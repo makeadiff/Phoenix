@@ -11,6 +11,7 @@ produces:
   - application/json
   
 paths:
+  ############################### User
   /users:
     get:
       description: Returns a list of all users matching given parameters
@@ -47,6 +48,11 @@ paths:
         - name: user_type
           in: query
           type: string
+          enum:
+            - volunteer
+            - applicant
+            - let_go
+            - alumnai
           description: Can be 'volunteer', 'applicant', 'let_go' or 'alumnai'. 
         - name: center_id
           in: query
@@ -102,6 +108,11 @@ paths:
         - name: user_type
           in: formData
           type: string
+          enum:
+            - volunteer
+            - applicant
+            - let_go
+            - alumnai
           description: Can be 'volunteer', 'applicant', 'let_go' or 'alumnai'. 
       responses:
         200:
@@ -194,6 +205,77 @@ paths:
           description: User was deleted
         404:
           description: Couldn't find the user with the given {user_id}
+
+  /users/{user_id}/groups:
+    get:
+      description: Return all the groups of the given user ID.
+      parameters:
+        - name: user_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user
+      responses:
+        200: 
+          description: Ok
+        404:
+          description: Can't find any user with the given ID.
+
+  /users/{user_id}/groups/{group_id}:
+    get:
+      description: Returns true if the given user is part of the given group. 
+      parameters:
+        - name: user_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user
+        - name: group_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the Group
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find the even group in the given user's groups
+    post:
+      description: Add the user to the given Group.
+      parameters:
+        - name: user_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user
+        - name: group_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the Group
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find the even group in the given user's groups
+    delete:
+      description: Remove the user to the given Group.
+      parameters:
+        - name: user_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user
+        - name: group_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the Group
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find user or the group.
 
   /users/{user_id}/credit:
     get:
@@ -302,6 +384,7 @@ paths:
         default:
           description: User logged out.
   
+  ########################################### Cities
   /cities:
     get:
       tags:
@@ -393,9 +476,412 @@ paths:
           description: Returns the list of users.
         404:
           description: Can't find the city/group or users in that combination.
-      
+
+  /cities/{city_id}/centers:
+    get:
+      summary: Returns the list of all centers in the given city.
+      parameters:
+        - name: city_id
+          in: path
+          required: true
+          type: integer
+          description: City ID
+      responses:
+        200:
+          description: Returns all centers.
+        404:
+          description: Can't find city with given ID.
+
+  /cities/{city_id}/students:
+    get:
+      summary: Returns the list of all students in the given city.
+      parameters:
+        - name: city_id
+          in: path
+          required: true
+          type: integer
+          description: City ID
+      responses:
+        200:
+          description: Returns all students.
+        404:
+          description: Can't find city with given ID.
+
+  ###################################### Group
+  /groups/:
+    get:
+      summary: Returns all the groups currently active.
+      responses:
+        200:
+          description: Ok
+
+  /groups/{group_id}:
+    get:
+      summary: Returns the details of the group of the given ID
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          type: integer
+          description: Group ID
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Group not found.
   
+  ###################################### Center
+  /centers/:
+    get:
+      description: Returns a list of all centers matching given parameters
+      parameters:
+        - name: name
+          in: query
+          type: string
+          description: Search by Center name
+        - name: city_id
+          in: query
+          type: integer
+          required: false
+          description: Return all centers in the given city.
+      responses:
+        200:
+          description: Ok
+    # post:
+    #   description: Create a new center.
+    #   parameters:
+    #     - name: name
+    #       in: query
+    #       type: string
+    #       required: true
+    #       description: Search by Center name
+    #     - name: city_id
+    #       in: query
+    #       type: integer
+    #       required: true
+    #       description: Return all centers in the given city.
+    #     - center_head_id
+    #       in: query
+    #       type: integer
+    #       required: true
+    #       description: The Shelter Operations Fellow's user ID. 
+    #   responses:
+    #     200:
+    #       description: Ok
+
+  /centers/{center_id}:
+    get:
+      description: Returns the details of the center who's ID is given
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          description: ID of the center
+          required: true
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find any centers with the given ID
+    # post:
+    #   description: Edit the given center.
+    #   parameters:
+    #     - name: name
+    #       in: query
+    #       type: string
+    #       required: true
+    #       description: Search by Center name
+    #     - name: city_id
+    #       in: query
+    #       type: integer
+    #       required: true
+    #       description: Return all centers in the given city.
+    #     - center_head_id
+    #       in: query
+    #       type: integer
+    #       required: true
+    #       description: The Shelter Operations Fellow's user ID. 
+    #   responses:
+    #     200:
+    #       description: Ok
+    #     404:
+    #        description: Can't find any centers with the given ID
+    # delete:
+    #   description: Deletes the given center.
+    #   responses:
+    #     200:
+    #       description: Ok
+    #     404:
+    #        description: Can't find any centers with the given ID
   
+  /centers/{center_id}/teachers:
+    get:
+      description: Returns the teachers assigned to the given center.
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          description: ID of the center
+          required: true
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find any centers with the given ID
+
+  /centers/{center_id}/students:
+    get:
+      description: Returns the students in the given center.
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          description: ID of the center
+          required: true
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find any centers with the given ID
+
+  /centers/{center_id}/levels:
+    get:
+      description: Returns the levels/class sections. in the given center.
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          description: ID of the center
+          required: true
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find any centers with the given ID
+
+  /centers/{center_id}/batchs:
+    get:
+      description: Returns the batchs in the given center.
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          description: ID of the center
+          required: true
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find any centers with the given ID
+
+  ###################################### Students
+  
+  /students:
+    get:
+      description: Returns a list of all students matching given parameters
+      parameters:
+        - name: name
+          in: query
+          type: string
+          description: Search by name
+        - name: city_id
+          in: query
+          type: integer
+          required: false
+          description: Return all students in the given city. If ommited the city of the user who's login is used to access the api is assumed.
+        - name: center_id
+          in: query
+          type: integer
+          required: false
+          description: Returns all the students in the given center.
+        - name: sex
+          in: query
+          type: string
+          enum: [m,f]
+          required: false
+          description: Returns all the students who are of the given gender. Can be 'm' or 'f'.
+      responses:
+        '200':
+          description: Returns the list of students according to the given parameters.
+          schema:
+            type: "array"
+            items: 
+              $ref: "#/definitions/Student"
+        '404':
+          description: Did not find any students matching the given parameters
+    post:
+      description: Create a new student with the data given in the body.
+      parameters:
+        - name: name
+          in: formData
+          type: string
+          required: true
+          description: Name of the Student
+        - name: sex
+          in: formData
+          type: string
+          enum: [m,f]
+          description: Sex of the student - 'm' or 'f'.
+        - name: center_id
+          type: integer
+          in: formData
+          required: true
+          description: ID of the Center that student belongs to. Must be a valid center.
+      responses:
+        200:
+          description: Student added successfully.
+        400:
+          description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+
+  /students/{student_id}:
+    get:
+      description: Returns the student who's ID is given
+      parameters:
+        - name: student_id
+          in: path
+          description: The ID of the student to be found.
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Returns the student details
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Student"
+        404:
+          description: Can't find student with given ID
+        400:
+          description: Invalid ID format - did you put alphabets into the ID?
+    post:
+      description: Edit details of the given student
+      parameters:
+        - name: student_id
+          in: path
+          type: integer
+          description: The ID of the student who has to be edited
+          required: true
+        - name: name
+          in: formData
+          type: string
+          description: If you want to edit the name of the volunteer, provide the new name here.
+        - name: sex
+          in: formData
+          type: string
+          description: Sex of the student - can be "m", "f" or "u"
+      responses:
+        200:
+          description: User edited with given data
+        404:
+          description: Can't find any student with the given {student_id}
+          
+    delete:
+      description: Deletes the student with the given ID 
+      parameters:
+        - name: student_id
+          in: path
+          type: integer
+          description: The id of the student to be deleted.
+          required: true
+      responses:
+        200:
+          description: Student was deleted
+        404:
+          description: Couldn't find the student with the given {student_id}
+
+  ############################# Level
+  /levels/{level_id}:
+    get:
+      description: Returns the details of the level with the given ID
+      parameters:
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level that should be found.
+      responses:
+        200:
+          description: Details of the level will be returned.
+        404:
+          description: Can't find any level with the given {level_id}
+
+  /levels/{level_id}/students:
+    get:
+      description: Returs the students mapped to the given level.
+      parameters:
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+      responses:
+        200:
+          description: List of all the students in that level.
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Student"
+        404:
+          description: Can't find any level with the given {level_id}
+
+  ######################## Batches
+  /batches/{batch_id}:
+    get:
+      description: Returns the details of the batch with the given ID
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch that should be found.
+      responses:
+        200:
+          description: Details of the batch will be returned.
+        404:
+          description: Can't find any batch with the given {batch_id}
+
+  /batchs/{batch_id}/teachers:
+    get:
+      description: Returs the teachers mapped to the given batch.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+      responses:
+        200:
+          description: List of all the teachers in that batch.
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/User"
+        404:
+          description: Can't find any batch with the given {batch_id}
+
+# Class
+
+# GET /classes/{class_id}
+# POST /classes/
+# Class->save($class_info);
+
+# GET /users/{user_id}/classes/last
+# GET /users/{user_id}/classes
+#         ? level_id
+#           batch_id
+#           class_on
+# GET /classes/
+#       ? level_id
+#         batch_id
+#         class_on
+#         user_id
+        
+# GET /classes/{class_id}/students : Includes Attendance Data
+# POST /classes/{class_id}/students : Mark attendance
+# POST /classes/{class_id}/students/{student_id}/participation
+# POST /classes/{class_id}/students/{student_id}/check_for_understanding
+
+
 definitions:
   User:
     type: "object"
@@ -433,6 +919,24 @@ definitions:
         - "m"
         - "f"
         - "o"
+  Student:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      birthday:
+        type: string
+        format: "date"
+      center_id:
+        type: integer
+      sex:
+        type: string
+        enum:
+        - "m"
+        - "f"
+        - "u"
   City:
     type: "object"
     properties:
