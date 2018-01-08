@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   version: "1.0"
   title: "MADApp API"
-  description: "API endpoint documentation for MADApp."
+  description: "API endpoint documentation for MADApp. Responses will be follow JSend conventions - http://labs.omniti.com/labs/jsend."
 host: localhost
 basePath: /Projects/Phoenix/public
 consumes:
@@ -138,11 +138,15 @@ paths:
               $ref: "#/definitions/User"
         404:
           description: Can't find user with given ID
-        400:
-          description: Invalid ID format - did you put alphabets into the ID?
     post:
       description: Edit details of the given user
       parameters:
+        # Another option of doing this.
+        # - name: user
+        #   in: body
+        #   description: User details to update
+        #   schema:
+        #       $ref: "#/definitions/User"
         - name: user_id
           in: path
           type: integer
@@ -898,12 +902,18 @@ definitions:
         type: string
       credit:
         type: integer
+      city_id:
+        type: integer
+      city:
+        type: string
       joined_on:
         type: string
         format: "date-time"
       left_on:
         type: string
-        format: "date-time"
+        format: "date"
+      reason_for_leaving:
+        type: sting
       user_type:
         type: string
         enum:
@@ -913,12 +923,38 @@ definitions:
         - "applicant"
       address:
         type: string
+      birthday:
+        type: sting
+        format: "date"
+      photo:
+        type: sting
       sex:
         type: string
         enum:
         - "m"
         - "f"
         - "o"
+      status:
+        type: string
+        enum:
+          - "1"
+          - "0"
+      # groups:
+      #   schema:
+      #     type: "object"
+      #     items:
+      #       $ref: "#/definitions/Group"
+            
+  Group:
+    type: "object"
+    properties:
+      id: 
+        type: integer
+      name:
+        type: string
+      vertical_id:
+        type: integer
+        
   Student:
     type: "object"
     properties:

@@ -91,6 +91,8 @@ final class User extends Model
 
     public function fetch($user_id) {
         $data = $this->select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->find($user_id);
+        if(!$data) return false;
+        
         $data->groups = $data->groups();
         $data->city = $data->city()[0]->name;
         return $data;
