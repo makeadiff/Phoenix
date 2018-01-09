@@ -913,7 +913,7 @@ definitions:
         type: string
         format: "date"
       reason_for_leaving:
-        type: sting
+        type: string
       user_type:
         type: string
         enum:
@@ -924,10 +924,10 @@ definitions:
       address:
         type: string
       birthday:
-        type: sting
+        type: string
         format: "date"
       photo:
-        type: sting
+        type: string
       sex:
         type: string
         enum:
