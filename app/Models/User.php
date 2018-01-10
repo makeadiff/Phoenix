@@ -25,7 +25,8 @@ final class User extends Model
     {
         $q = app('db')->table($this->table);
 
-        $q->select("User.id","User.name","User.email","User.phone","User.mad_email","User.credit","User.joined_on","User.left_on","User.user_type","User.address","User.sex", app('db')->raw("City.name AS city_name"));
+        $q->select("User.id","User.name","User.email","User.phone","User.mad_email","User.credit","User.joined_on","User.left_on",
+                    "User.user_type","User.address","User.sex", app('db')->raw("City.name AS city_name"));
         $q->join("City", "City.id", '=', 'User.city_id');
 
         if(!isset($data['status'])) $data['status'] = 1;
@@ -39,7 +40,7 @@ final class User extends Model
         if(!empty($data['not_user_type'])) $q->where_not_in('User.user_type', $data['not_user_type']);
         if(!empty($data['id'])) $q->where('User.id', $data['id']);
         if(!empty($data['user_id'])) $q->where('User.id', $data['user_id']);
-        if(!empty($data['name'])) $q->like('User.name', $data['name']);
+        if(!empty($data['name'])) $q->where('User.name', 'like', '%' . $data['name'] . '%');
         if(!empty($data['phone'])) $q->where('User.phone', $data['phone']);
         
         if(!empty($data['email'])) $q->where('User.email', $data['email']);
@@ -50,7 +51,7 @@ final class User extends Model
         
         if(!empty($data['user_group'])) {
             $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
-            $q->where_in('UserGroup.group_id', $data['user_group']);
+            $q->whereIn('UserGroup.group_id', $data['user_group']);
             $q->where('UserGroup.year', $this->year);
         }
         if(!empty($data['user_group_type'])) {
@@ -66,18 +67,20 @@ final class User extends Model
             $q->where('UserGroup.year', $this->year);
         }
         if(!empty($data['center_id'])) {
+            // $q->select("DISTINCT User.id");
             $q->join('UserClass', 'User.id', '=', 'UserClass.user_id');
             $q->join('Class', 'Class.id', '=', 'UserClass.class_id');
             $q->join('Level', 'Class.level_id', '=', 'Level.id');
-            $q->where_in('Level.center_id', $data['center_id']);
+            $q->where('Level.center_id', $data['center_id']);
+            $q->distinct();
         }
 
         // Sorting
         if(!empty($data['user_type'])) {
             if($data['user_type'] == 'applicant') {
-                $q->orderBy('User.joined_on DESC');
+                $q->orderBy('User.joined_on','desc');
             } elseif($data['user_type'] == 'let_go') {
-                $q->orderBy('User.left_on DESC');
+                $q->orderBy('User.left_on','desc');
             }
         }
         $q->orderby('User.name');
@@ -85,12 +88,15 @@ final class User extends Model
         // :TODO: Pagination
 
         // dd($q->toSql(), $q->getBindings());
+
         $results = $q->get();
+        
         return $results;
     }
 
     public function fetch($user_id) {
-        $data = $this->select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->find($user_id);
+        $data = $this->select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 
+                                'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->find($user_id);
         if(!$data) return false;
         
         $data->groups = $data->groups();

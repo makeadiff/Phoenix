@@ -66,8 +66,6 @@ paths:
             type: "array"
             items: 
               $ref: "#/definitions/User"
-        '404':
-          description: Did not find any users matching the given parameters
     post:
       description: Create a new user with the data given in the body.
       parameters:
@@ -226,24 +224,6 @@ paths:
           description: Can't find any user with the given ID.
 
   /users/{user_id}/groups/{group_id}:
-    get:
-      description: Returns true if the given user is part of the given group. 
-      parameters:
-        - name: user_id
-          type: integer
-          in: path
-          required: true
-          description: ID of the user
-        - name: group_id
-          type: integer
-          in: path
-          required: true
-          description: ID of the Group
-      responses:
-        200:
-          description: Ok
-        404:
-          description: Can't find the even group in the given user's groups
     post:
       description: Add the user to the given Group.
       parameters:
@@ -261,7 +241,7 @@ paths:
         200:
           description: Ok
         404:
-          description: Can't find the even group in the given user's groups
+          description: Can't find any user or group with the given ID. 
     delete:
       description: Remove the user to the given Group.
       parameters:

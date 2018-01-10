@@ -14,7 +14,10 @@
 // Responses are in JSend format - slightly modified. http://labs.omniti.com/labs/jsend
 use App\Models\User;
 use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
+
 header("Content-type: application/json");
+header("Access-Control-Allow-Origin: *");
 
 $app->get('/', function () use ($app) {
     return $app->version();
@@ -31,6 +34,27 @@ $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
     return showSuccess("List of users returned", array('users' => $users));
 });
 
+$app->get('/users/', function(Request $request) use ($app) {
+	$search_fields = ['name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+
+		if($key == 'group_id') {
+			$search['user_group'] = array($request->input('group_id'));
+		} elseif ($key == 'group_in') {
+			$search['user_group'] = explode(",", $request->input('group_in'));
+		} else {
+			$search[$key] = $request->input($key);
+		}
+	}
+
+	$user = new User;
+	$data = $user->search($search);
+
+	return showSuccess("Search Results", array('users' => $data));
+});
+
 $app->get('/users/{user_id}', function($user_id) use ($app) {
 	$user = new User;
 	$details = $user->fetch($user_id);
@@ -42,10 +66,22 @@ $app->get('/users/{user_id}', function($user_id) use ($app) {
 	return showSuccess("User details for {$details->name}", array('user' => $details));
 });
 
-$app->get('/users/{user_id}/credits', function($user_id) use ($app) {
+$app->get('/users/{user_id}/groups', function($user_id) use ($app) {
 	$user = new User;
-	$details = intval($user->fetch($user_id)->credit);
-	return showSuccess("Credits for user $user_id", $details);
+	$info = $user->fetch($user_id);
+	if(!$info) return response(showError("Can't find user with user id '$user_id'"), 404);
+
+	$groups = $info->groups;
+	return showSuccess("Credits for user $user_id", array('groups' => $groups));
+});
+
+$app->get('/users/{user_id}/credit', function($user_id) use ($app) {
+	$user = new User;
+	$info = $user->fetch($user_id);
+	if(!$info) return response(showError("Can't find user with user id '$user_id'"), 404);
+
+	$details = intval($info->credit);
+	return showSuccess("Credits for user $user_id", array('credit' => $details));
 });
 
 $app->post('/users','UserController@add');
