@@ -26,11 +26,11 @@ final class User extends Model
         $q = app('db')->table($this->table);
 
         $q->select("User.id","User.name","User.email","User.phone","User.mad_email","User.credit","User.joined_on","User.left_on",
-                    "User.user_type","User.address","User.sex", app('db')->raw("City.name AS city_name"));
+                    "User.user_type","User.address","User.sex", "User.status", "User.city_id", app('db')->raw("City.name AS city_name"));
         $q->join("City", "City.id", '=', 'User.city_id');
 
         if(!isset($data['status'])) $data['status'] = 1;
-        if($data['status'] !== false) $q->where('User.status', $data['status']); // Setting status as 'false' gets you even the deleted users
+        if($data['status'] !== false) $q->where('User.status', $data['status']); // Setting status as '0' gets you even the deleted users
         
         if(isset($data['city_id']) and $data['city_id'] != 0) $q->where('User.city_id', $data['city_id']);
         
@@ -96,7 +96,7 @@ final class User extends Model
 
     public function fetch($user_id) {
         $data = $this->select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 
-                                'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->find($user_id);
+                                'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->where('status','1')->find($user_id);
         if(!$data) return false;
         
         $data->groups = $data->groups();
@@ -153,7 +153,7 @@ final class User extends Model
         return $user->save();
     }
     
-    /// Changes the phone number format from +91976068565 to 9746068565. Remove the 91 at the starting.
+    /// Changes the phone number format from +91976063565 to 9746063565. Remove the 91 at the starting.
     private function correctPhoneNumber($phone) {
         if(strlen($phone) > 10) {
             return preg_replace('/^\+?91\D?/', '', $phone);
