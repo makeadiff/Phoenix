@@ -88,16 +88,15 @@ paths:
           type: string
           in: formData
           description: "MAD Email - if they are a fellow or above, they'll have this."
+        - name: password
+          type: string
+          in: formData
+          description: "Password for the user. If registering on site, set this to 'pass'"
         - name: joined_on
           type: string
           format: "date-time"
           in: formData
           description: The date they joined 
-        - name: left_on
-          type: string
-          format: "date-time"
-          in: formData
-          description: The time when they left MAD.
         - name: city_id
           type: integer
           in: formData

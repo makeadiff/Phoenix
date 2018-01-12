@@ -21,7 +21,8 @@
     "autoload-dev": {
         "classmap": [
             "tests/",
-            "database/"
+            "database/",
+            "app/Libraries"
         ]
     }
 }

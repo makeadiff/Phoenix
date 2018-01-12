@@ -31,7 +31,7 @@ $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
 	$user = new User;
     $users = $user->search(array('city_id' => $city_id));
     
-    return showSuccess("List of users returned", array('users' => $users));
+    return JSend::success("List of users returned", array('users' => $users));
 });
 
 $app->get('/users/', function(Request $request) use ($app) {
@@ -52,7 +52,7 @@ $app->get('/users/', function(Request $request) use ($app) {
 	$user = new User;
 	$data = $user->search($search);
 
-	return showSuccess("Search Results", array('users' => $data));
+	return JSend::success("Search Results", array('users' => $data));
 });
 
 $app->get('/users/{user_id}', function($user_id) use ($app) {
@@ -60,82 +60,65 @@ $app->get('/users/{user_id}', function($user_id) use ($app) {
 	$details = $user->fetch($user_id);
 
 	if(!$details) {
-		return response(showError("Can't find user with user id '$user_id'"), 404);
+		return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 	}
 
-	return showSuccess("User details for {$details->name}", array('user' => $details));
+	return JSend::success("User details for {$details->name}", array('user' => $details));
 });
 
 $app->get('/users/{user_id}/groups', function($user_id) use ($app) {
 	$user = new User;
 	$info = $user->fetch($user_id);
-	if(!$info) return response(showError("Can't find user with user id '$user_id'"), 404);
+	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 
 	$groups = $info->groups;
-	return showSuccess("Credits for user $user_id", array('groups' => $groups));
+	return JSend::success("Credits for user $user_id", array('groups' => $groups));
 });
 
 $app->get('/users/{user_id}/credit', function($user_id) use ($app) {
 	$user = new User;
 	$info = $user->fetch($user_id);
-	if(!$info) return response(showError("Can't find user with user id '$user_id'"), 404);
+	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 
-	$details = intval($info->credit);
-	return showSuccess("Credits for user $user_id", array('credit' => $details));
+	$credit = intval($info->credit);
+	return JSend::success("Credits for user $user_id", array('credit' => $credit));
+});
+$app->post('/users/{user_id}/credit', function($user_id, Request $request) use ($app) {
+	$user = new User;
+	$info = $user->fetch($user_id);
+	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
+
+	$validator = \Validator::make($request->all(), [
+		'credit'      			=> 'required|numeric',
+        'updated_by_user_id'    => 'required|numeric|exists:User,id',
+        'reason' 				=> 'required'
+	]);
+
+    if ($validator->fails()) {
+        return response(JSend::fail("Unable to edit the credit - errors in input", $validator->errors()), 400);
+    }
+
+	$user->editCredit($user_id, $request->input('credit'), $request->input('updated_by_user_id'), $request->input('reason'));
+	
+	return JSend::success("Edit the credits for user $user_id", array('credit' => $request->input('credit')));
 });
 
 $app->post('/users','UserController@add');
 $app->post('/users/{user_id}','UserController@edit');
+$app->delete('/users/{user_id}', function($user_id) use ($app) {
+	$user = new User;
+	$info = $user->fetch($user_id);
+	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 
+	$info = $user->remove($user_id);
 
+	return JSend::success("User deleted successfully", array('user' => $info));
+});
 
-function showSuccess($message, $data = array()) {
-	return showSituation('success', $message, $data);
-}
+$app->get('/users/{user_id}/groups', function($user_id) use ($app) {
+	$user = new User;
+	$info = $user->fetch($user_id);
+	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 
-function showFail($message, $data = array()) {
-	return showSituation('fail', $message, $data);
-}
-
-function showError($message, $data = array()) {
-	return showSituation('error', $message, $data);
-}
-
-function showSituation($status, $message, $data) {
-	$template = array(
-		'success'	=> true,
-		'error'		=> false,
-		'status'	=> 'success',
-		'data'		=> null
-	);
-
-	if($status == 'error') {
-		$template['error'] = true;
-		$template['success'] = false;
-		$template['fail'] = false;
-
-		$template['message'] = $message;
-
-	} else if($status == 'fail') {
-		$template['error'] = true;
-		$template['success'] = false;
-		$template['fail'] = true;
-
-		$template['data'] = array($message);
-	}
-
-	$template['status'] = $status;
-
-	if(is_string($message)) {
-		$template[$status] = $message;
-
-	} elseif(is_array($message)) {
-		$template = array_merge($template, $message);
-	} 
-
-	if($data)
-		$template['data'] = $data;
-
-	return json_encode($template);
-}
-
+	return JSend::success("User Groupn for user $user_id", array('groups' => $info->groups));
+});

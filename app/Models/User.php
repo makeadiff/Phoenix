@@ -99,7 +99,15 @@ final class User extends Model
                                 'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->where('status','1')->find($user_id);
         if(!$data) return false;
         
-        $data->groups = $data->groups();
+        // All this to remove the 'pivot' key in the group
+        $raw_groups = $data->groups();
+        $groups = [];
+        foreach ($raw_groups as $g) {
+            unset($g->pivot);
+            $groups[] = $g;
+        }
+        $data->groups = $groups;
+
         $data->city = $data->city()[0]->name;
         return $data;
     }
@@ -136,10 +144,10 @@ final class User extends Model
             'joined_on' => date('Y-m-d H:i:s'),
         ]);
 
-        return $data;
+        return $user;
     }
 
-    public function edit($data, $user_id)
+    public function edit($user_id, $data)
     {
         $user = $this->find($user_id);
         foreach ($this->fillable as $key) {
@@ -150,7 +158,38 @@ final class User extends Model
 
             $user->$key = $data[$key];
         }
+        $user->save();
+
+        return $user;
+    }
+
+    public function remove($user_id)
+    {
+        $user = $this->find($user_id);
+        $user->status = 0;
+        $user->save();
+
+        return $user;
+    }
+
+    public function setCredit($user_id, $credit) {
+        $user = $this->find($user_id);
+        $user->credit = $credit; 
         return $user->save();
+    }
+
+    public function editCredit($user_id, $new_credit, $credit_assigned_by_user_id, $reason)
+    {
+        app('db')->table('UserCredit')->insert([
+            'user_id'   => $user_id,
+            'credit'    => $new_credit,
+            'credit_assigned_by_user_id' => $credit_assigned_by_user_id,
+            'comment'   => $reason,
+            'added_on'  => date('Y-m-d H:i:s'),
+            'year'      => $this->year
+        ]);
+
+        return $this->setCredit($user_id, $new_credit);
     }
     
     /// Changes the phone number format from +91976063565 to 9746063565. Remove the 91 at the starting.
