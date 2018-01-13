@@ -1,0 +1,14 @@
+{
+	"folders":
+	[
+		{
+			"path": "app"
+		},
+		{
+			"path": "api"
+		},
+		{
+			"path": "tests"
+		}
+	]
+}

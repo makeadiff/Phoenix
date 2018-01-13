@@ -5,7 +5,7 @@
  */
 class UserTest extends TestCase
 {
-    private $only_priority_tests = true;
+    private $only_priority_tests = false;
     private $write_to_db = false;
 
     public function testGetUserSingle()

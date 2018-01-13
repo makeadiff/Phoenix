@@ -12,8 +12,8 @@ final class User extends Model
     protected $fillable = ['email','mad_email','phone','name','sex','password','address','bio','source','birthday','city_id','credit','status','user_type', 'joined_on', 'left_on'];
 
     public $year;
-    // private $id = 0;
-    // private $data = false;
+    private $id = 0;
+    private $user = false;
 
     public function __construct(array $attributes = array())
     {
@@ -98,6 +98,9 @@ final class User extends Model
         $data = $this->select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 
                                 'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->where('status','1')->find($user_id);
         if(!$data) return false;
+
+        $this->id = $user_id;
+        $this->user = $data;
         
         // All this to remove the 'pivot' key in the group
         $raw_groups = $data->groups();
@@ -147,41 +150,98 @@ final class User extends Model
         return $user;
     }
 
-    public function edit($user_id, $data)
+    public function edit($data, $user_id = false)
     {
-        $user = $this->find($user_id);
+        $this->chain($user_id);
+
         foreach ($this->fillable as $key) {
             if(!isset($data[$key])) continue;
 
             if($key == 'phone') $data[$key] = $this->correctPhoneNumber($data[$key]);
             if($key == 'password') $data[$key] = Hash::make($data[$key]);
 
-            $user->$key = $data[$key];
+            $this->user->$key = $data[$key];
         }
-        $user->save();
+        $this->user->save();
 
-        return $user;
+        return $this->user;
     }
 
-    public function remove($user_id)
+    public function remove($user_id = false)
     {
-        $user = $this->find($user_id);
-        $user->status = 0;
-        $user->save();
+        $this->chain($user_id);
 
-        return $user;
+        $this->user->status = 0;
+        $this->user->save();
+
+        return $this->user;
     }
 
-    public function setCredit($user_id, $credit) {
-        $user = $this->find($user_id);
-        $user->credit = $credit; 
-        return $user->save();
-    }
-
-    public function editCredit($user_id, $new_credit, $credit_assigned_by_user_id, $reason)
+    public function addGroup($group_id, $user_id = false)
     {
+        $this->chain($user_id);
+        
+        // Check if the user has the group already.
+        $existing_groups = $this->groups();
+        $group_found = false;
+        foreach ($existing_groups as $grp) {
+            if($grp->id == $group_id) {
+                $group_found = true;
+                break;
+            }
+        }
+
+        if($group_found) return false;
+
+        app('db')->table("UserGroup")->insert([
+            'user_id'   => $this->id,
+            'group_id'  => $group_id,
+            'year'      => $this->year
+        ]);
+
+        return $this->groups();
+    }
+
+    public function removeGroup($group_id, $user_id = false)
+    {
+        $this->chain($user_id);
+        
+        // Check if the user has the group already.
+        $existing_groups = $this->groups();
+        $group_found = false;
+        foreach ($existing_groups as $grp) {
+            if($grp->id == $group_id) {
+                $group_found = true;
+                break;
+            }
+        }
+
+        if(!$group_found) return false;
+
+        app('db')->table("UserGroup")->where([
+            'user_id'   => $this->id,
+            'group_id'  => $group_id,
+            'year'      => $this->year
+        ])->delete();
+
+        return $this->groups();
+    }
+
+    public function setCredit($credit, $user_id = false)
+    {
+        $this->chain($user_id);
+
+        $this->user = $this->find($user_id);
+        $this->user->credit = $credit; 
+        return $this->user->save();
+    }
+
+    public function editCredit($new_credit, $credit_assigned_by_user_id, $reason, $user_id = false)
+    {
+        $this->chain($user_id);
+
         app('db')->table('UserCredit')->insert([
-            'user_id'   => $user_id,
+            'user_id'   => $this->id,
             'credit'    => $new_credit,
             'credit_assigned_by_user_id' => $credit_assigned_by_user_id,
             'comment'   => $reason,
@@ -189,7 +249,7 @@ final class User extends Model
             'year'      => $this->year
         ]);
 
-        return $this->setCredit($user_id, $new_credit);
+        return $this->find($this->id)->setCredit($new_credit);
     }
     
     /// Changes the phone number format from +91976063565 to 9746063565. Remove the 91 at the starting.
@@ -200,4 +260,17 @@ final class User extends Model
         return $phone;
     }
 
+    /// This is necessary to make the methord chaining work. With this, you can do stuff like - $user->find(3)->remove();
+    private function chain($user_id) {
+        if($user_id) {
+            $this->id = $user_id;
+        }
+        if(!$this->id and $this->attributes['id']) {
+            $this->id = $this->attributes['id'];
+        }
+
+        if(!$this->user) {
+            $this->user = $this->find($this->id);
+        }
+    }
 }

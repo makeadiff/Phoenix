@@ -58,7 +58,7 @@ class UserController extends Controller
             return response(JSend::fail("Unable to create user - errors in input.", $validator->errors()), 400);
         }
         
-        $result = $user->edit($user_id, $request->all());
+        $result = $user->find($user_id)->edit($request->all());
 
         return JSend::success("Edited the user", array('user' => $result));
     }

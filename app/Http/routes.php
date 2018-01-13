@@ -98,7 +98,7 @@ $app->post('/users/{user_id}/credit', function($user_id, Request $request) use (
         return response(JSend::fail("Unable to edit the credit - errors in input", $validator->errors()), 400);
     }
 
-	$user->editCredit($user_id, $request->input('credit'), $request->input('updated_by_user_id'), $request->input('reason'));
+	$user->find($user_id)->editCredit($request->input('credit'), $request->input('updated_by_user_id'), $request->input('reason'));
 	
 	return JSend::success("Edit the credits for user $user_id", array('credit' => $request->input('credit')));
 });
@@ -120,5 +120,28 @@ $app->get('/users/{user_id}/groups', function($user_id) use ($app) {
 	$info = $user->fetch($user_id);
 	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 
-	return JSend::success("User Groupn for user $user_id", array('groups' => $info->groups));
+	return JSend::success("User Groups for user $user_id", array('groups' => $info->groups));
 });
+
+$app->post('/users/{user_id}/groups/{group_id}', function($user_id, $group_id) use ($app) {
+	$user = new User;
+	$info = $user->fetch($user_id);
+	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
+
+	$groups = $user->find($user_id)->addGroup($group_id);
+	if(!$groups) return response(JSend::fail("User already has the given group"), 400);
+
+	return JSend::success("Added user to the given group.", array('groups' => $groups));
+});
+
+$app->delete('/users/{user_id}/groups/{group_id}', function($user_id, $group_id) use ($app) {
+	$user = new User;
+	$info = $user->fetch($user_id);
+	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
+
+	$groups = $user->find($user_id)->removeGroup($group_id);
+	if(!$groups) return response(JSend::fail("User don't have the given group"), 400);
+
+	return JSend::success("Removed user from the given group.", array('groups' => $groups));
+});
+
