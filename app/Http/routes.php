@@ -13,6 +13,8 @@
 
 // Responses are in JSend format - slightly modified. http://labs.omniti.com/labs/jsend
 use App\Models\User;
+use App\Models\Group;
+use App\Models\City;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
@@ -23,8 +25,18 @@ $app->get('/', function () use ($app) {
     return $app->version();
 });
 
-$app->get('/foo', function () use ($app) {
-    return "Please work.";
+$app->get('/cities', function() use($app) {
+	$cities = City::getAll();
+
+	return JSend::success("All cities", array('cities' => $cities));
+});
+
+$app->get('/cities/{city_id}', function ($city_id) use ($app) {
+	$city = City::fetch($city_id);
+   
+   	if(!$city) return response(JSend::fail("Can't find any city with the id $city_id"), 404);
+
+    return JSend::success("Details for city $city_id", array('city' => $city));
 });
 
 $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
@@ -33,6 +45,32 @@ $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
     
     return JSend::success("List of users returned", array('users' => $users));
 });
+
+$app->get('/cities/{city_id}/teachers', function ($city_id) use ($app) {
+	$user = new User;
+    $users = $user->search(array('city_id' => $city_id, 'user_group' => 9));
+    
+    return JSend::success("List of teachers returned", array('users' => $users));
+});
+
+$app->get('/cities/{city_id}/fellows', function ($city_id) use ($app) {
+	$user = new User;
+    $users = $user->search(array('city_id' => $city_id, 'user_group_type' => 'fellow'));
+    
+    return JSend::success("List of fellows returned", array('users' => $users));
+});
+
+// $app->get('/cities/{city_id}/centers', function ($city_id) use ($app) {
+// 	   $centers = Center::getAllInCity($city_id);
+    
+//     return JSend::success("List of centers returned", array('centers' => $centers));
+// });
+
+// $app->get('/cities/{city_id}/students', function ($city_id) use ($app) {
+//     $students = Student::search(array('city_id' => $city_id));
+    
+//     return JSend::success("List of students returned", array('students' => $students));
+// });
 
 $app->get('/users/', function(Request $request) use ($app) {
 	$search_fields = ['name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id'];
@@ -53,6 +91,17 @@ $app->get('/users/', function(Request $request) use ($app) {
 	$data = $user->search($search);
 
 	return JSend::success("Search Results", array('users' => $data));
+});
+
+$app->get('/users/login', function(Request $request) use ($app) {
+	$user = new User;
+	$data = $user->login($request->input('email'), $request->input('password'));
+
+	if(!$data) {
+		return response(JSend::fail("Invalid username/password"), 400);
+	}
+
+	return JSend::success("Welcome back, $data[name]", array('user' => $data));
 });
 
 $app->get('/users/{user_id}', function($user_id) use ($app) {

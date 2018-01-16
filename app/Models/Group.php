@@ -25,5 +25,10 @@ final class Group extends Model
     {
          return $this->belongsTo('App\Models\Vertical', 'vertical_id');
     }
+
+    // public function getAll()
+    // {
+    //     return Group::select('id', 'name')->get();
+    // }
 }
 

@@ -6,7 +6,7 @@
 class UserTest extends TestCase
 {
     private $only_priority_tests = false;
-    private $write_to_db = false;
+    private $write_to_db = true;
 
     public function testGetUserSingle()
     {
@@ -67,6 +67,7 @@ class UserTest extends TestCase
     ///     POST /users
     public function testPostUsers()
     {
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
         if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
 
         // This will create a new user.
@@ -93,6 +94,7 @@ class UserTest extends TestCase
 
     public function testPostUsersExisting()
     {
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
         // Should attempt create a duplicate 
         $user = array(
             'name'  => 'Binny V A',
@@ -111,4 +113,23 @@ class UserTest extends TestCase
         $this->assertEquals($data->data->email[0], "The email has already been taken.");
         $this->assertEquals(400, $this->response->status());
     }
+
+    public function testDeleteUser() 
+    {
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
+
+        $response = $this->call('DELETE', '/users/6');
+        $data = json_decode($response->getContent());
+        $this->assertEquals($data->status, 'success');
+        $this->seeInDatabase('User', array('id' => '6', 'status' => '0'));
+    }
+
+    public function testGetUserLogin() {
+        $this->get('/users/login?email=test.tester_dude@gmail.com&password=pass');
+        $data = json_decode($this->response->getContent());
+        $this->assertEquals($data->status, 'success');
+        $this->assertEquals($data->data->user->name, 'Test Dude');
+    }
+
 }

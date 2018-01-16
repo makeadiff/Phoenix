@@ -356,16 +356,16 @@ paths:
           description: User Logged into the system.
         '400':
           description: Invalid username/password supplied
-  /users/logout:
-    get:
-      tags:
-        - user
-        - auth
-      summary: Logs out current logged in user session
-      parameters: []
-      responses:
-        default:
-          description: User logged out.
+  #/users/logout:
+  #  get:
+  #    tags:
+  #      - user
+  #      - auth
+  #    summary: Logs out current logged in user session
+  #    parameters: []
+  #    responses:
+  #      default:
+  #        description: User logged out.
   
   ########################################### Cities
   /cities:
@@ -440,26 +440,6 @@ paths:
         404:
           description: Can't find any city with the given city ID
           
-  /cities/{city_id}/groups/{group_id}/users:
-    get:
-      summary: Return all the users in the given city and the given group. 
-      parameters:
-        - name: city_id
-          in: path
-          required: true
-          type: integer
-          description: ID of the city
-        - name: group_id
-          in: path
-          required: true
-          type: integer
-          description: ID of the group
-      responses:
-        200:
-          description: Returns the list of users.
-        404:
-          description: Can't find the city/group or users in that combination.
-
   /cities/{city_id}/centers:
     get:
       summary: Returns the list of all centers in the given city.

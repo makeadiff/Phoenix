@@ -10,6 +10,7 @@ final class User extends Model
     protected $table = 'User';
     public $timestamps = false;
     protected $fillable = ['email','mad_email','phone','name','sex','password','address','bio','source','birthday','city_id','credit','status','user_type', 'joined_on', 'left_on'];
+    public $errors = array();
 
     public $year;
     private $id = 0;
@@ -50,6 +51,7 @@ final class User extends Model
         if(!empty($data['left_on'])) $q->where('DATE_FORMAT(User.left_on, "%Y-%m")', date('Y-m', strtotime($data['left_on'])));
         
         if(!empty($data['user_group'])) {
+            if(!is_array($data['user_group'])) $data['user_group'] = array($data['user_group']);
             $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $q->whereIn('UserGroup.group_id', $data['user_group']);
             $q->where('UserGroup.year', $this->year);
@@ -57,7 +59,7 @@ final class User extends Model
         if(!empty($data['user_group_type'])) {
             $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
-            $q->whereIn('Group.type', $data['user_group_type']);
+            $q->where('Group.type', $data['user_group_type']);
             $q->where('UserGroup.year', $this->year);
         }
         if(!empty($data['user_group_vertical_id'])) {
@@ -85,6 +87,10 @@ final class User extends Model
         }
         $q->orderby('User.name');
 
+        // :TODO:
+        // ->groups() ?
+        // ->city() ?
+
         // :TODO: Pagination
 
         // dd($q->toSql(), $q->getBindings());
@@ -95,7 +101,7 @@ final class User extends Model
     }
 
     public function fetch($user_id) {
-        $data = $this->select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 
+        $data = User::select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 
                                 'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->where('status','1')->find($user_id);
         if(!$data) return false;
 
@@ -144,7 +150,7 @@ final class User extends Model
             'credit'    => isset($data['credit']) ? $data['credit'] : '3',
             'status'    => isset($data['status']) ? $data['status'] : '1',
             'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
-            'joined_on' => date('Y-m-d H:i:s'),
+            'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s')
         ]);
 
         return $user;
@@ -171,6 +177,7 @@ final class User extends Model
     {
         $this->chain($user_id);
 
+        $this->user = User::find($user_id);
         $this->user->status = 0;
         $this->user->save();
 
@@ -206,7 +213,7 @@ final class User extends Model
     {
         $this->chain($user_id);
         
-        // Check if the user has the group already.
+        // Check if the user has the group.
         $existing_groups = $this->groups();
         $group_found = false;
         foreach ($existing_groups as $grp) {
@@ -250,6 +257,29 @@ final class User extends Model
         ]);
 
         return $this->find($this->id)->setCredit($new_credit);
+    }
+
+    public function login($email_or_phone, $password)
+    {
+        $user = User::where('status', '1')->where('user_type','volunteer');
+        $user->where(function($q) use ($email_or_phone) {
+            $q->where('email', $email_or_phone)->orWhere('phone', $email_or_phone)->orWhere('mad_email', $email_or_phone);
+        });
+        $data = $user->first();
+
+        if($data) {
+            if(!Hash::check($password, $data['password'])) { // Incorrect password
+                $data = null;
+                $this->errors[] = "Incorrect password provided";
+            }
+        } else {
+            $this->errors[] = "Can't find any user with the given email/phone";
+        }
+
+        $info = null;
+        if($data) $info = $this->fetch($data['id']);
+
+        return $info;
     }
     
     /// Changes the phone number format from +91976063565 to 9746063565. Remove the 91 at the starting.

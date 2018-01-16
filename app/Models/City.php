@@ -21,5 +21,15 @@ final class City extends Model
         return $this->hasMany('App\Models\User');
     }
 
+    public static function getAll()
+    {
+        return City::select('id', 'name')->where('type', 'actual')->orderBy('name')->get();
+    }
+
+    public static function fetch($city_id)
+    {
+    	return City::where('id', $city_id)->first();
+    }
+
 }
 
