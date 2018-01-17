@@ -14,6 +14,9 @@ paths:
   ############################### User
   /users:
     get:
+      tags:
+        - user
+        - search
       description: Returns a list of all users matching given parameters
       parameters:
         - name: name
@@ -67,6 +70,8 @@ paths:
             items: 
               $ref: "#/definitions/User"
     post:
+      tags:
+        - user
       description: Create a new user with the data given in the body.
       parameters:
         - name: name
@@ -119,6 +124,8 @@ paths:
           
   /users/{user_id}:
     get:
+      tags:
+        - user
       description: Returns the user who's ID is given
       parameters:
         - name: user_id
@@ -136,6 +143,8 @@ paths:
         404:
           description: Can't find user with given ID
     post:
+      tags:
+        - user
       description: Edit details of the given user
       parameters:
         # Another option of doing this.
@@ -194,6 +203,8 @@ paths:
           description: Can't find any user with the given {user_id}
           
     delete:
+      tags:
+        - user
       description: Deletes the user with the given ID 
       parameters:
         - name: user_id
@@ -209,6 +220,9 @@ paths:
 
   /users/{user_id}/groups:
     get:
+      tags:
+        - user 
+        - group
       description: Return all the groups of the given user ID.
       parameters:
         - name: user_id
@@ -224,6 +238,9 @@ paths:
 
   /users/{user_id}/groups/{group_id}:
     post:
+      tags:
+        - user 
+        - group
       description: Add the user to the given Group.
       parameters:
         - name: user_id
@@ -242,6 +259,9 @@ paths:
         404:
           description: Can't find any user or group with the given ID. 
     delete:
+      tags:
+        - user 
+        - group
       description: Remove the user to the given Group.
       parameters:
         - name: user_id
@@ -262,6 +282,9 @@ paths:
 
   /users/{user_id}/credit:
     get:
+      tags:
+        - user 
+        - credit
       description: Returns the credit of the user with given ID
       parameters:
         - name: user_id
@@ -276,6 +299,9 @@ paths:
           description: Can't find any user with the id {user_id}
           
     post:
+      tags:
+        - user 
+        - credit
       description: Edit the credit of the user
       parameters:
         - name: user_id
@@ -308,6 +334,9 @@ paths:
           
   /users/{user_id}/credit_history:
     get:
+      tags:
+        - user 
+        - credit
       description: Returns the entire history of credit changes for the given user.
       parameters:
         - name: user_id
@@ -323,6 +352,8 @@ paths:
  
   /users/{user_id}/class_history:
     get:
+      tags:
+        - user 
       description: Returns the entire class history of the given user.
       parameters:
         - name: user_id
@@ -384,6 +415,8 @@ paths:
   
   /cities/{city_id}:
     get:
+      tags:
+        - city
       summary: Returns the details of the city who's Id is given.
       parameters:
         - name: city_id
@@ -397,6 +430,9 @@ paths:
           
   /cities/{city_id}/users:
     get:
+      tags:
+        - user 
+        - city
       summary: Return all the users in the given city
       parameters:
         - name: city_id
@@ -412,6 +448,10 @@ paths:
           
   /cities/{city_id}/teachers:
     get:
+      tags:
+        - user 
+        - city
+        - teacher
       summary: Return all the teachers in the given city
       parameters:
         - name: city_id
@@ -427,6 +467,10 @@ paths:
 
   /cities/{city_id}/fellows:
     get:
+      tags:
+        - user 
+        - city
+        - fellow
       summary: Return all the fellows in the given city. This includes the City Team Leads and Shelter Ops Fellows as well.
       parameters:
         - name: city_id
@@ -442,6 +486,9 @@ paths:
           
   /cities/{city_id}/centers:
     get:
+      tags:
+        - city
+        - center
       summary: Returns the list of all centers in the given city.
       parameters:
         - name: city_id
@@ -457,6 +504,9 @@ paths:
 
   /cities/{city_id}/students:
     get:
+      tags:
+        - city
+        - student
       summary: Returns the list of all students in the given city.
       parameters:
         - name: city_id
@@ -473,6 +523,8 @@ paths:
   ###################################### Group
   /groups/:
     get:
+      tags:
+        - group
       summary: Returns all the groups currently active.
       responses:
         200:
@@ -480,6 +532,8 @@ paths:
 
   /groups/{group_id}:
     get:
+      tags:
+        - group
       summary: Returns the details of the group of the given ID
       parameters:
         - name: group_id
@@ -496,6 +550,9 @@ paths:
   ###################################### Center
   /centers/:
     get:
+      tags:
+        - center
+        - search
       description: Returns a list of all centers matching given parameters
       parameters:
         - name: name
@@ -534,6 +591,8 @@ paths:
 
   /centers/{center_id}:
     get:
+      tags:
+        - center
       description: Returns the details of the center who's ID is given
       parameters:
         - name: center_id
@@ -579,6 +638,10 @@ paths:
   
   /centers/{center_id}/teachers:
     get:
+      tags:
+        - user
+        - teacher 
+        - center
       description: Returns the teachers assigned to the given center.
       parameters:
         - name: center_id
@@ -594,6 +657,9 @@ paths:
 
   /centers/{center_id}/students:
     get:
+      tags:
+        - student 
+        - center
       description: Returns the students in the given center.
       parameters:
         - name: center_id
@@ -609,6 +675,9 @@ paths:
 
   /centers/{center_id}/levels:
     get:
+      tags:
+        - level 
+        - center
       description: Returns the levels/class sections. in the given center.
       parameters:
         - name: center_id
@@ -624,6 +693,9 @@ paths:
 
   /centers/{center_id}/batchs:
     get:
+      tags:
+        - batch
+        - center
       description: Returns the batchs in the given center.
       parameters:
         - name: center_id
@@ -641,6 +713,9 @@ paths:
   
   /students:
     get:
+      tags:
+        - student
+        - search
       description: Returns a list of all students matching given parameters
       parameters:
         - name: name
@@ -673,6 +748,8 @@ paths:
         '404':
           description: Did not find any students matching the given parameters
     post:
+      tags:
+        - student
       description: Create a new student with the data given in the body.
       parameters:
         - name: name
@@ -698,6 +775,8 @@ paths:
 
   /students/{student_id}:
     get:
+      tags:
+        - student
       description: Returns the student who's ID is given
       parameters:
         - name: student_id
@@ -717,6 +796,8 @@ paths:
         400:
           description: Invalid ID format - did you put alphabets into the ID?
     post:
+      tags:
+        - student
       description: Edit details of the given student
       parameters:
         - name: student_id
@@ -739,6 +820,8 @@ paths:
           description: Can't find any student with the given {student_id}
           
     delete:
+      tags:
+        - student
       description: Deletes the student with the given ID 
       parameters:
         - name: student_id
@@ -755,6 +838,8 @@ paths:
   ############################# Level
   /levels/{level_id}:
     get:
+      tags:
+        - level
       description: Returns the details of the level with the given ID
       parameters:
         - name: level_id
@@ -770,6 +855,9 @@ paths:
 
   /levels/{level_id}/students:
     get:
+      tags:
+        - student
+        - level
       description: Returs the students mapped to the given level.
       parameters:
         - name: level_id
@@ -790,6 +878,8 @@ paths:
   ######################## Batches
   /batches/{batch_id}:
     get:
+      tags:
+        - batch
       description: Returns the details of the batch with the given ID
       parameters:
         - name: batch_id
@@ -805,6 +895,10 @@ paths:
 
   /batchs/{batch_id}/teachers:
     get:
+      tags:
+        - batch
+        - teacher
+        - user
       description: Returs the teachers mapped to the given batch.
       parameters:
         - name: batch_id
@@ -921,9 +1015,14 @@ definitions:
         type: integer
       name:
         type: string
+      description:
+        type: string
       birthday:
         type: string
         format: "date"
+      added_on:
+        type: string
+        format: "date-time"
       center_id:
         type: integer
       sex:
