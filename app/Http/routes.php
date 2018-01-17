@@ -27,6 +27,7 @@ $app->get('/', function () use ($app) {
     return $app->version();
 });
 
+///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
 $app->get('/cities', function() use($app) {
 	$cities = City::getAll();
 
@@ -88,6 +89,7 @@ $app->get('/cities/{city_id}/students', function ($city_id) use ($app) {
     return JSend::success("List of students in $city[name]", array('students' => $students));
 });
 
+///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
 $app->get('/users/', function(Request $request) use ($app) {
 	$search_fields = ['name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id'];
 	$search = [];
