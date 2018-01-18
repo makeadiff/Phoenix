@@ -72,6 +72,7 @@ paths:
     post:
       tags:
         - user
+        - create
       description: Create a new user with the data given in the body.
       parameters:
         - name: name
@@ -126,6 +127,7 @@ paths:
     get:
       tags:
         - user
+        - single
       description: Returns the user who's ID is given
       parameters:
         - name: user_id
@@ -145,6 +147,7 @@ paths:
     post:
       tags:
         - user
+        - edit
       description: Edit details of the given user
       parameters:
         # Another option of doing this.
@@ -205,6 +208,7 @@ paths:
     delete:
       tags:
         - user
+        - delete
       description: Deletes the user with the given ID 
       parameters:
         - name: user_id
@@ -260,7 +264,7 @@ paths:
           description: Can't find any user or group with the given ID. 
     delete:
       tags:
-        - user 
+        - user
         - group
       description: Remove the user to the given Group.
       parameters:
@@ -417,6 +421,7 @@ paths:
     get:
       tags:
         - city
+        - single
       summary: Returns the details of the city who's Id is given.
       parameters:
         - name: city_id
@@ -534,6 +539,7 @@ paths:
     get:
       tags:
         - group
+        - single
       summary: Returns the details of the group of the given ID
       parameters:
         - name: group_id
