@@ -1,0 +1,10 @@
+public function testDelete%TABLE%() 
+{
+    if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+    if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
+
+    $response = $this->call('DELETE', '%URL%');
+    $data = json_decode($response->getContent());
+    $this->assertEquals($data->status, 'success');
+  	//   $this->seeInDatabase('User', array('id' => '6', 'status' => '0'));
+}

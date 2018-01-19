@@ -8,97 +8,65 @@ $swagger_file = '/mnt/x/Data/www/Projects/Phoenix/api/swagger/swagger.yaml';
 $api = yaml_parse(file_get_contents($swagger_file));
 $api_base_path = 'http://localhost/Projects/Phoenix/public';
 
-$path = i($QUERY,'path', '/users/{user_id}');
+$path = i($QUERY, 'path', '/users/{user_id}');
 $verb = i($QUERY, 'verb', 'get');
+$test_type = i($QUERY, 'test_type', 'single');
 $action = i($QUERY, 'action');
 
+$all_paths = array();
+foreach ($api['paths'] as $path => $data) {
+	$all_paths[$path] = $path;
+}
+
 $templates = array();
-$templates['single'] =<<<END
-	public function testGet%TABLE%Single()
-    {
-        if(\$this->only_priority_tests) \$this->markTestSkipped("Running only priority tests.");
-
-        \$this->get('%URL%');
-        \$data = json_decode(\$this->response->getContent());
-
-        \$this->assertEquals(\$data->status, 'success');
-        \$this->assertEquals(%DATA-PATH%, '%DATA-VALUE%'');
-        \$this->assertEquals(200, \$this->response->status());
-    }
-END;
-
-$templates['single-not-found'] =<<<END
-    public function testGet%TABLE%SingleNotFound()
-    {
-        if(\$this->only_priority_tests) \$this->markTestSkipped("Running only priority tests.");
-
-        \$this->get('%URL%');
-        \$data = json_decode(\$this->response->getContent());
-
-        \$this->assertEquals(\$data->status, 'error');
-        \$this->assertEquals(\$data->message, "%DATA-MESSAGE%");
-        \$this->assertEquals(404, \$this->response->status());
-    }
-END;
+$templates['data-assertion'] = "\$this->assertEquals(%DATA-PATH%, '%DATA-VALUE%'');\n";
+$templates['single'] = file_get_contents('code/single.txt');
+$templates['single-not-found'] = file_get_contents('code/single-404.txt');
 
 $tables = ['User', 'Group', 'City', 'Class', 'Batch', 'Level', 'Center', 'Student'];
 
-if($url) $variables = parsePath($url);
+$variables = parsePath($path);
 
-if($action == 'Show Step 2') {
-	$input = array();
+if($action == 'Generate Tests') {
+	$replaced_url = i($QUERY, 'replaced_url');
+	$root = preg_replace('/^\/([^\/]+)\/?.*/', '$1', $replaced_url);
+	$table = findTable($root);
+	
+	// $response = load($api_base_path . $replaced_url);
+	// print "URL: " . $api_base_path . $replaced_url . "\n";
+	// print "Response: " . $response . "\n";
+	// $data = json_decode($response);
 
-	foreach ($variables as $var) {
-		$input["{" . $var . "}"] = 1; //readline("Enter $var: ");
+	$data_paths = i($QUERY, 'data-path');
+	$data_value = i($QUERY, 'data-value');
 
-		// if(isset($data['get']['responses']['404']))
-		// 	$input["{" . $var . "}-404"] = readline("Enter $var that will return 404: ");
-	}
+	$assertions = '';
+	for($i = 0; $i < count($data_paths); $i++) {
+		if(!$data_paths[$i]) continue;
 
-	// dump($input);
-
-	// Getting data - to confirm that its correct.
-	$replaced_url = str_replace(array_keys($input), array_values($input), $url);
-
-} elseif($action == 'Show Step 3') {
-
-	foreach ($api['paths'] as $url => $data) {
-		if($url != $path) continue;
-
-		echo $url . "\n";
-		$root = preg_replace('/^\/([^\/]+)\/?.*/', '$1', $url);
-
-		// Figure out which table this belongs to.
-		$max_match = 0;
-		$table = false;
-		foreach ($tables as $t) {
-			$similarity = similar_text($t, $root);
-			if($max_match < $similarity) {
-				$max_match = $similarity;
-				$table = $t;
-			}
-		}
-
-		// echo "\t" . $table . "\n";
-		if(isset($data['get']['tags'])) {
-			// echo "\t" . implode(",", $data['get']['tags']) . "\n";
-			if(!in_array('single', $data['get']['tags'])) continue; // Right now, checking for only single calls.
-		}
-
-		// $response = load($api_base_path . $replaced_url);
-		// print "URL: " . $api_base_path . $replaced_url . "\n";
-		// print "Response: " . $response . "\n";
-		// $data = json_decode($response);
-
-
-		$replaces = array(
-			'%URL%'			=> $replaced_url,
-			'%TABLE%'		=> $table,
-			'%DATA-PATH%'	=> '',
-			'%DATA-MESSAGE%'=> '',
-			'%DATA-VALUE%'	=> '',
+		$assertion_replaces = array(
+			'%DATA-PATH%'	=> $data_paths[$i],
+			'%DATA-VALUE%'	=> $data_value[$i],
 		);
+		$assertions .= str_replace(
+							array_keys($assertion_replaces), 
+							array_values($assertion_replaces), 
+							$templates['data-assertion']);
 	}
+
+	$replaces = array(
+		'%URL%'			=> $replaced_url,
+		'%TABLE%'		=> $table,
+		'%DATA-ASSERTIONS%'	=> $assertions,
+	);
+
+	$code = str_replace(
+				array_keys($replaces), 
+				array_values($replaces), 
+				$templates['single']);
+
+	render('output.php');
+	exit;
 }
 
 render();
@@ -122,4 +90,21 @@ function parsePath($url) {
 	}
 
 	return $vars;
+}
+
+function findTable($root) {
+	global $tables;
+
+	// Figure out which table this belongs to.
+	$max_match = 0;
+	$table = false;
+	foreach ($tables as $t) {
+		$similarity = similar_text($t, $root);
+		if($max_match < $similarity) {
+			$max_match = $similarity;
+			$table = $t;
+		}
+	}
+
+	return $table;
 }
