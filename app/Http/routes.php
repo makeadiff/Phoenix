@@ -89,6 +89,50 @@ $app->get('/cities/{city_id}/students', function ($city_id) use ($app) {
     return JSend::success("List of students in $city[name]", array('students' => $students));
 });
 
+///////////////////////////////////////////////////// Groups /////////////////////////////////////////////////
+$app->get('/groups', function(Request $request) use ($app) {
+	$search_fields = ['id', 'name','type','vertical_id'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+
+		$search[$key] = $request->input($key);
+	}
+
+	$groups = Group::search($search);
+
+	return JSend::success("User Groups", array('groups' => $groups));
+});
+
+$app->get('/groups/{group_id}', function($group_id) use ($app) {
+	$group = Group::fetch($group_id);
+	if(!$group) return response(JSend::fail("Can't find any group with ID $group_id"), 404);
+
+	return JSend::success("User Group: $group_id", array('group' => $group));
+});
+
+///////////////////////////////////////////////////// Centers /////////////////////////////////////////////////
+$app->get('/centers', function(Request $request) use ($app) {
+	$search_fields = ['id', 'name', 'city_id'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+
+		$search[$key] = $request->input($key);
+	}
+
+	$centers = Center::search($search);
+
+	return JSend::success("Centers", array('centers' => $centers));
+});
+
+$app->get('/centers/{center_id}', function($center_id) use ($app) {
+	$center = Center::fetch($center_id);
+	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
+
+	return JSend::success("Center ID : $center_id", array('center' => $center));
+});
+
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
 $app->get('/users/', function(Request $request) use ($app) {
 	$search_fields = ['name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id'];

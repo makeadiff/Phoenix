@@ -526,6 +526,7 @@ paths:
           description: Can't find city with given ID.
 
   ###################################### Group
+  # :TODO: - this is now a search operation. Search for 'id', 'name','type','vertical_id'.
   /groups/:
     get:
       tags:

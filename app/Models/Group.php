@@ -25,10 +25,33 @@ final class Group extends Model
     {
          return $this->belongsTo('App\Models\Vertical', 'vertical_id');
     }
+    
+    public static function search($data)
+    {
+        $search_fields = ['id', 'name','type','vertical_id'];
+        $q = app('db')->table('Group');
+        $q->select('id', 'name', 'type', 'vertical_id');
+        $q->where('group_type','normal')->where('status', '1');
 
-    // public function getAll()
-    // {
-    //     return Group::select('id', 'name')->get();
-    // }
+        foreach ($search_fields as $field) {
+            if(empty($data[$field])) continue;
+
+            if($field === 'name') $q->where($field, 'like', '%' . $data[$field] . '%');
+            else $q->where($field, $data[$field]);
+        }
+        $results = $q->get();
+
+        return $results;
+    }
+
+    public static function getAll()
+    {
+        return Group::select('id', 'name', 'type', 'vertical_id')->where('group_type','normal')->where('status', '1')->orderBy('type', 'name')->get();
+    }
+
+    public static function fetch($group_id)
+    {
+        return Group::select('id', 'name', 'type', 'vertical_id')->where('id', $group_id)->first();
+    }
 }
 
