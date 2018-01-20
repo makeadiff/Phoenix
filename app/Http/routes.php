@@ -128,14 +128,14 @@ $app->get('/centers', function(Request $request) use ($app) {
 });
 
 $app->get('/centers/{center_id}', function($center_id) use ($app) {
-	$center = Center::fetch($center_id);
+	$center = (new Center)->fetch($center_id);
 	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
 
 	return JSend::success("Center ID : $center_id", array('center' => $center));
 });
 
 $app->get('/centers/{center_id}/teachers', function($center_id) use ($app) {
-	$center = Center::fetch($center_id);
+	$center = (new Center)->fetch($center_id);
 	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
 
 	$user = new User;
@@ -145,13 +145,21 @@ $app->get('/centers/{center_id}/teachers', function($center_id) use ($app) {
 });
 
 $app->get('/centers/{center_id}/students', function ($center_id) use ($app) {
-	$center = Center::fetch($center_id);
+	$center = (new Center)->fetch($center_id);
 	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
 
 	$student = new Student;
     $students = $student->search(array('center_id' => $center_id));
     
     return JSend::success("List of students in $center[name]", array('students' => $students));
+});
+
+$app->get('/centers/{center_id}/batches', function ($center_id) use ($app) {
+	$center = (new Center)->fetch($center_id);
+	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
+ 
+    $batches = (new Batch)->search(['center_id' => $center_id]);
+    return JSend::success("List of batches in $center[name]", array('batches' => $batches));
 });
 
 ////////////////////////////////////////////////////////// Batches ///////////////////////////////////////////

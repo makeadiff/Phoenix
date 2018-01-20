@@ -1,21 +1,13 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Common;
 
-final class Center extends Model  
+final class Center extends Common
 {
     protected $table = 'Center';
     public $timestamps = false;
 
-    public $year;
-
-	public function __construct(array $attributes = array())
-	{
-	    parent::__construct($attributes);
-	    $this->year = 2017; // :TODO:
-	}
-	
 	public function users()
     {
         return $this->hasMany('App\Models\User');
@@ -24,7 +16,7 @@ final class Center extends Model
     public function city()
     {
          $city = $this->belongsTo('App\Models\City', 'city_id');
-         return $city->get();
+         return $city->first();
     }
 
     public static function getAll()
@@ -53,11 +45,6 @@ final class Center extends Model
     public static function inCity($city_id)
     {
         return Center::where('city_id', $city_id)->where('status', '1')->orderBy('name')->get();
-    }
-
-    public static function fetch($center_id)
-    {
-    	return Center::where('status', '0')->find($center_id);
     }
 
 }
