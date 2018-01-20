@@ -1,21 +1,13 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Common;
 
-final class Group extends Model  
+final class Group extends Common  
 {
     protected $table = 'Group';
     public $timestamps = false;
 
-    public $year;
-
-	public function __construct(array $attributes = array())
-	{
-	    parent::__construct($attributes);
-	    $this->year = 2017; // :TODO:
-	}
-	
 	public function users()
     {
         return $this->belongsToMany('App\Models\User')->wherePivot('year',$this->year);
@@ -39,6 +31,7 @@ final class Group extends Model
             if($field === 'name') $q->where($field, 'like', '%' . $data[$field] . '%');
             else $q->where($field, $data[$field]);
         }
+        $q->orderBy('type', 'name');
         $results = $q->get();
 
         return $results;
@@ -47,11 +40,6 @@ final class Group extends Model
     public static function getAll()
     {
         return Group::select('id', 'name', 'type', 'vertical_id')->where('group_type','normal')->where('status', '1')->orderBy('type', 'name')->get();
-    }
-
-    public static function fetch($group_id)
-    {
-        return Group::select('id', 'name', 'type', 'vertical_id')->where('id', $group_id)->first();
     }
 }
 

@@ -37,6 +37,7 @@ final class Center extends Common
             if($field === 'name') $q->where($field, 'like', '%' . $data[$field] . '%');
             else $q->where($field, $data[$field]);
         }
+        $q->orderBy('name');
         $results = $q->get();
 
         return $results;
@@ -44,7 +45,7 @@ final class Center extends Common
 
     public static function inCity($city_id)
     {
-        return Center::where('city_id', $city_id)->where('status', '1')->orderBy('name')->get();
+        return $this->search(['city_id' => $city_id]);
     }
 
 }

@@ -30,20 +30,20 @@ $app->get('/', function () use ($app) {
 
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
 $app->get('/cities', function() use($app) {
-	$cities = City::getAll();
+	$cities = (new City)->getAll();
 
 	return JSend::success("All cities", array('cities' => $cities));
 });
 
 $app->get('/cities/{city_id}', function ($city_id) use ($app) {
-	$city = City::fetch($city_id);
+	$city = (new City)->fetch($city_id);
    	if(!$city) return response(JSend::fail("Can't find any city with the id $city_id"), 404);
 
     return JSend::success("Details for city $city_id", array('city' => $city));
 });
 
 $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
-	$city = City::fetch($city_id);
+	$city = (new City)->fetch($city_id);
 	if(!$city) return response(JSend::fail("Can't find any city with ID $city_id"), 404);
 
 	$user = new User;
@@ -53,35 +53,34 @@ $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
 });
 
 $app->get('/cities/{city_id}/teachers', function ($city_id) use ($app) {
-	$city = City::fetch($city_id);
+	$city = (new City)->fetch($city_id);
 	if(!$city) return response(JSend::fail("Can't find any city with ID $city_id"), 404);
 
-	$user = new User;
-    $users = $user->search(array('city_id' => $city_id, 'user_group' => 9));
+	$users = (new User)->search(array('city_id' => $city_id, 'user_group' => 9));
     
     return JSend::success("List of teachers returned", array('users' => $users));
 });
 
 $app->get('/cities/{city_id}/fellows', function ($city_id) use ($app) {
-	$city = City::fetch($city_id);
+	$city = (new City)->fetch($city_id);
 	if(!$city) return response(JSend::fail("Can't find any city with ID $city_id"), 404);
 
-	$user = new User;
-    $users = $user->search(array('city_id' => $city_id, 'user_group_type' => 'fellow'));
+	$users = (new User)->search(array('city_id' => $city_id, 'user_group_type' => 'fellow'));
     
     return JSend::success("List of fellows returned", array('users' => $users));
 });
 
 $app->get('/cities/{city_id}/centers', function ($city_id) use ($app) {
-		$city = City::fetch($city_id);
+		$city = (new City)->fetch($city_id);
 		if(!$city) return response(JSend::fail("Can't find any city with ID $city_id"), 404);
- 	   	$centers = Center::getAllInCity($city_id);
+
+ 	   	$centers = (new Center)->inCity($city_id);
 
 	   	return JSend::success("List of centers in city '$city[name]'", array('centers' => $centers));
 });
 
 $app->get('/cities/{city_id}/students', function ($city_id) use ($app) {
-	$city = City::fetch($city_id);
+	$city = (new City)->fetch($city_id);
 	if(!$city) return response(JSend::fail("Can't find any city with ID $city_id"), 404);
 
 	$student = new Student;

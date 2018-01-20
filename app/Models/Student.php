@@ -1,14 +1,20 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Common;
 use App\Models\Center;
 
-final class Student extends Model  
+final class Student extends Common
 {
     protected $table = 'Student';
     public $timestamps = false;
     protected $fillable = ['name','sex','birthday','center_id','status','added_on', 'description', 'photo'];
+
+    public function center()
+    {
+        $center = $this->belongsTo('App\Models\Center', 'center_id');
+        return $center->first();
+    }
 
     public function search($data)
     {
@@ -41,18 +47,12 @@ final class Student extends Model
         $this->id = $student_id;
         $this->student = $data;
 
-        $data->center = $data->center()[0]->name;
+        $data->center = $data->center()->name;
         return $data;
     }
 
     public function inCenter($center_id) {
         return $this->search(['center_id' => $center_id]);
-    }
-
-    public function center()
-    {
-        $center = $this->belongsTo('App\Models\Center', 'center_id');
-        return $center->get();
     }
 
     public function add($data)
@@ -69,44 +69,5 @@ final class Student extends Model
         ]);
 
         return $student;
-    }
-
-    public function edit($data, $student_id = false)
-    {
-        $this->chain($student_id);
-
-        foreach ($this->fillable as $key) {
-            if(!isset($data[$key])) continue;
-
-            $this->student->$key = $data[$key];
-        }
-        $this->student->save();
-
-        return $this->student;
-    }
-
-    public function remove($student_id = false)
-    {
-        $this->chain($student_id);
-
-        $this->student = Student::find($student_id);
-        $this->student->status = 0;
-        $this->student->save();
-
-        return $this->student;
-    }
-
-    /// This is necessary to make the methord chaining work. With this, you can do stuff like - $student->find(3)->remove();
-    private function chain($student_id) {
-        if($student_id) {
-            $this->id = $student_id;
-        }
-        if(!$this->id and $this->attributes['id']) {
-            $this->id = $this->attributes['id'];
-        }
-
-        if(!$this->student) {
-            $this->student = $this->find($this->id);
-        }
     }
 }

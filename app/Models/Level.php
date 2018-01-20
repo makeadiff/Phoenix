@@ -4,11 +4,11 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\Center;
 
-final class Batch extends Common
+final class Level extends Common
 {
-    protected $table = 'Batch';
+    protected $table = 'Level';
     public $timestamps = false;
-    protected $fillable = ['day','class_time','batch_head_id','center_id','status','year'];
+    protected $fillable = ['name','grade','center_id','status','year'];
 
     public function center()
     {
@@ -17,9 +17,9 @@ final class Batch extends Common
     }
 
     public function search($data) {
-        $search_fields = ['id', 'day', 'class_time', 'center_id', 'status'];
-        $q = app('db')->table('Batch');
-        $q->select('id', 'day', 'class_time', 'batch_head_id', 'center_id', 'status');
+        $search_fields = ['id', 'name', 'grade', 'center_id', 'status'];
+        $q = app('db')->table('Level');
+        $q->select('id', 'name', 'grade', 'center_id', 'status');
         if(!isset($data['status'])) $data['status'] = '1';
         if(!isset($data['year'])) $data['year'] = $this->year;
 
@@ -28,10 +28,10 @@ final class Batch extends Common
 
             else $q->where($field, $data[$field]);
         }
-        $q->orderBy('day', 'class_time');
+        $q->orderBy('grade', 'name');
         $results = $q->get();
         foreach ($results as $key => $row) {
-            $results[$key]->name = $this->getName($row->day, $row->class_time);
+            $results[$key]->name = $row->grade . ' ' . $row->name;
         }
 
         return $results;
@@ -40,7 +40,7 @@ final class Batch extends Common
     public function fetch($id) {
         $this->id = $id;
         $this->item = $this->where('status', '1')->where('year', $this->year)->find($id);
-        $this->item->name = $this->getName($this->item->day, $this->item->class_time);
+        $this->item->name = $this->item->grade . ' ' . $this->item->name;
         $this->item->center = $this->item->center()->name;
         return $this->item;
     }
@@ -51,21 +51,14 @@ final class Batch extends Common
 
     public function add($data)
     {
-        $batch = Batch::create([
-            'day'       => $data['day'],
-            'class_time'=> $data['class_time'],
+        $batch = Level::create([
+            'name'       => $data['name'],
+            'grade'=> $data['grade'],
             'center_id' => $data['center_id'],
-            'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '',
             'year'      => $this->year,
             'status'    => isset($data['status']) ? $data['status'] : '1'
         ]);
 
         return $batch;
     }
-
-    public function getName($day, $time) {
-        $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        return $days[$day] . ' ' . date('h:i A', strtotime('2018-01-21 ' . $time));
-    }
-
 }

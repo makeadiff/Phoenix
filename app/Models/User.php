@@ -11,6 +11,18 @@ final class User extends Common
     public $timestamps = false;
     protected $fillable = ['email','mad_email','phone','name','sex','password','address','bio','source','birthday','city_id','credit','status','user_type', 'joined_on', 'left_on'];
 
+    public function groups() 
+    {
+        $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->wherePivot('year',$this->year)->select('Group.id','Group.vertical_id', 'Group.name');
+        return $groups->get();
+    }
+
+    public function city()
+    {
+         $city = $this->belongsTo('App\Models\City', 'city_id');
+         return $city->get();
+    }
+
     public function search($data)
     {
         $q = app('db')->table($this->table);
@@ -112,18 +124,6 @@ final class User extends Common
 
         $data->city = $data->city()[0]->name;
         return $data;
-    }
-
-    public function groups() 
-    {
-        $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->wherePivot('year',$this->year)->select('Group.id','Group.vertical_id', 'Group.name');
-        return $groups->get();
-    }
-
-    public function city()
-    {
-         $city = $this->belongsTo('App\Models\City', 'city_id');
-         return $city->get();
     }
 
     public function add($data)

@@ -1,21 +1,13 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Common;
 
-final class Vertical extends Model  
+final class Vertical extends Common  
 {
     protected $table = 'Vertical';
     public $timestamps = false;
 
-    public $year;
-
-	public function __construct(array $attributes = array())
-	{
-	    parent::__construct($attributes);
-	    $this->year = 2017; // :TODO:
-	}
-	
 	public function groups()
     {
         return $this->hasMany('App\Models\Group');
