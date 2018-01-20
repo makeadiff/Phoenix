@@ -17,6 +17,7 @@ use App\Models\Group;
 use App\Models\City;
 use App\Models\Center;
 use App\Models\Student;
+use App\Models\Batch;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
@@ -133,8 +134,36 @@ $app->get('/centers/{center_id}', function($center_id) use ($app) {
 	return JSend::success("Center ID : $center_id", array('center' => $center));
 });
 
+$app->get('/centers/{center_id}/teachers', function($center_id) use ($app) {
+	$center = Center::fetch($center_id);
+	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
+
+	$user = new User;
+	$teachers = $user->search(['center_id' => $center_id]);
+
+	return JSend::success("Teachers in Center $center_id", array('teachers' => $teachers));
+});
+
+$app->get('/centers/{center_id}/students', function ($center_id) use ($app) {
+	$center = Center::fetch($center_id);
+	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
+
+	$student = new Student;
+    $students = $student->search(array('center_id' => $center_id));
+    
+    return JSend::success("List of students in $center[name]", array('students' => $students));
+});
+
+////////////////////////////////////////////////////////// Batches ///////////////////////////////////////////
+$app->get('/batches/{batch_id}', function($batch_id) use ($app) {
+	$batch = (new Batch)->fetch($batch_id);
+	if(!$batch) return response(JSend::fail("Can't find any batch with ID $batch_id"), 404);
+
+	return JSend::success("Batch ID : $batch_id", array('batch' => $batch));
+});
+
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
-$app->get('/users/', function(Request $request) use ($app) {
+$app->get('/users', function(Request $request) use ($app) {
 	$search_fields = ['name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id'];
 	$search = [];
 	foreach ($search_fields as $key) {
@@ -175,15 +204,6 @@ $app->get('/users/{user_id}', function($user_id) use ($app) {
 	}
 
 	return JSend::success("User details for {$details->name}", array('user' => $details));
-});
-
-$app->get('/users/{user_id}/groups', function($user_id) use ($app) {
-	$user = new User;
-	$info = $user->fetch($user_id);
-	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
-
-	$groups = $info->groups;
-	return JSend::success("Credits for user $user_id", array('groups' => $groups));
 });
 
 $app->get('/users/{user_id}/credit', function($user_id) use ($app) {

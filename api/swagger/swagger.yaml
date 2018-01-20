@@ -527,7 +527,7 @@ paths:
 
   ###################################### Group
   # :TODO: - this is now a search operation. Search for 'id', 'name','type','vertical_id'.
-  /groups/:
+  /groups:
     get:
       tags:
         - group
@@ -555,7 +555,7 @@ paths:
           description: Group not found.
   
   ###################################### Center
-  /centers/:
+  /centers:
     get:
       tags:
         - center

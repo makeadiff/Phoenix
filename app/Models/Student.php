@@ -9,17 +9,6 @@ final class Student extends Model
     protected $table = 'Student';
     public $timestamps = false;
     protected $fillable = ['name','sex','birthday','center_id','status','added_on', 'description', 'photo'];
-    public $errors = array();
-
-    public $year;
-    private $id = 0;
-    private $student = false;
-
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-        $this->year = 2017; // :TODO:
-    }
 
     public function search($data)
     {
@@ -35,7 +24,7 @@ final class Student extends Model
         if(isset($data['center_id']) and $data['center_id'] != 0) $q->where('Student.center_id', $data['center_id']);
         
         if(!empty($data['id'])) $q->where('Student.id', $data['id']);
-        if(!empty($data['student_id'])) $q->where('Student.id', $data['user_id']);
+        if(!empty($data['student_id'])) $q->where('Student.id', $data['student_id']);
         if(!empty($data['city_id'])) $q->where('Center.city_id', $data['city_id']);
         if(!empty($data['name'])) $q->where('Student.name', 'like', '%' . $data['name'] . '%');
         if(!empty($data['sex'])) $q->where('Student.sex', $data['sex']);
@@ -56,6 +45,9 @@ final class Student extends Model
         return $data;
     }
 
+    public function inCenter($center_id) {
+        return $this->search(['center_id' => $center_id]);
+    }
 
     public function center()
     {

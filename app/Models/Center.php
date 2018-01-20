@@ -50,14 +50,14 @@ final class Center extends Model
         return $results;
     }
 
-    public static function getAllInCity($city_id)
+    public static function inCity($city_id)
     {
         return Center::where('city_id', $city_id)->where('status', '1')->orderBy('name')->get();
     }
 
     public static function fetch($center_id)
     {
-    	return Center::where('id', $center_id)->first();
+    	return Center::where('status', '0')->find($center_id);
     }
 
 }

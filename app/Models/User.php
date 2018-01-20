@@ -1,26 +1,15 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Group;
+use App\Models\Common;
 use Illuminate\Support\Facades\Hash;
 
-final class User extends Model  
+final class User extends Common
 {
     protected $table = 'User';
     public $timestamps = false;
     protected $fillable = ['email','mad_email','phone','name','sex','password','address','bio','source','birthday','city_id','credit','status','user_type', 'joined_on', 'left_on'];
-    public $errors = array();
-
-    public $year;
-    private $id = 0;
-    private $user = false;
-
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-        $this->year = 2017; // :TODO:
-    }
 
     public function search($data)
     {
@@ -100,6 +89,10 @@ final class User extends Model
         return $results;
     }
 
+    public function inCity($city_id) {
+        return $this->search(['city_id' => $city_id]);
+    }
+
     public function fetch($user_id) {
         $data = User::select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 
                                 'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->where('status','1')->find($user_id);
@@ -168,17 +161,6 @@ final class User extends Model
 
             $this->user->$key = $data[$key];
         }
-        $this->user->save();
-
-        return $this->user;
-    }
-
-    public function remove($user_id = false)
-    {
-        $this->chain($user_id);
-
-        $this->user = User::find($user_id);
-        $this->user->status = 0;
         $this->user->save();
 
         return $this->user;
@@ -288,19 +270,5 @@ final class User extends Model
             return preg_replace('/^\+?91\D?/', '', $phone);
         }
         return $phone;
-    }
-
-    /// This is necessary to make the methord chaining work. With this, you can do stuff like - $user->find(3)->remove();
-    private function chain($user_id) {
-        if($user_id) {
-            $this->id = $user_id;
-        }
-        if(!$this->id and $this->attributes['id']) {
-            $this->id = $this->attributes['id'];
-        }
-
-        if(!$this->user) {
-            $this->user = $this->find($this->id);
-        }
     }
 }
