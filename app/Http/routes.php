@@ -18,6 +18,7 @@ use App\Models\City;
 use App\Models\Center;
 use App\Models\Student;
 use App\Models\Batch;
+use App\Models\Level;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
@@ -169,6 +170,13 @@ $app->get('/batches/{batch_id}', function($batch_id) use ($app) {
 	return JSend::success("Batch ID : $batch_id", array('batch' => $batch));
 });
 
+////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
+$app->get('/levels/{level_id}', function($level_id) use ($app) {
+	$level = (new Level)->fetch($level_id);
+	if(!$level) return response(JSend::fail("Can't find any level with ID $level_id"), 404);
+
+	return JSend::success("Level ID : $level_id", array('level' => $level));
+});
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
 $app->get('/users', function(Request $request) use ($app) {
 	$search_fields = ['name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id'];
