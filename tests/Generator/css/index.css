@@ -1,4 +1,6 @@
 #step-2,#step-3 {
 	display: none;
 }
-
+#swagger_file, #api_base_path, #replaced_url {
+	width: 400px;
+}

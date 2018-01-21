@@ -47,8 +47,7 @@ $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
 	$city = (new City)->fetch($city_id);
 	if(!$city) return response(JSend::fail("Can't find any city with ID $city_id"), 404);
 
-	$user = new User;
-    $users = $user->search(array('city_id' => $city_id));
+    $users = (new User)->search(array('city_id' => $city_id));
     
     return JSend::success("List of users returned", array('users' => $users));
 });

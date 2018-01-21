@@ -8,6 +8,7 @@ class UserTest extends TestCase
     private $only_priority_tests = false;
     private $write_to_db = true;
 
+    /// Path: GET    /users/{user_id}
     public function testGetUserSingle()
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
@@ -20,6 +21,7 @@ class UserTest extends TestCase
         $this->assertEquals(200, $this->response->status());
     }
 
+    /// Path: GET    /users/{user_id}   404
     public function testGetUserSingleNotFound()
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
@@ -32,7 +34,7 @@ class UserTest extends TestCase
         $this->assertEquals(404, $this->response->status());
     }
 
-    ///     GET /users
+    /// Path: GET /users
     public function testGetUsers() 
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
@@ -64,7 +66,7 @@ class UserTest extends TestCase
         // center_id
     }
 
-    ///     POST /users
+    /// Path: POST /users
     public function testPostUsers()
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
@@ -92,6 +94,7 @@ class UserTest extends TestCase
         // :TODO: DELETE FROM User WEHRE id=$data->data->user->id
     }
 
+    /// Path: POST /users
     public function testPostUsersExisting()
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
@@ -114,6 +117,7 @@ class UserTest extends TestCase
         $this->assertEquals(400, $this->response->status());
     }
 
+    /// Path: Delete /users
     public function testDeleteUser() 
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
@@ -125,6 +129,7 @@ class UserTest extends TestCase
         $this->seeInDatabase('User', array('id' => '6', 'status' => '0'));
     }
 
+    /// Path: GET  /users/login
     public function testGetUserLogin() {
         $this->get('/users/login?email=test.tester_dude@gmail.com&password=pass');
         $data = json_decode($this->response->getContent());

@@ -1,40 +1,40 @@
 function init() {
-	// $("#path").on("change", showVariables);
+	$("#path").on("change", setUrl);
 	$("#show-step-2").click(showStepTwo);
-	$("#show-step-3").click(showStepThree);
+}
+
+function setUrl() {
+	$("#replaced_url").val($("#path").val());
 }
 
 function showStepTwo() {
 	$("#step-2").show();
-	showVariables();
-}
-
-function showStepThree() {
-	$("#step-3").show();
 	getApiData();
 }
 
 function getApiData() {
 	var api_base_path = $("#api_base_path").val();
-	var path = $("#path").val();
-	var variables = parsePath(path);
-	var replaces = [];
-	var url = path;
-	for (var i = 0; i < variables.length; i++) {
-		url = url.replace(variables[i], $("#var-" + i).val());
-	}
-	$("#replaced_url").val(url);
+	// var path = $("#path").val();
+	// var variables = parsePath(path);
+	// var replaces = [];
+	// var url = path;
+	// for (var i = 0; i < variables.length; i++) {
+	// 	url = url.replace(variables[i], $("#var-" + i).val());
+	// }
+	// $("#replaced_url").val(url);
+	var url = $("#replaced_url").val();
 	var full_url = api_base_path + url;
 
 	$.ajax({
 		url: full_url,
-		dataType: "text"
+		// dataType: "text"
 	}).done(function(data) {
-		$("#json").val(data);
-		// console.log(data);
-	})
-	
-	console.log(url);
+		// $("#json").val(data);
+		$("#json").val(JSON.stringify(data, null, 4));
+	}).error(function(data) {
+		var response = JSON.parse(data.responseText);
+		$("#json").val(JSON.stringify(response, null, 4));
+	});
 }
 
 

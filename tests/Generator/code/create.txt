@@ -1,27 +1,28 @@
-public function testPost%TABLE%()
-{
-    if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
-    if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
+    /// Path: %VERB%    %PATH%
+    public function testPost%TABLE%()
+    {
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
 
-    // This will create a new user.
-    $post_data = array(
-        'name'  => 'Test Dude',
-        'phone' => '10000000001',
-        'email' => 'test.test_dude@gmail.com',
-        'password'  => 'pass',
-        'joined_on' => date('Y-m-d H:i:s'),
-        'city_id'   => 28,
-        'data_type' => 'volunteer'
-    );
+        // This will create a new user.
+        $post_data = array(
+            'name'  => 'Test Dude',
+            'phone' => '10000000001',
+            'email' => 'test.test_dude@gmail.com',
+            'password'  => 'pass',
+            'joined_on' => date('Y-m-d H:i:s'),
+            'city_id'   => 28,
+            'data_type' => 'volunteer'
+        );
 
-    $response = $this->call('POST', '%URL%', $post_data);
+        $response = $this->call('POST', '%URL%', $post_data);
 
-    $data = json_decode($response->getContent());
-    $this->assertEquals($data->status, 'success');
-    $this->assertEquals(200, $this->response->status());
+        $data = json_decode($response->getContent());
+        $this->assertEquals($data->status, 'success');
+        $this->assertEquals(200, $this->response->status());
 
-    // $this->assertEquals($data->data->user->email, "test.test_dude@gmail.com");
-    // $this->seeInDatabase('User', array('email' => 'test.test_dude@gmail.com'));
+        // $this->assertEquals($data->data->user->email, "test.test_dude@gmail.com");
+        // $this->seeInDatabase('User', array('email' => 'test.test_dude@gmail.com'));
 
-    // :TODO: DELETE FROM User WEHRE id=$data->data->user->id
-}
+        // :TODO: DELETE FROM User WEHRE id=$data->data->user->id
+    }

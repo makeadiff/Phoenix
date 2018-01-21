@@ -1,5 +1,5 @@
 	/// Path: %VERB%	%PATH%
-	public function testGet%TABLE%() 
+	public function test%VERB%%TABLE%%TYPE%()
 	{
 	    if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 

@@ -21,9 +21,11 @@ foreach ($api['paths'] as $path => $data) {
 $templates = array();
 $templates['data-assertion'] = "\$this->assertEquals(%DATA-PATH%, '%DATA-VALUE%'');\n";
 $templates['single'] = file_get_contents('code/single.txt');
-$templates['single-not-found'] = file_get_contents('code/single-404.txt');
+$templates['404'] = file_get_contents('code/404.txt');
+$templates['list'] = file_get_contents('code/list.txt');
 
 $tables = ['User', 'Group', 'City', 'Class', 'Batch', 'Level', 'Center', 'Student'];
+$all_test_types = ['single' => 'Single', '404' => 'Not Found - 404', 'list' => 'List', 'search' => 'Search', 'create' => 'Create', 'edit' => 'Edit', 'delete' => 'Delete'];
 
 $variables = parsePath($path);
 
@@ -57,13 +59,15 @@ if($action == 'Generate Tests') {
 	$replaces = array(
 		'%URL%'			=> $replaced_url,
 		'%TABLE%'		=> $table,
-		'%DATA-ASSERTIONS%'	=> $assertions,
+		'%VERB%'		=> ucfirst($verb),
+		'%TYPE%'		=> ucfirst($test_type),
+		'%DATA-ASSERTIONS%'	=> rtrim($assertions),
 	);
 
 	$code = str_replace(
 				array_keys($replaces), 
 				array_values($replaces), 
-				$templates['single']);
+				$templates[$test_type]);
 
 	render('output.php');
 	exit;
