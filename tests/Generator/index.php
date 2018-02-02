@@ -8,14 +8,14 @@ $swagger_file = '/mnt/x/Data/www/Projects/Phoenix/api/swagger/swagger.yaml';
 $api = yaml_parse(file_get_contents($swagger_file));
 $api_base_path = 'http://localhost/Projects/Phoenix/public';
 
-$path = i($QUERY, 'path', '/users/{user_id}');
+$path = i($QUERY, 'path');
 $verb = i($QUERY, 'verb', 'get');
 $test_type = i($QUERY, 'test_type', 'single');
 $action = i($QUERY, 'action');
 
 $all_paths = array();
-foreach ($api['paths'] as $path => $data) {
-	$all_paths[$path] = $path;
+foreach ($api['paths'] as $p => $data) {
+	$all_paths[$p] = $p;
 }
 
 $templates = array();
@@ -44,7 +44,7 @@ if($action == 'Generate Tests') {
 
 	$assertions = '';
 	for($i = 0; $i < count($data_paths); $i++) {
-		if(!$data_paths[$i]) continue;
+		if(!$data_paths[$i] or $data_paths[$i] == '$data->') continue;
 
 		$assertion_replaces = array(
 			'%DATA-PATH%'	=> $data_paths[$i],
@@ -56,12 +56,18 @@ if($action == 'Generate Tests') {
 							$templates['data-assertion']);
 	}
 
+	if(i($QUERY, 'data-assertion')) {
+		$assertions = i($PARAM, 'data-assertion');
+	}
+
 	$replaces = array(
 		'%URL%'			=> $replaced_url,
+		'%PATH%'		=> $path,
 		'%TABLE%'		=> $table,
-		'%VERB%'		=> ucfirst($verb),
+		'%VERB%'		=> strtoupper($verb),
 		'%TYPE%'		=> ucfirst($test_type),
 		'%DATA-ASSERTIONS%'	=> rtrim($assertions),
+		'%FUNCTION-NAME%' => 'test' . ucfirst($verb) . pathToFunctionName($path) . ucfirst($test_type)
 	);
 
 	$code = str_replace(
@@ -71,6 +77,10 @@ if($action == 'Generate Tests') {
 
 	render('output.php');
 	exit;
+}
+
+function pathToFunctionName($path) {
+	return str_replace(' ', '', ucwords(preg_replace(['/\{.+?\}/', '#\/#'], ['', ' '], $path)));
 }
 
 render();

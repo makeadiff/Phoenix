@@ -70,5 +70,26 @@ class CityTest extends TestCase
         $this->assertEquals($data->status, 'error');
         $this->assertEquals(404, $this->response->status());
     }
-    
+
+    /// Path: GET    /cities/{city_id}/teachers
+    public function testGetCitiesTeachersList()
+    {
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+
+        $this->get('/cities/28/teachers');
+        $data = json_decode($this->response->getContent());
+
+        $this->assertEquals($data->status, 'success');
+        $search_for = 'Crusher';
+        $found = false;
+        foreach ($data->data->users as $key => $info) {
+            if($info->name == $search_for) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+        $this->assertEquals(200, $this->response->status());
+    }
+
 }

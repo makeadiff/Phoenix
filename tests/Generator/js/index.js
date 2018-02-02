@@ -1,10 +1,49 @@
+var data_object_name = false;
+
 function init() {
 	$("#path").on("change", setUrl);
 	$("#show-step-2").click(showStepTwo);
+	$("#search-array").click(function() { codeInsert('search-array'); });
 }
 
+function codeInsert(type) {
+	var code;
+
+	if(type == 'search-array') {
+		code = `        $search_for = 'INSERT VALUE FOR SEARCH';
+        $found = false;
+        foreach ($data->data->INSERT_OBJECT_NAME as $key => $info) {
+            if($info->INSERT_KEY == $search_for) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);`;
+	}
+
+	if(data_object_name) code = code.replace('INSERT_OBJECT_NAME', data_object_name);
+
+	$('#data-assertion').val(code);
+}
 function setUrl() {
-	$("#replaced_url").val($("#path").val());
+	var path = $("#path").val();
+	var variables = parsePath(path);
+	var replaces = {
+		"{center_id}": 	220, 	// Start Rek
+		"{user_id}": 	1,		// Binny
+		"{batch_id}": 	1971,	// Batch in Start Rek
+		"{level_id": 	4852,	// Level in Start Rek
+		"{city_id}": 	28,		// Test City
+		"{group_id}": 	9		// ES Volunteer
+	}
+
+	var url = path;
+	if(variables) {
+		for(var i=0; i<variables.length; i++) 
+			url = url.replace(variables[i], replaces[variables[i]]);
+	}
+
+	$("#replaced_url").val(url);
 }
 
 function showStepTwo() {
@@ -27,29 +66,20 @@ function getApiData() {
 
 	$.ajax({
 		url: full_url,
-		// dataType: "text"
+
 	}).done(function(data) {
-		// $("#json").val(data);
+		var all_keys = Object.keys(data['data']);
+		data_object_name = all_keys[0];
+
+		if(Array.isArray(data['data'][data_object_name])) {
+			$("#test_type option[value='list']").prop('selected', true);
+		}
+
 		$("#json").val(JSON.stringify(data, null, 4));
 	}).error(function(data) {
 		var response = JSON.parse(data.responseText);
 		$("#json").val(JSON.stringify(response, null, 4));
 	});
-}
-
-
-function showVariables() {
-	var ele = $("#path");
-	var path = ele.val();
-	var variables = parsePath(path);
-	var html = "";
-	var value;
-
-	for(var i=0; i<variables.length; i++) {
-		value = 1
-		html += "<label for='var-"+i+"'>"+variables[i]+"</label><input type='text' name='var-"+i+"' id='var-"+i+"' value='"+value+"' /><br />";
-	}
-	$("#vars").append($(html));
 }
 
 // Taken from API.php in exdon/inclues/classes
