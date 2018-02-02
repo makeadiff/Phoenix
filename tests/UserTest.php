@@ -34,7 +34,7 @@ class UserTest extends TestCase
         $this->assertEquals(404, $this->response->status());
     }
 
-    /// Path: GET /users
+    /// Path: GET  /users
     public function testGetUsers() 
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
@@ -117,7 +117,7 @@ class UserTest extends TestCase
         $this->assertEquals(400, $this->response->status());
     }
 
-    /// Path: Delete /users
+    /// Path: DELETE    /users/{user_id}
     public function testDeleteUser() 
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");

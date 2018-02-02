@@ -698,12 +698,12 @@ paths:
         404:
           description: Can't find any centers with the given ID
 
-  /centers/{center_id}/batchs:
+  /centers/{center_id}/batches:
     get:
       tags:
         - batch
         - center
-      description: Returns the batchs in the given center.
+      description: Returns the batches in the given center.
       parameters:
         - name: center_id
           in: path
@@ -882,6 +882,29 @@ paths:
         404:
           description: Can't find any level with the given {level_id}
 
+  /levels/{level_id}/batches:
+    get:
+      tags:
+        - batch
+        - level
+      description: Returns the batches mapped to the given level.
+      parameters:
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+      responses:
+        200:
+          description: List of all the batches in the given level.
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Batch"
+        404:
+          description: Can't find any level with the given {level_id}
+
+
   ######################## Batches
   /batches/{batch_id}:
     get:
@@ -900,13 +923,13 @@ paths:
         404:
           description: Can't find any batch with the given {batch_id}
 
-  /batchs/{batch_id}/teachers:
+  /batches/{batch_id}/teachers:
     get:
       tags:
         - batch
         - teacher
         - user
-      description: Returs the teachers mapped to the given batch.
+      description: Returns the teachers mapped to the given batch.
       parameters:
         - name: batch_id
           type: integer
@@ -922,6 +945,31 @@ paths:
               $ref: "#/definitions/User"
         404:
           description: Can't find any batch with the given {batch_id}
+
+  /batches/{batch_id}/levels:
+    get:
+      tags:
+        - batch
+        - level
+      description: Returns the levels mapped to the given batch.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+      responses:
+        200:
+          description: List of all the levels in that batch.
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Level"
+        404:
+          description: Can't find any batch with the given {batch_id}
+
+
+
 
 # Class
 
@@ -1052,3 +1100,42 @@ definitions:
         enum:
           - "actual"
           - "virtual"
+  Batch:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      day:
+        type: integer
+      class_time:
+        type: string
+        format: "time"
+      batch_head_id:
+        type: integer
+      center_id:
+        type: integer
+      status:
+        type: string
+        enum:
+        - "1"
+        - "0"
+  Level:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      grade:
+        type: integer
+      center_id:
+        type: integer
+      status:
+        type: string
+        enum:
+        - "1"
+        - "0"
+        
+    

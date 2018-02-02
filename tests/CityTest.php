@@ -21,7 +21,7 @@ class CityTest extends TestCase
         $this->assertEquals(200, $this->response->status());
     }
 
-    /// Path: GET /cities/{city_id}
+    /// Path: GET /cities/{city_id}     404
     public function testGetCitySingleNotFound()
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
@@ -34,7 +34,7 @@ class CityTest extends TestCase
         $this->assertEquals(404, $this->response->status());
     }
 
-    /// Path: GET /cities/
+    /// Path: GET /cities
     public function testGetCities() 
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");

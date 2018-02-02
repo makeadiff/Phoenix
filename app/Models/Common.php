@@ -51,7 +51,7 @@ class Common extends Model
     }
 
     /// This is necessary to make the methord chaining work. With this, you can do stuff like - $item->find(3)->remove();
-    private function chain($id) {
+    protected function chain($id) {
         if($id) {
             $this->id = $id;
         }

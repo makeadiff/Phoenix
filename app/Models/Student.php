@@ -35,6 +35,11 @@ final class Student extends Common
         if(!empty($data['name'])) $q->where('Student.name', 'like', '%' . $data['name'] . '%');
         if(!empty($data['sex'])) $q->where('Student.sex', $data['sex']);
 
+        if(!empty($data['level_id'])) {
+            $q->join('StudentLevel', 'Student.id', '=', 'StudentLevel.student_id');
+            $q->where('StudentLevel.level_id', $data['level_id']);
+        }
+
         $results = $q->get();
         
         return $results;
@@ -60,7 +65,7 @@ final class Student extends Common
         $student = Student::create([
             'name'      => $data['name'],
             'sex'       => isset($data['sex']) ? $data['sex'] : 'u',
-            'birthday'  => isset($data['birthday']) ? $data['birthday'] : '',
+            'birthday'  => isset($data['birthday']) ? date('Y-m-d', strtotime($data['birthday'])) : '',
             'center_id' => $data['center_id'],
             'description'   => isset($data['description']) ? $data['description'] : '',
             'photo'     => isset($data['photo']) ? $data['photo'] : '',

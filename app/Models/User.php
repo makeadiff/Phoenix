@@ -70,12 +70,18 @@ final class User extends Common
             $q->where('UserGroup.year', $this->year);
         }
         if(!empty($data['center_id'])) {
-            // $q->select("DISTINCT User.id");
             $q->join('UserClass', 'User.id', '=', 'UserClass.user_id');
             $q->join('Class', 'Class.id', '=', 'UserClass.class_id');
             $q->join('Level', 'Class.level_id', '=', 'Level.id');
             $q->where('Level.center_id', $data['center_id']);
             $q->distinct();
+        }
+
+        if(!empty($data['batch_id'])) {
+            $q->join('UserBatch', 'User.id', '=', 'UserBatch.user_id');
+            $q->addSelect("UserBatch.level_id");
+            // $q->join('Batch', 'UserBatch.batch_id', '=', 'Batch.id');
+            $q->where('UserBatch.batch_id', $data['batch_id']);
         }
 
         // Sorting
@@ -159,11 +165,11 @@ final class User extends Common
             if($key == 'phone') $data[$key] = $this->correctPhoneNumber($data[$key]);
             if($key == 'password') $data[$key] = Hash::make($data[$key]);
 
-            $this->user->$key = $data[$key];
+            $this->item->$key = $data[$key];
         }
-        $this->user->save();
+        $this->item->save();
 
-        return $this->user;
+        return $this->item;
     }
 
     public function addGroup($group_id, $user_id = false)

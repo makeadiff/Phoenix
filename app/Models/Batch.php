@@ -19,15 +19,23 @@ final class Batch extends Common
     public function search($data) {
         $search_fields = ['id', 'day', 'class_time', 'center_id', 'status'];
         $q = app('db')->table('Batch');
-        $q->select('id', 'day', 'class_time', 'batch_head_id', 'center_id', 'status');
+        $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status');
         if(!isset($data['status'])) $data['status'] = '1';
         if(!isset($data['year'])) $data['year'] = $this->year;
 
         foreach ($search_fields as $field) {
             if(empty($data[$field])) continue;
 
-            else $q->where($field, $data[$field]);
+            else $q->where("Batch." . $field, $data[$field]);
         }
+
+        if(!empty($data['level_id'])) {
+            $q->join('BatchLevel', 'Batch.id', '=', 'BatchLevel.batch_id');
+            $q->join("Level", 'Level.id', '=', 'BatchLevel.level_id');
+            $q->where("Level.year", $this->year)->where('Level.status', '1');
+            $q->where('BatchLevel.level_id', $data['level_id']);
+        }
+
         $q->orderBy('day', 'class_time');
         $results = $q->get();
         foreach ($results as $key => $row) {

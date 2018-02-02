@@ -161,12 +161,36 @@ $app->get('/centers/{center_id}/batches', function ($center_id) use ($app) {
     return JSend::success("List of batches in $center[name]", array('batches' => $batches));
 });
 
+$app->get('/centers/{center_id}/levels', function ($center_id) use ($app) {
+	$center = (new Center)->fetch($center_id);
+	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
+ 
+    $levels = (new Level)->search(['center_id' => $center_id]);
+    return JSend::success("List of levels in $center[name]", array('levels' => $levels));
+});
+
 ////////////////////////////////////////////////////////// Batches ///////////////////////////////////////////
 $app->get('/batches/{batch_id}', function($batch_id) use ($app) {
 	$batch = (new Batch)->fetch($batch_id);
 	if(!$batch) return response(JSend::fail("Can't find any batch with ID $batch_id"), 404);
 
 	return JSend::success("Batch ID : $batch_id", array('batch' => $batch));
+});
+$app->get('/batches/{batch_id}/teachers', function($batch_id) use ($app) {
+	$batch = (new Batch)->fetch($batch_id);
+	if(!$batch) return response(JSend::fail("Can't find any batch with ID $batch_id"), 404);
+
+	$teachers = (new User)->search(['batch_id' => $batch_id]);
+
+	return JSend::success("Teachers in batch $batch_id", array('teachers' => $teachers));
+});
+$app->get('/batches/{batch_id}/levels', function($batch_id) use ($app) {
+	$batch = (new Batch)->fetch($batch_id);
+	if(!$batch) return response(JSend::fail("Can't find any batch with ID $batch_id"), 404);
+
+	$levels = (new Level)->search(['batch_id' => $batch_id]);
+
+	return JSend::success("Levels in batch $batch_id", array('levels' => $levels));
 });
 
 ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
@@ -175,6 +199,22 @@ $app->get('/levels/{level_id}', function($level_id) use ($app) {
 	if(!$level) return response(JSend::fail("Can't find any level with ID $level_id"), 404);
 
 	return JSend::success("Level ID : $level_id", array('level' => $level));
+});
+$app->get('/levels/{level_id}/students', function($level_id) use ($app) {
+	$level = (new Level)->fetch($level_id);
+	if(!$level) return response(JSend::fail("Can't find any level with ID $level_id"), 404);
+
+	$students = (new Student)->search(['level_id' => $level_id]);
+
+	return JSend::success("Students in Level $level_id", array('students' => $students));
+});
+$app->get('/levels/{level_id}/batches', function($level_id) use ($app) {
+	$level = (new Level)->fetch($level_id);
+	if(!$level) return response(JSend::fail("Can't find any level with ID $level_id"), 404);
+
+	$batches = (new Batch)->search(['level_id' => $level_id]);
+
+	return JSend::success("Levels in batch $level_id", array('batches' => $batches));
 });
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
 $app->get('/users', function(Request $request) use ($app) {
@@ -290,3 +330,40 @@ $app->delete('/users/{user_id}/groups/{group_id}', function($user_id, $group_id)
 	return JSend::success("Removed user from the given group.", array('groups' => $groups));
 });
 
+///////////////////////////////////////////////////////// Student Calls //////////////////////////////////////////////
+$app->get('/students', function(Request $request) use ($app) {
+	$search_fields = ['name','birthday', 'city_id','sex','center_id'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+		$search[$key] = $request->input($key);
+	}
+
+	$student = new Student;
+	$data = $student->search($search);
+
+	return JSend::success("Search Results", array('students' => $data));
+});
+$app->delete('/students/{student_id}', function($student_id) use ($app) {
+	$student = new Student;
+	$info = $student->fetch($student_id);
+	if(!$info) return response(JSend::error("Can't find student with id '$student_id'"), 404);
+
+	$info = $student->remove($student_id);
+
+	return JSend::success("User deleted successfully", array('student' => $info));
+});
+
+$app->get('/students/{student_id}', function($student_id) use ($app) {
+	$student = new Student;
+	$details = $student->fetch($student_id);
+
+	if(!$details) {
+		return response(JSend::error("Can't find student with id '$student_id'"), 404);
+	}
+
+	return JSend::success("Student details for {$details->name}", array('student' => $details));
+});
+
+$app->post('/students','StudentController@add');
+$app->post('/students/{student_id}','StudentController@edit');
