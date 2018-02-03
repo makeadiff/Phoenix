@@ -256,18 +256,19 @@ final class User extends Common
         $data = $user->first();
 
         if($data) {
-            if(!Hash::check($password, $data['password'])) { // Incorrect password
+            $password_is_correct = Hash::check($password, $data->password);
+
+            if(!$password_is_correct) { // Incorrect password
                 $data = null;
                 $this->errors[] = "Incorrect password provided";
+            } else {
+                $user_id = $data->getKey();
+                return $this->fetch($user_id);
             }
-        } else {
-            $this->errors[] = "Can't find any user with the given email/phone";
         }
 
-        $info = null;
-        if($data) $info = $this->fetch($data['id']);
-
-        return $info;
+        $this->errors[] = "Can't find any user with the given email/phone";
+        return false;
     }
     
     /// Changes the phone number format from +91976063565 to 9746063565. Remove the 91 at the starting.

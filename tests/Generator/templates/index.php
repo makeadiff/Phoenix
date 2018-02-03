@@ -15,20 +15,22 @@ $html->buildInput("show-step-2", "&nbsp;", "button", "Show Step 2", array('class
 
 <fieldset id="step-2">
 	<legend>Step 2</legend>
+	<div id="call-error"></div>
 	<label for="json">Call Results</label>
 	<textarea id="json" rows="15" cols="80" name="json">Loading...</textarea><br />
 	<?php
 	$html->buildInput("test_type", "Test Type", "select", $test_type, array('options' => $all_test_types));
 	?>
 	<table>
-		<tr><td width="100">&nbsp;</td><th width="200">Path</th><th>Value</th></tr>
-		<tr><td>&nbsp;</td><td><input class="data-path" name="data-path[]" value="$data->" /></td><td><input name="data-value[]" value="" /></td></tr>
-		<tr><td>&nbsp;</td><td><input class="data-path" name="data-path[]" value="$data->" /></td><td><input name="data-value[]" value="" /></td></tr>
-		<tr><td>&nbsp;</td><td><input class="data-path" name="data-path[]" value="$data->" /></td><td><input name="data-value[]" value="" /></td></tr>
-		<tr><td>&nbsp;</td><th colspan="2"> OR </th></tr>
-		<tr><td>&nbsp;</td><td colspan="2"><textarea name="data-assertion" id="data-assertion" rows="5" cols="80"></textarea></td></tr>
+<!-- 		<tr><td width="100">&nbsp;</td><th width="200">Path</th><th>Value</th></tr>
+		<tr><td>&nbsp;</td><td><input class="data-path" name="data-path[]" value="$data->data->" /></td><td><input name="data-value[]" value="" /></td></tr>
+		<tr><td>&nbsp;</td><td><input class="data-path" name="data-path[]" value="$data->data->" /></td><td><input name="data-value[]" value="" /></td></tr>
+		<tr><td>&nbsp;</td><td><input class="data-path" name="data-path[]" value="$data->data->" /></td><td><input name="data-value[]" value="" /></td></tr>
+		<tr><td>&nbsp;</td><th colspan="2"> OR </th></tr> -->
+		<tr><td width="100">&nbsp;</td><td colspan="2"><textarea name="data-assertion" id="data-assertion" rows="5" cols="80"></textarea></td></tr>
 		<tr><td>&nbsp;</td><td colspan="2">Insert: <br />
-								<input type="button" id="search-array" value="Search Array" class='btn btn-success btn-xs' />
+								<input type="button" id="search-array" value="Search Array" class='btn btn-success btn-xs' /> &nbsp;
+								<input type="button" id="single-item" value="Single" class='btn btn-success btn-xs' />
 							</td></tr>
 	</table><br /><br />
 

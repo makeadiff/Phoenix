@@ -5,8 +5,8 @@
  */
 class UserTest extends TestCase
 {
-    private $only_priority_tests = true;
-    private $write_to_db = true;
+    private $only_priority_tests = false;
+    private $write_to_db = false;
 
     /// Path: GET    /users/{user_id}
     public function testGetUserSingle()
@@ -26,11 +26,11 @@ class UserTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/users/2');
+        $this->get('/users/6');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'error');
-        $this->assertEquals($data->message, "Can't find user with user id '2'");
+        $this->assertEquals($data->message, "Can't find user with user id '6'");
         $this->assertEquals(404, $this->response->status());
     }
 
@@ -134,16 +134,16 @@ class UserTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/users/login?email=test.tester_dude@gmail.com&password=pass');
+        $this->get('/users/login?email=sulu.simulation@makeadiff.in&password=pass');
         $data = json_decode($this->response->getContent());
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->user->name, 'Test Dude');
+        $this->assertEquals($data->data->user->name, 'Sulu');
     }
 
     /// Path: GET   /users/{user_id}/groups
     public function testGetUserGroupList()
     {
-        // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $this->get('/users/1/groups');
         $data = json_decode($this->response->getContent());
@@ -158,6 +158,19 @@ class UserTest extends TestCase
             }
         }
         $this->assertTrue($found);
+        $this->assertEquals(200, $this->response->status());
+    }
+
+    /// Path: GET   /users/{user_id}/credit
+    public function testGetUsersCreditSingle()
+    {
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+
+        $this->get('/users/1/credit');
+        $data = json_decode($this->response->getContent());
+
+        $this->assertEquals($data->status, 'success');
+        $this->assertTrue(is_numeric($data->data->credit));
         $this->assertEquals(200, $this->response->status());
     }
 

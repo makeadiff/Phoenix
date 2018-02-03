@@ -45,7 +45,7 @@ final class Center extends Common
 
     public static function inCity($city_id)
     {
-        return $this->search(['city_id' => $city_id]);
+        return Center::search(['city_id' => $city_id]);
     }
 
 }

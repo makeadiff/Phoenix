@@ -1,7 +1,7 @@
     /// Path: %VERB%    %PATH%
     public function %FUNCTION-NAME%()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $this->get('%URL%');
         $data = json_decode($this->response->getContent());

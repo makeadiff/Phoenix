@@ -105,7 +105,7 @@ $app->get('/groups', function(Request $request) use ($app) {
 });
 
 $app->get('/groups/{group_id}', function($group_id) use ($app) {
-	$group = Group::fetch($group_id);
+	$group = (new Group)->fetch($group_id);
 	if(!$group) return response(JSend::fail("Can't find any group with ID $group_id"), 404);
 
 	return JSend::success("User Group: $group_id", array('group' => $group));
@@ -243,7 +243,10 @@ $app->get('/users/login', function(Request $request) use ($app) {
 	$data = $user->login($request->input('email'), $request->input('password'));
 
 	if(!$data) {
-		return response(JSend::fail("Invalid username/password"), 400);
+		$error = "Invalid username/password";
+		if(count($user->errors)) $error = implode(", ", $user->errors);
+		
+		return response(JSend::fail($error), 400);
 	}
 
 	return JSend::success("Welcome back, $data[name]", array('user' => $data));

@@ -19,7 +19,7 @@ foreach ($api['paths'] as $p => $data) {
 }
 
 $templates = array();
-$templates['data-assertion'] = "\$this->assertEquals(%DATA-PATH%, '%DATA-VALUE%'');\n";
+$templates['data-assertion'] = "\$this->assertEquals(%DATA-PATH%, '%DATA-VALUE%');\n";
 $templates['single'] = file_get_contents('code/single.txt');
 $templates['404'] = file_get_contents('code/404.txt');
 $templates['list'] = file_get_contents('code/list.txt');
@@ -44,7 +44,7 @@ if($action == 'Generate Tests') {
 
 	$assertions = '';
 	for($i = 0; $i < count($data_paths); $i++) {
-		if(!$data_paths[$i] or $data_paths[$i] == '$data->') continue;
+		if(!$data_paths[$i] or $data_paths[$i] == '$data->data->') continue;
 
 		$assertion_replaces = array(
 			'%DATA-PATH%'	=> $data_paths[$i],
