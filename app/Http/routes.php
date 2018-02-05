@@ -1,16 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It is a breeze. Simply tell Lumen the URIs it should respond to
-| and give it the Closure to call when that URI is requested.
-|
-*/
-
 // Responses are in JSend format - slightly modified. http://labs.omniti.com/labs/jsend
 use App\Models\User;
 use App\Models\Group;
@@ -22,13 +11,14 @@ use App\Models\Level;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
-header("Content-type: application/json");
+// header("Content-type: application/json");
 header("Access-Control-Allow-Origin: *");
 
 $app->get('/', function () use ($app) {
     return $app->version();
 });
 
+$app->group(['prefix' => 'v1', 'middleware' => 'auth.basic'], function($app) {
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
 $app->get('/cities', function() use($app) {
 	$cities = (new City)->getAll();
@@ -370,3 +360,5 @@ $app->get('/students/{student_id}', function($student_id) use ($app) {
 
 $app->post('/students','StudentController@add');
 $app->post('/students/{student_id}','StudentController@edit');
+
+});
