@@ -11,11 +11,14 @@ use App\Models\Level;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
-// header("Content-type: application/json");
+header("Content-type: application/json");
 header("Access-Control-Allow-Origin: *");
 
 $app->get('/', function () use ($app) {
-    return $app->version();
+    return JSend::success(['data' => [
+    	'app'		=> 'Phoenix',
+    	'framework' => $app->version()
+    ]]);
 });
 
 $app->group(['prefix' => 'v1', 'middleware' => 'auth.basic'], function($app) {

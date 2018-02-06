@@ -1,5 +1,5 @@
     /// Path: %VERB%    %PATH%
-    public function testPost%TABLE%()
+    public function %FUNCTION-NAME%()
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
         if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
@@ -15,7 +15,7 @@
             'data_type' => 'volunteer'
         );
 
-        $response = $this->call('POST', '%URL%', $post_data);
+        $response = $this->load('%URL%', 'POST', $post_data);
 
         $data = json_decode($response->getContent());
         $this->assertEquals($data->status, 'success');

@@ -5,15 +5,15 @@
  */
 class UserTest extends TestCase
 {
-    private $only_priority_tests = false;
-    private $write_to_db = false;
+    // private $only_priority_tests = false;
+    // private $write_to_db = false;
 
     /// Path: GET    /users/{user_id}
     public function testGetUserSingle()
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/users/1');
+        $this->load('/users/1');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -26,7 +26,7 @@ class UserTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/users/6');
+        $this->load('/users/6');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'error');
@@ -39,21 +39,21 @@ class UserTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/users?name=Binny');
+        $this->load('/users?name=Binny');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
         $this->assertEquals($data->data->users[0]->name, "Binny V A");
         $this->assertEquals(200, $this->response->status());
 
-        $this->get('/users?phone=9746068565');
+        $this->load('/users?phone=9746068565');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
         $this->assertEquals($data->data->users[0]->name, "Binny V A");
         $this->assertEquals(200, $this->response->status());
 
-        $this->get('/users?email=binnyva@gmail.com&mad_email=cto@makeadiff.in&city_id=26&user_type=volunteer');
+        $this->load('/users?email=binnyva@gmail.com&mad_email=cto@makeadiff.in&city_id=26&user_type=volunteer');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -83,7 +83,7 @@ class UserTest extends TestCase
             'user_type' => 'volunteer'
         );
 
-        $response = $this->call('POST', '/users', $user);
+        $response = $this->load('/users', 'POST', $user);
 
         $data = json_decode($response->getContent());
         $this->assertEquals($data->status, 'success');
@@ -109,7 +109,7 @@ class UserTest extends TestCase
             'user_type' => 'volunteer'
         );
 
-        $response = $this->call('POST', '/users', $user);
+        $response = $this->load('/users', 'POST', $user);
 
         $data = json_decode($response->getContent());
         $this->assertEquals($data->status, 'fail');
@@ -123,7 +123,7 @@ class UserTest extends TestCase
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
         if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
 
-        $response = $this->call('DELETE', '/users/6');
+        $response = $this->load('/users/6', 'DELETE');
         $data = json_decode($response->getContent());
         $this->assertEquals($data->status, 'success');
         $this->seeInDatabase('User', array('id' => '6', 'status' => '0'));
@@ -134,7 +134,7 @@ class UserTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/users/login?email=sulu.simulation@makeadiff.in&password=pass');
+        $this->load('/users/login?email=sulu.simulation@makeadiff.in&password=pass');
         $data = json_decode($this->response->getContent());
         $this->assertEquals($data->status, 'success');
         $this->assertEquals($data->data->user->name, 'Sulu');
@@ -145,7 +145,7 @@ class UserTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/users/1/groups');
+        $this->load('/users/1/groups');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -166,7 +166,7 @@ class UserTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/users/1/credit');
+        $this->load('/users/1/credit');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');

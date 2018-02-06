@@ -5,15 +5,15 @@
  */
 class CenterTest extends TestCase
 {
-    private $only_priority_tests = false;
-    private $write_to_db = true;
+    // private $only_priority_tests = false;
+    // private $write_to_db = true;
 
     /// Path: GET    /centers
     public function testGetCentersList()
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/centers?city_id=1');
+        $this->load('/centers?city_id=1');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -35,7 +35,7 @@ class CenterTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/centers/220');
+        $this->load('/centers/220');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -48,7 +48,7 @@ class CenterTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/centers/220/teachers');
+        $this->load('/centers/220/teachers');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -69,7 +69,7 @@ class CenterTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/centers/220/students');
+        $this->load('/centers/220/students');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -90,7 +90,7 @@ class CenterTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/centers/220/levels');
+        $this->load('/centers/220/levels');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -111,7 +111,7 @@ class CenterTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/centers/220/batches');
+        $this->load('/centers/220/batches');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');

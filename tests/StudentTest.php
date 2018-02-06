@@ -5,15 +5,15 @@
  */
 class StudentTest extends TestCase
 {
-    private $only_priority_tests = false;
-    private $write_to_db = true;
+    // private $only_priority_tests = false;
+    // private $write_to_db = true;
 
     /// Path: GET    /students
     public function testGetStudentsList()
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/students?center_id=220');
+        $this->load('/students?center_id=220');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -34,7 +34,7 @@ class StudentTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/students/21932');
+        $this->load('/students/21932');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');

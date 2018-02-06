@@ -5,15 +5,15 @@
  */
 class GroupTest extends TestCase
 {
-    private $only_priority_tests = false;
-    private $write_to_db = true;
+    // private $only_priority_tests = false;
+    // private $write_to_db = true;
 
     /// Path: GET    /groups
     public function testGetGroupsList()
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/groups');
+        $this->load('/groups');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -34,7 +34,7 @@ class GroupTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/groups?vertical_id=8');
+        $this->load('/groups?vertical_id=8');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
@@ -56,7 +56,7 @@ class GroupTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->get('/groups/9');
+        $this->load('/groups/9');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');

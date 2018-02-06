@@ -1,9 +1,9 @@
 	/// Path: %VERB%	%PATH%	404
-	public function test%VERB%%TABLE%%TYPE%()
+	public function %FUNCTION-NAME%()
 	{
 	    if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-	    $this->get('%URL%');
+	    $this->load('%URL%');
 	    $data = json_decode($this->response->getContent());
 
 	    $this->assertEquals($data->status, 'error');

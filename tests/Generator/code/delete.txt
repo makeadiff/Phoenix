@@ -1,11 +1,10 @@
 	/// Path: %VERB%	%PATH%
-	public function test%VERB%%TABLE%() 
+	public function %FUNCTION-NAME%() 
 	{
 	    if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 	    if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
 
-	    $response = $this->call('DELETE', '%URL%');
+	    $response = $this->load('%URL%','DELETE');
 	    $data = json_decode($response->getContent());
 	    $this->assertEquals($data->status, 'success');
-	  	//   $this->seeInDatabase('User', array('id' => '6', 'status' => '0'));
 	}
