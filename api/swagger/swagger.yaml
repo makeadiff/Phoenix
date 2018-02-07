@@ -3,13 +3,25 @@ info:
   version: "1.0"
   title: "MADApp API"
   description: "API endpoint documentation for MADApp. Responses will be follow JSend conventions - http://labs.omniti.com/labs/jsend."
-host: localhost
-basePath: /Projects/Phoenix/public
+host: makeadiff.in
+basePath: /api/v1/
 consumes:
   - application/json
 produces:
   - application/json
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
   
+# To create docs, use this command
+# bootprint openapi <swagger.yaml> <output_folder>
+#     bootprint should be installed for this to work - use 'sudo npm install -g spectacle-docs' to install bootprint.
+# OR 
+# spectacle -d <swagger.yaml>
+#     spectacle should be installed for this to work - use 'sudo npm install -g spectacle-docs' to install spectacle.
+
 paths:
   ############################### User
   /users:
@@ -17,7 +29,8 @@ paths:
       tags:
         - user
         - search
-      description: Returns a list of all users matching given parameters
+      summary: Returns a list of all users matching given parameters.
+      description: Search interface for users. Use any of the given parameters to search/filter the user table. The final result will be returned.
       parameters:
         - name: name
           in: query
@@ -73,23 +86,27 @@ paths:
       tags:
         - user
         - create
-      description: Create a new user with the data given in the body.
+      summary: Create a new user with the data given in the body.
+      description: Use this call to create new user. 
       parameters:
         - name: name
           in: formData
           type: string
           required: true
           description: Name of the user
+          # example: Bruce Wayne
         - name: phone
           in: formData
           type: string
           required: true
           description: Phone number
+          # example: "911911911"
         - name: email
           in: formData
           type: string
           required: true
           description: Email
+          # example: "bruce@wayne-enterprises.com"
         - name: mad_email
           type: string
           in: formData
@@ -98,16 +115,19 @@ paths:
           type: string
           in: formData
           description: "Password for the user. If registering on site, set this to 'pass'"
+          # example: "iambatman"
         - name: joined_on
           type: string
           format: "date-time"
           in: formData
           description: The date they joined 
+          # example: "2009-05-09"
         - name: city_id
           type: integer
           in: formData
           required: true
           description: ID of the city that user belongs to. Must be a valid city.
+          # example: 1
         - name: user_type
           in: formData
           type: string
@@ -117,6 +137,7 @@ paths:
             - let_go
             - alumnai
           description: Can be 'volunteer', 'applicant', 'let_go' or 'alumnai'. 
+          # example: volunteer
       responses:
         200:
           description: User added successfully.
@@ -128,7 +149,8 @@ paths:
       tags:
         - user
         - single
-      description: Returns the user who's ID is given
+      summary: Returns the user who's ID is given
+      description: Use this to get information of any user in the system. Keep in mind that this will not return details of deleted users. 
       parameters:
         - name: user_id
           in: path
@@ -148,7 +170,8 @@ paths:
       tags:
         - user
         - edit
-      description: Edit details of the given user
+      summary: Edit details of the given user
+      description: Update the user with the given ID - set any of the fields in the parameter list.
       parameters:
         # Another option of doing this.
         # - name: user
@@ -209,7 +232,8 @@ paths:
       tags:
         - user
         - delete
-      description: Deletes the user with the given ID 
+      summary: Delete user with given ID.
+      description: Sets the status of the given user to '0' - makes this user un-accessable.
       parameters:
         - name: user_id
           in: path
@@ -227,6 +251,7 @@ paths:
       tags:
         - user 
         - group
+      summary: Find all User Groups of the given user.
       description: Return all the groups of the given user ID.
       parameters:
         - name: user_id
@@ -243,8 +268,9 @@ paths:
   /users/{user_id}/groups/{group_id}:
     post:
       tags:
-        - user 
+        - user
         - group
+      summary: Add user to group.
       description: Add the user to the given Group.
       parameters:
         - name: user_id
@@ -266,7 +292,8 @@ paths:
       tags:
         - user
         - group
-      description: Remove the user to the given Group.
+      summary: Remove user from Group.
+      description: Unset the user group connection for the given user and group.
       parameters:
         - name: user_id
           type: integer
@@ -289,6 +316,7 @@ paths:
       tags:
         - user 
         - credit
+      summary: Get the current credit of given user.
       description: Returns the credit of the user with given ID
       parameters:
         - name: user_id
@@ -306,7 +334,8 @@ paths:
       tags:
         - user 
         - credit
-      description: Edit the credit of the user
+      summary: Edit the credit of the user
+      description: Edit the credit of the user - make sure you provide a rational along with the new credit.
       parameters:
         - name: user_id
           type: integer
@@ -341,6 +370,7 @@ paths:
       tags:
         - user 
         - credit
+      summary: Credit history of given user.
       description: Returns the entire history of credit changes for the given user.
       parameters:
         - name: user_id
@@ -357,7 +387,8 @@ paths:
   /users/{user_id}/class_history:
     get:
       tags:
-        - user 
+        - user
+      summary: Class history of user.
       description: Returns the entire class history of the given user.
       parameters:
         - name: user_id
@@ -374,7 +405,8 @@ paths:
       tags:
         - user
         - auth
-      summary: Logs user into the system
+      summary: User Authentication
+      description: Logs user into the system
       parameters:
         - name: email
           in: query
@@ -396,7 +428,7 @@ paths:
   #    tags:
   #      - user
   #      - auth
-  #    summary: Logs out current logged in user session
+  #    description: Logs out current logged in user session
   #    parameters: []
   #    responses:
   #      default:
@@ -407,7 +439,8 @@ paths:
     get:
       tags:
         - city
-      summary: Gets list of all the cities in the system.
+      summary: Returns all cities.
+      description: Gets list of all the cities in the system.
       parameters: []
       responses:
         200:
@@ -422,7 +455,8 @@ paths:
       tags:
         - city
         - single
-      summary: Returns the details of the city who's Id is given.
+      summary: Information of given city
+      description: Returns the details of the city who's ID is given.
       parameters:
         - name: city_id
           in: path
@@ -436,9 +470,10 @@ paths:
   /cities/{city_id}/users:
     get:
       tags:
-        - user 
+        - user
         - city
-      summary: Return all the users in the given city
+      summary: All users in city.
+      description: Return all active users in the city with the given ID.
       parameters:
         - name: city_id
           in: path
@@ -457,7 +492,8 @@ paths:
         - user 
         - city
         - teacher
-      summary: Return all the teachers in the given city
+      summary: Teachers of a city
+      description: Return all the teachers in the given city
       parameters:
         - name: city_id
           in: path
@@ -476,7 +512,8 @@ paths:
         - user 
         - city
         - fellow
-      summary: Return all the fellows in the given city. This includes the City Team Leads and Shelter Ops Fellows as well.
+      summary: Fellows in a city
+      description: Return all the fellows in the given city. This includes the City Team Leads and Shelter Ops Fellows as well.
       parameters:
         - name: city_id
           in: path
@@ -494,7 +531,8 @@ paths:
       tags:
         - city
         - center
-      summary: Returns the list of all centers in the given city.
+      summary: Centers in a city.
+      description: Returns the list of all centers in the given city.
       parameters:
         - name: city_id
           in: path
@@ -512,7 +550,8 @@ paths:
       tags:
         - city
         - student
-      summary: Returns the list of all students in the given city.
+      summary: Students in a city.
+      description: Returns the list of all students in the given city.
       parameters:
         - name: city_id
           in: path
@@ -531,7 +570,8 @@ paths:
     get:
       tags:
         - group
-      summary: Returns all the groups currently active.
+      summary: All Groups.
+      description: Returns all the groups currently active.
       responses:
         200:
           description: Ok
@@ -541,7 +581,8 @@ paths:
       tags:
         - group
         - single
-      summary: Returns the details of the group of the given ID
+      summary: Information about a User Group
+      description: Returns the details of the group of the given ID
       parameters:
         - name: group_id
           in: path
@@ -560,6 +601,7 @@ paths:
       tags:
         - center
         - search
+      summary: Search Centers.
       description: Returns a list of all centers matching given parameters
       parameters:
         - name: name
@@ -600,6 +642,8 @@ paths:
     get:
       tags:
         - center
+        - single
+      summary: Information about a center.
       description: Returns the details of the center who's ID is given
       parameters:
         - name: center_id
@@ -647,8 +691,9 @@ paths:
     get:
       tags:
         - user
-        - teacher 
+        - teacher
         - center
+      summary: Teachers in given center.
       description: Returns the teachers assigned to the given center.
       parameters:
         - name: center_id
@@ -665,8 +710,9 @@ paths:
   /centers/{center_id}/students:
     get:
       tags:
-        - student 
+        - student
         - center
+      summary: Students in given center.
       description: Returns the students in the given center.
       parameters:
         - name: center_id
@@ -685,6 +731,7 @@ paths:
       tags:
         - level 
         - center
+      summary: Levels in given center.
       description: Returns the levels/class sections. in the given center.
       parameters:
         - name: center_id
@@ -703,6 +750,7 @@ paths:
       tags:
         - batch
         - center
+      summary: Batches in given center.
       description: Returns the batches in the given center.
       parameters:
         - name: center_id
@@ -723,6 +771,7 @@ paths:
       tags:
         - student
         - search
+      summary: Student search.
       description: Returns a list of all students matching given parameters
       parameters:
         - name: name
@@ -757,6 +806,7 @@ paths:
     post:
       tags:
         - student
+      summary: Create new student
       description: Create a new student with the data given in the body.
       parameters:
         - name: name
@@ -784,6 +834,7 @@ paths:
     get:
       tags:
         - student
+      summary: Student Info
       description: Returns the student who's ID is given
       parameters:
         - name: student_id
@@ -805,6 +856,7 @@ paths:
     post:
       tags:
         - student
+      summary: Edit student
       description: Edit details of the given student
       parameters:
         - name: student_id
@@ -829,6 +881,7 @@ paths:
     delete:
       tags:
         - student
+      summary: Delete Student
       description: Deletes the student with the given ID 
       parameters:
         - name: student_id
@@ -847,6 +900,7 @@ paths:
     get:
       tags:
         - level
+      summary: Level information
       description: Returns the details of the level with the given ID
       parameters:
         - name: level_id
@@ -865,7 +919,8 @@ paths:
       tags:
         - student
         - level
-      description: Returs the students mapped to the given level.
+      summary: Students in Level
+      description: Returns the students mapped to the given level.
       parameters:
         - name: level_id
           type: integer
@@ -887,6 +942,7 @@ paths:
       tags:
         - batch
         - level
+      summary: Batches in level
       description: Returns the batches mapped to the given level.
       parameters:
         - name: level_id
@@ -910,6 +966,7 @@ paths:
     get:
       tags:
         - batch
+      summary: Batch information
       description: Returns the details of the batch with the given ID
       parameters:
         - name: batch_id
@@ -929,6 +986,7 @@ paths:
         - batch
         - teacher
         - user
+      summary: Teachers in batch
       description: Returns the teachers mapped to the given batch.
       parameters:
         - name: batch_id
@@ -951,6 +1009,7 @@ paths:
       tags:
         - batch
         - level
+      summary: Levels in batch
       description: Returns the levels mapped to the given batch.
       parameters:
         - name: batch_id
@@ -1053,15 +1112,15 @@ definitions:
       #     items:
       #       $ref: "#/definitions/Group"
             
-  Group:
-    type: "object"
-    properties:
-      id: 
-        type: integer
-      name:
-        type: string
-      vertical_id:
-        type: integer
+  #Group:
+  #  type: "object"
+  #  properties:
+  #    id: 
+  #      type: integer
+  #    name:
+  #      type: string
+  #    vertical_id:
+  #      type: integer
         
   Student:
     type: "object"
