@@ -29,7 +29,7 @@ paths:
       tags:
         - user
         - search
-      summary: Returns a list of all users matching given parameters.
+      summary: User Search
       description: Search interface for users. Use any of the given parameters to search/filter the user table. The final result will be returned.
       parameters:
         - name: name
@@ -86,7 +86,7 @@ paths:
       tags:
         - user
         - create
-      summary: Create a new user with the data given in the body.
+      summary: Create new User
       description: Use this call to create new user. 
       parameters:
         - name: name
@@ -149,7 +149,7 @@ paths:
       tags:
         - user
         - single
-      summary: Returns the user who's ID is given
+      summary: User Information
       description: Use this to get information of any user in the system. Keep in mind that this will not return details of deleted users. 
       parameters:
         - name: user_id
@@ -170,7 +170,7 @@ paths:
       tags:
         - user
         - edit
-      summary: Edit details of the given user
+      summary: Edit User
       description: Update the user with the given ID - set any of the fields in the parameter list.
       parameters:
         # Another option of doing this.
@@ -232,7 +232,7 @@ paths:
       tags:
         - user
         - delete
-      summary: Delete user with given ID.
+      summary: Delete User
       description: Sets the status of the given user to '0' - makes this user un-accessable.
       parameters:
         - name: user_id
@@ -251,7 +251,7 @@ paths:
       tags:
         - user 
         - group
-      summary: Find all User Groups of the given user.
+      summary: User Groups of an user
       description: Return all the groups of the given user ID.
       parameters:
         - name: user_id
@@ -270,8 +270,8 @@ paths:
       tags:
         - user
         - group
-      summary: Add user to group.
-      description: Add the user to the given Group.
+      summary: Add User to group.
+      description: Add the user to the given User Group.
       parameters:
         - name: user_id
           type: integer
@@ -292,7 +292,7 @@ paths:
       tags:
         - user
         - group
-      summary: Remove user from Group.
+      summary: Remove User from Group
       description: Unset the user group connection for the given user and group.
       parameters:
         - name: user_id
@@ -316,7 +316,7 @@ paths:
       tags:
         - user 
         - credit
-      summary: Get the current credit of given user.
+      summary: Credit of User
       description: Returns the credit of the user with given ID
       parameters:
         - name: user_id
@@ -334,7 +334,7 @@ paths:
       tags:
         - user 
         - credit
-      summary: Edit the credit of the user
+      summary: Edit the credit of User
       description: Edit the credit of the user - make sure you provide a rational along with the new credit.
       parameters:
         - name: user_id
@@ -439,7 +439,7 @@ paths:
     get:
       tags:
         - city
-      summary: Returns all cities.
+      summary: Returns all cities
       description: Gets list of all the cities in the system.
       parameters: []
       responses:
@@ -455,7 +455,7 @@ paths:
       tags:
         - city
         - single
-      summary: Information of given city
+      summary: City Information
       description: Returns the details of the city who's ID is given.
       parameters:
         - name: city_id
@@ -472,7 +472,7 @@ paths:
       tags:
         - user
         - city
-      summary: All users in city.
+      summary: Users in City
       description: Return all active users in the city with the given ID.
       parameters:
         - name: city_id
@@ -492,7 +492,7 @@ paths:
         - user 
         - city
         - teacher
-      summary: Teachers of a city
+      summary: Teachers in a city
       description: Return all the teachers in the given city
       parameters:
         - name: city_id
@@ -834,7 +834,7 @@ paths:
     get:
       tags:
         - student
-      summary: Student Info
+      summary: Student Information
       description: Returns the student who's ID is given
       parameters:
         - name: student_id
