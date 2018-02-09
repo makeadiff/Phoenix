@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -18,7 +17,7 @@ class BasicAuth
 
     	if(!$info) {
             $headers = array('WWW-Authenticate' => 'Basic');
-            return response('You need a login provided by the Make a Difference Tech Team to acccess this API.', 401, $headers);
+            return response('{"status": "fail", "data": ["You need a login provided by the Make a Difference Tech Team to acccess this API."]}', 401, $headers);
         }
 
         return $next($request);

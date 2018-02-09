@@ -21,6 +21,13 @@ $app->get('/', function () use ($app) {
     ]]);
 });
 
+$url_prefix = 'v1';
+
+$app->post("/$url_prefix/users", ['middleware' => 'auth.basic', 'uses' => 'UserController@add']);
+$app->post("/$url_prefix/users/{user_id}", ['middleware' => 'auth.basic', 'uses' => 'UserController@edit']);
+$app->post("/$url_prefix/students", ['middleware' => 'auth.basic', 'uses' => 'StudentController@add']);
+$app->post("/$url_prefix/students/{student_i}", ['middleware' => 'auth.basic', 'uses' => 'StudentController@edit']);
+
 $app->group(['prefix' => 'v1', 'middleware' => 'auth.basic'], function($app) {
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
 $app->get('/cities', function() use($app) {
@@ -284,8 +291,8 @@ $app->post('/users/{user_id}/credit', function($user_id, Request $request) use (
 	return JSend::success("Edit the credits for user $user_id", array('credit' => $request->input('credit')));
 });
 
-$app->post('/users','UserController@add');
-$app->post('/users/{user_id}','UserController@edit');
+// $app->post('/users','UserController@add');
+// $app->post('/users/{user_id}','UserController@edit');
 $app->delete('/users/{user_id}', function($user_id) use ($app) {
 	$user = new User;
 	$info = $user->fetch($user_id);
@@ -361,7 +368,7 @@ $app->get('/students/{student_id}', function($student_id) use ($app) {
 	return JSend::success("Student details for {$details->name}", array('student' => $details));
 });
 
-$app->post('/students','StudentController@add');
-$app->post('/students/{student_id}','StudentController@edit');
+// $app->post('/students','StudentController@add');
+// $app->post('/students/{student_id}','StudentController@edit');
 
 });

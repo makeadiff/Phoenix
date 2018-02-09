@@ -9,7 +9,7 @@ final class User extends Common
 {
     protected $table = 'User';
     public $timestamps = false;
-    protected $fillable = ['email','mad_email','phone','name','sex','password','address','bio','source','birthday','city_id','credit','status','user_type', 'joined_on', 'left_on'];
+    protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','status','user_type', 'joined_on', 'left_on'];
 
     public function groups() 
     {
@@ -225,10 +225,9 @@ final class User extends Common
     public function setCredit($credit, $user_id = false)
     {
         $this->chain($user_id);
-
-        $this->user = $this->find($user_id);
-        $this->user->credit = $credit; 
-        return $this->user->save();
+        
+        $this->item->credit = $credit; 
+        return $this->item->save();
     }
 
     public function editCredit($new_credit, $credit_assigned_by_user_id, $reason, $user_id = false)
@@ -256,7 +255,8 @@ final class User extends Common
         $data = $user->first();
 
         if($data) {
-            $password_is_correct = Hash::check($password, $data->password);
+            $password_is_correct = Hash::check($password, $data->password_hash);
+            // $password_is_correct = Hash::check($password, $data->password);
 
             if(!$password_is_correct) { // Incorrect password
                 $data = null;
