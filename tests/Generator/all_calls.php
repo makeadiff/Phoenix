@@ -14,7 +14,7 @@ $done_paths = array();
 $routes = '/mnt/x/Data/www/Projects/Phoenix/app/Http/routes.php';
 $route_lines = explode("\n", file_get_contents($routes));
 foreach ($route_lines as $l) {
-	if(preg_match('/^\$app\-\>([^\(]+)\(\'([^\']+)\'\,/', $l, $matches)) {
+	if(preg_match('/^\$app\-\>([^\(]+)\([\"\'](?:\/\$url_prefix)?([^\']+)[\"\']\,/', $l, $matches)) {
 		$verb = $matches[1];
 		$path = $matches[2];
 

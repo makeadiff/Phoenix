@@ -3,7 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Common extends Model  
+class Common extends Model
 {
     public $errors = array();
 
@@ -39,8 +39,10 @@ class Common extends Model
         return $this->item;
     }
 
-    public function remove($id = false)
+    public function remove()
     {
+        list($id) = func_get_args(); // We do this instead of putting the args in the parameter list to make sure overloading works.
+
         $this->chain($id);
 
         $this->item = $this->find($id);
@@ -48,6 +50,11 @@ class Common extends Model
         $this->item->save();
 
         return $this->item;
+    }
+
+    public function error($text) {
+        $this->errors[] = $text;
+        return false;
     }
 
     /// This is necessary to make the methord chaining work. With this, you can do stuff like - $item->find(3)->remove();

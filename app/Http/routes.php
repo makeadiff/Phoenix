@@ -8,6 +8,7 @@ use App\Models\Center;
 use App\Models\Student;
 use App\Models\Batch;
 use App\Models\Level;
+use App\Models\Donation;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
@@ -26,9 +27,9 @@ $url_prefix = 'v1';
 $app->post("/$url_prefix/users", ['middleware' => 'auth.basic', 'uses' => 'UserController@add']);
 $app->post("/$url_prefix/users/{user_id}", ['middleware' => 'auth.basic', 'uses' => 'UserController@edit']);
 $app->post("/$url_prefix/students", ['middleware' => 'auth.basic', 'uses' => 'StudentController@add']);
-$app->post("/$url_prefix/students/{student_i}", ['middleware' => 'auth.basic', 'uses' => 'StudentController@edit']);
+$app->post("/$url_prefix/students/{student_id}", ['middleware' => 'auth.basic', 'uses' => 'StudentController@edit']);
 
-$app->group(['prefix' => 'v1', 'middleware' => 'auth.basic'], function($app) {
+$app->group(['prefix' => $url_prefix, 'middleware' => 'auth.basic'], function($app) {
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
 $app->get('/cities', function() use($app) {
 	$cities = (new City)->getAll();
@@ -361,14 +362,66 @@ $app->get('/students/{student_id}', function($student_id) use ($app) {
 	$student = new Student;
 	$details = $student->fetch($student_id);
 
-	if(!$details) {
-		return response(JSend::error("Can't find student with id '$student_id'"), 404);
-	}
+	if(!$details) return response(JSend::error("Can't find student with id '$student_id'"), 404);
 
 	return JSend::success("Student details for {$details->name}", array('student' => $details));
 });
-
 // $app->post('/students','StudentController@add');
 // $app->post('/students/{student_id}','StudentController@edit');
+
+/////////////////////////////////////////////// Donations ///////////////////////////////////////////////////////
+$app->get('/donations', function(Request $request) {
+	$search_fields = ['deposit_status_in','deposit_status','approver_id','id','city_id','amount','status','fundraiser_user_id','updated_by_user_id', 'include_deposit_info', 'deposited'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+
+		if ($key == 'deposit_status_in') {
+			$search['deposit_status_in'] = explode(",", $request->input('deposit_status_in'));
+		} else {
+			$search[$key] = $request->input($key);
+		}
+	}
+
+	$donation = new Donation;
+	$data = $donation->search($search);
+
+	return JSend::success("Donations", ['donations' => $data]);
+});
+
+$app->post('/donations', function(Request $request) {
+	$donation = new Donation;
+	$donation = $donation->add($request->all());
+
+	if($donation) return JSend::success("Donation inserted succesfully : Donation ID '{$donation->id}'", array("donation" => $donation));
+	else return JSend::error("Failure in inserting donation at server. Try again after some time.", $donation->errors);
+});
+
+$app->get('/donations/{donation_id}', function($donation_id) {
+	$donation = new Donation;
+	$data = $donation->fetch($donation_id);
+
+	if(!$data) return response(JSend::fail("Can't find any donations with the ID $donation_id"), 404);
+
+	return JSend::success("Donation Details for $donation_id", ['donation' => $data]);
+});
+
+$app->delete('/donations/{donation_id}', function($donation_id) {
+	$donation = new Donation;
+	$data = $donation->fetch($donation_id);
+
+	if(!$data) return response(JSend::fail("Can't find any donations with the ID $donation_id"), 404);
+
+	$donation->remove($donation_id);
+
+	return ""; // JSend::success("Donation '$donation_id' deleted.", ['donation' => $data]); // DELETE return should be empty.
+});
+
+$app->get('/users/{user_id}/donations', function($fundraiser_user_id) {
+	$donation = new Donation;
+	$data = $donation->search(['fundraiser_user_id' => $fundraiser_user_id]);
+
+	return JSend::success("Donations", ['donations' => $data]);
+});
 
 });

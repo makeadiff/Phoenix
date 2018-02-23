@@ -85,7 +85,6 @@ paths:
     post:
       tags:
         - user
-        - create
       summary: Create new User
       description: Use this call to create new user. 
       parameters:
@@ -310,6 +309,30 @@ paths:
           description: Ok
         404:
           description: Can't find user or the group.
+
+  /users/{user_id}/donations:
+    get:
+      tags:
+        - user 
+        - donation
+        - donut
+      summary: Donations raised by User
+      description: Returns all the donations that the given user has raised.
+      parameters:
+        - name: user_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user
+      responses:
+        200:
+          description: Returns the donations of the given user
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Donation"
+        404:
+          description: Can't find any user with the id {user_id}
 
   /users/{user_id}/credit:
     get:
@@ -1027,8 +1050,192 @@ paths:
         404:
           description: Can't find any batch with the given {batch_id}
 
-
-
+  ############################ Donations
+  /donations:
+    get:
+      tags:
+        - donation
+        - search 
+        - donut 
+      summary: Search Donations
+      description: Search thru donations of the current year using any of the listed parameters.
+      parameters:
+        - name: id
+          in: query
+          type: integer
+          description: Find donation with the given ID.
+        - name: city_id
+          in: query
+          type: integer
+          description: Find donations in the given city.
+        - name: amount
+          in: query
+          type: integer
+          description: Find donations that is for the given amount
+        - name: status
+          in: query
+          type: string
+          enum:
+            - deposited
+            - collected
+            - receipted
+          description: Find donations that have this donation status.
+        - name: fundraiser_user_id
+          in: query
+          type: integer
+          description: Find donations raised by the given user
+        - name: type
+          in: query
+          type: string
+          enum:
+            - cash
+            - cheque
+            - nach
+            - globalgiving
+            - giveindia
+            - online
+            - other
+          description: Donation type
+        - name: updated_by_user_id
+          in: query
+          type: integer
+          description: Find donations edited by the given user.
+        - name: include_deposit_info
+          in: query
+          type: string
+          enum:
+            - true
+            - false
+          description: Include the deposit information along with the donation data.
+        - name: deposited
+          in: query
+          type: string
+          enum:
+            - true
+            - false
+          description: Return only deposited donations.
+        - name: deposit_status_in
+          in: query
+          type: string
+          description: Comma seperated list of possible deposit statuses. 
+        - name: deposit_status
+          in: query
+          type: string
+          enum:
+            - pending
+            - approved
+            - rejected
+          description: Find donations that are in this stage of deposit.
+        - name: approver_id
+          in: query
+          type: integer
+          description: Find all donations approved by given user id.
+      responses:
+        '200':
+          description: Returns the list of donations that matches the given parameters.
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Donation"
+    post:
+      tags:
+        - donation
+        - donut 
+      summary: Add Donation
+      description: Add a new donation based on the data provided
+      parameters:
+        - name: donor_name
+          in: formData
+          type: string
+          description: Name of the donor making the donation
+          required: true
+        - name: donor_email
+          in: formData
+          type: string
+          description: Donor Email Address 
+          required: true
+        - name: donor_phone
+          in: formData
+          type: string
+          description: Donor Phone number
+          required: true
+        - name: donor_address
+          in: formData
+          type: string
+          description: Donor's home address.
+        - name: type
+          in: formData
+          type: string
+          enum:
+            - cash
+            - cheque
+            - nach
+            - globalgiving
+            - giveindia
+            - online
+            - other
+          description: ID of the user who added this donation.
+        - name: fundraiser_user_id
+          in: formData
+          type: integer
+          description: ID of the user who added this donation.
+        - name: amount
+          in: formData
+          type: integer
+          description: Amount donated
+        - name: added_on
+          in: formData
+          type: string
+          description: Time the donation was made
+          format: "date-time"
+        - name: comment
+          in: formData
+          type: string
+          description: Any comments about this donation. For eg. "Donation for Dream Camp"
+      responses:
+        200:
+          description: Donation added successfully
+        400:
+          description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+  /donations/{donation_id}:
+    get:
+      tags:
+        - donation
+        - donut
+      summary: Donation Information
+      description: Use this to get data on any given donation.
+      parameters:
+        - name: donation_id
+          in: path
+          description: The ID of the donation to be found.
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Returns the donation details
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Donation"
+        404:
+          description: Can't find donation with given ID
+    delete:
+      tags:
+        - donation
+        - donut
+      summary: Delete a Donation
+      description: Deletes the donation with the given ID. 
+      parameters:
+        - name: donation_id
+          in: path
+          description: The ID of the donation to be found.
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find donation with given ID
 
 # Class
 
@@ -1106,21 +1313,20 @@ definitions:
         enum:
           - "1"
           - "0"
-      # groups:
-      #   schema:
-      #     type: "object"
-      #     items:
-      #       $ref: "#/definitions/Group"
+      groups:
+        type: "array"
+        items:
+          $ref: "#/definitions/Group"
             
-  #Group:
-  #  type: "object"
-  #  properties:
-  #    id: 
-  #      type: integer
-  #    name:
-  #      type: string
-  #    vertical_id:
-  #      type: integer
+  Group:
+   type: "object"
+   properties:
+     id: 
+       type: integer
+     name:
+       type: string
+     vertical_id:
+       type: integer
         
   Student:
     type: "object"
@@ -1196,5 +1402,79 @@ definitions:
         enum:
         - "1"
         - "0"
-        
-    
+  Donation:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      type:
+        type: string
+        enum:
+          - "cash"
+          - 'cheque'
+          - 'nach'
+          - 'globalgiving'
+          - 'giveindia'
+          - 'online'
+          - 'other'
+      fundraiser_user_id:
+        type: integer
+      donor_id:
+        type: integer
+      with_user_id:
+        type: integer
+      status:
+        type: string
+        enum:
+          - receipted
+          - collected
+          - deposited
+      amount:
+        type: integer
+      cheque_no:
+        type: string
+      added_on:
+        type: string
+        format: "date-time"
+      updated_on:
+        type: string
+        format: "date-time"
+      updated_by_user_id:
+        type: integer
+      comment:
+        type: string
+      fundraiser:
+        type: string
+      donor:
+        type: string
+      deposit:
+        type: "array"
+        items:
+          $ref: "#/definitions/Deposit"
+  Deposit:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      collected_from_user_id:
+        type: integer
+      given_to_user_id:
+        type: integer
+      added_on:
+        type: string
+        format: "date-time"
+      reviewed_on:
+        type: string
+        format: "date-time"
+      amount:
+        type: integer
+      status:
+        type: string
+        enum:
+          - approved
+          - pending
+          - rejected
+      given_to_user_name:
+        type: string
+      collected_from_user_name:
+        type: string
