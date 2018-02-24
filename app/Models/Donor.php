@@ -35,7 +35,7 @@ final class Donor extends Common
             return $donor_id;
         } 
 
-        return $donor['id'];
+        return $donor->id;
     }
 
     // public function search($data)

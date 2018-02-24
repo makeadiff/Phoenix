@@ -1165,6 +1165,7 @@ paths:
           description: Donor's home address.
         - name: type
           in: formData
+          required: true
           type: string
           enum:
             - cash

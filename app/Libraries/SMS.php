@@ -16,16 +16,17 @@ class SMS
             'send_to'   =>  $number
         );
 
-        $url = str_replace('&amp;', '&', url('http://enterprise.smsgupshup.com/GatewayAPI/rest', $gupshup_param));
+        //$url = str_replace('&amp;', '&', url('http://enterprise.smsgupshup.com/GatewayAPI/rest', $gupshup_param));
+        $url = str_replace('&amp;', '&', SMS::getLink('http://enterprise.smsgupshup.com/GatewayAPI/rest', $gupshup_param));
 
         // Comment the line below to disable Messageing
-        $data = $this->load($url);
+        $data = SMS::load($url);
 
         return true;
     }
 
     //Function to make the above code work :)
-    function static getLink($url,$params=array(),$use_existing_arguments=false) {
+    public static function getLink($url,$params=array(),$use_existing_arguments=false) {
         if(!$params and !$use_existing_arguments) return $url;
         if($use_existing_arguments) $params = $params + $_GET;
 
@@ -69,7 +70,7 @@ class SMS
         return $link;
     }
 
-    function static load($url,$options=array()) {
+    public static function load($url,$options=array()) {
         $default_options = array(
             'method'		=> 'get',
             'post_data'		=> array(),		// The data that must be send to the URL as post data.

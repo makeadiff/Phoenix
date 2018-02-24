@@ -4,7 +4,6 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\User;
 use App\Models\Donor;
-use Mail;
 
 final class Donation extends Common
 {
@@ -152,34 +151,29 @@ final class Donation extends Common
             'status'            => 'collected',
         ]);
 
-        // $sms = new SMS;
-        // $message = "Dear $donor_name, Thanks a lot for your contribution of Rs. $amount towards Make a Difference. This is only an acknowledgement. A confirmation and e-receipt would be sent once the amount reaches us.";
+        // $sms = new \SMS;
+        // $message = "Dear {$data['donor_name']}, Thanks a lot for your contribution of Rs. {$data['amount']} towards Make a Difference. This is only an acknowledgement. A confirmation and e-receipt would be sent once the amount reaches us.";
         // $sms->send($data['donor_phone'], $message);
 
-        // $email = new Email;
-        // Mail::send('emails.reminder', ['data' => $data], function ($m) use ($data) {
-        //     $m->from('hello@app.com', 'Your Application');
-        //     $m->to($data['donor_email'], $data['donor_name'])->subject('Your Reminder!');
-        //     $m->attach($pathToFile);
-        // }
+        $base_path = app()->basePath();
+        $base_url = url('/');
 
-        // Send acknowledgement Email
-        // $base_url = base_path() . '/public/;
-        // $images[] = $base_url . 'assets/mad-letterhead-left.png';
-        // $images[] = $base_url . 'assets/mad-letterhead-logo.png';
-        // $images[] = $base_url . 'assets/mad-letterhead-right.png';
+        $mail = new \Email;
+        $mail->from     = "noreply <noreply@makeadiff.in>";
+        $mail->to       = $data['donor_email'];
+        $mail->subject  = "Donation Acknowledgment";;
 
-        // $email = new Email();
-        // $email_html = file_get_contents($base_url . 'templates/email/donation_acknowledgement.html');
-        // $email->html = str_replace( array('%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'), 
-        //                             array($base_url,    $amount,    $donor_name,    date('d/m/Y')), $email_html);
-        // $email->to = $donor_email;
-        // $email->from = "noreply <noreply@makeadiff.in>";
-        // $email->subject = "Donation Acknowledgment";
-        // $email->images = $images;
-        // $email->send();
+        $email_html = file_get_contents($base_path . '/resources/email_templates/donation_acknowledgement.html');
+        $mail->html = str_replace(  array('%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'), 
+                                    array($base_url,$data['amount'],$data['donor_name'], date('d/m/Y')), $email_html);
 
-
+        $images = [
+            $base_path . '/public/assets/mad-letterhead-left.png',
+            $base_path . '/public/assets/mad-letterhead-logo.png',
+            $base_path . '/public/assets/mad-letterhead-right.png'
+        ];
+        $mail->images = $images;
+        $mail->send();
 
         return $donation;
     }
