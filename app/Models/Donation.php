@@ -13,6 +13,7 @@ final class Donation extends Common
     public $start_date = '2017-08-01 00:00:00';
     public $timestamps = true;
     protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'cheque_no', 'added_on', 'updated_on', 'updated_by_user_id', 'comment'];
+    protected $donation_statuses = ['collected', 'deposited', 'receipted'];
 
     public function fundraiser()
     {
@@ -24,6 +25,12 @@ final class Donation extends Common
     {
         $donor = $this->belongsTo('App\Models\Donor', 'donor_id');
         return $donor->first();
+    }
+
+    public function deposit()
+    {
+        $deposits = $this->belongsToMany("App\Models\Deposit", 'Donut_DonationDeposit');
+        return $deposits->get();
     }
 
     public function search($data)
@@ -49,12 +56,12 @@ final class Donation extends Common
             $q->where("Donut_Deposit.given_to_user_id", $data['approver_id']);
             if(!isset($data['deposit_status'])) $q->where('Donut_Deposit.status', 'approved');
         }
-        if(isset($data['deposit_status'])) {
+        if(!empty($data['deposit_status'])) {
             $q->join("Donut_Donation_Deposit", "Donut_Donation_Deposit.donation_id", '=', 'Donut_Donation.id');
             $q->join("Donut_Deposit", "Donut_Donation_Deposit.deposit_id", '=', 'Donut_Deposit.id');
             if(!isset($data['deposit_status']))  $q->where('Donut_Deposit.status', $data['deposit_status']);
         }
-        if(isset($data['deposit_status_in'])) {
+        if(!empty($data['deposit_status_in'])) {
             $q->join("Donut_Donation_Deposit", "Donut_Donation_Deposit.donation_id", '=', 'Donut_Donation.id');
             $q->join("Donut_Deposit", "Donut_Donation_Deposit.deposit_id", '=', 'Donut_Deposit.id');
             $q->where(function($q) use ($data) {
@@ -69,10 +76,10 @@ final class Donation extends Common
         if(isset($data['deposited']) or (isset($data['include_deposit_info']) and $data['include_deposit_info'])) {
             foreach ($donations as $index => $don) {
                 $donation_id = $don->id;
-                // Find all donations deposited by the current user which is still in pending or approved.
+                // Find all donations deposited by the current user which is still in pending or approved. :TODO: Find better way of doing this.
                 $all_deposit_info = app('db')->select("SELECT DP.*, GU.name AS given_to_user_name, CU.name AS collected_from_user_name 
                     FROM Donut_Deposit DP 
-                    INNER JOIN Donut_Donation_Deposit DD ON DD.deposit_id=DP.id
+                    INNER JOIN Donut_DonationDeposit DD ON DD.deposit_id=DP.id
                     INNER JOIN User GU ON GU.id=DP.given_to_user_id
                     INNER JOIN User CU ON CU.id=DP.collected_from_user_id
                     WHERE DD.donation_id=? AND DP.status IN ('approved', 'pending')
@@ -85,10 +92,13 @@ final class Donation extends Common
 
                 if(isset($data['deposited'])) {
                     // Find donations which had are in the deposits table with status of pending or approved
-                    if(!$deposit_info and $data['deposited'])  unset($donations[$donation_id]); // Deposit info not present - undeposited.
+                    if(!$deposit_info and $data['deposited']) {
+                        unset($donations[$index]); // Deposit info not present - undeposited.
+                    }
+
                     if($deposit_info and ($deposit_info->status == 'approved' or $deposit_info->status == 'pending')) {// Approved or pending deposit
-                        if($data['deposited'] == false) unset($donations[$donation_id]); // If they want only undeposited donations, unset
-                    } else if($data['deposited'] == true) unset($donations[$donation_id]); // Only deposited donations go thru.
+                        if(!$data['deposited']) unset($donations[$index]); // If they want only undeposited donations, unset
+                    } else if($data['deposited']) unset($donations[$index]); // Only deposited donations go thru.
                 }
             }
         }
@@ -151,9 +161,9 @@ final class Donation extends Common
             'status'            => 'collected',
         ]);
 
-        // $sms = new \SMS;
-        // $message = "Dear {$data['donor_name']}, Thanks a lot for your contribution of Rs. {$data['amount']} towards Make a Difference. This is only an acknowledgement. A confirmation and e-receipt would be sent once the amount reaches us.";
-        // $sms->send($data['donor_phone'], $message);
+        $sms = new \SMS;
+        $message = "Dear {$data['donor_name']}, Thanks a lot for your contribution of Rs. {$data['amount']} towards Make a Difference. This is only an acknowledgement. A confirmation and e-receipt would be sent once the amount reaches us.";
+        $sms->send($data['donor_phone'], $message);
 
         $base_path = app()->basePath();
         $base_url = url('/');
@@ -176,6 +186,22 @@ final class Donation extends Common
         $mail->send();
 
         return $donation;
+    }
+
+    function edit($data, $donation_id = false) {
+        $this->chain($donation_id);
+
+        if(!$this->item) return false;
+        
+        foreach ($this->fillable as $key) {
+            if(!isset($data[$key])) continue;
+
+            $this->item->$key = $data[$key];
+        }
+        $this->item->save();
+
+        return $this->item;
+        
     }
 
     /// Used to validate the donation

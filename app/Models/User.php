@@ -111,14 +111,16 @@ final class User extends Common
         return $this->search(['city_id' => $city_id]);
     }
 
-    public function fetch($user_id) {
-        $data = User::select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 
-                                'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->where('status','1')->find($user_id);
+    public function fetch($user_id, $only_volunteers = true) {
+        if(!$user_id) return false;
+
+        $user = User::select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 
+                                'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->where('status','1');
+        if($only_volunteers) $user = $user->where('user_type', 'volunteer');
+
+        $data = $user->find($user_id);
         if(!$data) return false;
 
-        $this->id = $user_id;
-        $this->user = $data;
-        
         // All this to remove the 'pivot' key in the group
         $raw_groups = $data->groups();
         $groups = [];

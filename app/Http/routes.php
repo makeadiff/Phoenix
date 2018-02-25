@@ -9,14 +9,25 @@ use App\Models\Student;
 use App\Models\Batch;
 use App\Models\Level;
 use App\Models\Donation;
+use App\Models\Deposit;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
-header("Content-type: application/json");
+// header("Content-type: application/json");
 header("Access-Control-Allow-Origin: *");
 
 $app->get('/', function () use ($app) {
-    return JSend::success(['data' => [
+	$result = [];
+
+	$deposit = new Deposit;
+	$result = $deposit->add(142509, 1, [15461]);
+
+	if(!$result) var_dump($deposit->errors);
+
+	// $result = $deposit->find(748)->approve(99917);
+
+	return JSend::success(['data' => [
+		'result'	=> $result,
     	'app'		=> 'Phoenix',
     	'framework' => $app->version()
     ]]);
