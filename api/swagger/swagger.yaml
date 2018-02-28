@@ -1238,6 +1238,99 @@ paths:
         404:
           description: Can't find donation with given ID
 
+  /deposits:
+    get:
+      tags:
+        - deposit 
+        - donut
+      summary: Deposit Search
+      description: Search thru the deposits to get items the current user should review, review status, etc.
+      parameters:
+        - name: id
+          in: query
+          type: integer
+          description: ID of the deposit that should be shown.
+        - name: status
+          in: query
+          type: string
+          enum:
+            - approved
+            - rejected
+            - pending
+          description: Search for all deposits that has the given status.
+        - name: status_in
+          in: query
+          type: string
+          description: Search for all deposits that matches any of the given status. 
+        - name: reviewer_id
+          in: query
+          type: integer
+          description: Returns all the deposits that the given user has to review.
+      responses:
+        200:
+          description: Ok 
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Deposit"
+    post:
+      tags:
+        - deposit
+        - donut
+      summary: Add Deposit 
+      description: Add new deposit with the given information.
+      parameters:
+        - name: collected_from_user_id
+          in: formData
+          type: integer
+          description: The ID of the user from whom the money should be collected from.
+        - name: given_to_user_id
+          in: formData
+          type: integer
+          description: The ID of the user to whom the money should be given to
+        - name: donation_ids
+          in: formData
+          type: array
+          description: An array of all the IDs of the donations included in this deposit. 
+      responses:
+        200:
+          description: Created the deposit.
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Deposit"
+        400:
+          description: Errors in input.
+  /deposits/{deposit_id}:
+    post:
+      tags:
+        - deposit
+        - donut
+      summary: Approve/Reject Deposit
+      description: Use this call to approve/reject any given deposit.
+      parameters:
+        - name: deposit_id
+          in: query
+          type: path
+          description: ID of the deposit to be edited.
+        - name: reviewer_id
+          in: query
+          type: integer
+          description: ID of the user who is going to review the deposit.
+        - name: status
+          in: query
+          type: string
+          enum:
+            - approved
+            - rejected
+            - pending
+          description: The deposit will be approved/rejected based on this.
+      responses:
+        200:
+          description: Updated the deposit
+        400:
+          description: Errors in input.
+
 # Class
 
 # GET /classes/{class_id}

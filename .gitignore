@@ -1,3 +1,4 @@
 /vendor
 .env
 Phoenix.sublime-workspace
+api/swagger/batman-swagger.yaml

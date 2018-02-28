@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Hash;
 
 final class User extends Common
 {
+    const CREATED_AT = 'added_on';
+    const UPDATED_AT = 'updated_on';
     protected $table = 'User';
-    public $timestamps = false;
+    public $timestamps = true;
     protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','status','user_type', 'joined_on', 'left_on'];
 
     public function groups() 

@@ -1,6 +1,4 @@
 <?php
-
-// Responses are in JSend format - slightly modified. http://labs.omniti.com/labs/jsend
 use App\Models\User;
 use App\Models\Group;
 use App\Models\City;
@@ -13,7 +11,7 @@ use App\Models\Deposit;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
-// header("Content-type: application/json");
+header("Content-type: application/json");
 header("Access-Control-Allow-Origin: *");
 
 $app->get('/', function () use ($app) {
@@ -433,6 +431,48 @@ $app->get('/users/{user_id}/donations', function($fundraiser_user_id) {
 	$data = $donation->search(['fundraiser_user_id' => $fundraiser_user_id]);
 
 	return JSend::success("Donations", ['donations' => $data]);
+});
+
+///////////////////////////// Deposits ////////////////////////
+$app->post('/deposits', function(Request $request) {
+	$deposit = new Deposit;
+	$deposit_info = $deposit->add($request->input('collected_from_user_id'), $request->input('given_to_user_id'), $request->input('donation_ids'));
+
+	if(!$deposit_info) {
+		return response(JSend::fail("Error making the deposit", $deposit->errors), 400);
+	}
+	return JSend::success("Made the deposit", ['deposit' => $deposit_info]);
+});
+
+$app->get('/deposits', function(Request $request) {
+	$search_fields = ['id', 'status', 'status_in', 'reviewer_id'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+
+		$search[$key] = $request->input($key);
+	}
+
+	$deposit = new Deposit;
+	$data = $deposit->search($search);
+
+	return JSend::success("Deposits matching criteria", ['deposits' => $data]);
+});
+
+$app->post('/deposits/{deposit_id}', function ($deposit_id, Request $request) {
+	$reviewer_id = $request->input('reviewer_id');
+	$status = $request->input('status');
+
+	$deposit = new Deposit;
+	$data = false;
+	if($status == 'approve')
+		$data = $deposit->find($deposit_id)->approve($reviewer_id);
+	else if($status == 'reject')
+		$data = $deposit->find($deposit_id)->reject($reviewer_id);
+
+	if(!$data) return response(JSend::fail("Error approving deposit.", $depsit->errors), 400);
+
+	return JSend::success("Deposit updated", ['deposit' => $data]);
 });
 
 });

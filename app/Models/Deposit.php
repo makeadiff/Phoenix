@@ -54,6 +54,7 @@ final class Deposit extends Common
             if($pre_existing_deposit) return $this->error("Dontation $donation_id is already deposited. You cannot deposit it again.");
 
             // :TODO: Check if this user has the ability to deposit this donation - must be a donation the user fundraised or approved at some point.
+            //          Are both collected_from_user_id and given_to_user_id in the same city - except for the Finance fellow -> National deposit.
         }
 
         $amount = app('db')->table("Donut_Donation")->whereIn('id', $donation_ids)->sum('amount');
@@ -63,6 +64,7 @@ final class Deposit extends Common
             'collected_from_user_id'=> $collected_from_user_id,
             'given_to_user_id'      => $given_to_user_id,
             'reviewed_on'           => '0000-00-00 00:00:00',
+            'added_on'              => date('Y-m-d H:i:s'),
             'status'                => 'pending',
             'amount'                => $amount,
         ]);
@@ -71,7 +73,7 @@ final class Deposit extends Common
             $donation = new Donation;
             $donation->find($donation_id)->edit([
                 'status'        => 'deposited',
-                'with_user_id'  => $given_to_user_id,
+                //'with_user_id'  => $given_to_user_id, // This gets updated only after approved.
             ]);
 
             app('db')->table("Donut_DonationDeposit")->insert([
@@ -83,47 +85,46 @@ final class Deposit extends Common
         return $this->find($deposit_id);
     }
 
-    // function search($params) {
-    //     $this->sql_checks = array();
-    //     $this->sql_joins = array();
+    public function search($data) 
+    {
+        $q = app('db')->table($this->table);
 
-    //     if(isset($params['reviewer_id'])) {
-    //         $this->sql_checks['reviewer_id'] = "DP.given_to_user_id={$params['reviewer_id']}";
-    //         $this->sql_checks['status'] = "DP.status='pending'";
-    //     }
-    //     if(isset($params['status'])) $this->sql_checks['status'] = "DP.status={$params['status']}";
-    //     if(isset($params['status_in'])) $this->sql_checks['status'] = "DP.status IN (" . implode(",", $params['status_in']) . ")";
+        $q->select("Donut_Deposit.id","Donut_Deposit.amount","Donut_Deposit.added_on","Donut_Deposit.reviewed_on","Donut_Deposit.status","Donut_Deposit.collected_from_user_id","Donut_Deposit.given_to_user_id");
 
-    //     // Only get donations after a preset date
-    //     include('../../donutleaderboard/_city_filter.php');
-    //     $from_date = $city_date_filter['25']['from']; // National start date
-    //     $this->sql_checks['from_date'] = "DP.added_on >= '$from_date 00:00:00'";
+        if(!empty($data['reviewer_id'])) {
+            $q->where('Donut_Deposit.given_to_user_id', $data['reviewer_id']);
+            $q->where('Donut_Deposit.status', 'pending');
+        }
 
-    //     $deposits = $this->sql->getById("SELECT DP.id, DP.amount,DP.added_on, DP.reviewed_on, DP.status,
-    //             DP.collected_from_user_id, TRIM(CONCAT(CFU.first_name, ' ', CFU.last_name)) AS collected_from_user_name,
-    //             DP.given_to_user_id, TRIM(CONCAT(GTU.first_name,' ', GTU.last_name)) AS given_to_user_name
-    //         FROM deposits DP
-    //         INNER JOIN users GTU ON DP.given_to_user_id=GTU.id
-    //         INNER JOIN users CFU ON DP.collected_from_user_id=CFU.id
-    //         " . implode("\n", $this->sql_joins) . "
-    //         WHERE " . implode(' AND ', $this->sql_checks) . "
-    //         ORDER BY DP.added_on DESC");
+        if(!empty($data['id'])) $q->where('Donut_Deposit.id', $data['id']);
+        if(!empty($data['status'])) $q->where('Donut_Deposit.status', $data['status']);
+        if(!empty($data['status_in'])) $q->whereIn('Donut_Deposit.status', $data['status_in']);
 
-    //     foreach($deposits as $id => $dep) {
-    //         $deposits[$id]['donations'] = $this->getDonationsIn($id);
-    //     }
+        $donation = new Donation;
+        $q->where('Donut_Deposit.added_on', '>', $donation->start_date);
 
-    //     return $deposits;
-    // }
+        $q->orderBy('Donut_Deposit.added_on','desc');
+        $deposits = $q->get();
+        // dd($q->toSql(), $q->getBindings());
+
+        foreach ($deposits as $index => $dep) {
+            $deposits[$index]->donations = $this->find($dep->id)->donations();
+        }
+
+        return $deposits;
+    }
 
     public function approve($current_user_id, $deposit_id = false) {
         $this->chain($deposit_id);
+
+        if(!$current_user_id) return $this->error("Please include the ID of the user reviewing the deposit.");
 
         $donations = $this->item->donations();
         foreach ($donations as $donation) {
             $donation->edit([
                 'status'        => 'collected',
                 'with_user_id'  => $current_user_id,
+                'updated_by_user_id' => $current_user_id
             ]);
         }
 
