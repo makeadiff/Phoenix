@@ -135,21 +135,22 @@ final class Donation extends Common
             'donor_name' => $data['donor_name'],
             'donor_email'=> $data['donor_email'],
             'donor_phone'=> $data['donor_phone'],
-            'donor_address'=> $data['donor_address'],
+            'donor_address'=> (!empty($data['donor_address']) ? $data['donor_address'] : ''),
         ], $data['fundraiser_user_id']);
 
         if(!$donor_id) return $this->error ("Can't find a valid Donor. Try logging out of the app and logging back in again.");
         if(!$data['fundraiser_user_id']) return $this->error("Can't find a valid Fundraiser. Try logging out of the app and logging back in again.");
+        if(!$data['type']) return $this->error("Can't find a valid donation type. Try again later.");
 
         if(!empty($data['added_on'])) {
-            if($data['added_on'] == '1970-01-01' or $data['added_on'] == '0000-00-00') $data['added_on'] = date("Y-m-d H:i:s");
+            if($data['added_on'] == '1970-01-01' or $data['added_on'] == '0000-00-00' or $data['added_on'] == '1970-01-01 0000-00-00' or !$data['added_on']) $data['added_on'] = date("Y-m-d H:i:s");
             else $data['added_on'] = date("Y-m-d H:i:s", strtotime($data['added_on']));
         } else {
             $data['added_on'] = date('Y-m-d H:i:s');
         }
         
         $donation = Donation::create([
-            'donour_id'         => $donor_id,
+            'donor_id'          => $donor_id,
             'type'              => $data['type'],
             'fundraiser_user_id'=> $data['fundraiser_user_id'],
             'updated_by_user_id'=> $data['fundraiser_user_id'],
@@ -157,7 +158,7 @@ final class Donation extends Common
             'amount'            => $data['amount'],
             'added_on'          => $data['added_on'],
             'updated_on'        => $data['added_on'],
-            'comment'           => $data['comment'],
+            'comment'           => (!empty($data['comment']) ? $data['comment'] : ''),
             'status'            => 'collected',
         ]);
 
@@ -213,17 +214,17 @@ final class Donation extends Common
         // $donor_id = $this->findDonor($donor_name, $donor_email, $donor_phone, $donor_address);
         $donor_id = $donor->findMatching($data, $fundraiser_user_id);
 
-        if(!$donor_id) return JSend::error("Can't find a valid Donor ID for this donation. Try logging out of the app and logging back in again.");
-        if(!$fundraiser_user_id) return JSend::error("Can't find a valid Fundraiser ID for this donation. Try logging out of the app and logging back in again.");
+        if(!$donor_id) return \JSend::error("Can't find a valid Donor ID for this donation. Try logging out of the app and logging back in again.");
+        if(!$fundraiser_user_id) return \JSend::error("Can't find a valid Fundraiser ID for this donation. Try logging out of the app and logging back in again.");
 
         if($this->checkIfDonorDetailsSameAsVolunteerBelowXAmount($donor_email,$donor_phone,$fundraiser_user_id)) {
-            return JSend::error("You seem to have entered your own details in place of the donor. If you continue, the donor won't receive the acknowledgement or receipt. You can only make two donations under your own details. You sure you want to continue?");
+            return \JSend::error("You seem to have entered your own details in place of the donor. If you continue, the donor won't receive the acknowledgement or receipt. You can only make two donations under your own details. You sure you want to continue?");
 
         } elseif ($created_date = $this->checkIfRepeatDonation($donor_id,$fundraiser_user_id,$amount)) { // = is used for assignment. It should NOT be ==
-            return JSend::error("Donation of Rs. $amount from $donor_name has already been added on $created_date. Are you sure you want to add the same amount again?");
+            return \JSend::error("Donation of Rs. $amount from $donor_name has already been added on $created_date. Are you sure you want to add the same amount again?");
 
         } elseif($data = $this->checkIfRepeatDonationWithDifferentAmount($donor_id,$fundraiser_user_id)) {
-            return JSend::error("Donation of Rs. $data[amount] from $donor_name has already been added on $data[created_date]. Are you sure you want to add another amount again?");
+            return \JSend::error("Donation of Rs. $data[amount] from $donor_name has already been added on $data[created_date]. Are you sure you want to add another amount again?");
         }
 
         return true;
@@ -232,7 +233,7 @@ final class Donation extends Common
         $fundraiser = app('db')->table('User')->select('phone','email')->where('id', $fundraiser_user_id)->first();
 
         if(empty($fundraiser)) {
-            return JSend::fail("Can't find a valid Fundraiser ID for this donation. Try logging out of the app and logging back in again.");
+            return \JSend::fail("Can't find a valid Fundraiser ID for this donation. Try logging out of the app and logging back in again.");
         }
 
         if(($fundraiser->phone  == $donor_phone) || ($fundraiser->email == $donor_email)) {

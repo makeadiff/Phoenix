@@ -269,9 +269,9 @@ final class User extends Common
                 $user_id = $data->getKey();
                 return $this->fetch($user_id);
             }
+        } else {
+            $this->errors[] = "Can't find any user with the given email/phone";
         }
-
-        $this->errors[] = "Can't find any user with the given email/phone";
         return false;
     }
     

@@ -17,13 +17,6 @@ header("Access-Control-Allow-Origin: *");
 $app->get('/', function () use ($app) {
 	$result = [];
 
-	$deposit = new Deposit;
-	$result = $deposit->add(142509, 1, [15461]);
-
-	if(!$result) var_dump($deposit->errors);
-
-	// $result = $deposit->find(748)->approve(99917);
-
 	return JSend::success(['data' => [
 		'result'	=> $result,
     	'app'		=> 'Phoenix',
@@ -250,7 +243,7 @@ $app->get('/users', function(Request $request) use ($app) {
 
 $app->get('/users/login', function(Request $request) use ($app) {
 	$user = new User;
-	$data = $user->login($request->input('email'), $request->input('password'));
+	$data = $user->login($request->input('phone'), $request->input('password'));
 
 	if(!$data) {
 		$error = "Invalid username/password";
@@ -399,13 +392,20 @@ $app->get('/donations', function(Request $request) {
 });
 
 $app->post('/donations', function(Request $request) {
-	$donation = new Donation;
-	$donation = $donation->add($request->all());
+	$donation_model = new Donation;
+	$donation = $donation_model->add($request->all());
 
 	if($donation) return JSend::success("Donation inserted succesfully : Donation ID '{$donation->id}'", array("donation" => $donation));
-	else return JSend::error("Failure in inserting donation at server. Try again after some time.", $donation->errors);
+	else return JSend::error("Failure in inserting donation at server. Try again after some time.", $donation_model->errors);
 });
 
+$app->post('/donations/validate', function(Request $request) {
+	$donation = new Donation;
+	$result = $donation->validate($request->all());
+
+	if($result) return JSend::success("Validated successfully");
+	else return JSend::error("Validation error");
+});
 $app->get('/donations/{donation_id}', function($donation_id) {
 	$donation = new Donation;
 	$data = $donation->fetch($donation_id);

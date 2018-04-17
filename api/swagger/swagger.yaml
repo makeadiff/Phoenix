@@ -28,7 +28,6 @@ paths:
     get:
       tags:
         - user
-        - search
       summary: User Search
       description: Search interface for users. Use any of the given parameters to search/filter the user table. The final result will be returned.
       parameters:
@@ -147,7 +146,6 @@ paths:
     get:
       tags:
         - user
-        - single
       summary: User Information
       description: Use this to get information of any user in the system. Keep in mind that this will not return details of deleted users. 
       parameters:
@@ -168,7 +166,6 @@ paths:
     post:
       tags:
         - user
-        - edit
       summary: Edit User
       description: Update the user with the given ID - set any of the fields in the parameter list.
       parameters:
@@ -477,7 +474,6 @@ paths:
     get:
       tags:
         - city
-        - single
       summary: City Information
       description: Returns the details of the city who's ID is given.
       parameters:
@@ -623,7 +619,6 @@ paths:
     get:
       tags:
         - center
-        - search
       summary: Search Centers.
       description: Returns a list of all centers matching given parameters
       parameters:
@@ -1054,8 +1049,7 @@ paths:
   /donations:
     get:
       tags:
-        - donation
-        - search 
+        - donation 
         - donut 
       summary: Search Donations
       description: Search thru donations of the current year using any of the listed parameters.
@@ -1281,17 +1275,22 @@ paths:
       description: Add new deposit with the given information.
       parameters:
         - name: collected_from_user_id
-          in: formData
+          in: query
           type: integer
           description: The ID of the user from whom the money should be collected from.
+          required: true
         - name: given_to_user_id
-          in: formData
+          in: query
           type: integer
           description: The ID of the user to whom the money should be given to
+          required: true
         - name: donation_ids
-          in: formData
+          in: query
           type: array
+          items:
+            type: integer
           description: An array of all the IDs of the donations included in this deposit. 
+          required: true
       responses:
         200:
           description: Created the deposit.
@@ -1310,13 +1309,15 @@ paths:
       description: Use this call to approve/reject any given deposit.
       parameters:
         - name: deposit_id
-          in: query
-          type: path
+          in: path
+          type: integer
           description: ID of the deposit to be edited.
+          required: true
         - name: reviewer_id
           in: query
           type: integer
           description: ID of the user who is going to review the deposit.
+          required: true
         - name: status
           in: query
           type: string
@@ -1325,6 +1326,7 @@ paths:
             - rejected
             - pending
           description: The deposit will be approved/rejected based on this.
+          required: true
       responses:
         200:
           description: Updated the deposit
