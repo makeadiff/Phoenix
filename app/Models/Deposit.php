@@ -16,8 +16,14 @@ final class Deposit extends Common
 
     public function donations()
     {
-        $donations = $this->belongsToMany('App\Models\Donation', 'Donut_DonationDeposit');
-        return $donations->get();
+        $connection = $this->belongsToMany('App\Models\Donation', 'Donut_DonationDeposit');
+
+        $donations = $connection->get();
+        foreach ($donations as $i => $don) {
+            $donations[$i]->donor = $don->donor()->name;
+            $donations[$i]->fundraiser = $don->fundraiser()->name;
+        }
+        return $donations;
     }
 
     public function collected_from() {
@@ -89,10 +95,11 @@ final class Deposit extends Common
     {
         $q = app('db')->table($this->table);
 
-        $q->select("Donut_Deposit.id","Donut_Deposit.amount","Donut_Deposit.added_on","Donut_Deposit.reviewed_on","Donut_Deposit.status","Donut_Deposit.collected_from_user_id","Donut_Deposit.given_to_user_id");
+        $q->select("Donut_Deposit.id","Donut_Deposit.amount","Donut_Deposit.added_on","Donut_Deposit.reviewed_on","Donut_Deposit.status",
+                    "Donut_Deposit.collected_from_user_id","Donut_Deposit.given_to_user_id");
 
-        if(!empty($data['reviewer_id'])) {
-            $q->where('Donut_Deposit.given_to_user_id', $data['reviewer_id']);
+        if(!empty($data['reviewer_user_id'])) {
+            $q->where('Donut_Deposit.given_to_user_id', $data['reviewer_user_id']);
             $q->where('Donut_Deposit.status', 'pending');
         }
 
@@ -107,7 +114,10 @@ final class Deposit extends Common
         $deposits = $q->get();
         // dd($q->toSql(), $q->getBindings());
 
+        $user = new User;
+
         foreach ($deposits as $index => $dep) {
+            $deposits[$index]->collected_from_user_name = $user->find($dep->collected_from_user_id)->name;
             $deposits[$index]->donations = $this->find($dep->id)->donations();
         }
 
@@ -144,7 +154,9 @@ final class Deposit extends Common
         if($this->item->given_to_user_id != $current_user_id) return $this->error("Current user don't have permission to approve/reject the deposit.");
 
         $this->item->status = $status;
-        return $this->item->save();
+        $this->item->save();
+
+        return $this->item;
     }
 
     public function fetch($deposit_id)

@@ -447,7 +447,9 @@ $app->get('/users/{user_id}/donations', function($fundraiser_user_id) {
 ///////////////////////////// Deposits ////////////////////////
 $app->post('/deposits', function(Request $request) {
 	$deposit = new Deposit;
-	$deposit_info = $deposit->add($request->input('collected_from_user_id'), $request->input('given_to_user_id'), $request->input('donation_ids'));
+	$donation_ids = $request->input('donation_ids');
+	if(!is_array($donation_ids)) $donation_ids = explode(",", $donation_ids);
+	$deposit_info = $deposit->add($request->input('collected_from_user_id'), $request->input('given_to_user_id'), $donation_ids);
 
 	if(!$deposit_info) {
 		return response(JSend::fail("Error making the deposit", $deposit->errors), 400);
@@ -456,7 +458,7 @@ $app->post('/deposits', function(Request $request) {
 });
 
 $app->get('/deposits', function(Request $request) {
-	$search_fields = ['id', 'status', 'status_in', 'reviewer_id'];
+	$search_fields = ['id', 'status', 'status_in', 'reviewer_user_id'];
 	$search = [];
 	foreach ($search_fields as $key) {
 		if(!$request->input($key)) continue;
@@ -471,17 +473,18 @@ $app->get('/deposits', function(Request $request) {
 });
 
 $app->post('/deposits/{deposit_id}', function ($deposit_id, Request $request) {
-	$reviewer_id = $request->input('reviewer_id');
+	$reviewer_user_id = $request->input('reviewer_user_id');
 	$status = $request->input('status');
 
 	$deposit = new Deposit;
 	$data = false;
-	if($status == 'approve')
-		$data = $deposit->find($deposit_id)->approve($reviewer_id);
-	else if($status == 'reject')
-		$data = $deposit->find($deposit_id)->reject($reviewer_id);
+	if($status == 'approved')
+		$data = $deposit->find($deposit_id)->approve($reviewer_user_id);
+	else if($status == 'rejected')
+		$data = $deposit->find($deposit_id)->reject($reviewer_user_id);
+	else return response(JSend::error("Status should be 'approved' or 'rejected'"), 400);
 
-	if(!$data) return response(JSend::fail("Error approving deposit.", $depsit->errors), 400);
+	if(!$data) return response(JSend::fail("Error approving deposit.", $deposit->errors), 400);
 
 	return JSend::success("Deposit updated", ['deposit' => $data]);
 });
