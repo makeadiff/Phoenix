@@ -1120,7 +1120,7 @@ paths:
             - approved
             - rejected
           description: Find donations that are in this stage of deposit.
-        - name: approver_id
+        - name: approver_user_id
           in: query
           type: integer
           description: Find all donations approved by given user id.

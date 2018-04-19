@@ -50,41 +50,50 @@ final class Donation extends Common
         if(!empty($data['fundraiser_user_id'])) $q->where('Donut_Donation.fundraiser_user_id', $data['fundraiser_user_id']);
         if(!empty($data['updated_by_user_id'])) $q->where('Donut_Donation.updated_by_user_id', $data['updated_by_user_id']);
 
-        if(!empty($data['approver_id'])) {
-            $q->join("Donut_Donation_Deposit", "Donut_Donation_Deposit.donation_id", '=', 'Donut_Donation.id');
-            $q->join("Donut_Deposit", "Donut_Donation_Deposit.deposit_id", '=', 'Donut_Deposit.id');
-            $q->where("Donut_Deposit.given_to_user_id", $data['approver_id']);
+        if(!empty($data['approver_user_id'])) {
+            $q->join("Donut_DonationDeposit", "Donut_DonationDeposit.donation_id", '=', 'Donut_Donation.id');
+            $q->join("Donut_Deposit", "Donut_DonationDeposit.deposit_id", '=', 'Donut_Deposit.id');
+            $q->where("Donut_Deposit.given_to_user_id", $data['approver_user_id']);
             if(!isset($data['deposit_status'])) $q->where('Donut_Deposit.status', 'approved');
         }
         if(!empty($data['deposit_status'])) {
-            $q->join("Donut_Donation_Deposit", "Donut_Donation_Deposit.donation_id", '=', 'Donut_Donation.id');
-            $q->join("Donut_Deposit", "Donut_Donation_Deposit.deposit_id", '=', 'Donut_Deposit.id');
+            $q->join("Donut_DonationDeposit", "Donut_DonationDeposit.donation_id", '=', 'Donut_Donation.id');
+            $q->join("Donut_Deposit", "Donut_DonationDeposit.deposit_id", '=', 'Donut_Deposit.id');
             if(!isset($data['deposit_status']))  $q->where('Donut_Deposit.status', $data['deposit_status']);
         }
         if(!empty($data['deposit_status_in'])) {
-            $q->join("Donut_Donation_Deposit", "Donut_Donation_Deposit.donation_id", '=', 'Donut_Donation.id');
-            $q->join("Donut_Deposit", "Donut_Donation_Deposit.deposit_id", '=', 'Donut_Deposit.id');
+            $q->join("Donut_DonationDeposit", "Donut_DonationDeposit.donation_id", '=', 'Donut_Donation.id');
+            $q->join("Donut_Deposit", "Donut_DonationDeposit.deposit_id", '=', 'Donut_Deposit.id');
             $q->where(function($q) use ($data) {
                 foreach($data['deposit_status_in'] as $deposit_status) $q->orWhere('Donut_Deposit.status', $deposit_status);
             });
         }
         $q->where('Donut_Donation.added_on', '>', $this->start_date);
         $q->orderBy('Donut_Donation.added_on','desc');
+
+        // dd($q->toSql(), $q->getBindings());
+
         $donations = $q->get();
 
         // Find only deposited or undeposited donations - also used to include deposit info.
         if(isset($data['deposited']) or (isset($data['include_deposit_info']) and $data['include_deposit_info'])) {
             foreach ($donations as $index => $don) {
                 $donation_id = $don->id;
-                // Find all donations deposited by the current user which is still in pending or approved. :TODO: Find better way of doing this.
-                $all_deposit_info = app('db')->select("SELECT DP.*, GU.name AS given_to_user_name, CU.name AS collected_from_user_name 
-                    FROM Donut_Deposit DP 
-                    INNER JOIN Donut_DonationDeposit DD ON DD.deposit_id=DP.id
-                    INNER JOIN User GU ON GU.id=DP.given_to_user_id
-                    INNER JOIN User CU ON CU.id=DP.collected_from_user_id
-                    WHERE DD.donation_id=? AND DP.status IN ('approved', 'pending')
-                    ORDER BY DP.added_on DESC", [$donation_id]);
-                $deposit_info = reset($all_deposit_info);
+                // Find all donations deposited by the current user which is still in pending or approved.
+                $q = app('db')->table("Donut_Deposit AS DP");
+                $q->select('DP.*', 'GU.name AS given_to_user_name', 'CU.name AS collected_from_user_name'); 
+                $q->join("Donut_DonationDeposit AS DD", 'DD.deposit_id', '=', 'DP.id');
+                $q->join("User AS GU", 'GU.id', '=', 'DP.given_to_user_id');
+                $q->join("User AS CU", 'CU.id', '=', 'DP.collected_from_user_id');
+                $q->where("DD.donation_id", $donation_id);
+                $q->whereIn("DP.status", ['approved', 'pending']);
+                $q->orderBy("DP.added_on", 'desc');
+
+                if(!empty($data['approver_user_id'])) {
+                    $q->where("DP.collected_from_user_id", $data['approver_user_id']);
+                }
+
+                $deposit_info = $q->first();
 
                 if(isset($data['include_deposit_info']) and $data['include_deposit_info']) {
                     $donations[$index]->deposit = $all_deposit_info;
@@ -97,7 +106,11 @@ final class Donation extends Common
                     }
 
                     if($deposit_info and ($deposit_info->status == 'approved' or $deposit_info->status == 'pending')) {// Approved or pending deposit
-                        if(!$data['deposited']) unset($donations[$index]); // If they want only undeposited donations, unset
+                        if(!$data['deposited']) {
+                            var_dump($deposit_info, $index);
+
+                            unset($donations[$index]); // If they want only undeposited donations, unset
+                        }
                     } else if($data['deposited']) unset($donations[$index]); // Only deposited donations go thru.
                 }
             }
@@ -279,7 +292,7 @@ final class Donation extends Common
         $this->chain($donation_id);
 
         if($deleter_id) {
-            $donations_for_deletion = $this->search(array('fundraiser_user_id' => $deleter_id))->merge($this->search(array('approver_id' => $deleter_id)));
+            $donations_for_deletion = $this->search(array('fundraiser_user_id' => $deleter_id))->merge($this->search(array('approver_user_id' => $deleter_id)));
             if(!$donations_for_deletion->count() or !$donations_for_deletion) return JSend::fail("Can't find any donations that can be deleted by '$deleter_id'");
             $donation_ids_for_deletion = $donations_for_deletion->filter(function ($val) { return $val->id; });
 

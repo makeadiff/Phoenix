@@ -45,52 +45,57 @@
                 <tbody>
                     <tr>
                         <td><a href="#operation--users-get">GET /users</a></td>
-                        <td><p>Returns a list of all users matching given parameters.</p>
+                        <td><p>User Search</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users-post">POST /users</a></td>
-                        <td><p>Create a new user with the data given in the body.</p>
+                        <td><p>Create new User</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--get">GET /users/{user_id}</a></td>
-                        <td><p>Returns the user who&#39;s ID is given</p>
+                        <td><p>User Information</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--post">POST /users/{user_id}</a></td>
-                        <td><p>Edit details of the given user</p>
+                        <td><p>Edit User</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--delete">DELETE /users/{user_id}</a></td>
-                        <td><p>Delete user with given ID.</p>
+                        <td><p>Delete User</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--groups-get">GET /users/{user_id}/groups</a></td>
-                        <td><p>Find all User Groups of the given user.</p>
+                        <td><p>User Groups of an user</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--groups--group_id--post">POST /users/{user_id}/groups/{group_id}</a></td>
-                        <td><p>Add user to group.</p>
+                        <td><p>Add User to group.</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--groups--group_id--delete">DELETE /users/{user_id}/groups/{group_id}</a></td>
-                        <td><p>Remove user from Group.</p>
+                        <td><p>Remove User from Group</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--users--user_id--donations-get">GET /users/{user_id}/donations</a></td>
+                        <td><p>Donations raised by User</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--credit-get">GET /users/{user_id}/credit</a></td>
-                        <td><p>Get the current credit of given user.</p>
+                        <td><p>Credit of User</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--credit-post">POST /users/{user_id}/credit</a></td>
-                        <td><p>Edit the credit of the user</p>
+                        <td><p>Edit the credit of User</p>
         </td>
                     </tr>
                     <tr>
@@ -110,12 +115,12 @@
                     </tr>
                     <tr>
                         <td><a href="#operation--cities--city_id--users-get">GET /cities/{city_id}/users</a></td>
-                        <td><p>All users in city.</p>
+                        <td><p>Users in City</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--cities--city_id--teachers-get">GET /cities/{city_id}/teachers</a></td>
-                        <td><p>Teachers of a city</p>
+                        <td><p>Teachers in a city</p>
         </td>
                     </tr>
                     <tr>
@@ -135,7 +140,7 @@
                     </tr>
                 </tbody>
             </table>
-            <h3 id="tag-search" class="swagger-summary-tag">Tag: search</h3>
+            <h3 id="tag-delete" class="swagger-summary-tag">Tag: delete</h3>
             
             <p class="sw-tag-external-doc">
             </p>
@@ -148,66 +153,8 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><a href="#operation--users-get">GET /users</a></td>
-                        <td><p>Returns a list of all users matching given parameters.</p>
-        </td>
-                    </tr>
-                    <tr>
-                        <td><a href="#operation--centers-get">GET /centers</a></td>
-                        <td><p>Search Centers.</p>
-        </td>
-                    </tr>
-                    <tr>
-                        <td><a href="#operation--students-get">GET /students</a></td>
-                        <td><p>Student search.</p>
-        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <h3 id="tag-teacher" class="swagger-summary-tag">Tag: teacher</h3>
-            
-            <p class="sw-tag-external-doc">
-            </p>
-            <table class="table table-bordered table-condensed swagger--summary">
-                <thead>
-                <tr>
-                    <th>Operation</th>
-                    <th>Description</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><a href="#operation--cities--city_id--teachers-get">GET /cities/{city_id}/teachers</a></td>
-                        <td><p>Teachers of a city</p>
-        </td>
-                    </tr>
-                    <tr>
-                        <td><a href="#operation--centers--center_id--teachers-get">GET /centers/{center_id}/teachers</a></td>
-                        <td><p>Teachers in given center.</p>
-        </td>
-                    </tr>
-                    <tr>
-                        <td><a href="#operation--batches--batch_id--teachers-get">GET /batches/{batch_id}/teachers</a></td>
-                        <td><p>Teachers in batch</p>
-        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <h3 id="tag-fellow" class="swagger-summary-tag">Tag: fellow</h3>
-            
-            <p class="sw-tag-external-doc">
-            </p>
-            <table class="table table-bordered table-condensed swagger--summary">
-                <thead>
-                <tr>
-                    <th>Operation</th>
-                    <th>Description</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><a href="#operation--cities--city_id--fellows-get">GET /cities/{city_id}/fellows</a></td>
-                        <td><p>Fellows in a city</p>
+                        <td><a href="#operation--users--user_id--delete">DELETE /users/{user_id}</a></td>
+                        <td><p>Delete User</p>
         </td>
                     </tr>
                 </tbody>
@@ -295,7 +242,7 @@
                     </tr>
                     <tr>
                         <td><a href="#operation--students--student_id--get">GET /students/{student_id}</a></td>
-                        <td><p>Student Info</p>
+                        <td><p>Student Information</p>
         </td>
                     </tr>
                     <tr>
@@ -311,6 +258,30 @@
                     <tr>
                         <td><a href="#operation--levels--level_id--students-get">GET /levels/{level_id}/students</a></td>
                         <td><p>Students in Level</p>
+        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 id="tag-single" class="swagger-summary-tag">Tag: single</h3>
+            
+            <p class="sw-tag-external-doc">
+            </p>
+            <table class="table table-bordered table-condensed swagger--summary">
+                <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#operation--groups--group_id--get">GET /groups/{group_id}</a></td>
+                        <td><p>Information about a User Group</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--centers--center_id--get">GET /centers/{center_id}</a></td>
+                        <td><p>Information about a center.</p>
         </td>
                     </tr>
                 </tbody>
@@ -393,7 +364,7 @@
                     </tr>
                 </tbody>
             </table>
-            <h3 id="tag-create" class="swagger-summary-tag">Tag: create</h3>
+            <h3 id="tag-search" class="swagger-summary-tag">Tag: search</h3>
             
             <p class="sw-tag-external-doc">
             </p>
@@ -406,13 +377,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><a href="#operation--users-post">POST /users</a></td>
-                        <td><p>Create a new user with the data given in the body.</p>
+                        <td><a href="#operation--students-get">GET /students</a></td>
+                        <td><p>Student search.</p>
         </td>
                     </tr>
                 </tbody>
             </table>
-            <h3 id="tag-single" class="swagger-summary-tag">Tag: single</h3>
+            <h3 id="tag-deposit" class="swagger-summary-tag">Tag: deposit</h3>
             
             <p class="sw-tag-external-doc">
             </p>
@@ -425,61 +396,18 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><a href="#operation--users--user_id--get">GET /users/{user_id}</a></td>
-                        <td><p>Returns the user who&#39;s ID is given</p>
+                        <td><a href="#operation--deposits-get">GET /deposits</a></td>
+                        <td><p>Deposit Search</p>
         </td>
                     </tr>
                     <tr>
-                        <td><a href="#operation--cities--city_id--get">GET /cities/{city_id}</a></td>
-                        <td><p>Information of given city</p>
+                        <td><a href="#operation--deposits-post">POST /deposits</a></td>
+                        <td><p>Add Deposit</p>
         </td>
                     </tr>
                     <tr>
-                        <td><a href="#operation--groups--group_id--get">GET /groups/{group_id}</a></td>
-                        <td><p>Information about a User Group</p>
-        </td>
-                    </tr>
-                    <tr>
-                        <td><a href="#operation--centers--center_id--get">GET /centers/{center_id}</a></td>
-                        <td><p>Information about a center.</p>
-        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <h3 id="tag-edit" class="swagger-summary-tag">Tag: edit</h3>
-            
-            <p class="sw-tag-external-doc">
-            </p>
-            <table class="table table-bordered table-condensed swagger--summary">
-                <thead>
-                <tr>
-                    <th>Operation</th>
-                    <th>Description</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><a href="#operation--users--user_id--post">POST /users/{user_id}</a></td>
-                        <td><p>Edit details of the given user</p>
-        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <h3 id="tag-delete" class="swagger-summary-tag">Tag: delete</h3>
-            
-            <p class="sw-tag-external-doc">
-            </p>
-            <table class="table table-bordered table-condensed swagger--summary">
-                <thead>
-                <tr>
-                    <th>Operation</th>
-                    <th>Description</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><a href="#operation--users--user_id--delete">DELETE /users/{user_id}</a></td>
-                        <td><p>Delete user with given ID.</p>
+                        <td><a href="#operation--deposits--deposit_id--post">POST /deposits/{deposit_id}</a></td>
+                        <td><p>Approve/Reject Deposit</p>
         </td>
                     </tr>
                 </tbody>
@@ -498,17 +426,17 @@
                 <tbody>
                     <tr>
                         <td><a href="#operation--users--user_id--groups-get">GET /users/{user_id}/groups</a></td>
-                        <td><p>Find all User Groups of the given user.</p>
+                        <td><p>User Groups of an user</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--groups--group_id--post">POST /users/{user_id}/groups/{group_id}</a></td>
-                        <td><p>Add user to group.</p>
+                        <td><p>Add User to group.</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--groups--group_id--delete">DELETE /users/{user_id}/groups/{group_id}</a></td>
-                        <td><p>Remove user from Group.</p>
+                        <td><p>Remove User from Group</p>
         </td>
                     </tr>
                     <tr>
@@ -519,6 +447,99 @@
                     <tr>
                         <td><a href="#operation--groups--group_id--get">GET /groups/{group_id}</a></td>
                         <td><p>Information about a User Group</p>
+        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 id="tag-donation" class="swagger-summary-tag">Tag: donation</h3>
+            
+            <p class="sw-tag-external-doc">
+            </p>
+            <table class="table table-bordered table-condensed swagger--summary">
+                <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#operation--users--user_id--donations-get">GET /users/{user_id}/donations</a></td>
+                        <td><p>Donations raised by User</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--donations-get">GET /donations</a></td>
+                        <td><p>Search Donations</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--donations-post">POST /donations</a></td>
+                        <td><p>Add Donation</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--donations--donation_id--get">GET /donations/{donation_id}</a></td>
+                        <td><p>Donation Information</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--donations--donation_id--delete">DELETE /donations/{donation_id}</a></td>
+                        <td><p>Delete a Donation</p>
+        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 id="tag-donut" class="swagger-summary-tag">Tag: donut</h3>
+            
+            <p class="sw-tag-external-doc">
+            </p>
+            <table class="table table-bordered table-condensed swagger--summary">
+                <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#operation--users--user_id--donations-get">GET /users/{user_id}/donations</a></td>
+                        <td><p>Donations raised by User</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--donations-get">GET /donations</a></td>
+                        <td><p>Search Donations</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--donations-post">POST /donations</a></td>
+                        <td><p>Add Donation</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--donations--donation_id--get">GET /donations/{donation_id}</a></td>
+                        <td><p>Donation Information</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--donations--donation_id--delete">DELETE /donations/{donation_id}</a></td>
+                        <td><p>Delete a Donation</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--deposits-get">GET /deposits</a></td>
+                        <td><p>Deposit Search</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--deposits-post">POST /deposits</a></td>
+                        <td><p>Add Deposit</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--deposits--deposit_id--post">POST /deposits/{deposit_id}</a></td>
+                        <td><p>Approve/Reject Deposit</p>
         </td>
                     </tr>
                 </tbody>
@@ -537,12 +558,12 @@
                 <tbody>
                     <tr>
                         <td><a href="#operation--users--user_id--credit-get">GET /users/{user_id}/credit</a></td>
-                        <td><p>Get the current credit of given user.</p>
+                        <td><p>Credit of User</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--users--user_id--credit-post">POST /users/{user_id}/credit</a></td>
-                        <td><p>Edit the credit of the user</p>
+                        <td><p>Edit the credit of User</p>
         </td>
                     </tr>
                     <tr>
@@ -585,22 +606,22 @@
                 <tbody>
                     <tr>
                         <td><a href="#operation--cities-get">GET /cities</a></td>
-                        <td><p>Returns all cities.</p>
+                        <td><p>Returns all cities</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--cities--city_id--get">GET /cities/{city_id}</a></td>
-                        <td><p>Information of given city</p>
+                        <td><p>City Information</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--cities--city_id--users-get">GET /cities/{city_id}/users</a></td>
-                        <td><p>All users in city.</p>
+                        <td><p>Users in City</p>
         </td>
                     </tr>
                     <tr>
                         <td><a href="#operation--cities--city_id--teachers-get">GET /cities/{city_id}/teachers</a></td>
-                        <td><p>Teachers of a city</p>
+                        <td><p>Teachers in a city</p>
         </td>
                     </tr>
                     <tr>
@@ -616,6 +637,54 @@
                     <tr>
                         <td><a href="#operation--cities--city_id--students-get">GET /cities/{city_id}/students</a></td>
                         <td><p>Students in a city.</p>
+        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 id="tag-teacher" class="swagger-summary-tag">Tag: teacher</h3>
+            
+            <p class="sw-tag-external-doc">
+            </p>
+            <table class="table table-bordered table-condensed swagger--summary">
+                <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#operation--cities--city_id--teachers-get">GET /cities/{city_id}/teachers</a></td>
+                        <td><p>Teachers in a city</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--centers--center_id--teachers-get">GET /centers/{center_id}/teachers</a></td>
+                        <td><p>Teachers in given center.</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--batches--batch_id--teachers-get">GET /batches/{batch_id}/teachers</a></td>
+                        <td><p>Teachers in batch</p>
+        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 id="tag-fellow" class="swagger-summary-tag">Tag: fellow</h3>
+            
+            <p class="sw-tag-external-doc">
+            </p>
+            <table class="table table-bordered table-condensed swagger--summary">
+                <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#operation--cities--city_id--fellows-get">GET /cities/{city_id}/fellows</a></td>
+                        <td><p>Fellows in a city</p>
         </td>
                     </tr>
                 </tbody>
@@ -934,8 +1003,7 @@
                     <div class="operation-summary">Search Centers.</div>
                     <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/centers</strong></h3>
                         Tags:
-                            <a href="#tag-center">center</a>, 
-                            <a href="#tag-search">search</a>
+                            <a href="#tag-center">center</a>
                 </div>
                 <div class="panel-body">
                     <section class="sw-operation-description">
@@ -1487,7 +1555,7 @@
         <span id="path--cities"></span>
             <div id="operation--cities-get" class="swagger--panel-operation-get panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Returns all cities.</div>
+                    <div class="operation-summary">Returns all cities</div>
                     <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/cities</strong></h3>
                         Tags:
                             <a href="#tag-city">city</a>
@@ -1544,11 +1612,10 @@
         <span id="path--cities--city_id-"></span>
             <div id="operation--cities--city_id--get" class="swagger--panel-operation-get panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Information of given city</div>
+                    <div class="operation-summary">City Information</div>
                     <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/cities/{city_id}</strong></h3>
                         Tags:
-                            <a href="#tag-city">city</a>, 
-                            <a href="#tag-single">single</a>
+                            <a href="#tag-city">city</a>
                 </div>
                 <div class="panel-body">
                     <section class="sw-operation-description">
@@ -1900,7 +1967,7 @@
         <span id="path--cities--city_id--teachers"></span>
             <div id="operation--cities--city_id--teachers-get" class="swagger--panel-operation-get panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Teachers of a city</div>
+                    <div class="operation-summary">Teachers in a city</div>
                     <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/cities/{city_id}/teachers</strong></h3>
                         Tags:
                             <a href="#tag-user">user</a>, 
@@ -1994,7 +2061,7 @@
         <span id="path--cities--city_id--users"></span>
             <div id="operation--cities--city_id--users-get" class="swagger--panel-operation-get panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">All users in city.</div>
+                    <div class="operation-summary">Users in City</div>
                     <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/cities/{city_id}/users</strong></h3>
                         Tags:
                             <a href="#tag-user">user</a>, 
@@ -2070,6 +2137,1122 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <p>Can&#39;t find any city with the given city ID</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+        
+        <span id="path--deposits"></span>
+            <div id="operation--deposits-get" class="swagger--panel-operation-get panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">Deposit Search</div>
+                    <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/deposits</strong></h3>
+                        Tags:
+                            <a href="#tag-deposit">deposit</a>, 
+                            <a href="#tag-donut">donut</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Search thru the deposits to get items the current user should review, review status, etc.</p>
+            
+                    </section>
+            
+                    
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                id
+                                            </td>
+                                            <td><p>ID of the deposit that should be shown.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                status
+                                            </td>
+                                            <td><p>Search for all deposits that has the given status.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                        <span class="json-property-enum-item">approved</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">rejected</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">pending</span>
+                                                    
+                                                }
+                                                </span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                status_in
+                                            </td>
+                                            <td><p>Search for all deposits that matches any of the given status.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                reviewer_id
+                                            </td>
+                                            <td><p>Returns all the deposits that the given user has to review.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    
+                        <section class="sw-responses">
+                                <p><a href="#sw-default-produces">Uses default content-types: </a>
+                                    <span class="label label-default">application/json</span> 
+                                </p>
+                            
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Ok</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                                <div  class="panel panel-definition">
+                                                    <div class="panel-body">
+                                                            
+                                                                            <section class="json-schema-array-items">
+                                                                                
+                                                                                <span class="json-property-type">    <a class="json-schema-ref" href="#/definitions/Deposit">Deposit</a>
+                                                                                </span>
+                                                                                <span class="json-property-range" title="Value limits"></span>
+                                                                                
+                                                                                <div class="json-inner-schema">
+                                                                                    
+                                                                                </div>
+                                                                            </section>    </div>
+                                                </div></div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+            <div id="operation--deposits-post" class="swagger--panel-operation-post panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">Add Deposit</div>
+                    <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/deposits</strong></h3>
+                        Tags:
+                            <a href="#tag-deposit">deposit</a>, 
+                            <a href="#tag-donut">donut</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Add new deposit with the given information.</p>
+            
+                    </section>
+            
+                    
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                collected_from_user_id
+                                            </td>
+                                            <td><p>The ID of the user from whom the money should be collected from.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                given_to_user_id
+                                            </td>
+                                            <td><p>The ID of the user to whom the money should be given to</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                donation_ids
+                                            </td>
+                                            <td><p>An array of all the IDs of the donations included in this deposit.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer[]</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    
+                        <section class="sw-responses">
+                                <p><a href="#sw-default-produces">Uses default content-types: </a>
+                                    <span class="label label-default">application/json</span> 
+                                </p>
+                            
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Created the deposit.</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                                <div  class="panel panel-definition">
+                                                    <div class="panel-body">
+                                                            
+                                                    </div>
+                                                </div></div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Errors in input.</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+        
+        <span id="path--deposits--deposit_id-"></span>
+            <div id="operation--deposits--deposit_id--post" class="swagger--panel-operation-post panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">Approve/Reject Deposit</div>
+                    <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/deposits/{deposit_id}</strong></h3>
+                        Tags:
+                            <a href="#tag-deposit">deposit</a>, 
+                            <a href="#tag-donut">donut</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Use this call to approve/reject any given deposit.</p>
+            
+                    </section>
+            
+                    
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                deposit_id
+                                            </td>
+                                            <td><p>ID of the deposit to be edited.</p>
+                                        </td>
+                                            <td>path</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                reviewer_id
+                                            </td>
+                                            <td><p>ID of the user who is going to review the deposit.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                status
+                                            </td>
+                                            <td><p>The deposit will be approved/rejected based on this.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                        <span class="json-property-enum-item">approved</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">rejected</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">pending</span>
+                                                    
+                                                }
+                                                </span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    
+                        <section class="sw-responses">
+                                <p><a href="#sw-default-produces">Uses default content-types: </a>
+                                    <span class="label label-default">application/json</span> 
+                                </p>
+                            
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Updated the deposit</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Errors in input.</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+        
+        <span id="path--donations"></span>
+            <div id="operation--donations-get" class="swagger--panel-operation-get panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">Search Donations</div>
+                    <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/donations</strong></h3>
+                        Tags:
+                            <a href="#tag-donation">donation</a>, 
+                            <a href="#tag-donut">donut</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Search thru donations of the current year using any of the listed parameters.</p>
+            
+                    </section>
+            
+                    
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                id
+                                            </td>
+                                            <td><p>Find donation with the given ID.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                city_id
+                                            </td>
+                                            <td><p>Find donations in the given city.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                amount
+                                            </td>
+                                            <td><p>Find donations that is for the given amount</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                status
+                                            </td>
+                                            <td><p>Find donations that have this donation status.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                        <span class="json-property-enum-item">deposited</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">collected</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">receipted</span>
+                                                    
+                                                }
+                                                </span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                fundraiser_user_id
+                                            </td>
+                                            <td><p>Find donations raised by the given user</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                type
+                                            </td>
+                                            <td><p>Donation type</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                        <span class="json-property-enum-item">cash</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">cheque</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">nach</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">globalgiving</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">giveindia</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">online</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">other</span>
+                                                    
+                                                }
+                                                </span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                updated_by_user_id
+                                            </td>
+                                            <td><p>Find donations edited by the given user.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                include_deposit_info
+                                            </td>
+                                            <td><p>Include the deposit information along with the donation data.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                        <span class="json-property-enum-item">true</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">false</span>
+                                                    
+                                                }
+                                                </span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                deposited
+                                            </td>
+                                            <td><p>Return only deposited donations.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                        <span class="json-property-enum-item">true</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">false</span>
+                                                    
+                                                }
+                                                </span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                deposit_status_in
+                                            </td>
+                                            <td><p>Comma seperated list of possible deposit statuses.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                deposit_status
+                                            </td>
+                                            <td><p>Find donations that are in this stage of deposit.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                        <span class="json-property-enum-item">pending</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">approved</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">rejected</span>
+                                                    
+                                                }
+                                                </span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                approver_user_id
+                                            </td>
+                                            <td><p>Find all donations approved by given user id.</p>
+                                        </td>
+                                            <td>query</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    
+                        <section class="sw-responses">
+                                <p><a href="#sw-default-produces">Uses default content-types: </a>
+                                    <span class="label label-default">application/json</span> 
+                                </p>
+                            
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Returns the list of donations that matches the given parameters.</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                                <div  class="panel panel-definition">
+                                                    <div class="panel-body">
+                                                            
+                                                                            <section class="json-schema-array-items">
+                                                                                
+                                                                                <span class="json-property-type">    <a class="json-schema-ref" href="#/definitions/Donation">Donation</a>
+                                                                                </span>
+                                                                                <span class="json-property-range" title="Value limits"></span>
+                                                                                
+                                                                                <div class="json-inner-schema">
+                                                                                    
+                                                                                </div>
+                                                                            </section>    </div>
+                                                </div></div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+            <div id="operation--donations-post" class="swagger--panel-operation-post panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">Add Donation</div>
+                    <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/donations</strong></h3>
+                        Tags:
+                            <a href="#tag-donation">donation</a>, 
+                            <a href="#tag-donut">donut</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Add a new donation based on the data provided</p>
+            
+                    </section>
+            
+                    
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                donor_name
+                                            </td>
+                                            <td><p>Name of the donor making the donation</p>
+                                        </td>
+                                            <td>formData</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                donor_email
+                                            </td>
+                                            <td><p>Donor Email Address</p>
+                                        </td>
+                                            <td>formData</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                donor_phone
+                                            </td>
+                                            <td><p>Donor Phone number</p>
+                                        </td>
+                                            <td>formData</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                donor_address
+                                            </td>
+                                            <td><p>Donor&#39;s home address.</p>
+                                        </td>
+                                            <td>formData</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                type
+                                            </td>
+                                            <td><p>ID of the user who added this donation.</p>
+                                        </td>
+                                            <td>formData</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                        <span class="json-property-enum-item">cash</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">cheque</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">nach</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">globalgiving</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">giveindia</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">online</span>
+                                                    ,
+                                                        <span class="json-property-enum-item">other</span>
+                                                    
+                                                }
+                                                </span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                fundraiser_user_id
+                                            </td>
+                                            <td><p>ID of the user who added this donation.</p>
+                                        </td>
+                                            <td>formData</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                amount
+                                            </td>
+                                            <td><p>Amount donated</p>
+                                        </td>
+                                            <td>formData</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                added_on
+                                            </td>
+                                            <td><p>Time the donation was made</p>
+                                        </td>
+                                            <td>formData</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>    <span class="json-property-format">(date-time)</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                comment
+                                            </td>
+                                            <td><p>Any comments about this donation. For eg. &quot;Donation for Dream Camp&quot;</p>
+                                        </td>
+                                            <td>formData</td>
+                                            <td>
+                                        <span class="json-property-type">string</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    
+                        <section class="sw-responses">
+                                <p><a href="#sw-default-produces">Uses default content-types: </a>
+                                    <span class="label label-default">application/json</span> 
+                                </p>
+                            
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Donation added successfully</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+        
+        <span id="path--donations--donation_id-"></span>
+            <div id="operation--donations--donation_id--delete" class="swagger--panel-operation-delete panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">Delete a Donation</div>
+                    <h3 class="panel-title"><span class="operation-name">DELETE</span> <strong>/donations/{donation_id}</strong></h3>
+                        Tags:
+                            <a href="#tag-donation">donation</a>, 
+                            <a href="#tag-donut">donut</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Deletes the donation with the given ID.</p>
+            
+                    </section>
+            
+                    
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                donation_id
+                                            </td>
+                                            <td><p>The ID of the donation to be found.</p>
+                                        </td>
+                                            <td>path</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    
+                        <section class="sw-responses">
+                                <p><a href="#sw-default-produces">Uses default content-types: </a>
+                                    <span class="label label-default">application/json</span> 
+                                </p>
+                            
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Ok</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-404">
+                                        404 Not Found
+                                    
+                                    </dt>
+                                    <dd class="sw-response-404">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Can&#39;t find donation with given ID</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+            <div id="operation--donations--donation_id--get" class="swagger--panel-operation-get panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">Donation Information</div>
+                    <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/donations/{donation_id}</strong></h3>
+                        Tags:
+                            <a href="#tag-donation">donation</a>, 
+                            <a href="#tag-donut">donut</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Use this to get data on any given donation.</p>
+            
+                    </section>
+            
+                    
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                donation_id
+                                            </td>
+                                            <td><p>The ID of the donation to be found.</p>
+                                        </td>
+                                            <td>path</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    
+                        <section class="sw-responses">
+                                <p><a href="#sw-default-produces">Uses default content-types: </a>
+                                    <span class="label label-default">application/json</span> 
+                                </p>
+                            
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Returns the donation details</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                                <div  class="panel panel-definition">
+                                                    <div class="panel-body">
+                                                            
+                                                    </div>
+                                                </div></div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-404">
+                                        404 Not Found
+                                    
+                                    </dt>
+                                    <dd class="sw-response-404">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Can&#39;t find donation with given ID</p>
                                             
                                                 </div>
                                             </div>
@@ -2883,7 +4066,7 @@
             </div>
             <div id="operation--students--student_id--get" class="swagger--panel-operation-get panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Student Info</div>
+                    <div class="operation-summary">Student Information</div>
                     <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/students/{student_id}</strong></h3>
                         Tags:
                             <a href="#tag-student">student</a>
@@ -3116,11 +4299,10 @@
         <span id="path--users"></span>
             <div id="operation--users-get" class="swagger--panel-operation-get panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Returns a list of all users matching given parameters.</div>
+                    <div class="operation-summary">User Search</div>
                     <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/users</strong></h3>
                         Tags:
-                            <a href="#tag-user">user</a>, 
-                            <a href="#tag-search">search</a>
+                            <a href="#tag-user">user</a>
                 </div>
                 <div class="panel-body">
                     <section class="sw-operation-description">
@@ -3332,11 +4514,10 @@
             </div>
             <div id="operation--users-post" class="swagger--panel-operation-post panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Create a new user with the data given in the body.</div>
+                    <div class="operation-summary">Create new User</div>
                     <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/users</strong></h3>
                         Tags:
-                            <a href="#tag-user">user</a>, 
-                            <a href="#tag-create">create</a>
+                            <a href="#tag-user">user</a>
                 </div>
                 <div class="panel-body">
                     <section class="sw-operation-description">
@@ -3652,7 +4833,7 @@
         <span id="path--users--user_id-"></span>
             <div id="operation--users--user_id--delete" class="swagger--panel-operation-delete panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Delete user with given ID.</div>
+                    <div class="operation-summary">Delete User</div>
                     <h3 class="panel-title"><span class="operation-name">DELETE</span> <strong>/users/{user_id}</strong></h3>
                         Tags:
                             <a href="#tag-user">user</a>, 
@@ -3743,11 +4924,10 @@
             </div>
             <div id="operation--users--user_id--get" class="swagger--panel-operation-get panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Returns the user who&apos;s ID is given</div>
+                    <div class="operation-summary">User Information</div>
                     <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/users/{user_id}</strong></h3>
                         Tags:
-                            <a href="#tag-user">user</a>, 
-                            <a href="#tag-single">single</a>
+                            <a href="#tag-user">user</a>
                 </div>
                 <div class="panel-body">
                     <section class="sw-operation-description">
@@ -3838,11 +5018,10 @@
             </div>
             <div id="operation--users--user_id--post" class="swagger--panel-operation-post panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Edit details of the given user</div>
+                    <div class="operation-summary">Edit User</div>
                     <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/users/{user_id}</strong></h3>
                         Tags:
-                            <a href="#tag-user">user</a>, 
-                            <a href="#tag-edit">edit</a>
+                            <a href="#tag-user">user</a>
                 </div>
                 <div class="panel-body">
                     <section class="sw-operation-description">
@@ -4141,7 +5320,7 @@
         <span id="path--users--user_id--credit"></span>
             <div id="operation--users--user_id--credit-get" class="swagger--panel-operation-get panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Get the current credit of given user.</div>
+                    <div class="operation-summary">Credit of User</div>
                     <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/users/{user_id}/credit</strong></h3>
                         Tags:
                             <a href="#tag-user">user</a>, 
@@ -4232,7 +5411,7 @@
             </div>
             <div id="operation--users--user_id--credit-post" class="swagger--panel-operation-post panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Edit the credit of the user</div>
+                    <div class="operation-summary">Edit the credit of User</div>
                     <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/users/{user_id}/credit</strong></h3>
                         Tags:
                             <a href="#tag-user">user</a>, 
@@ -4480,10 +5659,117 @@
                 </div>
             </div>
         
+        <span id="path--users--user_id--donations"></span>
+            <div id="operation--users--user_id--donations-get" class="swagger--panel-operation-get panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">Donations raised by User</div>
+                    <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/users/{user_id}/donations</strong></h3>
+                        Tags:
+                            <a href="#tag-user">user</a>, 
+                            <a href="#tag-donation">donation</a>, 
+                            <a href="#tag-donut">donut</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Returns all the donations that the given user has raised.</p>
+            
+                    </section>
+            
+                    
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                user_id
+                                            </td>
+                                            <td><p>ID of the user</p>
+                                        </td>
+                                            <td>path</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    
+                        <section class="sw-responses">
+                                <p><a href="#sw-default-produces">Uses default content-types: </a>
+                                    <span class="label label-default">application/json</span> 
+                                </p>
+                            
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Returns the donations of the given user</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                                <div  class="panel panel-definition">
+                                                    <div class="panel-body">
+                                                            
+                                                                            <section class="json-schema-array-items">
+                                                                                
+                                                                                <span class="json-property-type">    <a class="json-schema-ref" href="#/definitions/Donation">Donation</a>
+                                                                                </span>
+                                                                                <span class="json-property-range" title="Value limits"></span>
+                                                                                
+                                                                                <div class="json-inner-schema">
+                                                                                    
+                                                                                </div>
+                                                                            </section>    </div>
+                                                </div></div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-404">
+                                        404 Not Found
+                                    
+                                    </dt>
+                                    <dd class="sw-response-404">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>Can&#39;t find any user with the id {user_id}</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+        
         <span id="path--users--user_id--groups"></span>
             <div id="operation--users--user_id--groups-get" class="swagger--panel-operation-get panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Find all User Groups of the given user.</div>
+                    <div class="operation-summary">User Groups of an user</div>
                     <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/users/{user_id}/groups</strong></h3>
                         Tags:
                             <a href="#tag-user">user</a>, 
@@ -4576,7 +5862,7 @@
         <span id="path--users--user_id--groups--group_id-"></span>
             <div id="operation--users--user_id--groups--group_id--delete" class="swagger--panel-operation-delete panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Remove user from Group.</div>
+                    <div class="operation-summary">Remove User from Group</div>
                     <h3 class="panel-title"><span class="operation-name">DELETE</span> <strong>/users/{user_id}/groups/{group_id}</strong></h3>
                         Tags:
                             <a href="#tag-user">user</a>, 
@@ -4683,7 +5969,7 @@
             </div>
             <div id="operation--users--user_id--groups--group_id--post" class="swagger--panel-operation-post panel">
                 <div class="panel-heading">
-                    <div class="operation-summary">Add user to group.</div>
+                    <div class="operation-summary">Add User to group.</div>
                     <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/users/{user_id}/groups/{group_id}</strong></h3>
                         Tags:
                             <a href="#tag-user">user</a>, 
@@ -4691,7 +5977,7 @@
                 </div>
                 <div class="panel-body">
                     <section class="sw-operation-description">
-                        <p>Add the user to the given Group.</p>
+                        <p>Add the user to the given User Group.</p>
             
                     </section>
             
@@ -4973,6 +6259,452 @@
                                                                 
                                                             }
                                                             </span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                        </dl>
+                                    </section>
+                    </div>
+                </div>        
+                <div id="definition-Deposit" class="panel panel-definition">
+                        <div class="panel-heading">
+                                <h3 class="panel-title"><a name="/definitions/Deposit"></a>Deposit:
+                                    <span class="json-property-type">
+                <span class="json-property-type">object</span>
+                <span class="json-property-range" title="Value limits"></span>
+                
+                </span>
+                                </h3>
+                        </div>
+                    <div class="panel-body">
+                            
+                                    <section class="json-schema-properties">
+                                        <dl>
+                                                <dt data-property-name="id">
+                                                    <span class="json-property-name">id:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="collected_from_user_id">
+                                                    <span class="json-property-name">collected_from_user_id:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="given_to_user_id">
+                                                    <span class="json-property-name">given_to_user_id:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="added_on">
+                                                    <span class="json-property-name">added_on:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>    <span class="json-property-format">(date-time)</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="reviewed_on">
+                                                    <span class="json-property-name">reviewed_on:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>    <span class="json-property-format">(date-time)</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="amount">
+                                                    <span class="json-property-name">amount:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="status">
+                                                    <span class="json-property-name">status:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                                    <span class="json-property-enum-item">approved</span>
+                                                                ,
+                                                                    <span class="json-property-enum-item">pending</span>
+                                                                ,
+                                                                    <span class="json-property-enum-item">rejected</span>
+                                                                
+                                                            }
+                                                            </span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="given_to_user_name">
+                                                    <span class="json-property-name">given_to_user_name:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="collected_from_user_name">
+                                                    <span class="json-property-name">collected_from_user_name:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                        </dl>
+                                    </section>
+                    </div>
+                </div>        
+                <div id="definition-Donation" class="panel panel-definition">
+                        <div class="panel-heading">
+                                <h3 class="panel-title"><a name="/definitions/Donation"></a>Donation:
+                                    <span class="json-property-type">
+                <span class="json-property-type">object</span>
+                <span class="json-property-range" title="Value limits"></span>
+                
+                </span>
+                                </h3>
+                        </div>
+                    <div class="panel-body">
+                            
+                                    <section class="json-schema-properties">
+                                        <dl>
+                                                <dt data-property-name="id">
+                                                    <span class="json-property-name">id:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="type">
+                                                    <span class="json-property-name">type:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                                    <span class="json-property-enum-item">cash</span>
+                                                                ,
+                                                                    <span class="json-property-enum-item">cheque</span>
+                                                                ,
+                                                                    <span class="json-property-enum-item">nach</span>
+                                                                ,
+                                                                    <span class="json-property-enum-item">globalgiving</span>
+                                                                ,
+                                                                    <span class="json-property-enum-item">giveindia</span>
+                                                                ,
+                                                                    <span class="json-property-enum-item">online</span>
+                                                                ,
+                                                                    <span class="json-property-enum-item">other</span>
+                                                                
+                                                            }
+                                                            </span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="fundraiser_user_id">
+                                                    <span class="json-property-name">fundraiser_user_id:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="donor_id">
+                                                    <span class="json-property-name">donor_id:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="with_user_id">
+                                                    <span class="json-property-name">with_user_id:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="status">
+                                                    <span class="json-property-name">status:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>    <span class="json-property-enum" title="Possible values">, x &isin; {
+                                                                    <span class="json-property-enum-item">receipted</span>
+                                                                ,
+                                                                    <span class="json-property-enum-item">collected</span>
+                                                                ,
+                                                                    <span class="json-property-enum-item">deposited</span>
+                                                                
+                                                            }
+                                                            </span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="amount">
+                                                    <span class="json-property-name">amount:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="cheque_no">
+                                                    <span class="json-property-name">cheque_no:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="added_on">
+                                                    <span class="json-property-name">added_on:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>    <span class="json-property-format">(date-time)</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="updated_on">
+                                                    <span class="json-property-name">updated_on:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>    <span class="json-property-format">(date-time)</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="updated_by_user_id">
+                                                    <span class="json-property-name">updated_by_user_id:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="comment">
+                                                    <span class="json-property-name">comment:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="fundraiser">
+                                                    <span class="json-property-name">fundraiser:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="donor">
+                                                    <span class="json-property-name">donor:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="deposit">
+                                                    <span class="json-property-name">deposit:</span>
+                                                    
+                                                    <span class="json-property-type">object[]</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                                        <section class="json-schema-array-items">
+                                                                            
+                                                                            <span class="json-property-type">    <a class="json-schema-ref" href="#/definitions/Deposit">Deposit</a>
+                                                                            </span>
+                                                                            <span class="json-property-range" title="Value limits"></span>
+                                                                            
+                                                                            <div class="json-inner-schema">
+                                                                                
+                                                                            </div>
+                                                                        </section>                </div>
+                                                </dd>
+                                        </dl>
+                                    </section>
+                    </div>
+                </div>        
+                <div id="definition-Group" class="panel panel-definition">
+                        <div class="panel-heading">
+                                <h3 class="panel-title"><a name="/definitions/Group"></a>Group:
+                                    <span class="json-property-type">
+                <span class="json-property-type">object</span>
+                <span class="json-property-range" title="Value limits"></span>
+                
+                </span>
+                                </h3>
+                        </div>
+                    <div class="panel-body">
+                            
+                                    <section class="json-schema-properties">
+                                        <dl>
+                                                <dt data-property-name="id">
+                                                    <span class="json-property-name">id:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="name">
+                                                    <span class="json-property-name">name:</span>
+                                                    
+                                                    <span class="json-property-type">string</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                    </div>
+                                                </dd>
+                                                <dt data-property-name="vertical_id">
+                                                    <span class="json-property-name">vertical_id:</span>
+                                                    
+                                                    <span class="json-property-type">integer</span>
                                                     <span class="json-property-range" title="Value limits"></span>
                                                     
                                                 </dt>
@@ -5450,6 +7182,28 @@
                                                     <div class="json-inner-schema">
                                                         
                                                     </div>
+                                                </dd>
+                                                <dt data-property-name="groups">
+                                                    <span class="json-property-name">groups:</span>
+                                                    
+                                                    <span class="json-property-type">object[]</span>
+                                                    <span class="json-property-range" title="Value limits"></span>
+                                                    
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="json-inner-schema">
+                                                        
+                                                                        <section class="json-schema-array-items">
+                                                                            
+                                                                            <span class="json-property-type">    <a class="json-schema-ref" href="#/definitions/Group">Group</a>
+                                                                            </span>
+                                                                            <span class="json-property-range" title="Value limits"></span>
+                                                                            
+                                                                            <div class="json-inner-schema">
+                                                                                
+                                                                            </div>
+                                                                        </section>                </div>
                                                 </dd>
                                         </dl>
                                     </section>

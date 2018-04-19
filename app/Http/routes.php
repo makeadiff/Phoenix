@@ -373,13 +373,24 @@ $app->get('/students/{student_id}', function($student_id) use ($app) {
 
 /////////////////////////////////////////////// Donations ///////////////////////////////////////////////////////
 $app->get('/donations', function(Request $request) {
-	$search_fields = ['deposit_status_in','deposit_status','approver_id','id','city_id','amount','status','fundraiser_user_id','updated_by_user_id', 'include_deposit_info', 'deposited'];
+	$search_fields = ['deposit_status_in','deposit_status','approver_user_id','id','city_id','amount','status','fundraiser_user_id','updated_by_user_id', 'include_deposit_info', 'deposited'];
 	$search = [];
 	foreach ($search_fields as $key) {
 		if(!$request->input($key)) continue;
 
 		if ($key == 'deposit_status_in') {
 			$search['deposit_status_in'] = explode(",", $request->input('deposit_status_in'));
+
+		// Specific bolean cases. So that we can use the keyworld 'false' in the URL. Not really required, but looks slightly better this way.
+		} elseif ($key == 'include_deposit_info' or $key == 'deposited') {
+			$input = $request->input($key);
+
+			if(strtolower($input) == 'false') $value = false;
+			else $value = (boolean) $value;
+
+			$search[$key] = $value;
+
+		// Everything else.
 		} else {
 			$search[$key] = $request->input($key);
 		}

@@ -25,14 +25,15 @@ final class Donor extends Common
 
         // If we can't find the donor, add a new one.
         if(!$donor) {
-            $donor = Donor::create([
+            $donor_id = Donor::insertGetId([
                 'name'  => $data['donor_name'],
                 'email' => $data['donor_email'],
                 'phone' => $data['donor_phone'],
                 'address' => $data['donor_address'],
                 'added_by_user_id' => $added_by_user_id
             ]);
-            if($donor) return $donor->id;
+            
+            if($donor_id) return $donor_id;
             else return false;
         } 
 
