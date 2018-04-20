@@ -51,6 +51,9 @@ final class Donation extends Common
         if(!empty($data['status'])) $q->where('Donut_Donation.status', $data['status']);
         if(!empty($data['fundraiser_user_id'])) $q->where('Donut_Donation.fundraiser_user_id', $data['fundraiser_user_id']);
         if(!empty($data['updated_by_user_id'])) $q->where('Donut_Donation.updated_by_user_id', $data['updated_by_user_id']);
+        if(isset($data['deposited']) or isset($data['include_deposit_info'])) { //If either of these are set get only cash/cheque donations
+            $q->whereIn("Donut_Donation.type", ['cash', 'cheque']);
+        }
 
         if(!empty($data['approver_user_id'])) {
             $q->join("Donut_DonationDeposit", "Donut_DonationDeposit.donation_id", '=', 'Donut_Donation.id');
