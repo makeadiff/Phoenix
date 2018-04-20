@@ -1,4 +1,6 @@
 <?php
+namespace App\Libraries;
+
 require_once "Mail.php";
 require_once "Mail/mime.php";
 error_reporting(E_ERROR | E_PARSE);
@@ -20,7 +22,7 @@ class Email
 							'To'        => $this->to,
 							'Subject'   => $this->subject);
 
-		$mime = new Mail_mime(array('eol' => "\n"));
+		$mime = new \Mail_mime(array('eol' => "\n"));
 		$mime->setHTMLBody($this->html);
 
 		foreach($this->images as $image) {
@@ -28,7 +30,7 @@ class Email
 			$sucess[] = $mime->addHTMLImage($image,"image/png",'',true, $name);
 		}
 
-		$smtp = Mail::factory('smtp',
+		$smtp = \Mail::factory('smtp',
 			array ( 'host'     => $this->smtp_host,
 					'auth'     => true,
 					'username' => $this->smtp_username,
@@ -39,7 +41,7 @@ class Email
 
 		$mail = $smtp->send($this->to, $headers, $body);
 
-		if (PEAR::isError($mail)) {
+		if (\PEAR::isError($mail)) {
 			//echo("<p>" . $mail->getMessage() . "</p>");
 			return false;
 		}

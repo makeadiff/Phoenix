@@ -4,6 +4,8 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\User;
 use App\Models\Donor;
+use App\Libraries\SMS;
+use App\Libraries\Email;
 
 final class Donation extends Common
 {
@@ -172,14 +174,14 @@ final class Donation extends Common
             'status'            => 'collected',
         ]);
 
-        $sms = new \SMS;
+        $sms = new SMS;
         $message = "Dear {$data['donor_name']}, Thanks a lot for your contribution of Rs. {$data['amount']} towards Make a Difference. This is only an acknowledgement. A confirmation and e-receipt would be sent once the amount reaches us.";
         $sms->send($data['donor_phone'], $message);
 
         $base_path = app()->basePath();
         $base_url = url('/');
 
-        $mail = new \Email;
+        $mail = new Email;
         $mail->from     = "noreply <noreply@makeadiff.in>";
         $mail->to       = $data['donor_email'];
         $mail->subject  = "Donation Acknowledgment";;

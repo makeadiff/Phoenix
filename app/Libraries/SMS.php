@@ -1,4 +1,6 @@
 <?php
+namespace App\Libraries;
+
 class SMS
 {
     public static function send($number, $message) {
