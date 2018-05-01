@@ -1604,6 +1604,28 @@ paths:
         400:
           description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
 
+    delete:
+      tags:
+        - event 
+      summary: Uninvite a user from Event
+      description: Remove the invitation of any given user from the given event.
+      parameters:
+        - name: event_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the event
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: User ID who is to be removed from the event
+      responses:
+        200:
+          description: Given users have been invited 
+        404:
+          description: Can't find an event or user with the given ID 
+
   /events/{event_id}/invited:
     get:
       tags:
