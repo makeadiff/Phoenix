@@ -1333,6 +1333,322 @@ paths:
         400:
           description: Errors in input.
 
+  /events:
+    get:
+      tags:
+        - event
+      summary: Search for events
+      description: Search thru all created events. Use any of the given parameters to narrow down the list of events.
+      parameters:
+        - name: name
+          in: query
+          type: string
+          description: Search for the events with the given name 
+        - name: description
+          in: query
+          type: string
+          description: Search for the given text within the event description
+        - name: date
+          in: query
+          type: string
+          format: "date-time"
+          description: Search for event by the date when the event starts
+        - name: latitude
+          in: query
+          type: string
+          description: Search for the event by the location(latitude) of the event
+        - name: lognitude
+          in: query
+          type: string
+          description: Search for the event by the location(lognitude) of the event
+        - name: place
+          in: query
+          type: string
+          description: Search by the place were event is happening.
+        - name: city_id
+          in: query
+          type: integer
+          description: City of the event
+        - name: type
+          in: query
+          type: string
+          description: Search by event type.
+        - name: created_by_user_id
+          in: query
+          type: integer
+          description: Search by the user who created the event.
+      responses:
+        200:
+          description: Returns a list of all event matching the given parameters
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Event"
+        400:
+          description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+    post:
+      tags:
+        - event
+      summary: Create a new event
+      description: Create a new event using the given parameters
+      parameters:
+        - name: name
+          in: formData
+          type: string
+          required: true
+          description: Name of the event
+        - name: description
+          in: formData
+          type: string
+          description: Description of the event
+        - name: starts_on
+          in: formData
+          type: string
+          format: "date-time"
+          required: true
+          description: The date when the event will happen
+        - name: place
+          in: formData
+          type: string
+          description: The place where the event will happen
+        - name: city_id
+          in: formData
+          required: true
+          type: integer
+          description: The ID of the city where the city is happening.
+        - name: event_type_id
+          in: formData
+          required: true
+          type: integer
+          description: The ID of the event type.
+        - name: created_by_user_id
+          in: formData
+          type: integer
+          required: true
+          description: ID of the user who created the event 
+        - name: latitude
+          in: formData
+          type: string
+          description: Latitude of the location of the event.
+        - name: lognitude
+          in: formData
+          type: string
+          description: Lognitude of the location of the event.
+      responses:
+        200:
+          description: New event created
+        400:
+          description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+
+  /events/{event_id}:
+    get:
+      tags:
+        - event 
+      summary: Event Information
+      description: Get the information of any given event.
+      parameters:
+        - name: event_id 
+          in: path
+          description: The ID of event that you want to get info on.
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Returns the Event details
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Event"
+        404:
+          description: Can't find event with given ID
+          
+    post:
+      tags:
+        - event 
+      summary: Edit a given event
+      description: Update the event with the specified ID
+      parameters:
+        - name: event_id 
+          in: path
+          description: The ID of event that you want to get info on.
+          required: true
+          type: integer
+        - name: name
+          in: formData
+          type: string
+          required: true
+          description: Name of the event
+        - name: description
+          in: formData
+          type: string
+          description: Description of the event
+        - name: starts_on
+          in: formData
+          type: string
+          format: "date-time"
+          required: true
+          description: The date when the event will happen
+        - name: place
+          in: formData
+          type: string
+          description: The place where the event will happen
+        - name: city_id
+          in: formData
+          required: true
+          type: integer
+          description: The ID of the city where the city is happening.
+        - name: event_type_id
+          in: formData
+          required: true
+          type: integer
+          description: The ID of the event type.
+        - name: created_by_user_id
+          in: formData
+          type: integer
+          required: true
+          description: ID of the user who created the event 
+        - name: latitude
+          in: formData
+          type: string
+          description: Latitude of the location of the event.
+        - name: lognitude
+          in: formData
+          type: string
+          description: Lognitude of the location of the event.
+      responses:
+        200:
+          description: Event Updated
+        400:
+          description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+
+    delete:
+      tags:
+        - delete
+        - event
+      summary: Cancel an event
+      description: Soft deletes a given event(sets the status to '0') - means it was cancelled
+      parameters:
+        - name: event_id 
+          in: path
+          description: The ID of event that you want to delete.
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Event deleted
+        404:
+          description: Couldn't find the event with the given event ID.
+
+  /events/{event_id}/users:
+    get:
+      tags:
+        - event
+      summary: Users connected to given event 
+      description: This will give you all the users connected to this event - the invited, attended, rsvped - all together.
+      parameters:
+        - name: event_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the event of which users shoud be returned.
+      responses:
+        200:
+          description: Returns all the users connected to the event.
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/UserEvent"
+        404:
+          description: Can't find any event with the given ID 
+    post:
+      tags:
+        - event
+      summary: Invite users to the given event
+      description: Give a list of all the users who should be invited to the given event.
+      parameters:
+        - name: event_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the event to which users should be invited to.
+        - name: invite_user_ids
+          in: formData
+          type: string
+          description: Comma seperated IDs of all the users that is invited to the given event.
+      responses:
+        200:
+          description: All the given users have been invited to the event.
+        400:
+          description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+
+  /events/{event_id}/users/{user_id}:
+    get:
+      tags:
+        - event
+      summary: Info of users connection with event 
+      description: Returns the info of any given user who is associated with a given event.
+      parameters:
+        - name: event_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the event
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: User ID who is associated to the event.
+      responses:
+        200:
+          description: Given users have been invited 
+        400:
+          description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+
+  /events/{event_id}/invited:
+    get:
+      tags:
+        - event
+      summary: Users invited to the event
+      description: Returns a list of all the users invited to the given event.
+      parameters:
+        - name: event_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the event
+      responses:
+        200:
+          description: List of all invited users
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/UserEvent"
+        404:
+          description: Can't find any event with the given ID
+
+  /events/{event_id}/attended:
+    get:
+      tags:
+        - event
+      summary: Users who attended the event
+      description: Returns a list of all the users who attended the given event.
+      parameters:
+        - name: event_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the event
+      responses:
+        200:
+          description: List of all users who attended the event.
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/UserEvent"
+        404:
+          description: Can't find any event with the given ID
+
+
 # Class
 
 # GET /classes/{class_id}
@@ -1574,3 +1890,58 @@ definitions:
         type: string
       collected_from_user_name:
         type: string
+  Event:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      starts_on:
+        type: string
+        format: "date-time"
+      place:
+        type: string
+      city_id:
+        type: string
+      event_type_id:
+        type: integer
+      event_type:
+        type: string
+      created_by_user_id:
+        type: string
+        format: "date-time"
+      location:
+        type: string      
+      created_on:
+        type: string
+        format: "date-time"
+  UserEvent:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      present:
+        type: string
+        enum:
+          - 0
+          - 1
+      late:
+        type: string
+        enum:
+          - 0
+          - 1
+      rsvp:
+        type: string
+        enum:
+          - no_data
+          - going
+          - maybe
+          - cant_go
+      reason:
+        type: string
+
