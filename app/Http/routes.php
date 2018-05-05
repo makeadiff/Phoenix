@@ -8,6 +8,8 @@ use App\Models\Batch;
 use App\Models\Level;
 use App\Models\Donation;
 use App\Models\Deposit;
+use App\Models\Event;
+
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
@@ -487,6 +489,41 @@ $app->post('/deposits/{deposit_id}', function ($deposit_id, Request $request) {
 	if(!$data) return response(JSend::fail("Error approving deposit.", $deposit->errors), 400);
 
 	return JSend::success("Deposit updated", ['deposit' => $data]);
+});
+
+
+////////////////////////////////// Events ////////////////////////////////
+$app->get('/events', function(Request $request) use ($app) {
+	$search_fields = ['id', 'name', 'description', 'starts_on', 'place', 'city_id', 'event_type_id', 'created_by_user_id', 'status'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+
+		$search[$key] = $request->input($key);
+	}
+
+	$event = new Event;
+	$events = $event->search($search);
+
+	return JSend::success("Events", array('events' => $events));
+});
+
+$app->get('/events/{event_id}', function($event_id) use($app) {
+	$event = new Event;
+
+	$data = $event->fetch($event_id);
+	if(!$data) return response(JSend::fail("Can't find event with ID $event_id", $event->errors), 404);
+
+	return JSend::success("Event: $event_id", ['event' => $data]);
+});
+
+$app->get('/events/{event_id}/users', function($event_id) use($app) {
+	$event = new Event;
+
+	$data = $event->find($event_id)->users();
+	if(!$data) return response(JSend::fail("Can't find event with ID $event_id", $event->errors), 404);
+
+	return JSend::success("Event: $event_id", ['users' => $data]);
 });
 
 });
