@@ -13,7 +13,7 @@ final class User extends Common
     public $timestamps = true;
     protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','status','user_type', 'joined_on', 'left_on'];
 
-    public function groups() 
+    public function groups()
     {
         $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->wherePivot('year',$this->year)->select('Group.id','Group.vertical_id', 'Group.name');
         return $groups->get();

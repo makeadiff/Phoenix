@@ -8,6 +8,15 @@ final class Event extends Common
 {
     protected $table = 'Event';
     public $timestamps = true;
+    const CREATED_AT = 'created_on';
+    const UPDATED_AT = 'updated_on';
+
+    private $rsvp = [
+            'no_data',
+            'going',
+            'maybe',
+            'cant_go',
+        ];
 
     protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'event_type_id', 'created_by_user_id', 'latitude', 'longitude', 'status'];
 
@@ -17,7 +26,8 @@ final class Event extends Common
         return $creator->first();
     }
 
-    public function search($data) {
+    public function search($data) 
+    {
         $search_fields = ['id', 'name', 'description', 'starts_on', 'place', 'city_id', 'event_type_id', 'created_by_user_id', 'status'];
 
         $q = app('db')->table('Event');
@@ -39,23 +49,65 @@ final class Event extends Common
         return $results;
     }
 
-    public function users() {
-        $users = $this->belongsToMany('App\Models\User', 'UserEvent', 'event_id', 'user_id')->select('User.id','User.name', 'UserEvent.present', 'UserEvent.late', 'UserEvent.user_choice');
-        $data = $users->get();
+    public function users($filter = []) 
+    {
+        $users = $this->belongsToMany('App\Models\User', 'UserEvent', 'event_id', 'user_id');
+        $users->select('User.id','User.name', 'UserEvent.present', 'UserEvent.late', 'UserEvent.user_choice');
+        if(isset($filter['rsvp'])) {
+            $key = array_search($filter['rsvp'], $this->rsvp);
+            $users->where('UserEvent.user_choice', '=', $key);
+        }
+        if(isset($filter['present'])) $users->where('UserEvent.present', '=', $filter['present']);
+        if(isset($filter['late'])) $users->where('UserEvent.late', '=', $filter['late']);
+        if(isset($filter['user_id'])) $users->where('UserEvent.user_id', '=', $filter['user_id']);
 
-        $rsvp = [
-            'no_data',
-            'going',
-            'maybe',
-            'cant_go',
-        ];
+        $data = $users->get();
+        // dd($users->toSql(), $users->getBindings());
 
         for($i=0; $i<count($data); $i++) {
-            $data[$i]->rsvp = $rsvp[$data[$i]->user_choice];
+            $data[$i]->rsvp = $this->rsvp[$data[$i]->user_choice];
             $data[$i]->present = ($data[$i]->present == 3) ? 0 : 1;
          }
 
         return $data;
+    }
+
+    public function add($data) 
+    {
+        $event = Event::create([
+            'name'          => $data['name'],
+            'description'   => isset($data['description']) ? $data['description'] : '',
+            'starts_on'     => isset($data['starts_on']) ? $data['starts_on'] : date('Y-m-d H:i:s'),
+            'place'         => isset($data['place']) ? $data['place'] : '',
+            'city_id'       => $data['city_id'],
+            'event_type_id' => $data['event_type_id'],
+            'created_by_user_id'   => $data['created_by_user_id'],
+            'latitude'      => isset($data['latitude']) ? $data['latitude'] : '',
+            'longitude'     => isset($data['longitude']) ? $data['longitude'] : '',
+        ]);
+
+        return $event;
+    }
+
+    public function updateUserConnection($event_id, $user_id, $data)
+    {
+        $q = app('db')->table("UserEvent");
+        $q->where('event_id', '=', $event_id)->where('user_id', '=', $user_id);
+
+        $fields = ['present', 'late', 'rsvp'];
+
+        $update = [];
+        foreach ($fields as $key) {
+            if(!isset($data[$key])) continue;
+
+            if($key == 'rsvp') $data[$key] = array_search($data[$key], $this->rsvp);
+
+            $update[$key] = $data[$key];
+        }
+
+        // A better way to do this is using the ::save() - but for some season its not working. Hence, this.
+
+        return $q->update($update);
     }
 
 }

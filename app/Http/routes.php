@@ -32,6 +32,8 @@ $app->post("/$url_prefix/users", ['middleware' => 'auth.basic', 'uses' => 'UserC
 $app->post("/$url_prefix/users/{user_id}", ['middleware' => 'auth.basic', 'uses' => 'UserController@edit']);
 $app->post("/$url_prefix/students", ['middleware' => 'auth.basic', 'uses' => 'StudentController@add']);
 $app->post("/$url_prefix/students/{student_id}", ['middleware' => 'auth.basic', 'uses' => 'StudentController@edit']);
+$app->post("/$url_prefix/events", ['middleware' => 'auth.basic', 'uses' => 'EventController@add']);
+$app->post("/$url_prefix/events/{event_id}", ['middleware' => 'auth.basic', 'uses' => 'EventController@edit']);
 
 $app->group(['prefix' => $url_prefix, 'middleware' => 'auth.basic'], function($app) {
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
@@ -221,6 +223,7 @@ $app->get('/levels/{level_id}/batches', function($level_id) use ($app) {
 
 	return JSend::success("Levels in batch $level_id", array('batches' => $batches));
 });
+
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
 $app->get('/users', function(Request $request) use ($app) {
 	$search_fields = ['name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id'];
@@ -305,7 +308,7 @@ $app->delete('/users/{user_id}', function($user_id) use ($app) {
 
 	$info = $user->remove($user_id);
 
-	return JSend::success("User deleted successfully", array('user' => $info));
+	return ""; // JSend::success("User deleted successfully", array('user' => $info));
 });
 
 $app->get('/users/{user_id}/groups', function($user_id) use ($app) {
@@ -335,7 +338,7 @@ $app->delete('/users/{user_id}/groups/{group_id}', function($user_id, $group_id)
 	$groups = $user->find($user_id)->removeGroup($group_id);
 	if(!$groups) return response(JSend::fail("User don't have the given group"), 400);
 
-	return JSend::success("Removed user from the given group.", array('groups' => $groups));
+	return ""; // JSend::success("Removed user from the given group.", array('groups' => $groups));
 });
 
 ///////////////////////////////////////////////////////// Student Calls //////////////////////////////////////////////
@@ -359,7 +362,7 @@ $app->delete('/students/{student_id}', function($student_id) use ($app) {
 
 	$info = $student->remove($student_id);
 
-	return JSend::success("User deleted successfully", array('student' => $info));
+	return ""; // JSend::success("User deleted successfully", array('student' => $info));
 });
 
 $app->get('/students/{student_id}', function($student_id) use ($app) {
@@ -517,13 +520,61 @@ $app->get('/events/{event_id}', function($event_id) use($app) {
 	return JSend::success("Event: $event_id", ['event' => $data]);
 });
 
-$app->get('/events/{event_id}/users', function($event_id) use($app) {
+$app->delete('/events/{event_id}', function($event_id) use($app) {
 	$event = new Event;
 
-	$data = $event->find($event_id)->users();
+	$data = $event->fetch($event_id);
+	if(!$data) return response(JSend::fail("Can't find event with ID $event_id", $event->errors), 404);
+
+	$info = $event->remove($event_id);
+
+	return "";
+});
+
+$app->get('/events/{event_id}/users', function($event_id, Request $request) use($app) {
+	$event = new Event;
+
+	$filter = $request->all();
+	$data = $event->find($event_id)->users($filter);
 	if(!$data) return response(JSend::fail("Can't find event with ID $event_id", $event->errors), 404);
 
 	return JSend::success("Event: $event_id", ['users' => $data]);
 });
 
+$app->get('/events/{event_id}/attended', function($event_id) use($app) {
+	$event = new Event;
+
+	$data = $event->find($event_id)->users(['present' => '1']);
+	if(!$data) return response(JSend::fail("Can't find event with ID $event_id", $event->errors), 404);
+
+	return JSend::success("Event: $event_id", ['users' => $data]);
 });
+
+$app->get('/events/{event_id}/users/{user_id}', function($event_id, $user_id) use($app) {
+	$event = new Event;
+	$data = $event->find($event_id)->users(['user_id' => $user_id]);
+	if(!count($data)) return response(JSend::fail("Can't find event with ID $event_id / User with ID $user_id", $event->errors), 404);
+
+	return JSend::success("Event: $event_id", ['user' => $data[0]]);
+});
+
+$app->post('/events/{event_id}/users/{user_id}', function($event_id, $user_id, Request $request) use($app) {
+	$event = new Event;
+	$update = $event->updateUserConnection($event_id, $user_id, $request->all());
+	// if(!$update) return response(JSend::fail("Error updating connection", $event->errors), 400); // If there is no change, this is getting triggered.
+
+	$data = $event->find($event_id)->users(['user_id' => $user_id]);
+	if(!count($data)) return response(JSend::fail("Can't find event with ID $event_id / User with ID $user_id", $event->errors), 404);
+
+	return JSend::success("Event: $event_id", ['user' => $data[0]]);
+});
+
+});
+
+
+/**
+ * Possible Changes...
+ *
+ * starts_on -> start_on
+ * updateUserConnection($event_id, $user_id, $data) -> $event->find($event_id)->updateUserConnection($use_id, $data)
+ */
