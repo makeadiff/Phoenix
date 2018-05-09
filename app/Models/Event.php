@@ -89,10 +89,29 @@ final class Event extends Common
         return $event;
     }
 
-    public function updateUserConnection($event_id, $user_id, $data)
+    public function invite($user_ids, $event_id = false)
     {
+        $this->chain($event_id);
+
+        $user_event_insert = [];
+        foreach ($user_ids as $user_id) {
+            $user_event_insert[] = [
+                'user_id'   => $user_id,
+                'event_id'  => $this->id,
+                'present'   => '0',
+                'created_from'  => '1'
+            ];
+        }
+
+        app('db')->table('UserEvent')->insert($user_event_insert);
+    }
+
+    public function updateUserConnection($user_id, $data, $event_id = false)
+    {
+        $this->chain($event_id);
+
         $q = app('db')->table("UserEvent");
-        $q->where('event_id', '=', $event_id)->where('user_id', '=', $user_id);
+        $q->where('event_id', '=', $this->id)->where('user_id', '=', $user_id);
 
         $fields = ['present', 'late', 'rsvp'];
 
@@ -110,4 +129,12 @@ final class Event extends Common
         return $q->update($update);
     }
 
+    public function deleteUserConnection($user_id, $event_id = false)
+    {
+        $this->chain($event_id);
+
+        $q = app('db')->table("UserEvent");
+        $q->where('event_id', '=', $this->id)->where('user_id', '=', $user_id);
+        $q->delete();
+    }
 }

@@ -1131,6 +1131,7 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Donation"
+
     post:
       tags:
         - donation
@@ -1192,6 +1193,7 @@ paths:
           description: Donation added successfully
         400:
           description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+
   /donations/{donation_id}:
     get:
       tags:
@@ -1214,6 +1216,7 @@ paths:
               $ref: "#/definitions/Donation"
         404:
           description: Can't find donation with given ID
+
     delete:
       tags:
         - donation
@@ -1599,6 +1602,7 @@ paths:
         - name: invite_user_ids
           in: formData
           type: string
+          required: true
           description: Comma seperated IDs of all the users that is invited to the given event.
       responses:
         200:

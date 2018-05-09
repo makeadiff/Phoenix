@@ -541,6 +541,22 @@ $app->get('/events/{event_id}/users', function($event_id, Request $request) use(
 	return JSend::success("Event: $event_id", ['users' => $data]);
 });
 
+$app->post('/events/{event_id}/users', function($event_id, Request $request) use($app) {
+	$event = new Event;
+
+	$user_ids_raw = $request->input('invite_user_ids');
+	if(!is_array($user_ids_raw)) $user_ids = explode(",", $user_ids_raw);
+	else $user_ids = $user_ids_raw;
+
+	$event = $event->find($event_id);
+	if(!$event) return response(JSend::fail("Can't find event with ID $event_id", $event->errors), 404);
+
+	$event->invite($user_ids);
+	$count = count($user_ids);
+
+	return JSend::success( $count . " users invited to event", ['invited_count' => $count]);
+});
+
 $app->get('/events/{event_id}/attended', function($event_id) use($app) {
 	$event = new Event;
 
@@ -560,13 +576,23 @@ $app->get('/events/{event_id}/users/{user_id}', function($event_id, $user_id) us
 
 $app->post('/events/{event_id}/users/{user_id}', function($event_id, $user_id, Request $request) use($app) {
 	$event = new Event;
-	$update = $event->updateUserConnection($event_id, $user_id, $request->all());
+	$update = $event->find($event_id)->updateUserConnection($user_id, $request->all());
 	// if(!$update) return response(JSend::fail("Error updating connection", $event->errors), 400); // If there is no change, this is getting triggered.
 
 	$data = $event->find($event_id)->users(['user_id' => $user_id]);
 	if(!count($data)) return response(JSend::fail("Can't find event with ID $event_id / User with ID $user_id", $event->errors), 404);
 
 	return JSend::success("Event: $event_id", ['user' => $data[0]]);
+});
+
+$app->delete('/events/{event_id}/users/{user_id}', function($event_id, $user_id) use($app) {
+	$event = new Event;
+
+	$data = $event->find($event_id)->users(['user_id' => $user_id]);
+	if(!count($data)) return response(JSend::fail("Can't find event with ID $event_id / User with ID $user_id", $event->errors), 404);
+
+	$event->find($event_id)->deleteUserConnection($user_id);
+	return ""; 
 });
 
 });
@@ -576,5 +602,4 @@ $app->post('/events/{event_id}/users/{user_id}', function($event_id, $user_id, R
  * Possible Changes...
  *
  * starts_on -> start_on
- * updateUserConnection($event_id, $user_id, $data) -> $event->find($event_id)->updateUserConnection($use_id, $data)
  */

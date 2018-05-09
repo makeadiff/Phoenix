@@ -69,5 +69,7 @@ class Common extends Model
         if(!$this->item) {
             $this->item = $this->find($this->id);
         }
+
+        return $this->id;
     }
 }
