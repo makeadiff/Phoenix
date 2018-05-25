@@ -99,7 +99,8 @@ final class Event extends Common
                 'user_id'   => $user_id,
                 'event_id'  => $this->id,
                 'present'   => '0',
-                'created_from'  => '1'
+                'created_from'  => '1',
+                'created_on'=> date('Y-m-d H:i:s'),
             ];
         }
 

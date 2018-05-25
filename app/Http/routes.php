@@ -601,5 +601,6 @@ $app->delete('/events/{event_id}/users/{user_id}', function($event_id, $user_id)
 /**
  * Possible Changes...
  *
- * starts_on -> start_on
+ * Event.starts_on -> start_on
+ * UserEvent.created_on -> added_on
  */
