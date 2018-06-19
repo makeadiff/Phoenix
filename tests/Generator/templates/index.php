@@ -22,11 +22,6 @@ $html->buildInput("show-step-2", "&nbsp;", "button", "Show Step 2", array('class
 	$html->buildInput("test_type", "Test Type", "select", $test_type, array('options' => $all_test_types));
 	?>
 	<table>
-<!-- 		<tr><td width="100">&nbsp;</td><th width="200">Path</th><th>Value</th></tr>
-		<tr><td>&nbsp;</td><td><input class="data-path" name="data-path[]" value="$data->data->" /></td><td><input name="data-value[]" value="" /></td></tr>
-		<tr><td>&nbsp;</td><td><input class="data-path" name="data-path[]" value="$data->data->" /></td><td><input name="data-value[]" value="" /></td></tr>
-		<tr><td>&nbsp;</td><td><input class="data-path" name="data-path[]" value="$data->data->" /></td><td><input name="data-value[]" value="" /></td></tr>
-		<tr><td>&nbsp;</td><th colspan="2"> OR </th></tr> -->
 		<tr><td width="100">&nbsp;</td><td colspan="2"><textarea name="data-assertion" id="data-assertion" rows="5" cols="80"></textarea></td></tr>
 		<tr><td>&nbsp;</td><td colspan="2">Insert: <br />
 								<input type="button" id="search-array" value="Search Array" class='btn btn-success btn-xs' /> &nbsp;

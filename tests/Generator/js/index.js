@@ -43,6 +43,7 @@ function setUrl() {
 		"{city_id}": 	28,		// Test City
 		"{group_id}": 	9,		// ES Volunteer
 		"{student_id}": 21932,	// Yoda
+		"{event_id}": 	2069,
 	}
 
 	var url = path;
@@ -66,7 +67,9 @@ function getApiData() {
 
 	$.ajax({
 		url: full_url,
-
+		beforeSend: function (xhr) {
+		    xhr.setRequestHeader ("Authorization", "Basic " + btoa("sulu.simulation@makeadiff.in:pass"));
+		},
 	}).done(function(data) {
 		var all_keys = Object.keys(data['data']);
 		data_object_name = all_keys[0];

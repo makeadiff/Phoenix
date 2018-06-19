@@ -6,7 +6,7 @@ $html = new HTML;
 
 $swagger_file = '/mnt/x/Data/www/Projects/Phoenix/api/swagger/swagger.yaml';
 $api = yaml_parse(file_get_contents($swagger_file));
-$api_base_path = 'http://localhost/Projects/Phoenix/public';
+$api_base_path = 'http://localhost/Projects/Phoenix/v1';
 
 $path = i($QUERY, 'path');
 $verb = i($QUERY, 'verb', 'get');

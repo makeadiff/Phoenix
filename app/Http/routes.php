@@ -248,7 +248,10 @@ $app->get('/users', function(Request $request) use ($app) {
 
 $app->get('/users/login', function(Request $request) use ($app) {
 	$user = new User;
-	$data = $user->login($request->input('phone'), $request->input('password'));
+	$phone_or_email = $request->input('phone');
+	if(!$phone_or_email) $phone_or_email = $request->input('email');
+	if(!$phone_or_email) $phone_or_email = $request->input('identifier');
+	$data = $user->login($phone_or_email, $request->input('password'));
 
 	if(!$data) {
 		$error = "Invalid username/password";
@@ -541,6 +544,7 @@ $app->get('/events/{event_id}/users', function($event_id, Request $request) use(
 	return JSend::success("Event: $event_id", ['users' => $data]);
 });
 
+/// Invite Users
 $app->post('/events/{event_id}/users', function($event_id, Request $request) use($app) {
 	$event = new Event;
 
