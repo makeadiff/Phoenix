@@ -17,7 +17,7 @@ class EventController extends Controller
     {
         $validation_rules = [
             'name'                  => 'required|max:50',
-            'city_id'               => 'required|numeric|exists:City,id',
+            // 'city_id'               => 'sometimes|required|numeric|exists:City,id', // Disabled because I can't get 0 to validate.
             'created_by_user_id'    => 'required|numeric|exists:User,id',
             'event_type_id'         => 'required|numeric|exists:Event_Type,id',
         ];
@@ -45,7 +45,7 @@ class EventController extends Controller
 
         $validation_rules = [
             'name'                  => 'max:50',
-            'city_id'               => 'numeric|exists:City,id',
+            'city_id'               => 'numeric|sometimes|exists:City,id',
             'created_by_user_id'    => 'numeric|exists:User,id',
             'event_type_id'         => 'numeric|exists:Event_Type,id',
         ];
