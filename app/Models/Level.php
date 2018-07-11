@@ -17,7 +17,7 @@ final class Level extends Common
     }
 
     public function search($data) {
-        $search_fields = ['id', 'name', 'grade', 'center_id', 'status'];
+        $search_fields = ['id', 'name', 'grade', 'center_id', 'project_id', 'status'];
         $q = app('db')->table('Level');
         $q->select('Level.id', 'name', 'grade', 'Level.center_id', 'Level.status');
         if(!isset($data['status'])) $data['status'] = '1';

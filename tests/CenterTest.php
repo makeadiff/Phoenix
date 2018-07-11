@@ -106,6 +106,27 @@ class CenterTest extends TestCase
         $this->assertEquals(200, $this->response->status());
     }
 
+    /// Path: GET    /centers/{center_id}/levels?project_id=2
+    public function testGetCentersLevelsInFoundationList()
+    {
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+
+        $this->load('/centers/154/levels?project_id=2');
+        $data = json_decode($this->response->getContent());
+
+        $this->assertEquals($data->status, 'success');
+        $search_for = '10 M';
+        $found = false;
+        foreach ($data->data->levels as $key => $info) {
+            if($info->name == $search_for) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+        $this->assertEquals(200, $this->response->status());
+    }
+
     /// Path: GET    /centers/{center_id}/batches
     public function testGetCentersBatchesList()
     {
@@ -127,4 +148,24 @@ class CenterTest extends TestCase
         $this->assertEquals(200, $this->response->status());
     }
 
+    /// Path: GET    /centers/{center_id}/batches?project_id=2
+    public function testGetCentersBatchesFoundationList()
+    {
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+
+        $this->load('/centers/154/batches?project_id=2');
+        $data = json_decode($this->response->getContent());
+
+        $this->assertEquals($data->status, 'success');
+        $search_for = 'Sunday 04:00 PM';
+        $found = false;
+        foreach ($data->data->batches as $key => $info) {
+            if($info->name == $search_for) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+        $this->assertEquals(200, $this->response->status());
+    }
 }

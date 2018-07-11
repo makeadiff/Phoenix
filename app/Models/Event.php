@@ -108,6 +108,8 @@ final class Event extends Common
         foreach ($user_ids as $user_id) {
         	$rsvp_auth_key = substr(md5(time()), 0,  10);
 
+        	// :TODO: Check if the user_id, event_id combo is there already 
+
             $user_event_insert[] = [
                 'user_id'   => $user_id,
                 'event_id'  => $this->id,

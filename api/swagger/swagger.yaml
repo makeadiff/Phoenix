@@ -757,6 +757,11 @@ paths:
           type: integer
           description: ID of the center
           required: true
+        - name: project_id
+          in: query
+          type: string
+          enum: [1,2]
+          description: ID of the program of which levels should be returned. Value can be 1 or 2 - Ed Support or Foundation. Defaults to 1(Ed Support) 
       responses:
         200:
           description: Ok
@@ -776,6 +781,11 @@ paths:
           type: integer
           description: ID of the center
           required: true
+        - name: project_id
+          in: query
+          type: string
+          enum: [1,2]
+          description: ID of the program of which batches should be returned. Value can be 1 or 2 - Ed Support or Foundation. Defaults to 1(Ed Support) 
       responses:
         200:
           description: Ok

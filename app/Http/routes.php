@@ -160,19 +160,25 @@ $app->get('/centers/{center_id}/students', function ($center_id) use ($app) {
     return JSend::success("List of students in $center[name]", array('students' => $students));
 });
 
-$app->get('/centers/{center_id}/batches', function ($center_id) use ($app) {
+$app->get('/centers/{center_id}/batches', function ($center_id, Request $request) use ($app) {
 	$center = (new Center)->fetch($center_id);
 	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
- 
-    $batches = (new Batch)->search(['center_id' => $center_id]);
+
+	$project_id = $request->input('project_id');
+	if(!$project_id) $project_id = 1;
+
+    $batches = (new Batch)->search(['center_id' => $center_id, 'project_id' => $project_id]);
     return JSend::success("List of batches in $center[name]", array('batches' => $batches));
 });
 
-$app->get('/centers/{center_id}/levels', function ($center_id) use ($app) {
+$app->get('/centers/{center_id}/levels', function ($center_id, Request $request) use ($app) {
 	$center = (new Center)->fetch($center_id);
 	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
+
+	$project_id = $request->input('project_id');
+	if(!$project_id) $project_id = 1;
  
-    $levels = (new Level)->search(['center_id' => $center_id]);
+    $levels = (new Level)->search(['center_id' => $center_id, 'project_id' => $project_id]);
     return JSend::success("List of levels in $center[name]", array('levels' => $levels));
 });
 
