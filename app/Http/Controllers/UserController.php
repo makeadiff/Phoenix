@@ -38,7 +38,7 @@ class UserController extends Controller
     public function edit(Request $request, $user_id)
     {
         $user = new User;
-        $exists = $user->fetch($user_id);
+        $exists = $user->fetch($user_id, false);
 
         if(!$exists) {
             return response(JSend::fail("Can't find any user with the given ID"), 404);

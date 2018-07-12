@@ -73,7 +73,7 @@ paths:
           in: query
           type: integer
           required: false
-          description: Returns all the teachers in the given city.
+          description: Returns all the teachers in the given center. 
       responses:
         '200':
           description: Returns the list of users according to the given parameters.
@@ -217,7 +217,13 @@ paths:
         - name: sex
           in: formData
           type: string
+          enum: [m,f,o]
           description: Sex of the user - can be "m", "f" or "o"
+        - name: user_type
+          in: formData
+          type: string
+          enum: [applicant,volunteer,let_go,alumnai]
+          description: User Type of the user - they will only be active if this is set to 'volunteer'.
       responses:
         200:
           description: User edited with given data

@@ -2,7 +2,7 @@
 
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
-    protected $only_priority_tests = true;
+    protected $only_priority_tests = false;
     protected $write_to_db = true;
     protected $url_prefix = '/v1';
     protected $call_headers = [
