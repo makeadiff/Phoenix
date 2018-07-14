@@ -260,7 +260,6 @@ final class User extends Common
 
         if($data) {
             $password_is_correct = Hash::check($password, $data->password_hash);
-            // $password_is_correct = Hash::check($password, $data->password);
 
             if(!$password_is_correct) { // Incorrect password
                 $data = null;

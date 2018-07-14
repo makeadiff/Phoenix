@@ -155,13 +155,13 @@ paths:
           required: true
           type: integer
       responses:
-        200:
+        '200':
           description: Returns the user details
           schema:
             type: "object"
             items:
               $ref: "#/definitions/User"
-        404:
+        '404':
           description: Can't find user with given ID
     post:
       tags:
@@ -206,10 +206,6 @@ paths:
           type: string
           format: "date"
           description: The date user left MAD. Don't include this field if the user is still a volunteer
-        - name: user_type
-          in: formData
-          type: string
-          description: Can be any of these "volunteer", "let_go", "alumnai", "applicant"
         - name: address
           in: formData
           type: string
@@ -1620,6 +1616,11 @@ paths:
           type: string
           required: true
           description: Comma seperated IDs of all the users that is invited to the given event.
+        - name: send_invite_emails
+          in: formData
+          type: string
+          enum: [1,0]
+          description: Send event invitation emails to all the invited users. Defaults to '1'
       responses:
         200:
           description: All the given users have been invited to the event.

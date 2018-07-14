@@ -561,7 +561,10 @@ $app->post('/events/{event_id}/users', function($event_id, Request $request) use
 	$event = $event->find($event_id);
 	if(!$event) return response(JSend::fail("Can't find event with ID $event_id", $event->errors), 404);
 
-	$event->invite($user_ids);
+	$send_envites = $request->input('send_invite_emails');
+	if($send_envites !== '0')
+		$event->invite($user_ids);
+	
 	$count = count($user_ids);
 
 	return JSend::success( $count . " users invited to event", ['invited_count' => $count]);
