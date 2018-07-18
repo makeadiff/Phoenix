@@ -14,7 +14,7 @@ class Common extends Model
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->year = 2017; // :TODO:
+        $this->year = 2018; // :TODO: :HARDCODE:
     }
 
     public function fetch($id)
