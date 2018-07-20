@@ -47,7 +47,7 @@ class BatchTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->load('/batches/1971/levels');
+        $this->load('/batches/2494/levels');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');

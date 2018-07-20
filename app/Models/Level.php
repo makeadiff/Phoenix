@@ -46,9 +46,13 @@ final class Level extends Common
         return $results;
     }
 
-    public function fetch($id) {
+    public function fetch($id, $is_active = true) {
         $this->id = $id;
-        $this->item = $this->where('status', '1')->where('year', $this->year)->find($id);
+
+        if($is_active)
+            $this->item = $this->where('status', '1')->where('year', $this->year)->find($id);
+        else 
+            $this->item = $this->find($id);
         if(!$this->item) return false;
         
         $this->item->name = $this->item->grade . ' ' . $this->item->name;

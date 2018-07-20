@@ -184,13 +184,13 @@ $app->get('/centers/{center_id}/levels', function ($center_id, Request $request)
 
 ////////////////////////////////////////////////////////// Batches ///////////////////////////////////////////
 $app->get('/batches/{batch_id}', function($batch_id) use ($app) {
-	$batch = (new Batch)->fetch($batch_id);
+	$batch = (new Batch)->fetch($batch_id, false);
 	if(!$batch) return response(JSend::fail("Can't find any batch with ID $batch_id"), 404);
 
 	return JSend::success("Batch ID : $batch_id", array('batch' => $batch));
 });
 $app->get('/batches/{batch_id}/teachers', function($batch_id) use ($app) {
-	$batch = (new Batch)->fetch($batch_id);
+	$batch = (new Batch)->fetch($batch_id, false);
 	if(!$batch) return response(JSend::fail("Can't find any batch with ID $batch_id"), 404);
 
 	$teachers = (new User)->search(['batch_id' => $batch_id]);
@@ -198,7 +198,7 @@ $app->get('/batches/{batch_id}/teachers', function($batch_id) use ($app) {
 	return JSend::success("Teachers in batch $batch_id", array('teachers' => $teachers));
 });
 $app->get('/batches/{batch_id}/levels', function($batch_id) use ($app) {
-	$batch = (new Batch)->fetch($batch_id);
+	$batch = (new Batch)->fetch($batch_id, false);
 	if(!$batch) return response(JSend::fail("Can't find any batch with ID $batch_id"), 404);
 
 	$levels = (new Level)->search(['batch_id' => $batch_id]);
@@ -208,13 +208,13 @@ $app->get('/batches/{batch_id}/levels', function($batch_id) use ($app) {
 
 ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
 $app->get('/levels/{level_id}', function($level_id) use ($app) {
-	$level = (new Level)->fetch($level_id);
+	$level = (new Level)->fetch($level_id, false);
 	if(!$level) return response(JSend::fail("Can't find any level with ID $level_id"), 404);
 
 	return JSend::success("Level ID : $level_id", array('level' => $level));
 });
 $app->get('/levels/{level_id}/students', function($level_id) use ($app) {
-	$level = (new Level)->fetch($level_id);
+	$level = (new Level)->fetch($level_id, false);
 	if(!$level) return response(JSend::fail("Can't find any level with ID $level_id"), 404);
 
 	$students = (new Student)->search(['level_id' => $level_id]);
@@ -222,7 +222,7 @@ $app->get('/levels/{level_id}/students', function($level_id) use ($app) {
 	return JSend::success("Students in Level $level_id", array('students' => $students));
 });
 $app->get('/levels/{level_id}/batches', function($level_id) use ($app) {
-	$level = (new Level)->fetch($level_id);
+	$level = (new Level)->fetch($level_id, false);
 	if(!$level) return response(JSend::fail("Can't find any level with ID $level_id"), 404);
 
 	$batches = (new Batch)->search(['level_id' => $level_id]);

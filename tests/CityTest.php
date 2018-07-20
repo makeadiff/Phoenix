@@ -52,11 +52,11 @@ class CityTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->load('/cities/1/users');
+        $this->load('/cities/28/users');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->users[0]->name, 'AADAM ILLIAS');
+        $this->assertEquals($data->data->users[0]->name, 'Center Head Test');
         $this->assertEquals(200, $this->response->status());
     }
 
