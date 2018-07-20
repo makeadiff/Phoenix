@@ -17,7 +17,7 @@ final class Batch extends Common
     }
 
     public function search($data) {
-        $search_fields = ['id', 'day', 'class_time', 'center_id', 'project_id', 'status'];
+        $search_fields = ['id', 'day', 'class_time', 'center_id', 'project_id', 'year', 'status'];
         $q = app('db')->table('Batch');
         $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status');
         if(!isset($data['status'])) $data['status'] = '1';
