@@ -98,7 +98,7 @@ final class Event extends Common
         return $event;
     }
 
-    public function invite($user_ids, $event_id = false)
+    public function invite($user_ids, $send_invite_email = true, $event_id = false)
     {
         $this->chain($event_id);
 
@@ -119,7 +119,7 @@ final class Event extends Common
                 'rsvp_auth_key' => $rsvp_auth_key
             ];
 
-            $this->sendInvite($this->id, $user_id, $rsvp_auth_key);
+            if($send_invite_email) $this->sendInvite($this->id, $user_id, $rsvp_auth_key);
         }
 
         app('db')->table('UserEvent')->insert($user_event_insert);
