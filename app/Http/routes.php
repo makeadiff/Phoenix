@@ -312,7 +312,7 @@ $app->post('/users/{user_id}/credit', function($user_id, Request $request) use (
 // $app->post('/users/{user_id}','UserController@edit');
 $app->delete('/users/{user_id}', function($user_id) use ($app) {
 	$user = new User;
-	$info = $user->fetch($user_id);
+	$info = $user->fetch($user_id, false);
 	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 
 	$info = $user->remove($user_id);

@@ -72,11 +72,12 @@ class UserTest extends TestCase
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
         if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
 
+        $email = 'test.test_dxd3@gmail.com';
         // This will create a new user.
         $user = array(
             'name'  => 'Test Dude',
-            'phone' => '10000000001',
-            'email' => 'test.test_dude@gmail.com',
+            'phone' => '10000000014',
+            'email' => $email,
             'password'  => 'pass',
             'joined_on' => date('Y-m-d H:i:s'),
             'city_id'   => 28,
@@ -87,9 +88,9 @@ class UserTest extends TestCase
 
         $data = json_decode($response->getContent());
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->user->email, "test.test_dude@gmail.com");
+        $this->assertEquals($data->data->user->email, $email);
         $this->assertEquals(200, $this->response->status());
-        $this->seeInDatabase('User', array('email' => 'test.test_dude@gmail.com'));
+        $this->seeInDatabase('User', array('email' => $email));
 
         // :TODO: DELETE FROM User WEHRE id=$data->data->user->id
     }
@@ -124,8 +125,7 @@ class UserTest extends TestCase
         if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
 
         $response = $this->load('/users/6', 'DELETE');
-        $data = json_decode($response->getContent());
-        $this->assertEquals($data->status, 'success');
+        $this->assertEquals(200, $this->response->status());
         $this->seeInDatabase('User', array('id' => '6', 'status' => '0'));
     }
 

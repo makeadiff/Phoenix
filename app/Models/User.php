@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 final class User extends Common
 {
-    const CREATED_AT = 'added_on';
+    const CREATED_AT = 'joined_on';
     const UPDATED_AT = 'updated_on';
     protected $table = 'User';
     public $timestamps = true;

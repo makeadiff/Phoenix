@@ -38,7 +38,7 @@ class GroupTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $search_for = 'HC Fellow';
+        $search_for = 'Human Capital Fellow';
         $found = false;
         foreach ($data->data->groups as $key => $info) {
             if($info->name == $search_for) {
@@ -47,7 +47,7 @@ class GroupTest extends TestCase
             }
         }
         $this->assertTrue($found, "Couldn't find '$search_for' in the groups.");
-        $this->assertEquals(count($data->data->groups), 4);
+        $this->assertEquals(count($data->data->groups), 5);
         $this->assertEquals(200, $this->response->status());
     }
 

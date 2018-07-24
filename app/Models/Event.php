@@ -44,6 +44,8 @@ final class Event extends Common
         foreach ($search_fields as $field) {
             if(empty($data[$field])) continue;
 
+            if($field == 'name' or $field == 'description' or $field == 'place')
+                $q->where("Event." . $field, 'LIKE', "%" . $data[$field] . "%");
             else $q->where("Event." . $field, $data[$field]);
         }
         $q->where("Event.starts_on", '>', $this->year . '-05-01 00:00:00');
@@ -51,6 +53,7 @@ final class Event extends Common
         $q->join('Event_Type', 'Event.event_type_id', '=', 'Event_Type.id');
         $q->orderBy('Event.starts_on', 'Event.name');
         $results = $q->get();
+        // dd($q->toSql(), $q->getBindings());
 
         return $results;
     }

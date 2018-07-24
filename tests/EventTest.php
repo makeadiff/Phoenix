@@ -14,7 +14,7 @@ class EventTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $search_for = 'Test';
+        $search_for = 'Test 123'; // This will get deleted at some point. Plan for it.
         $found = false;
         foreach ($data->data->events as $key => $info) {
             if($info->name == $search_for) {
