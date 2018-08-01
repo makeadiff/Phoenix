@@ -1437,6 +1437,10 @@ paths:
           required: true
           type: integer
           description: The ID of the event type.
+        - name: vertical_id
+          in: formData
+          type: integer
+          description: The vertical of this event
         - name: created_by_user_id
           in: formData
           type: integer
@@ -1518,6 +1522,10 @@ paths:
           required: true
           type: integer
           description: The ID of the event type.
+        - name: vertical_id
+          in: formData
+          type: integer
+          description: The vertical of this event
         - name: created_by_user_id
           in: formData
           type: integer

@@ -561,8 +561,8 @@ $app->post('/events/{event_id}/users', function($event_id, Request $request) use
 	$event = $event->find($event_id);
 	if(!$event) return response(JSend::fail("Can't find event with ID $event_id", $event->errors), 404);
 
-	$send_envites = $request->input('send_invite_emails');
-	$event->invite($user_ids, $send_envites);
+	$send_invites = $request->input('send_invite_emails');
+	$event->invite($user_ids, $send_invites);
 	
 	$count = count($user_ids);
 
@@ -607,6 +607,18 @@ $app->delete('/events/{event_id}/users/{user_id}', function($event_id, $user_id)
 	return ""; 
 });
 
+
+////////////////////////////////// Debug //////////////////////////
+$app->get('/events/{event_id}/send_invites', function($event_id) use($app) {
+	$event = new Event;
+	$invited_users = $event->find($event_id)->users();
+
+	foreach ($invited_users as $user) {
+		$event->sendInvite($event_id, $user->id, $user->rsvp_auth_key);
+	}
+
+	return JSend::success("Sent event invites.", ['invited_user_count' => count($invited_users)]);
+});
 });
 
 

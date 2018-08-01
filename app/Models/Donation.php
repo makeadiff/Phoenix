@@ -177,29 +177,34 @@ final class Donation extends Common
             'status'            => 'collected',
         ]);
 
-        $sms = new SMS;
-        $message = "Dear {$data['donor_name']}, Thanks a lot for your contribution of Rs. {$data['amount']} towards Make a Difference. This is only an acknowledgement. A confirmation and e-receipt would be sent once the amount reaches us.";
-        $sms->send($data['donor_phone'], $message);
+        if(!isset($data['dont_send_sms'])) { // This is an undocumented way to prevent sending SMS when making a donation. Useful for testing, seeding, etc.
+            $sms = new SMS;
+            $message = "Dear {$data['donor_name']}, Thanks a lot for your contribution of Rs. {$data['amount']} towards Make a Difference. "
+                            . " This is only an acknowledgement. A confirmation and e-receipt would be sent once the amount reaches us.";
+            $sms->send($data['donor_phone'], $message);
+        }
 
-        $base_path = app()->basePath();
-        $base_url = url('/');
+        if(!isset($data['dont_send_email'])) { // This is an undocumented way to prevent sending Email when making a donation. Useful for testing, seeding, etc.
+            $base_path = app()->basePath();
+            $base_url = url('/');
 
-        $mail = new Email;
-        $mail->from     = "noreply <noreply@makeadiff.in>";
-        $mail->to       = $data['donor_email'];
-        $mail->subject  = "Donation Acknowledgment";;
+            $mail = new Email;
+            $mail->from     = "noreply <noreply@makeadiff.in>";
+            $mail->to       = $data['donor_email'];
+            $mail->subject  = "Donation Acknowledgment";;
 
-        $email_html = file_get_contents($base_path . '/resources/email_templates/donation_acknowledgement.html');
-        $mail->html = str_replace(  array('%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'), 
-                                    array($base_url,$data['amount'],$data['donor_name'], date('d/m/Y')), $email_html);
+            $email_html = file_get_contents($base_path . '/resources/email_templates/donation_acknowledgement.html');
+            $mail->html = str_replace(  array('%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'), 
+                                        array($base_url,$data['amount'],$data['donor_name'], date('d/m/Y')), $email_html);
 
-        $images = [
-            $base_path . '/public/assets/mad-letterhead-left.png',
-            $base_path . '/public/assets/mad-letterhead-logo.png',
-            $base_path . '/public/assets/mad-letterhead-right.png'
-        ];
-        $mail->images = $images;
-        $mail->send();
+            $images = [
+                $base_path . '/public/assets/mad-letterhead-left.png',
+                $base_path . '/public/assets/mad-letterhead-logo.png',
+                $base_path . '/public/assets/mad-letterhead-right.png'
+            ];
+            $mail->images = $images;
+            $mail->send();
+        }
 
         return $donation;
     }
