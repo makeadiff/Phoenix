@@ -14,7 +14,6 @@ class Common extends Model
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        // $this->year = 2018; // :TODO: :HARDCODE:
 
         // Current year
         $this_month = intval(date('m'));
