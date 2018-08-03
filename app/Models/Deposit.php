@@ -12,7 +12,7 @@ final class Deposit extends Common
     protected $table = 'Donut_Deposit';
     public $timestamps = true;
     protected $fillable = ['collected_from_user_id', 'given_to_user_id', 'reviewed_on', 'amount', 'status'];
-    protected $national_account_user_id = 13257; // Pooja's User ID in Donut
+    protected $national_account_user_id = 163416; // National Finance User ID.
 
     public function donations()
     {

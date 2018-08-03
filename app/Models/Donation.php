@@ -12,7 +12,7 @@ final class Donation extends Common
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $table = 'Donut_Donation';
-    public $start_date = '2017-08-01 00:00:00';
+    public $start_date = $this->year . '-05-01 00:00:00';
     public $timestamps = true;
     protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'cheque_no', 'added_on', 'updated_on', 'updated_by_user_id', 'comment'];
     protected $donation_statuses = ['collected', 'deposited', 'receipted'];

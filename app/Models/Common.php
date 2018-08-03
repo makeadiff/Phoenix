@@ -14,7 +14,15 @@ class Common extends Model
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->year = 2018; // :TODO: :HARDCODE:
+        // $this->year = 2018; // :TODO: :HARDCODE:
+
+        // Current year
+        $this_month = intval(date('m'));
+        $months = array();
+        $start_month = 5; // May
+        $start_year = date('Y');
+        if($this_month < $start_month) $start_year = date('Y')-1;
+        $this->year = $start_year;
     }
 
     public function fetch($id)
