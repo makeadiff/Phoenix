@@ -28,14 +28,8 @@ $app->get('/', function () use ($app) {
 
 $url_prefix = 'v1';
 
-$app->post("/$url_prefix/users", ['middleware' => 'auth.basic', 'uses' => 'UserController@add']);
-$app->post("/$url_prefix/users/{user_id}", ['middleware' => 'auth.basic', 'uses' => 'UserController@edit']);
-$app->post("/$url_prefix/students", ['middleware' => 'auth.basic', 'uses' => 'StudentController@add']);
-$app->post("/$url_prefix/students/{student_id}", ['middleware' => 'auth.basic', 'uses' => 'StudentController@edit']);
-$app->post("/$url_prefix/events", ['middleware' => 'auth.basic', 'uses' => 'EventController@add']);
-$app->post("/$url_prefix/events/{event_id}", ['middleware' => 'auth.basic', 'uses' => 'EventController@edit']);
-
 $app->group(['prefix' => $url_prefix, 'middleware' => 'auth.basic'], function($app) {
+
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
 $app->get('/cities', function() use($app) {
 	$cities = (new City)->getAll();
@@ -230,6 +224,24 @@ $app->get('/levels/{level_id}/batches', function($level_id) use ($app) {
 	return JSend::success("Levels in batch $level_id", array('batches' => $batches));
 });
 
+////////////////////////////////////////////////// Auth //////////////////////////////////////////////////////
+$app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($app) {
+	$user = new User;
+	$phone_or_email = $request->input('phone');
+	if(!$phone_or_email) $phone_or_email = $request->input('email');
+	if(!$phone_or_email) $phone_or_email = $request->input('identifier');
+	$data = $user->login($phone_or_email, $request->input('password'));
+
+	if(!$data) {
+		$error = "Invalid username/password";
+		if(count($user->errors)) $error = implode(", ", $user->errors);
+		
+		return response(JSend::fail($error), 400);
+	}
+
+	return JSend::success("Welcome back, $data[name]", array('user' => $data));
+});
+
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
 $app->get('/users', function(Request $request) use ($app) {
 	$search_fields = ['name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id'];
@@ -250,23 +262,6 @@ $app->get('/users', function(Request $request) use ($app) {
 	$data = $user->search($search);
 
 	return JSend::success("Search Results", array('users' => $data));
-});
-
-$app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($app) {
-	$user = new User;
-	$phone_or_email = $request->input('phone');
-	if(!$phone_or_email) $phone_or_email = $request->input('email');
-	if(!$phone_or_email) $phone_or_email = $request->input('identifier');
-	$data = $user->login($phone_or_email, $request->input('password'));
-
-	if(!$data) {
-		$error = "Invalid username/password";
-		if(count($user->errors)) $error = implode(", ", $user->errors);
-		
-		return response(JSend::fail($error), 400);
-	}
-
-	return JSend::success("Welcome back, $data[name]", array('user' => $data));
 });
 
 $app->get('/users/{user_id}', function($user_id) use ($app) {
@@ -624,6 +619,13 @@ $app->get('/events/{event_id}/send_invites', function($event_id) use($app) {
 	return JSend::success("Sent event invites.", ['invited_user_count' => count($invited_users)]);
 });
 });
+
+$app->post("/$url_prefix/users", ['middleware' => 'auth.basic', 'uses' => 'UserController@add']);
+$app->post("/$url_prefix/users/{user_id}", ['middleware' => 'auth.basic', 'uses' => 'UserController@edit']);
+$app->post("/$url_prefix/students", ['middleware' => 'auth.basic', 'uses' => 'StudentController@add']);
+$app->post("/$url_prefix/students/{student_id}", ['middleware' => 'auth.basic', 'uses' => 'StudentController@edit']);
+$app->post("/$url_prefix/events", ['middleware' => 'auth.basic', 'uses' => 'EventController@add']);
+$app->post("/$url_prefix/events/{event_id}", ['middleware' => 'auth.basic', 'uses' => 'EventController@edit']);
 
 
 /**
