@@ -252,7 +252,7 @@ $app->get('/users', function(Request $request) use ($app) {
 	return JSend::success("Search Results", array('users' => $data));
 });
 
-$app->get('/users/login', function(Request $request) use ($app) {
+$app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($app) {
 	$user = new User;
 	$phone_or_email = $request->input('phone');
 	if(!$phone_or_email) $phone_or_email = $request->input('email');
@@ -478,6 +478,10 @@ $app->get('/deposits', function(Request $request) {
 		if(!$request->input($key)) continue;
 
 		$search[$key] = $request->input($key);
+	}
+
+	if(!count($search)) {
+		return response(JSend::fail("Please provide some search parameters", ["Please provide some search parameters"]), 404);
 	}
 
 	$deposit = new Deposit;

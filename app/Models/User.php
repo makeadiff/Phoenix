@@ -22,7 +22,7 @@ final class User extends Common
     public function city()
     {
          $city = $this->belongsTo('App\Models\City', 'city_id');
-         return $city->get();
+         return $city->first();
     }
 
     public function search($data)
@@ -132,7 +132,7 @@ final class User extends Common
         }
         $data->groups = $groups;
 
-        $data->city = $data->city()[0]->name;
+        $data->city = $data->city()->name;
         return $data;
     }
 

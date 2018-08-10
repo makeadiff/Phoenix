@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ErrorException;
 
 class Handler extends ExceptionHandler
 {
@@ -48,6 +49,15 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof NotFoundHttpException) {
             return response(\JSend::fail("Can't find the End Point you are trying to access."), 404);
+            
+        } elseif($e instanceof \ErrorException) {
+            error_reporting(0);
+            $status = 500;
+            $exception = get_class($e); // Reflection might be better here
+            $message = $e->getMessage();
+            $trace = $e->getTrace();
+
+            return response(\JSend::error("Internal Server Error", ['exception' => $exception, 'message' => $message, 'trace' => $trace[0]]), $status);
         } else {
             return parent::render($request, $e);
         }

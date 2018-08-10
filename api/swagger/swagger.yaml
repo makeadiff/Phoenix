@@ -423,7 +423,7 @@ paths:
           description: Ok
 
   /users/login:
-    get:
+    post:
       tags:
         - user
         - auth

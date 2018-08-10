@@ -46,12 +46,12 @@ final class Deposit extends Common
         // Check if any of the given donation has been part of an approved or pending deposit. Rejected deposits are ok.
         $donation = new Donation;
         foreach ($donation_ids as $donation_id) {
-            $existing_donation = $donation->fetch($donation_id);
+            $existing_donation = $donation->fetch($donation_id, true);
             if(!$existing_donation) return $this->error("Dontation $donation_id does not exist.");
 
             $pre_existing_deposit = false;
             foreach($existing_donation->deposit as $dep) {
-                if(($dep->status == 'pending' or $dep->status == 'approved') and $dep->collected_from_user_id = $collected_from_user_id) {
+                if(($dep->status == 'pending' or $dep->status == 'approved') and $dep->collected_from_user_id == $collected_from_user_id) {
                     $pre_existing_deposit = true; 
                     break;
                 }

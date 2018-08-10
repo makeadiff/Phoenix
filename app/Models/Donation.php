@@ -137,10 +137,13 @@ final class Donation extends Common
         return $this->search(array('donor_id' => $donor_id));
     }
 
-    public function fetch($donation_id) {
+    public function fetch($donation_id, $include_deposit_info = false) {
         // $data = Donation::find($donation_id);
-        $data = Donation::search(['id' => $donation_id, 'include_deposit_info' => true]);
-        if(!$data) return false;
+        $data = Donation::search(['id' => $donation_id, 'include_deposit_info' => $include_deposit_info]);
+        if(!$data) {
+            $data = Donation::search(['id' => $donation_id]); // Try finding the donation without deposit info.
+            if(!$data) return false;
+        }
         $data = reset($data);
 
         $this->id = $donation_id;
