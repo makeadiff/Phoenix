@@ -48,4 +48,20 @@ class Email
 
 		return true;
 	}
+
+	public function queue() {
+		$message = [
+			'type'		=> 'email',
+			'to'		=> $this->to,
+			'from'		=> $this->from,
+			'subject'	=> $this->subject,
+			'body'		=> $this->html,
+			'attachments'=>json_encode($this->images),
+			'added_on'	=> date('Y-m-d H:i:s'),
+			'status'	=> 'pending'
+		];
+		app('db')->table('Message_Queue')->insert($message);
+
+		return true;
+	}
 }

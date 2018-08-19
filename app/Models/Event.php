@@ -166,7 +166,8 @@ final class Event extends Common
             $base_path . '/public/assets/header.jpg'
         ];
         $mail->images = $images;
-        $mail->send();
+        // $mail->send();
+        $mail->queue();
     }
 
     public function updateUserConnection($user_id, $data, $event_id = false)
