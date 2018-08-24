@@ -14,7 +14,7 @@ final class Donation extends Common
     protected $table = 'Donut_Donation';
     public $start_date = '2018-05-01 00:00:00';
     public $timestamps = true;
-    protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'cheque_no', 'added_on', 'updated_on', 'updated_by_user_id', 'comment'];
+    protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'cheque_no', 'added_on', 'updated_on', 'nach_start_on', 'nach_end_on', 'updated_by_user_id', 'comment'];
     protected $donation_statuses = ['collected', 'deposited', 'receipted'];
 
     public function __construct(array $attributes = array())
@@ -182,6 +182,8 @@ final class Donation extends Common
             'amount'            => $data['amount'],
             'added_on'          => $data['added_on'],
             'updated_on'        => $data['added_on'],
+            'nach_start_on'     => (!empty($data['nach_start_on']) ? $data['nach_start_on'] : ''),
+            'nach_end_on'       => (!empty($data['nach_end_on']) ? $data['nach_end_on'] : ''),
             'comment'           => (!empty($data['comment']) ? $data['comment'] : ''),
             'status'            => 'collected',
         ]);

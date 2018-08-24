@@ -51,6 +51,15 @@ final class User extends Common
         if(!empty($data['mad_email'])) $q->where('User.mad_email', $data['mad_email']);
         if(!empty($data['any_email'])) $q->where('User.email', $data['any_email'])->orWhere("User.mad_email", $data['any_email']);
 
+        if(!empty($data['identifier'])) {
+            $q->where(function($query) use ($data) {
+                $query->where('User.email', $data['identifier'])
+                    ->orWhere("User.mad_email", $data['identifier'])
+                    ->orWhere("User.phone", $data['identifier'])
+                    ->orWhere("User.id", $data['identifier']);
+            });
+        }
+
         if(!empty($data['left_on'])) $q->where('DATE_FORMAT(User.left_on, "%Y-%m")', date('Y-m', strtotime($data['left_on'])));
         
         if(!empty($data['user_group'])) {

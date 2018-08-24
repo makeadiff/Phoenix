@@ -110,7 +110,7 @@ final class Event extends Common
         $rsvp_auth_keys = [];
 
         foreach ($user_ids as $user_id) {
-        	$rsvp_auth_key = substr(md5(time()), 0,  10);
+        	$rsvp_auth_key = substr(md5(uniqid()), 0,  10);
 
         	// :TODO: Check if the user_id, event_id combo is there already 
 
@@ -123,14 +123,14 @@ final class Event extends Common
                 'rsvp_auth_key' => $rsvp_auth_key
             ];
 
-            if($send_invite_email) $this->sendInvite($this->id, $user_id, $rsvp_auth_key);
+            if($send_invite_email) $this->sendInvite($this->id, $user_id, $rsvp_auth_key, 'queue');
         }
 
         app('db')->table('UserEvent')->insert($user_event_insert);
     }
 
     /// Send emails to invited users.
-    public function sendInvite($event_id, $user_id, $rsvp_auth_key)
+    public function sendInvite($event_id, $user_id, $rsvp_auth_key, $send_or_queue)
     {
  		$user = new User;
  		$info = $user->fetch($user_id);
@@ -166,8 +166,9 @@ final class Event extends Common
             $base_path . '/public/assets/header.jpg'
         ];
         $mail->images = $images;
-        // $mail->send();
-        $mail->queue();
+
+        if($send_or_queue == 'send') $mail->send();
+        else $mail->queue();
     }
 
     public function updateUserConnection($user_id, $data, $event_id = false)
