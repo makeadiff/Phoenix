@@ -56,7 +56,7 @@ class CityTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->users[0]->name, 'Center Head Test');
+        $this->assertEquals($data->data->users[0]->name, 'Buffy');
         $this->assertEquals(200, $this->response->status());
     }
 
