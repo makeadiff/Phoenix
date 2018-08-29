@@ -136,39 +136,45 @@ final class Event extends Common
  		$info = $user->fetch($user_id);
  		$event_info = $this->fetch($event_id);
 
- 		$mail = new Email;
-        $mail->from     = "noreply <noreply@makeadiff.in>";
-        $mail->to       = $info->email;
-        $mail->subject  = "RSVP for " . $event_info->name;
+        $both_emails = [$info->email, $info->mad_email];
 
-        $mail_content = "You have been invited to '" . $event_info->name . "'";
-        if($event_info->starts_on and $event_info->starts_on > date('Y-m-d H:i:s')) $mail_content .= " on " . date('j M(D) h:i A', strtotime($event_info->starts_on));
-        if($event_info->place) $mail_content .= " at " . $event_info->place;
+        foreach ($both_emails as $email) {
+            if(!trim($email)) continue;
 
-        $base_url = 'http://makeadiff.in/apps/events-api/v1/api/deep_linking_url/';
-        $go_url = $base_url . "?event_id={$event_id}&rsvp={$this->rsvp_number_codes['going']}&rsvp_auth_key=$rsvp_auth_key";
-        $maybe_url = $base_url . "?event_id={$event_id}&rsvp={$this->rsvp_number_codes['maybe']}&rsvp_auth_key=$rsvp_auth_key";
-        $no_go_url = $base_url . "?event_id={$event_id}&rsvp={$this->rsvp_number_codes['cant_go']}&rsvp_auth_key=$rsvp_auth_key";
+        	$mail = new Email;
+            $mail->from     = "noreply <noreply@makeadiff.in>";
+            $mail->to       = $email;
+            $mail->subject  = "RSVP for " . $event_info->name;
 
-        $mail_content .= ". Please confirm your presence at the event...
+            $mail_content = "You have been invited to '" . $event_info->name . "'";
+            if($event_info->starts_on and $event_info->starts_on > date('Y-m-d H:i:s')) $mail_content .= " on " . date('j M(D) h:i A', strtotime($event_info->starts_on));
+            if($event_info->place) $mail_content .= " at " . $event_info->place;
+
+            $base_url = 'http://makeadiff.in/apps/events-api/v1/api/deep_linking_url/';
+            $go_url = $base_url . "?event_id={$event_id}&rsvp={$this->rsvp_number_codes['going']}&rsvp_auth_key=$rsvp_auth_key";
+            $maybe_url = $base_url . "?event_id={$event_id}&rsvp={$this->rsvp_number_codes['maybe']}&rsvp_auth_key=$rsvp_auth_key";
+            $no_go_url = $base_url . "?event_id={$event_id}&rsvp={$this->rsvp_number_codes['cant_go']}&rsvp_auth_key=$rsvp_auth_key";
+
+            $mail_content .= ". Please confirm your presence at the event...
 <div style=\"text-align:center;padding:15px 0;\">
 <a href='".$go_url."' style='display:inline-block;padding:7px 15px;background-color:#ED1849;color:#fff;border-radius:4px;-webkit-border-radius:4px;margin:0 5px;'>GOING</a>
 <a href='".$maybe_url."' style='display:inline-block;padding:7px 15px;background-color:#ED1849;color:#fff;border-radius:4px;-webkit-border-radius:4px;margin:0 5px;'>MAYBE</a>
 <a href='".$no_go_url."' style='display:inline-block;padding:7px 15px;background-color:#ED1849;color:#fff;border-radius:4px;-webkit-border-radius:4px;margin:0 5px;'>CAN'T GO</a>
 </div>";
 
-        $base_path = app()->basePath();
-        $email_html = file_get_contents($base_path . '/resources/email_templates/template.html');
-        $mail->html = str_replace(  array('%CONTENT%', '%DATE%', '%FIRST_NAME%', '%NAME%'), 
-                                    array($mail_content, date('d/m/Y'), $info->name, $info->name), $email_html);
+            $base_path = app()->basePath();
+            $email_html = file_get_contents($base_path . '/resources/email_templates/template.html');
+            $mail->html = str_replace(  array('%CONTENT%', '%DATE%', '%FIRST_NAME%', '%NAME%'), 
+                                        array($mail_content, date('d/m/Y'), $info->name, $info->name), $email_html);
 
-        $images = [
-            $base_path . '/public/assets/header.jpg'
-        ];
-        $mail->images = $images;
+            $images = [
+                $base_path . '/public/assets/header.jpg'
+            ];
+            $mail->images = $images;
 
-        if($send_or_queue == 'send') $mail->send();
-        else $mail->queue();
+            if($send_or_queue == 'send') $mail->send();
+            else $mail->queue();
+        }
     }
 
     public function updateUserConnection($user_id, $data, $event_id = false)

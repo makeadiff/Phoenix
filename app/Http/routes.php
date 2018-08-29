@@ -244,7 +244,7 @@ $app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($
 
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
 $app->get('/users', function(Request $request) use ($app) {
-	$search_fields = ['id','identifier', 'name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id'];
+	$search_fields = ['id','identifier', 'name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id','project_id'];
 	$search = [];
 	foreach ($search_fields as $key) {
 		if(!$request->input($key)) continue;
@@ -257,6 +257,7 @@ $app->get('/users', function(Request $request) use ($app) {
 			$search[$key] = $request->input($key);
 		}
 	}
+	if(!isset($search['project_id'])) $search['project_id'] = 1;
 
 	$user = new User;
 	$data = $user->search($search);
