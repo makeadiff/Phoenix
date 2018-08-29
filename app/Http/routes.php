@@ -614,7 +614,7 @@ $app->get('/events/{event_id}/send_invites', function($event_id) use($app) {
 	$invited_users = $event->find($event_id)->users();
 
 	foreach ($invited_users as $user) {
-		$event->sendInvite($event_id, $user->id, $user->rsvp_auth_key);
+		$event->sendInvite($event_id, $user->id, $user->rsvp_auth_key, 'send');
 	}
 
 	return JSend::success("Sent event invites.", ['invited_user_count' => count($invited_users)]);

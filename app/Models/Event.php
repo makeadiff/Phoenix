@@ -130,7 +130,7 @@ final class Event extends Common
     }
 
     /// Send emails to invited users.
-    public function sendInvite($event_id, $user_id, $rsvp_auth_key, $send_or_queue)
+    public function sendInvite($event_id, $user_id, $rsvp_auth_key, $send_or_queue='queue')
     {
  		$user = new User;
  		$info = $user->fetch($user_id);
