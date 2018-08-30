@@ -132,13 +132,16 @@ final class Deposit extends Common
         $donations = $this->item->donations();
         foreach ($donations as $donation) {
             $donation->edit([
-                'status'        => 'collected',
-                'with_user_id'  => $current_user_id,
-                'updated_by_user_id' => $current_user_id
+                'status'            => 'collected',
+                'with_user_id'      => $current_user_id,
+                'updated_by_user_id'=> $current_user_id
             ]);
         }
 
         /// :TODO: If national account does the approval, send recipt.
+        // if($this->item->given_to_user_id == $this->national_account_user_id) {
+
+        // }
 
         return $this->changeStatus('approved', $current_user_id);
     }
@@ -153,7 +156,10 @@ final class Deposit extends Common
         $this->chain($deposit_id);
 
         if(!$this->item) return false;
-        if($this->item->given_to_user_id != $current_user_id) return $this->error("Current user don't have permission to approve/reject the deposit.");
+        if(($this->item->given_to_user_id != $current_user_id) // The person who the deposit was given to should be the one approving it.
+                and ($this->item->given_to_user_id != $this->national_account_user_id)) { // But if it is given to the national account, then it can be approved my mupltiple people
+            return $this->error("Current user don't have permission to approve/reject the deposit.");
+        }
 
         $this->item->status = $status;
         $this->item->save();

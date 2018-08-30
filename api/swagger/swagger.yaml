@@ -1271,7 +1271,7 @@ paths:
           in: query
           type: string
           description: Search for all deposits that matches any of the given status. 
-        - name: reviewer_id
+        - name: reviewer_user_id
           in: query
           type: integer
           description: Returns all the deposits that the given user has to review.
@@ -1328,7 +1328,7 @@ paths:
           type: integer
           description: ID of the deposit to be edited.
           required: true
-        - name: reviewer_id
+        - name: reviewer_user_id
           in: query
           type: integer
           description: ID of the user who is going to review the deposit.

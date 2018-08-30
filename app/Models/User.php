@@ -15,7 +15,7 @@ final class User extends Common
 
     public function groups()
     {
-        $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->wherePivot('year',$this->year)->select('Group.id','Group.vertical_id', 'Group.name');
+        $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->wherePivot('year',$this->year)->select('Group.id','Group.vertical_id', 'Group.name', 'Group.type');
         return $groups->get();
     }
 
