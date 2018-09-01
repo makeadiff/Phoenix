@@ -36,7 +36,7 @@ final class Deposit extends Common
         return $user->first();
     }
 
-    public function add($collected_from_user_id, $given_to_user_id, $donation_ids) {
+    public function add($collected_from_user_id, $given_to_user_id, $donation_ids, $deposit_information = '') {
         // Validations...
         $user = new User;
         if(!$user->fetch($collected_from_user_id)) return $this->error("Invalid User ID of depositer.");
@@ -73,6 +73,7 @@ final class Deposit extends Common
             'added_on'              => date('Y-m-d H:i:s'),
             'status'                => 'pending',
             'amount'                => $amount,
+            'deposit_information'   => $deposit_information
         ]);
 
         foreach ($donation_ids as $donation_id) {

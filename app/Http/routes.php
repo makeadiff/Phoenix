@@ -459,7 +459,7 @@ $app->post('/deposits', function(Request $request) {
 	$deposit = new Deposit;
 	$donation_ids = $request->input('donation_ids');
 	if(!is_array($donation_ids)) $donation_ids = explode(",", $donation_ids);
-	$deposit_info = $deposit->add($request->input('collected_from_user_id'), $request->input('given_to_user_id'), $donation_ids);
+	$deposit_info = $deposit->add($request->input('collected_from_user_id'), $request->input('given_to_user_id'), $donation_ids, $request->input('deposit_information'));
 
 	if(!$deposit_info) {
 		return response(JSend::fail("Error making the deposit", $deposit->errors), 400);
