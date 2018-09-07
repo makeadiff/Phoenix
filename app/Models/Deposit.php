@@ -97,7 +97,7 @@ final class Deposit extends Common
         $q = app('db')->table($this->table);
 
         $q->select("Donut_Deposit.id","Donut_Deposit.amount","Donut_Deposit.added_on","Donut_Deposit.reviewed_on","Donut_Deposit.status",
-                    "Donut_Deposit.collected_from_user_id","Donut_Deposit.given_to_user_id");
+                    "Donut_Deposit.collected_from_user_id","Donut_Deposit.given_to_user_id", "Donut_Deposit.deposit_information");
 
         if(!empty($data['reviewer_user_id'])) {
             $q->where('Donut_Deposit.given_to_user_id', $data['reviewer_user_id']);
@@ -132,19 +132,10 @@ final class Deposit extends Common
 
         $donations = $this->item->donations();
         foreach ($donations as $donation) {
-            $donation->edit([
-                'status'            => 'collected',
-                'with_user_id'      => $current_user_id,
-                'updated_by_user_id'=> $current_user_id
-            ]);
+            $donation->approve($current_user_id, $this->item->given_to_user_id, 'queue');
         }
 
-        /// :TODO: If national account does the approval, send recipt.
-        // if($this->item->given_to_user_id == $this->national_account_user_id) {
-
-        // }
-
-        return $this->changeStatus('approved', $current_user_id);
+        return true; // :DEBUG: $this->changeStatus('approved', $current_user_id);
     }
 
     public function reject($current_user_id, $deposit_id = false) {

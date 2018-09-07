@@ -16,6 +16,7 @@ final class Donation extends Common
     public $timestamps = true;
     protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'cheque_no', 'added_on', 'updated_on', 'nach_start_on', 'nach_end_on', 'updated_by_user_id', 'comment'];
     protected $donation_statuses = ['collected', 'deposited', 'receipted'];
+    protected $national_account_user_id = 163416; // National Finance User ID.
 
     public function __construct(array $attributes = array())
     {
@@ -202,7 +203,7 @@ final class Donation extends Common
             $mail = new Email;
             $mail->from     = "noreply <noreply@makeadiff.in>";
             $mail->to       = $data['donor_email'];
-            $mail->subject  = "Donation Acknowledgment";;
+            $mail->subject  = "Donation Acknowledgment";
 
             $email_html = file_get_contents($base_path . '/resources/email_templates/donation_acknowledgement.html');
             $mail->html = str_replace(  array('%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'), 
@@ -220,7 +221,54 @@ final class Donation extends Common
         return $donation;
     }
 
-    function edit($data, $donation_id = false) {
+    public function approve($collected_from_user_id, $given_to_user_id, $send_email = 'send', $donation_id = false) 
+    {
+        $this->chain($donation_id);
+
+        // :DEBUG: Enable this.
+        // $donation->edit([
+        //     'status'            => 'collected',
+        //     'with_user_id'      => $current_user_id,
+        //     'updated_by_user_id'=> $current_user_id
+        // ]);
+
+        print $given_to_user_id . '==' . $this->national_account_user_id . ' : ' . $send_email . "\n";
+
+        ///  If national account does the approval, send recipt.
+        if(($given_to_user_id == $this->national_account_user_id) and $send_email) {
+            // :TODO: More rules needed - don't send recipt for cash donations lesser than 2000 rs
+            $base_path = app()->basePath();
+            $base_url = url('/');
+            $donor = $this->item->donor();
+
+            $mail = new Email;
+            $mail->from     = "noreply <noreply@makeadiff.in>";
+            $mail->to       = $donor->email;
+            $mail->subject  = "Donation Recipt";
+
+            $email_html = file_get_contents($base_path . '/resources/email_templates/donation_receipt.html');
+            $mail->html = str_replace(  array('%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'), 
+                                        array($base_url, $this->item->amount, $donor->name, date('d/m/Y')), $email_html);
+
+            // :TODO: Generate PDF Receipt, attach it.
+            // https://github.com/barryvdh/laravel-dompdf
+            // https://appdividend.com/2017/05/08/generate-pdf-blade-laravel-5-4/
+
+            $images = [
+                $base_path . '/public/assets/mad-letterhead-left.png',
+                $base_path . '/public/assets/mad-letterhead-logo.png',
+                $base_path . '/public/assets/mad-letterhead-right.png'
+            ];
+            $mail->images = $images;
+
+            if($send_email == 'send') $mail->send();
+            else $mail->queue();
+        }
+
+        return true;
+    }
+
+    public function edit($data, $donation_id = false) {
         $this->chain($donation_id);
 
         if(!$this->item) return false;
@@ -233,7 +281,6 @@ final class Donation extends Common
         $this->item->save();
 
         return $this->item;
-        
     }
 
     /// Used to validate the donation
