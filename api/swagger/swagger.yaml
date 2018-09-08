@@ -615,7 +615,26 @@ paths:
           description: Ok
         404:
           description: Group not found.
-  
+
+  /verticals:
+    get:
+      tags:
+        - vertical
+      summary: All Verticals
+      description: Returns all the verticals currently active.
+      responses:
+        200:
+          description: Ok
+
+  /projects:
+    get:
+      tags:
+        - project
+      summary: All projects.
+      description: Returns all the projects currently active.
+      responses:
+        200:
+          description: Ok
   ###################################### Center
   /centers:
     get:

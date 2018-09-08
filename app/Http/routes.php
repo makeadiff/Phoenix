@@ -1,6 +1,7 @@
 <?php
 use App\Models\User;
 use App\Models\Group;
+use App\Models\Vertical;
 use App\Models\City;
 use App\Models\Center;
 use App\Models\Student;
@@ -111,6 +112,17 @@ $app->get('/groups/{group_id}', function($group_id) use ($app) {
 
 	return JSend::success("User Group: $group_id", array('group' => $group));
 });
+
+$app->get('/verticals', function() use ($app) {
+	$verticals = Vertical::getAll();
+	return JSend::success("Verticals", ['verticals' => $verticals]);
+});
+
+$app->get('/projects', function() use ($app) {
+	$projects = ['1' => 'Ed Support', '2' => 'Foundation'];
+	return JSend::success("Verticals", ['projects' => $projects]);
+});
+
 
 ///////////////////////////////////////////////////// Centers /////////////////////////////////////////////////
 $app->get('/centers', function(Request $request) use ($app) {
