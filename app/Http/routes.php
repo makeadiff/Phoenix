@@ -10,6 +10,7 @@ use App\Models\Level;
 use App\Models\Donation;
 use App\Models\Deposit;
 use App\Models\Event;
+use App\Models\Data;
 
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -234,6 +235,23 @@ $app->get('/levels/{level_id}/batches', function($level_id) use ($app) {
 	$batches = (new Batch)->search(['level_id' => $level_id]);
 
 	return JSend::success("Levels in batch $level_id", array('batches' => $batches));
+});
+
+
+/////////////////////////////////////////////////// Class ////////////////////////////////////////////////////
+$app->get('/classes/{class_id}/data/{name}', function($class_id, $data_name) {
+	$data = (new Data)->getSingle('Class', $class_id, $data_name);
+	if(!$data) return response(JSend::fail("Can't find any Data with class ID $class_id"), 404);
+
+	return JSend::success("Data '$data_name' for class $class_id", ['data' => $data]);
+});
+
+$app->post('/classes/{class_id}/data/{name}', function(Request $request, $class_id, $data_name) {
+	$data = $request->input('data');
+
+	if($data) (new Data)->get('Class', $class_id, $data_name)->setData($data);
+
+	return JSend::success("Data '$data_name' for class $class_id", ['data' => $data]);
 });
 
 ////////////////////////////////////////////////// Auth //////////////////////////////////////////////////////

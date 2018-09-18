@@ -117,15 +117,13 @@ final class User extends Common
         }
         $q->orderby('User.name');
 
-        // :TODO:
-        // ->groups() ?
-        // ->city() ?
-
         // :TODO: Pagination
 
         // dd($q->toSql(), $q->getBindings());
 
         $results = $q->get();
+
+        // dd($results);
         
         return $results;
     }
