@@ -13,5 +13,10 @@ final class Vertical extends Common
         return $this->hasMany('App\Models\Group');
     }
 
+    public static function getAll()
+    {
+        return Vertical::select('id', 'name')->where('status', '1')->orderBy('name')->get();
+    }
+
 }
 
