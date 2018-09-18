@@ -240,7 +240,7 @@ $app->get('/levels/{level_id}/batches', function($level_id) use ($app) {
 
 /////////////////////////////////////////////////// Class ////////////////////////////////////////////////////
 $app->get('/classes/{class_id}/data/{name}', function($class_id, $data_name) {
-	$data = (new Data)->getSingle('Class', $class_id, $data_name);
+	$data = (new Data)->get('Class', $class_id, $data_name)->getData();
 	if(!$data) return response(JSend::fail("Can't find any Data with class ID $class_id"), 404);
 
 	return JSend::success("Data '$data_name' for class $class_id", ['data' => $data]);

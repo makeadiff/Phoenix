@@ -27,11 +27,12 @@ final class Data extends Common
         return $results;
     }
 
-    public function getSingle($item, $item_id, $name, $year = false)
+    public function getData()
     {
-        $result = $this->get($item, $item_id, $name, $year);
+        $item = ( $this->item ) ? $this->item : $this->item_copy;
+        if(!$item) return false;
 
-        if($result) return $result->data;
+        if($item) return $item->data;
         return false;
     }
 
@@ -53,6 +54,7 @@ final class Data extends Common
             'name'      => $item->name,
             'data'      => $data,
             'year'      => $this->year,
+            'added_on'  => date('Y-m-d H:i:s')
         ]);
     }
 
