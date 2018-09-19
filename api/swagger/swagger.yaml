@@ -2,7 +2,13 @@ swagger: "2.0"
 info:
   version: "1.0"
   title: "MADApp API"
-  description: "API endpoint documentation for MADApp. Responses will be follow JSend conventions - http://labs.omniti.com/labs/jsend."
+  description: |
+    Core API will create an __centralized API for all operations on MAD__ Database. We'll hand over the API docs to any external party who will be developing apps for us. 
+
+    * Responses will be follow [JSend conventions](http://labs.omniti.com/labs/jsend)
+    * [Coversheet](https://docs.google.com/document/d/19OeIL2O_PAaDMjMx_ZdL2eTp2pmtZ1EUDDrWmRfScAE)
+    * [Reference Document](https://docs.google.com/document/d/1YgDsgXaLp5HERyIkqpBCSs398C1xc54cE1Th6shs17o)
+
 host: makeadiff.in
 basePath: /api/v1/
 consumes:
@@ -1075,6 +1081,59 @@ paths:
               $ref: "#/definitions/Level"
         404:
           description: Can't find any batch with the given {batch_id}
+
+  ############################ Classes
+  /classes/{class_id}/data/{name}:
+    get:
+      tags:
+        - class
+        - data 
+      summary: Get data point about the class who's ID is given 
+      description: Returns the provided data point of the class with the given class_id.
+      parameters:
+        - name: class_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the class who's data point should be returned.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be returned. The key part of the key/value pair.
+      responses:
+        '200':
+          description: Data point of the given class/data point name combo will be returned.
+        404:
+          description: Given class_id / data point name can't be found in database.
+
+    post:
+      tags:
+        - class
+        - data
+      summary: Save the data point to the given class
+      description: This lets you set any give data point to any class.
+      parameters:
+        - name: class_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the class who's data point should be set.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be set. The key part of the key/value pair.
+        - name: data
+          in: query
+          type: string
+          required: true
+          description: The data that should be set to the class/data point name pair. This is the value part.
+      responses:
+        '200':
+          description: Data point of the given class/data point name combo will be set.
+        404:
+          description: Given class_id / data point name can't be found in database.
 
   ############################ Donations
   /donations:
