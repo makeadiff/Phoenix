@@ -273,6 +273,10 @@ $app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($
 });
 
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
+// These calls are commented intentionally - the actual calls are at the end of this file. These lines are here to denote that there are more routes.
+// $app->post('/users','UserController@add');
+// $app->post('/users/{user_id}','UserController@edit');
+
 $app->get('/users', function(Request $request) use ($app) {
 	$search_fields = ['id','identifier', 'name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id','project_id'];
 	$search = [];
@@ -334,8 +338,6 @@ $app->post('/users/{user_id}/credit', function($user_id, Request $request) use (
 	return JSend::success("Edit the credits for user $user_id", array('credit' => $request->input('credit')));
 });
 
-// $app->post('/users','UserController@add');
-// $app->post('/users/{user_id}','UserController@edit');
 $app->delete('/users/{user_id}', function($user_id) use ($app) {
 	$user = new User;
 	$info = $user->fetch($user_id, false);
@@ -377,6 +379,10 @@ $app->delete('/users/{user_id}/groups/{group_id}', function($user_id, $group_id)
 });
 
 ///////////////////////////////////////////////////////// Student Calls //////////////////////////////////////////////
+// These calls are commented intentionally - the actual calls are at the end of this file. These lines are here to denote that there are more routes.
+// $app->post('/students','StudentController@add');
+// $app->post('/students/{student_id}','StudentController@edit');
+
 $app->get('/students', function(Request $request) use ($app) {
 	$search_fields = ['name','birthday', 'city_id','sex','center_id'];
 	$search = [];
@@ -408,8 +414,6 @@ $app->get('/students/{student_id}', function($student_id) use ($app) {
 
 	return JSend::success("Student details for {$details->name}", array('student' => $details));
 });
-// $app->post('/students','StudentController@add');
-// $app->post('/students/{student_id}','StudentController@edit');
 
 /////////////////////////////////////////////// Donations ///////////////////////////////////////////////////////
 $app->get('/donations', function(Request $request) {
@@ -526,7 +530,7 @@ $app->post('/deposits/{deposit_id}', function ($deposit_id, Request $request) {
 	if(!$given_deposit) return response(JSend::fail("Can't find any deposit with the given id.", $deposit->errors), 404);
 
 	$data = false;
-	// dd($given_deposit, $status);
+
 	if($status == 'approved') {
 		$data = $given_deposit->approve($reviewer_user_id);
 
@@ -544,6 +548,10 @@ $app->post('/deposits/{deposit_id}', function ($deposit_id, Request $request) {
 
 
 ////////////////////////////////// Events ////////////////////////////////
+// These calls are commented intentionally - the actual calls are at the end of this file. These lines are here to denote that there are more routes.
+// $app->post('/events','EventController@add');
+// $app->post('/events/{event_id}','EventController@edit');
+
 $app->get('/events', function(Request $request) use ($app) {
 	$search_fields = ['id', 'name', 'description', 'starts_on', 'place', 'city_id', 'event_type_id', 'created_by_user_id', 'status'];
 	$search = [];
@@ -600,7 +608,7 @@ $app->post('/events/{event_id}/users', function($event_id, Request $request) use
 	$event = $event->find($event_id);
 	if(!$event) return response(JSend::fail("Can't find event with ID $event_id", $event->errors), 404);
 
-	$send_invites = $request->input('send_invite_emails');
+	$send_invites = $request->input('send_invite_emails') == 'true' ? true : false;
 	$event->invite($user_ids, $send_invites);
 	
 	$count = count($user_ids);
