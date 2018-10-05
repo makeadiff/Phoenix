@@ -26,6 +26,9 @@ $app = new Laravel\Lumen\Application(
 $app->withFacades();
 $app->withEloquent();
 
+$app->configure('filesystems');
+class_alias('Illuminate\Support\Facades\Storage', 'Storage');
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -46,6 +49,13 @@ $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
 );
+$app->singleton('filesystem', function ($app) {
+    return $app->loadComponent(
+        'filesystems',
+        Illuminate\Filesystem\FilesystemServiceProvider::class,
+        'filesystem'
+    );
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +92,7 @@ $app->routeMiddleware([
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 // $app->register(\Illuminate\Mail\MailServiceProvider::class);
+$app->register(\Barryvdh\DomPDF\ServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

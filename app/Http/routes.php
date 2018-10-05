@@ -526,7 +526,6 @@ $app->post('/deposits/{deposit_id}', function ($deposit_id, Request $request) {
 	if(!$given_deposit) return response(JSend::fail("Can't find any deposit with the given id.", $deposit->errors), 404);
 
 	$data = false;
-	// dd($given_deposit, $status);
 	if($status == 'approved') {
 		$data = $given_deposit->approve($reviewer_user_id);
 
@@ -536,7 +535,7 @@ $app->post('/deposits/{deposit_id}', function ($deposit_id, Request $request) {
 	} else return response(JSend::error("Status should be 'approved' or 'rejected'"), 400);
 
 	if(!$data) {
-		return response(JSend::fail("Error approving deposit.", $deposit->errors), 400);
+		return response(JSend::fail("Error approving deposit.", $given_deposit->errors), 400);
 	}
 
 	return JSend::success("Deposit updated", ['deposit' => $data]);

@@ -131,6 +131,8 @@ final class Deposit extends Common
         if(!$current_user_id) return $this->error("Please include the ID of the user reviewing the deposit.");
 
         $donations = $this->item->donations();
+        if(!count($donations)) return $this->error("There are no donations associated with this deposit.");
+
         foreach ($donations as $donation) {
             $donation->approve($current_user_id, $this->item->given_to_user_id, 'queue');
         }

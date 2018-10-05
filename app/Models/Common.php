@@ -5,19 +5,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Common extends Model
 {
-    public $errors = array();
+    public $errors = [];
 
     public $year;
     protected $id = 0;
     protected $item = 0;
 
-    public function __construct(array $attributes = array())
+    public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
         // Current year
         $this_month = intval(date('m'));
-        $months = array();
+        $months = [];
         $start_month = 5; // May
         $start_year = date('Y');
         if($this_month < $start_month) $start_year = date('Y')-1;

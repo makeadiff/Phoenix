@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Donor;
 use App\Libraries\SMS;
 use App\Libraries\Email;
+use Illuminate\Support\Facades\Storage;
 
 final class Donation extends Common
 {
@@ -224,6 +225,7 @@ final class Donation extends Common
     public function approve($collected_from_user_id, $given_to_user_id, $send_email = 'send', $donation_id = false) 
     {
         $this->chain($donation_id);
+        $donation_id = $this->id;
 
         // :DEBUG: Enable this.
         // $donation->edit([
@@ -231,8 +233,6 @@ final class Donation extends Common
         //     'with_user_id'      => $current_user_id,
         //     'updated_by_user_id'=> $current_user_id
         // ]);
-
-        print $given_to_user_id . '==' . $this->national_account_user_id . ' : ' . $send_email . "\n";
 
         ///  If national account does the approval, send recipt.
         if(($given_to_user_id == $this->national_account_user_id) and $send_email) {
@@ -246,20 +246,37 @@ final class Donation extends Common
             $mail->to       = $donor->email;
             $mail->subject  = "Donation Recipt";
 
-            $email_html = file_get_contents($base_path . '/resources/email_templates/donation_receipt.html');
-            $mail->html = str_replace(  array('%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'), 
-                                        array($base_url, $this->item->amount, $donor->name, date('d/m/Y')), $email_html);
+            $email_html = file_get_contents(base_path('resources/email_templates/donation_receipt.html'));
 
-            // :TODO: Generate PDF Receipt, attach it.
+            // Generate PDF Receipt, attach it.
             // https://github.com/barryvdh/laravel-dompdf
-            // https://appdividend.com/2017/05/08/generate-pdf-blade-laravel-5-4/
+            $pdf = app('dompdf.wrapper');
+            $pdf_html = file_get_contents(base_path('resources/pdf_templates/donation_receipt.pdf.html'));
 
-            $images = [
+            $replaces = [
+                '%ASSETS_PATH%' => base_path('public/assets'),
+                '%BASE_URL%'    => $base_url,
+                '%CREATED_AT%'  => date('dS M, Y h:i A', strtotime($this->item->added_on)),
+                '%DATE%'        => date('d/m/Y'),
+                '%AMOUNT%'      => $this->item->amount,
+                '%AMOUNT_TEXT%' => $this->convertNumber($this->item->amount),
+                '%DONATION_ID%' => $donation_id,
+                '%DONOR_NAME%'  => $donor->name
+            ];
+
+            $mail->html = str_replace(array_keys($replaces), array_values($replaces), $email_html);
+            $pdf_html = str_replace(array_keys($replaces), array_values($replaces), $pdf_html);
+
+            $pdf->loadHTML($pdf_html);
+            $filename = 'Donation_Receipt_' . $donation_id . '.pdf';
+            Storage::put($filename, $pdf->output());
+
+            $mail->images = [
                 $base_path . '/public/assets/mad-letterhead-left.png',
                 $base_path . '/public/assets/mad-letterhead-logo.png',
-                $base_path . '/public/assets/mad-letterhead-right.png'
+                $base_path . '/public/assets/mad-letterhead-right.png',
             ];
-            $mail->images = $images;
+            $mail->attachments = [base_path('storage/app/' . $filename)];
 
             if($send_email == 'send') $mail->send();
             else $mail->queue();
@@ -345,6 +362,73 @@ final class Donation extends Common
             return $return;
         }
     }
+
+    /** 
+    *  Function:  convertNumber 
+    *
+    *  Description: 
+    *  Converts a given integer (in range [0..1T-1], inclusive) into 
+    *  alphabetical format ("one", "two", etc.)
+    *
+    *  @int
+    *
+    *  @return string
+    *
+    */ 
+    private function convertNumber($number) 
+    { 
+        if (($number < 0) || ($number > 999999999)) { 
+            throw new Exception("Number is out of range");
+        } 
+
+        $Gn = floor($number / 1000000);  /* Millions (giga) */ 
+        $number -= $Gn * 1000000; 
+        $kn = floor($number / 1000);     /* Thousands (kilo) */ 
+        $number -= $kn * 1000; 
+        $Hn = floor($number / 100);      /* Hundreds (hecto) */ 
+        $number -= $Hn * 100; 
+        $Dn = floor($number / 10);       /* Tens (deca) */ 
+        $n = $number % 10;               /* Ones */ 
+
+        $res = ""; 
+
+        if ($Gn) { 
+            $res .= $this->convertNumber($Gn) . " Million"; 
+        } 
+
+        if ($kn) { 
+            $res .= (empty($res) ? "" : " ") . $this->convertNumber($kn) . " Thousand"; 
+        } 
+
+        if ($Hn) { 
+            $res .= (empty($res) ? "" : " ") . $this->convertNumber($Hn) . " Hundred"; 
+        } 
+
+        $ones = array("", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eightteen", "Nineteen"); 
+        $tens = array("", "", "Twenty", "Thirty", "Fourty", "Fifty", "Sixty", "Seventy", "Eigthy", "Ninety"); 
+
+        if ($Dn || $n) { 
+            if (!empty($res)) { 
+                $res .= " and "; 
+            } 
+
+            if ($Dn < 2) { 
+                $res .= $ones[$Dn * 10 + $n]; 
+            } else { 
+                $res .= $tens[$Dn]; 
+
+                if ($n) { 
+                    $res .= "-" . $ones[$n]; 
+                } 
+            } 
+        } 
+
+        if (empty($res)) { 
+            $res = "zero"; 
+        } 
+
+        return $res; 
+    } 
 
     /// Delete the donation of which id is given.
     public function remove() {
