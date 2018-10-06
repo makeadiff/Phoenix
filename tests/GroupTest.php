@@ -17,7 +17,7 @@ class GroupTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $search_for = 'Mentors';
+        $search_for = 'ES Mentors';
         $found = false;
         foreach ($data->data->groups as $key => $info) {
             if($info->name == $search_for and $info->id == 8) {

@@ -84,18 +84,18 @@ final class User extends Common
         if(!empty($data['center_id'])) {
             $mentor_group_id = 8; // :HARDCODE:
 
-            if(in_array($mentor_group_id, $data['user_group'])) { // Find the mentors
+            if(isset($data['user_group']) and in_array($mentor_group_id, $data['user_group'])) { // Find the mentors
                 $q->join("Batch", 'User.id', '=', 'Batch.batch_head_id');
                 $q->where('Batch.center_id', $data['center_id']);
                 $q->where('Batch.year', $this->year);
-                $q->where('Batch.project_id', $data['project_id']);
+                if(isset($data['project_id'])) $q->where('Batch.project_id', $data['project_id']);
 
             } else { // Find the teachers
                 $q->join('UserClass', 'User.id', '=', 'UserClass.user_id');
                 $q->join('Class', 'Class.id', '=', 'UserClass.class_id');
                 $q->join('Level', 'Class.level_id', '=', 'Level.id');
                 $q->where('Level.center_id', $data['center_id']);
-                $q->where('Level.project_id', $data['project_id']);
+                if(isset($data['project_id'])) $q->where('Level.project_id', $data['project_id']);
             }
             $q->distinct();
         }
