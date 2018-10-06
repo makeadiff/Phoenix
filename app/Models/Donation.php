@@ -236,50 +236,7 @@ final class Donation extends Common
 
         ///  If national account does the approval, send recipt.
         if(($given_to_user_id == $this->national_account_user_id) and $send_email) {
-            // :TODO: More rules needed - don't send recipt for cash donations lesser than 2000 rs
-            $base_path = app()->basePath();
-            $base_url = url('/');
-            $donor = $this->item->donor();
-
-            $mail = new Email;
-            $mail->from     = "noreply <noreply@makeadiff.in>";
-            $mail->to       = $donor->email;
-            $mail->subject  = "Donation Recipt";
-
-            $email_html = file_get_contents(base_path('resources/email_templates/donation_receipt.html'));
-
-            // Generate PDF Receipt, attach it.
-            // https://github.com/barryvdh/laravel-dompdf
-            $pdf = app('dompdf.wrapper');
-            $pdf_html = file_get_contents(base_path('resources/pdf_templates/donation_receipt.pdf.html'));
-
-            $replaces = [
-                '%ASSETS_PATH%' => base_path('public/assets'),
-                '%BASE_URL%'    => $base_url,
-                '%CREATED_AT%'  => date('dS M, Y h:i A', strtotime($this->item->added_on)),
-                '%DATE%'        => date('d/m/Y'),
-                '%AMOUNT%'      => $this->item->amount,
-                '%AMOUNT_TEXT%' => $this->convertNumber($this->item->amount),
-                '%DONATION_ID%' => $donation_id,
-                '%DONOR_NAME%'  => $donor->name
-            ];
-
-            $mail->html = str_replace(array_keys($replaces), array_values($replaces), $email_html);
-            $pdf_html = str_replace(array_keys($replaces), array_values($replaces), $pdf_html);
-
-            $pdf->loadHTML($pdf_html);
-            $filename = 'Donation_Receipt_' . $donation_id . '.pdf';
-            Storage::put($filename, $pdf->output());
-
-            $mail->images = [
-                $base_path . '/public/assets/mad-letterhead-left.png',
-                $base_path . '/public/assets/mad-letterhead-logo.png',
-                $base_path . '/public/assets/mad-letterhead-right.png',
-            ];
-            $mail->attachments = [base_path('storage/app/' . $filename)];
-
-            if($send_email == 'send') $mail->send();
-            else $mail->queue();
+            $this->sendReceipt($send_email);
         }
 
         return true;
@@ -300,8 +257,62 @@ final class Donation extends Common
         return $this->item;
     }
 
+    private function sendReceipt($send_email = 'send', $donation_id = false) {
+        $this->chain($donation_id);
+        if(!$donation_id) $donation_id = $this->id;
+        
+        // Don't send recipt for cash donations lesser than 2000 rs
+        // if($this->item->amount < 2000) return false;
+
+        $base_path = app()->basePath();
+        $base_url = url('/');
+        $donor = $this->item->donor();
+
+        $mail = new Email;
+        $mail->from     = "noreply <noreply@makeadiff.in>";
+        $mail->to       = $donor->email;
+        $mail->subject  = "Donation Recipt";
+
+        $email_html = file_get_contents(base_path('resources/email_templates/donation_receipt.html'));
+
+        // Generate PDF Receipt, attach it.
+        // https://github.com/barryvdh/laravel-dompdf
+        $pdf = app('dompdf.wrapper');
+        $pdf_html = file_get_contents(base_path('resources/pdf_templates/donation_receipt.pdf.html'));
+
+        $replaces = [
+            '%ASSETS_PATH%' => base_path('public/assets'),
+            '%BASE_URL%'    => $base_url,
+            '%CREATED_AT%'  => date('dS M, Y h:i A', strtotime($this->item->added_on)),
+            '%DATE%'        => date('d/m/Y'),
+            '%AMOUNT%'      => $this->item->amount,
+            '%AMOUNT_TEXT%' => $this->convertNumber($this->item->amount),
+            '%DONATION_ID%' => $donation_id,
+            '%DONOR_NAME%'  => $donor->name
+        ];
+
+        $mail->html = str_replace(array_keys($replaces), array_values($replaces), $email_html);
+        $pdf_html = str_replace(array_keys($replaces), array_values($replaces), $pdf_html);
+
+        $pdf->loadHTML($pdf_html);
+        $filename = 'Donation_Receipt_' . $donation_id . '.pdf';
+        Storage::put($filename, $pdf->output());
+
+        $mail->images = [
+            'mad-letterhead-left.png'   => $base_path . '/public/assets/mad-letterhead-left.png',
+            'mad-letterhead-logo.png'   => $base_path . '/public/assets/mad-letterhead-logo.png',
+            'mad-letterhead-right.png'  => $base_path . '/public/assets/mad-letterhead-right.png',
+        ];
+        $mail->attachments = [base_path('storage/app/' . $filename)];
+
+        if($send_email == 'send') $mail->send();
+        else $mail->queue();
+
+        return true;
+    }
+
     /// Used to validate the donation
-    function validate($data) {
+    public function validate($data) {
         $donor_address = '';
         extract($data);
         $donor = new Donor;
