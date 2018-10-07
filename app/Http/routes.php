@@ -36,14 +36,14 @@ $app->group(['prefix' => $url_prefix, 'middleware' => 'auth.basic'], function($a
 $app->get('/cities', function() use($app) {
 	$cities = (new City)->getAll();
 
-	return JSend::success("All cities", array('cities' => $cities));
+	return JSend::success("All cities", ['cities' => $cities]);
 });
 
 $app->get('/cities/{city_id}', function ($city_id) use ($app) {
 	$city = (new City)->fetch($city_id);
    	if(!$city) return response(JSend::fail("Can't find any city with the id $city_id"), 404);
 
-    return JSend::success("Details for city $city_id", array('city' => $city));
+    return JSend::success("Details for city $city_id", ['city' => $city]);
 });
 
 $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
@@ -52,7 +52,7 @@ $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
 
     $users = (new User)->search(array('city_id' => $city_id));
     
-    return JSend::success("List of users returned", array('users' => $users));
+    return JSend::success("List of users returned", ['users' => $users]);
 });
 
 $app->get('/cities/{city_id}/teachers', function ($city_id) use ($app) {
@@ -61,7 +61,7 @@ $app->get('/cities/{city_id}/teachers', function ($city_id) use ($app) {
 
 	$users = (new User)->search(array('city_id' => $city_id, 'user_group' => 9));
     
-    return JSend::success("List of teachers returned", array('users' => $users));
+    return JSend::success("List of teachers returned", ['users' => $users]);
 });
 
 $app->get('/cities/{city_id}/fellows', function ($city_id) use ($app) {
@@ -70,7 +70,7 @@ $app->get('/cities/{city_id}/fellows', function ($city_id) use ($app) {
 
 	$users = (new User)->search(array('city_id' => $city_id, 'user_group_type' => 'fellow'));
     
-    return JSend::success("List of fellows returned", array('users' => $users));
+    return JSend::success("List of fellows returned", ['users' => $users]);
 });
 
 $app->get('/cities/{city_id}/centers', function ($city_id) use ($app) {
@@ -79,7 +79,7 @@ $app->get('/cities/{city_id}/centers', function ($city_id) use ($app) {
 
  	   	$centers = (new Center)->inCity($city_id);
 
-	   	return JSend::success("List of centers in city '$city[name]'", array('centers' => $centers));
+	   	return JSend::success("List of centers in city '$city[name]'", ['centers' => $centers]);
 });
 
 $app->get('/cities/{city_id}/students', function ($city_id) use ($app) {
@@ -89,7 +89,7 @@ $app->get('/cities/{city_id}/students', function ($city_id) use ($app) {
 	$student = new Student;
     $students = $student->search(array('city_id' => $city_id));
     
-    return JSend::success("List of students in $city[name]", array('students' => $students));
+    return JSend::success("List of students in $city[name]", ['students' => $students]);
 });
 
 ///////////////////////////////////////////////////// Groups /////////////////////////////////////////////////
@@ -104,14 +104,14 @@ $app->get('/groups', function(Request $request) use ($app) {
 
 	$groups = Group::search($search);
 
-	return JSend::success("User Groups", array('groups' => $groups));
+	return JSend::success("User Groups", ['groups' => $groups]);
 });
 
 $app->get('/groups/{group_id}', function($group_id) use ($app) {
 	$group = (new Group)->fetch($group_id);
 	if(!$group) return response(JSend::fail("Can't find any group with ID $group_id"), 404);
 
-	return JSend::success("User Group: $group_id", array('group' => $group));
+	return JSend::success("User Group: $group_id", ['group' => $group]);
 });
 
 $app->get('/verticals', function() use ($app) {
@@ -137,14 +137,14 @@ $app->get('/centers', function(Request $request) use ($app) {
 
 	$centers = Center::search($search);
 
-	return JSend::success("Centers", array('centers' => $centers));
+	return JSend::success("Centers", ['centers' => $centers]);
 });
 
 $app->get('/centers/{center_id}', function($center_id) use ($app) {
 	$center = (new Center)->fetch($center_id);
 	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
 
-	return JSend::success("Center ID : $center_id", array('center' => $center));
+	return JSend::success("Center ID : $center_id", ['center' => $center]);
 });
 
 $app->get('/centers/{center_id}/teachers', function($center_id) use ($app) {
@@ -154,7 +154,7 @@ $app->get('/centers/{center_id}/teachers', function($center_id) use ($app) {
 	$user = new User;
 	$teachers = $user->search(['center_id' => $center_id]);
 
-	return JSend::success("Teachers in Center $center_id", array('teachers' => $teachers));
+	return JSend::success("Teachers in Center $center_id", ['teachers' => $teachers]);
 });
 
 $app->get('/centers/{center_id}/students', function ($center_id) use ($app) {
@@ -164,7 +164,7 @@ $app->get('/centers/{center_id}/students', function ($center_id) use ($app) {
 	$student = new Student;
     $students = $student->search(array('center_id' => $center_id));
     
-    return JSend::success("List of students in $center[name]", array('students' => $students));
+    return JSend::success("List of students in $center[name]", ['students' => $students]);
 });
 
 $app->get('/centers/{center_id}/batches', function ($center_id, Request $request) use ($app) {
@@ -175,7 +175,7 @@ $app->get('/centers/{center_id}/batches', function ($center_id, Request $request
 	if(!$project_id) $project_id = 1;
 
     $batches = (new Batch)->search(['center_id' => $center_id, 'project_id' => $project_id]);
-    return JSend::success("List of batches in $center[name]", array('batches' => $batches));
+    return JSend::success("List of batches in $center[name]", ['batches' => $batches]);
 });
 
 $app->get('/centers/{center_id}/levels', function ($center_id, Request $request) use ($app) {
@@ -186,7 +186,7 @@ $app->get('/centers/{center_id}/levels', function ($center_id, Request $request)
 	if(!$project_id) $project_id = 1;
  
     $levels = (new Level)->search(['center_id' => $center_id, 'project_id' => $project_id]);
-    return JSend::success("List of levels in $center[name]", array('levels' => $levels));
+    return JSend::success("List of levels in $center[name]", ['levels' => $levels]);
 });
 
 ////////////////////////////////////////////////////////// Batches ///////////////////////////////////////////
@@ -194,7 +194,7 @@ $app->get('/batches/{batch_id}', function($batch_id) use ($app) {
 	$batch = (new Batch)->fetch($batch_id, false);
 	if(!$batch) return response(JSend::fail("Can't find any batch with ID $batch_id"), 404);
 
-	return JSend::success("Batch ID : $batch_id", array('batch' => $batch));
+	return JSend::success("Batch ID : $batch_id", ['batch' => $batch]);
 });
 $app->get('/batches/{batch_id}/teachers', function($batch_id) use ($app) {
 	$batch = (new Batch)->fetch($batch_id, false);
@@ -202,7 +202,7 @@ $app->get('/batches/{batch_id}/teachers', function($batch_id) use ($app) {
 
 	$teachers = (new User)->search(['batch_id' => $batch_id]);
 
-	return JSend::success("Teachers in batch $batch_id", array('teachers' => $teachers));
+	return JSend::success("Teachers in batch $batch_id", ['teachers' => $teachers]);
 });
 $app->get('/batches/{batch_id}/levels', function($batch_id) use ($app) {
 	$batch = (new Batch)->fetch($batch_id, false);
@@ -210,7 +210,7 @@ $app->get('/batches/{batch_id}/levels', function($batch_id) use ($app) {
 
 	$levels = (new Level)->search(['batch_id' => $batch_id]);
 
-	return JSend::success("Levels in batch $batch_id", array('levels' => $levels));
+	return JSend::success("Levels in batch $batch_id", ['levels' => $levels]);
 });
 
 ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
@@ -218,7 +218,7 @@ $app->get('/levels/{level_id}', function($level_id) use ($app) {
 	$level = (new Level)->fetch($level_id, false);
 	if(!$level) return response(JSend::fail("Can't find any level with ID $level_id"), 404);
 
-	return JSend::success("Level ID : $level_id", array('level' => $level));
+	return JSend::success("Level ID : $level_id", ['level' => $level]);
 });
 $app->get('/levels/{level_id}/students', function($level_id) use ($app) {
 	$level = (new Level)->fetch($level_id, false);
@@ -226,7 +226,7 @@ $app->get('/levels/{level_id}/students', function($level_id) use ($app) {
 
 	$students = (new Student)->search(['level_id' => $level_id]);
 
-	return JSend::success("Students in Level $level_id", array('students' => $students));
+	return JSend::success("Students in Level $level_id", ['students' => $students]);
 });
 $app->get('/levels/{level_id}/batches', function($level_id) use ($app) {
 	$level = (new Level)->fetch($level_id, false);
@@ -234,7 +234,7 @@ $app->get('/levels/{level_id}/batches', function($level_id) use ($app) {
 
 	$batches = (new Batch)->search(['level_id' => $level_id]);
 
-	return JSend::success("Levels in batch $level_id", array('batches' => $batches));
+	return JSend::success("Levels in batch $level_id", ['batches' => $batches]);
 });
 
 
@@ -269,7 +269,7 @@ $app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($
 		return response(JSend::fail($error), 400);
 	}
 
-	return JSend::success("Welcome back, $data[name]", array('user' => $data));
+	return JSend::success("Welcome back, $data[name]", ['user' => $data]);
 });
 
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
@@ -284,7 +284,7 @@ $app->get('/users', function(Request $request) use ($app) {
 		if(!$request->input($key)) continue;
 
 		if($key == 'group_id') {
-			$search['user_group'] = array($request->input('group_id'));
+			$search['user_group'] = [$request->input('group_id')];
 		} elseif ($key == 'group_in') {
 			$search['user_group'] = explode(",", $request->input('group_in'));
 		} else {
@@ -296,7 +296,7 @@ $app->get('/users', function(Request $request) use ($app) {
 	$user = new User;
 	$data = $user->search($search);
 
-	return JSend::success("Search Results", array('users' => $data));
+	return JSend::success("Search Results", ['users' => $data]);
 });
 
 $app->get('/users/{user_id}', function($user_id) use ($app) {
@@ -307,7 +307,7 @@ $app->get('/users/{user_id}', function($user_id) use ($app) {
 		return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 	}
 
-	return JSend::success("User details for {$details->name}", array('user' => $details));
+	return JSend::success("User details for {$details->name}", ['user' => $details]);
 });
 
 $app->get('/users/{user_id}/credit', function($user_id) use ($app) {
@@ -316,7 +316,7 @@ $app->get('/users/{user_id}/credit', function($user_id) use ($app) {
 	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 
 	$credit = intval($info->credit);
-	return JSend::success("Credits for user $user_id", array('credit' => $credit));
+	return JSend::success("Credits for user $user_id", ['credit' => $credit]);
 });
 $app->post('/users/{user_id}/credit', function($user_id, Request $request) use ($app) {
 	$user = new User;
@@ -335,7 +335,7 @@ $app->post('/users/{user_id}/credit', function($user_id, Request $request) use (
 
 	$user->find($user_id)->editCredit($request->input('credit'), $request->input('updated_by_user_id'), $request->input('reason'));
 	
-	return JSend::success("Edit the credits for user $user_id", array('credit' => $request->input('credit')));
+	return JSend::success("Edit the credits for user $user_id", ['credit' => $request->input('credit')]);
 });
 
 $app->delete('/users/{user_id}', function($user_id) use ($app) {
@@ -345,7 +345,7 @@ $app->delete('/users/{user_id}', function($user_id) use ($app) {
 
 	$info = $user->remove($user_id);
 
-	return ""; // JSend::success("User deleted successfully", array('user' => $info));
+	return ""; // JSend::success("User deleted successfully", ['user' => $info]);
 });
 
 $app->get('/users/{user_id}/groups', function($user_id) use ($app) {
@@ -353,7 +353,7 @@ $app->get('/users/{user_id}/groups', function($user_id) use ($app) {
 	$info = $user->fetch($user_id);
 	if(!$info) return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 
-	return JSend::success("User Groups for user $user_id", array('groups' => $info->groups));
+	return JSend::success("User Groups for user $user_id", ['groups' => $info->groups]);
 });
 
 $app->post('/users/{user_id}/groups/{group_id}', function($user_id, $group_id) use ($app) {
@@ -364,7 +364,7 @@ $app->post('/users/{user_id}/groups/{group_id}', function($user_id, $group_id) u
 	$groups = $user->find($user_id)->addGroup($group_id);
 	if(!$groups) return response(JSend::fail("User already has the given group"), 400);
 
-	return JSend::success("Added user to the given group.", array('groups' => $groups));
+	return JSend::success("Added user to the given group.", ['groups' => $groups]);
 });
 
 $app->delete('/users/{user_id}/groups/{group_id}', function($user_id, $group_id) use ($app) {
@@ -375,7 +375,7 @@ $app->delete('/users/{user_id}/groups/{group_id}', function($user_id, $group_id)
 	$groups = $user->find($user_id)->removeGroup($group_id);
 	if(!$groups) return response(JSend::fail("User don't have the given group"), 400);
 
-	return ""; // JSend::success("Removed user from the given group.", array('groups' => $groups));
+	return ""; // JSend::success("Removed user from the given group.", ['groups' => $groups]);
 });
 
 ///////////////////////////////////////////////////////// Student Calls //////////////////////////////////////////////
@@ -394,7 +394,7 @@ $app->get('/students', function(Request $request) use ($app) {
 	$student = new Student;
 	$data = $student->search($search);
 
-	return JSend::success("Search Results", array('students' => $data));
+	return JSend::success("Search Results", ['students' => $data]);
 });
 $app->delete('/students/{student_id}', function($student_id) use ($app) {
 	$student = new Student;
@@ -403,7 +403,7 @@ $app->delete('/students/{student_id}', function($student_id) use ($app) {
 
 	$info = $student->remove($student_id);
 
-	return ""; // JSend::success("User deleted successfully", array('student' => $info));
+	return ""; // JSend::success("User deleted successfully", ['student' => $info]);
 });
 
 $app->get('/students/{student_id}', function($student_id) use ($app) {
@@ -412,7 +412,7 @@ $app->get('/students/{student_id}', function($student_id) use ($app) {
 
 	if(!$details) return response(JSend::error("Can't find student with id '$student_id'"), 404);
 
-	return JSend::success("Student details for {$details->name}", array('student' => $details));
+	return JSend::success("Student details for {$details->name}", ['student' => $details]);
 });
 
 /////////////////////////////////////////////// Donations ///////////////////////////////////////////////////////
@@ -450,7 +450,7 @@ $app->post('/donations', function(Request $request) {
 	$donation_model = new Donation;
 	$donation = $donation_model->add($request->all());
 
-	if($donation) return JSend::success("Donation inserted succesfully : Donation ID '{$donation->id}'", array("donation" => $donation));
+	if($donation) return JSend::success("Donation inserted succesfully : Donation ID '{$donation->id}'", ["donation" => $donation]);
 	else return JSend::error("Failure in inserting donation at server. Try again after some time.", $donation_model->errors);
 });
 
@@ -563,7 +563,7 @@ $app->get('/events', function(Request $request) use ($app) {
 	$event = new Event;
 	$events = $event->search($search);
 
-	return JSend::success("Events", array('events' => $events));
+	return JSend::success("Events", ['events' => $events]);
 });
 
 $app->get('/events/{event_id}', function($event_id) use($app) {
