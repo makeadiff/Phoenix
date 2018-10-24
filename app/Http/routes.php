@@ -491,8 +491,11 @@ $app->get('/users/{user_id}/donations', function($fundraiser_user_id) {
 ///////////////////////////// Deposits ////////////////////////
 $app->post('/deposits', function(Request $request) {
 	$deposit = new Deposit;
-	$donation_ids = $request->input('donation_ids');
-	if(!is_array($donation_ids)) $donation_ids = explode(",", $donation_ids);
+	$donation_ids = [];
+	if($request->input('donation_ids')) {
+		$donation_ids = $request->input('donation_ids');
+		if(!is_array($donation_ids)) $donation_ids = explode(",", $donation_ids);
+	}
 	$deposit_info = $deposit->add($request->input('collected_from_user_id'), $request->input('given_to_user_id'), $donation_ids, $request->input('deposit_information'));
 
 	if(!$deposit_info) {

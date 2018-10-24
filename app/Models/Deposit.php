@@ -42,6 +42,7 @@ final class Deposit extends Common
         if(!$user->fetch($collected_from_user_id)) return $this->error("Invalid User ID of depositer.");
         if(!$user->fetch($given_to_user_id)) return $this->error("Invalid User ID of collector.");
         if($collected_from_user_id == $given_to_user_id) return $this->error("Depositer and collector can't be the same person.");
+        if(!$donation_ids or !count($donation_ids)) return $this->error("No donations selected to be part of the deposit.");
 
         // Check if any of the given donation has been part of an approved or pending deposit. Rejected deposits are ok.
         $donation = new Donation;
