@@ -138,7 +138,7 @@ final class Deposit extends Common
             $donation->approve($current_user_id, $this->item->given_to_user_id, 'queue');
         }
 
-        return true; // :DEBUG: $this->changeStatus('approved', $current_user_id);
+        return $this->changeStatus('approved', $current_user_id);
     }
 
     public function reject($current_user_id, $deposit_id = false) {
