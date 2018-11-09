@@ -57,6 +57,9 @@ final class Donation extends Common
         if(!empty($data['city_id'])) $q->where('User.city_id', $data['city_id']);
         if(!empty($data['amount'])) $q->where('Donut_Donation.amount', $data['amount']);
         if(!empty($data['status'])) $q->where('Donut_Donation.status', $data['status']);
+        if(!empty($data['from'])) $q->where('Donut_Donation.added_on', '>', date('Y-m-d 00:00:00', strtotime($data['from'])));
+        else $q->where('Donut_Donation.added_on', '>', $this->start_date);
+        if(!empty($data['to'])) $q->where('Donut_Donation.added_on', '<', date('Y-m-d 00:00:00', strtotime($data['to'])));
         if(!empty($data['fundraiser_user_id'])) $q->where('Donut_Donation.fundraiser_user_id', $data['fundraiser_user_id']);
         if(!empty($data['updated_by_user_id'])) $q->where('Donut_Donation.updated_by_user_id', $data['updated_by_user_id']);
         if(isset($data['deposited']) or isset($data['include_deposit_info'])) { //If either of these are set get only cash/cheque donations
@@ -81,7 +84,6 @@ final class Donation extends Common
                 foreach($data['deposit_status_in'] as $deposit_status) $q->orWhere('Donut_Deposit.status', $deposit_status);
             });
         }
-        $q->where('Donut_Donation.added_on', '>', $this->start_date);
         $q->orderBy('Donut_Donation.added_on','desc');
 
         // dd($q->toSql(), $q->getBindings());
@@ -190,14 +192,14 @@ final class Donation extends Common
             'status'            => 'collected',
         ]);
 
-        if(!isset($data['dont_send_sms'])) { // This is an undocumented way to prevent sending SMS when making a donation. Useful for testing, seeding, etc.
+        if(!isset($data['dont_send_sms']) and ($data['type'] == 'cash' or $data['type'] == 'cheque')) { // This is an undocumented way to prevent sending SMS when making a donation. Useful for testing, seeding, etc.
             $sms = new SMS;
             $message = "Dear {$data['donor_name']}, Thanks a lot for your contribution of Rs. {$data['amount']} towards Make a Difference. "
                             . " This is only an acknowledgement. A confirmation and e-receipt would be sent once the amount reaches us.";
             $sms->send($data['donor_phone'], $message);
         }
 
-        if(!isset($data['dont_send_email'])) { // This is an undocumented way to prevent sending Email when making a donation. Useful for testing, seeding, etc.
+        if(!isset($data['dont_send_email']) and ($data['type'] == 'cash' or $data['type'] == 'cheque')) { // This is an undocumented way to prevent sending Email when making a donation. Useful for testing, seeding, etc.
             $base_path = app()->basePath();
             $base_url = url('/');
 
@@ -227,12 +229,11 @@ final class Donation extends Common
         $this->chain($donation_id);
         $donation_id = $this->id;
 
-        // :DEBUG: Enable this.
-        // $donation->edit([
-        //     'status'            => 'collected',
-        //     'with_user_id'      => $current_user_id,
-        //     'updated_by_user_id'=> $current_user_id
-        // ]);
+        $donation->edit([
+            'status'            => 'collected',
+            'with_user_id'      => $current_user_id,
+            'updated_by_user_id'=> $current_user_id
+        ]);
 
         ///  If national account does the approval, send recipt.
         if(($given_to_user_id == $this->national_account_user_id) and $send_email) {
@@ -392,45 +393,45 @@ final class Donation extends Common
             throw new Exception("Number is out of range");
         } 
 
-        $Gn = floor($number / 1000000);  /* Millions (giga) */ 
-        $number -= $Gn * 1000000; 
-        $kn = floor($number / 1000);     /* Thousands (kilo) */ 
-        $number -= $kn * 1000; 
-        $Hn = floor($number / 100);      /* Hundreds (hecto) */ 
-        $number -= $Hn * 100; 
-        $Dn = floor($number / 10);       /* Tens (deca) */ 
-        $n = $number % 10;               /* Ones */ 
+        $millions = floor($number / 1000000);  /* Millions (giga) */ 
+        $number -= $millions * 1000000; 
+        $thousands = floor($number / 1000);     /* Thousands (kilo) */ 
+        $number -= $thousands * 1000; 
+        $hundreds = floor($number / 100);      /* Hundreds (hecto) */ 
+        $number -= $hundreds * 100; 
+        $tens = floor($number / 10);       /* Tens (deca) */ 
+        $unit = $number % 10;               /* Ones */ 
 
         $res = ""; 
 
-        if ($Gn) { 
-            $res .= $this->convertNumber($Gn) . " Million"; 
+        if ($millions) { 
+            $res .= $this->convertNumber($millions) . " Million"; 
         } 
 
-        if ($kn) { 
-            $res .= (empty($res) ? "" : " ") . $this->convertNumber($kn) . " Thousand"; 
+        if ($thousands) { 
+            $res .= (empty($res) ? "" : " ") . $this->convertNumber($thousands) . " Thousand"; 
         } 
 
-        if ($Hn) { 
-            $res .= (empty($res) ? "" : " ") . $this->convertNumber($Hn) . " Hundred"; 
+        if ($hundreds) { 
+            $res .= (empty($res) ? "" : " ") . $this->convertNumber($hundreds) . " Hundred"; 
         } 
 
-        $ones = array("", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eightteen", "Nineteen"); 
-        $tens = array("", "", "Twenty", "Thirty", "Fourty", "Fifty", "Sixty", "Seventy", "Eigthy", "Ninety"); 
+        $ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eightteen", "Nineteen"];
+        $all_tens = ["", "", "Twenty", "Thirty", "Fourty", "Fifty", "Sixty", "Seventy", "Eigthy", "Ninety"];
 
-        if ($Dn || $n) { 
-            if (!empty($res)) { 
-                $res .= " and "; 
-            } 
+        if ($tens || $unit) {
+            if (!empty($res)) {
+                $res .= " and ";
+            }
 
-            if ($Dn < 2) { 
-                $res .= $ones[$Dn * 10 + $n]; 
-            } else { 
-                $res .= $tens[$Dn]; 
+            if ($tens < 2) {
+                $res .= $ones[($tens * 10) + $unit];
+            } else {
+                $res .= $all_tens[$tens];
 
-                if ($n) { 
-                    $res .= "-" . $ones[$n]; 
-                } 
+                if ($unit) {
+                    $res .= "-" . $ones[$unit];
+                }
             } 
         } 
 

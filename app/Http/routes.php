@@ -417,7 +417,7 @@ $app->get('/students/{student_id}', function($student_id) use ($app) {
 
 /////////////////////////////////////////////// Donations ///////////////////////////////////////////////////////
 $app->get('/donations', function(Request $request) {
-	$search_fields = ['deposit_status_in','deposit_status','approver_user_id','id','city_id','amount','status','fundraiser_user_id','updated_by_user_id', 'include_deposit_info', 'deposited'];
+	$search_fields = ['deposit_status_in','deposit_status','approver_user_id','id','city_id','amount','status','fundraiser_user_id','updated_by_user_id', 'include_deposit_info', 'deposited', 'from', 'to'];
 	$search = [];
 	foreach ($search_fields as $key) {
 		if(!$request->input($key)) continue;
@@ -481,9 +481,18 @@ $app->delete('/donations/{donation_id}', function($donation_id) {
 	return ""; // JSend::success("Donation '$donation_id' deleted.", ['donation' => $data]); // DELETE return should be empty.
 });
 
-$app->get('/users/{user_id}/donations', function($fundraiser_user_id) {
+$app->get('/users/{user_id}/donations', function(Request $request, $fundraiser_user_id) {
+	$search_fields = ['from', 'to', 'amount'];
+	$search = ['fundraiser_user_id' => $fundraiser_user_id];
+
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+
+		$search[$key] = $request->input($key);
+	}
+
 	$donation = new Donation;
-	$data = $donation->search(['fundraiser_user_id' => $fundraiser_user_id]);
+	$data = $donation->search($search);
 
 	return JSend::success("Donations", ['donations' => $data]);
 });

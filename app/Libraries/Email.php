@@ -31,7 +31,8 @@ class Email
 		foreach($this->images as $key => $image) {
 			$mime->addHTMLImage($image, mime_content_type($image), $key);
             $cid = $mime->_html_images[$image_index]['cid'];
-            $this->html = str_replace("%CID-$key%", $cid, $this->html);
+            $file = basename($image);
+            $this->html = str_replace("%CID-$file%", $cid, $this->html);
             $image_index++;
 		}
 
@@ -69,7 +70,7 @@ class Email
 			'from'		=> $this->from,
 			'subject'	=> $this->subject,
 			'body'		=> $this->html,
-			'images'	=>json_encode($this->images),
+			'images'	=> json_encode($this->images),
 			'attachments'=>json_encode($this->attachments),
 			'added_on'	=> date('Y-m-d H:i:s'),
 			'status'	=> 'pending'

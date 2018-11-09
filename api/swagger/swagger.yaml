@@ -329,6 +329,16 @@ paths:
           in: path
           required: true
           description: ID of the user
+        - name: from
+          type: string
+          format: date 
+          in: query
+          description: Date from which the donations should be fetched. All donations made AFTER this date will be returned.
+        - name: to
+          type: string
+          format: date 
+          in: query
+          description: All donations made BEFORE this date will be returned.
       responses:
         200:
           description: Returns the donations of the given user
@@ -1168,6 +1178,16 @@ paths:
           in: query
           type: integer
           description: Find donations raised by the given user
+        - name: from
+          type: string
+          format: date 
+          in: query
+          description: Date from which the donations should be fetched. All donations made AFTER this date will be returned.
+        - name: to
+          type: string
+          format: date 
+          in: query
+          description: All donations made BEFORE this date will be returned.
         - name: type
           in: query
           type: string
