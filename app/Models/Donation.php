@@ -189,6 +189,7 @@ final class Donation extends Common
             'nach_start_on'     => (!empty($data['nach_start_on']) ? $data['nach_start_on'] : ''),
             'nach_end_on'       => (!empty($data['nach_end_on']) ? $data['nach_end_on'] : ''),
             'comment'           => (!empty($data['comment']) ? $data['comment'] : ''),
+            'cheque_no'         => (!empty($data['cheque_no']) ? $data['cheque_no'] : ''),
             'status'            => 'collected',
         ]);
 
