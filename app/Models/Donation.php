@@ -232,8 +232,8 @@ final class Donation extends Common
 
         $this->edit([
             'status'            => 'collected',
-            'with_user_id'      => $current_user_id,
-            'updated_by_user_id'=> $current_user_id
+            'with_user_id'      => $given_to_user_id,
+            'updated_by_user_id'=> $given_to_user_id
         ]);
 
         ///  If national account does the approval, send recipt.
