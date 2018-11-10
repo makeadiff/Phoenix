@@ -230,7 +230,7 @@ final class Donation extends Common
         $this->chain($donation_id);
         $donation_id = $this->id;
 
-        $donation->edit([
+        $this->edit([
             'status'            => 'collected',
             'with_user_id'      => $current_user_id,
             'updated_by_user_id'=> $current_user_id
