@@ -32,7 +32,7 @@ final class Data extends Common
         $item = ( $this->item ) ? $this->item : $this->item_copy;
         if(!$item) return false;
 
-        if($item) return $item->data;
+        if($item and $item->data) return $item->data;
         return false;
     }
 

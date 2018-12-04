@@ -471,6 +471,8 @@ $app->get('/donations/{donation_id}', function($donation_id) {
 });
 
 $app->delete('/donations/{donation_id}', function($donation_id) {
+	if(!$donation_id) return response(JSend::fail("Invalid donaiton ID - $donation_id"), 404);
+
 	$donation = new Donation;
 	$data = $donation->fetch($donation_id);
 

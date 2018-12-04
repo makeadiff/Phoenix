@@ -273,7 +273,7 @@ final class Donation extends Common
         $mail = new Email;
         $mail->from     = "noreply <noreply@makeadiff.in>";
         $mail->to       = $donor->email;
-        $mail->subject  = "Donation Recipt";
+        $mail->subject  = "Donation Receipt";
 
         $email_html = file_get_contents(base_path('resources/email_templates/donation_receipt.html'));
 

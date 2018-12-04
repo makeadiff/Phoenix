@@ -1,6 +1,8 @@
 <?php
 namespace App\Libraries;
 
+use Log;
+
 require_once "Mail.php";
 require_once "Mail/mime.php";
 error_reporting(E_ERROR | E_PARSE);
@@ -56,7 +58,7 @@ class Email
 		$mail = $smtp->send($this->to, $headers, $body);
 
 		if (\PEAR::isError($mail)) {
-			print $mail->getMessage();
+			Log::error("Error sending email '{$this->subject}' to '{$this->to}' : " . $mail->getMessage());
 			return false;
 		}
 
