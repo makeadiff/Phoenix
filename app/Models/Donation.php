@@ -57,11 +57,18 @@ final class Donation extends Common
         if(!empty($data['city_id'])) $q->where('User.city_id', $data['city_id']);
         if(!empty($data['amount'])) $q->where('Donut_Donation.amount', $data['amount']);
         if(!empty($data['status'])) $q->where('Donut_Donation.status', $data['status']);
+        if(!empty($data['type'])) $q->where('Donut_Donation.type', $data['type']);
+        if(!empty($data['type_in'])) $q->whereIn('Donut_Donation.type', $data['type_in']);
         if(!empty($data['from'])) $q->where('Donut_Donation.added_on', '>', date('Y-m-d 00:00:00', strtotime($data['from'])));
         else $q->where('Donut_Donation.added_on', '>', $this->start_date);
         if(!empty($data['to'])) $q->where('Donut_Donation.added_on', '<', date('Y-m-d 00:00:00', strtotime($data['to'])));
         if(!empty($data['fundraiser_user_id'])) $q->where('Donut_Donation.fundraiser_user_id', $data['fundraiser_user_id']);
         if(!empty($data['updated_by_user_id'])) $q->where('Donut_Donation.updated_by_user_id', $data['updated_by_user_id']);
+        if(!empty($data['donor_id'])) $q->where('Donut_Donor.id', $data['donor_id']);
+        if(!empty($data['donor_email'])) $q->where('Donut_Donor.email', $data['donor_email']);
+        if(!empty($data['donor_phone'])) $q->where('Donut_Donor.phone', $data['donor_phone']);
+        if(!empty($data['donor_name'])) $q->where('Donut_Donor.name', 'LIKE', '%' . $data['donor_name'] . '%');
+
         if(isset($data['deposited']) or isset($data['include_deposit_info'])) { //If either of these are set get only cash/cheque donations
             $q->whereIn("Donut_Donation.type", ['cash', 'cheque']);
         }
@@ -142,7 +149,6 @@ final class Donation extends Common
     }
 
     public function fetch($donation_id, $include_deposit_info = false) {
-        // $data = Donation::find($donation_id);
         $data = Donation::search(['id' => $donation_id, 'include_deposit_info' => $include_deposit_info]);
         if(!$data) {
             $data = Donation::search(['id' => $donation_id]); // Try finding the donation without deposit info.
@@ -238,6 +244,8 @@ final class Donation extends Common
 
         ///  If national account does the approval, send recipt.
         if(($given_to_user_id == $this->national_account_user_id) and $send_email) {
+            $this->edit(['status' => 'receipted']);
+
             $this->sendReceipt($send_email);
         }
 

@@ -18,7 +18,7 @@ final class Donor extends Common
         return $donations->get();
     }
 
-    /// Used to find a donor who matches multiple fields - email and phone. If none found, create the user.
+    /// Used to find a donor who matches multiple fields - email and phone. If none found, create the donor.
     public function findMatching($data, $added_by_user_id = 0) {
         // Find the donor - both email and phone must be same
         $donor = app('db')->table($this->table)->select('id')->where('email', $data['donor_email'])->where('phone', $data['donor_phone'])->first();
@@ -30,7 +30,8 @@ final class Donor extends Common
                 'email' => $data['donor_email'],
                 'phone' => $data['donor_phone'],
                 'address' => $data['donor_address'],
-                'added_by_user_id' => $added_by_user_id
+                'added_by_user_id' => $added_by_user_id,
+                'added_on'=> date('Y-m-d H:i:s')
             ]);
             
             if($donor_id) return $donor_id;
