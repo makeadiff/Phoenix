@@ -49,7 +49,7 @@ final class Donation extends Common
 
         $q->select("Donut_Donation.id", 'Donut_Donation.type', 'Donut_Donation.fundraiser_user_id', 'Donut_Donation.donor_id', 'Donut_Donation.with_user_id', 'Donut_Donation.status', 
                     'Donut_Donation.amount', 'Donut_Donation.cheque_no', 'Donut_Donation.added_on', 'Donut_Donation.updated_on', 'Donut_Donation.updated_by_user_id', 'Donut_Donation.comment', 
-                    app('db')->raw('User.name AS fundraiser'), app('db')->raw('Donut_Donor.name AS donor'));
+                    'User.city_id', app('db')->raw('User.name AS fundraiser'), app('db')->raw('Donut_Donor.name AS donor'));
         $q->join("User", "User.id", '=', 'Donut_Donation.fundraiser_user_id');
         $q->join("Donut_Donor", "Donut_Donor.id", '=', 'Donut_Donation.donor_id');
         

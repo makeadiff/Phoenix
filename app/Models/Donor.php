@@ -10,7 +10,7 @@ final class Donor extends Common
     const UPDATED_AT = 'updated_on';
     protected $table = 'Donut_Donor';
     public $timestamps = true;
-    protected $fillable = ['name','email', 'phone', 'added_on', 'address', 'added_by_user_id', 'updated_on'];
+    protected $fillable = ['name','email', 'phone', 'added_on', 'address', 'donor_finance_id', 'added_by_user_id', 'updated_on'];
 
     public function donation()
     {
