@@ -47,16 +47,18 @@ final class Donation extends Common
     {
         $q = app('db')->table($this->table);
 
-        $q->select("Donut_Donation.id", 'Donut_Donation.type', 'Donut_Donation.fundraiser_user_id', 'Donut_Donation.donor_id', 'Donut_Donation.with_user_id', 'Donut_Donation.status', 
+        $q->select("Donut_Donation.id", 'Donut_Donation.type', 'Donut_Donation.fundraiser_user_id', 'Donut_Donation.donor_id', 'Donut_Donor.donor_finance_id', 'Donut_Donation.with_user_id', 'Donut_Donation.status', 
                     'Donut_Donation.amount', 'Donut_Donation.cheque_no', 'Donut_Donation.added_on', 'Donut_Donation.updated_on', 'Donut_Donation.updated_by_user_id', 'Donut_Donation.comment', 
-                    'User.city_id', app('db')->raw('User.name AS fundraiser'), app('db')->raw('Donut_Donor.name AS donor'));
+                    'Donut_Donation.nach_start_on', 'Donut_Donation.nach_end_on', 'User.city_id', app('db')->raw('User.name AS fundraiser'), app('db')->raw('Donut_Donor.name AS donor'));
         $q->join("User", "User.id", '=', 'Donut_Donation.fundraiser_user_id');
         $q->join("Donut_Donor", "Donut_Donor.id", '=', 'Donut_Donation.donor_id');
         
         if(!empty($data['id'])) $q->where('Donut_Donation.id', $data['id']);
+        if(!empty($data['donation_id'])) $q->where('Donut_Donation.id', $data['donation_id']);
         if(!empty($data['city_id'])) $q->where('User.city_id', $data['city_id']);
         if(!empty($data['amount'])) $q->where('Donut_Donation.amount', $data['amount']);
         if(!empty($data['status'])) $q->where('Donut_Donation.status', $data['status']);
+        if(!empty($data['not_status'])) $q->where('Donut_Donation.status', '!=', $data['not_status']);
         if(!empty($data['type'])) $q->where('Donut_Donation.type', $data['type']);
         if(!empty($data['type_in'])) $q->whereIn('Donut_Donation.type', $data['type_in']);
         if(!empty($data['from'])) $q->where('Donut_Donation.added_on', '>', date('Y-m-d 00:00:00', strtotime($data['from'])));

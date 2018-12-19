@@ -41,4 +41,10 @@ final class Donor extends Common
         return $donor->id;
     }
 
+    public function fetch($donor_id) {
+        $this->id = $donor_id;
+        $this->item = $this->find($donor_id);
+
+        return $this->item;
+    }
 }
