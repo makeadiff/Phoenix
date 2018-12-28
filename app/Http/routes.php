@@ -667,6 +667,11 @@ $app->delete('/events/{event_id}/users/{user_id}', function($event_id, $user_id)
 	return ""; 
 });
 
+////////////////////////////////// Placeholders ///////////////////////////////
+$app->get('/custom/video_analytics', function(Request $request) use($app) {
+
+	return JSend::success("Data catured");
+});
 
 ////////////////////////////////// Debug //////////////////////////
 $app->get('/events/{event_id}/send_invites', function($event_id) use($app) {
