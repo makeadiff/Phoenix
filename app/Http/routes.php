@@ -11,6 +11,7 @@ use App\Models\Donation;
 use App\Models\Deposit;
 use App\Models\Event;
 use App\Models\Data;
+use App\Models\Survey_Question;
 
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -665,6 +666,14 @@ $app->delete('/events/{event_id}/users/{user_id}', function($event_id, $user_id)
 
 	$event->find($event_id)->deleteUserConnection($user_id);
 	return ""; 
+});
+
+////////////////////////////////// Survey /////////////////////////////////////
+$app->get('/survey_temp', function(Request $request) use ($app) {
+	$question_model = new Survey_Question;
+	$questions = $question_model->inCategorizedFormat(2);
+
+	return JSend::success("Survey Questions", $questions);
 });
 
 ////////////////////////////////// Placeholders ///////////////////////////////
