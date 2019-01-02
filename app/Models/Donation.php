@@ -71,8 +71,8 @@ final class Donation extends Common
         if(!empty($data['donor_phone'])) $q->where('Donut_Donor.phone', $data['donor_phone']);
         if(!empty($data['donor_name'])) $q->where('Donut_Donor.name', 'LIKE', '%' . $data['donor_name'] . '%');
 
-        if(isset($data['deposited']) or isset($data['include_deposit_info'])) { //If either of these are set get only cash/cheque donations
-            $q->whereIn("Donut_Donation.type", ['cash', 'cheque']);
+        if(isset($data['deposited']) or isset($data['include_deposit_info'])) { //If either of these are set get only cash/cheque donations - and NACH forms.
+            $q->whereIn("Donut_Donation.type", ['cash', 'cheque', 'nach']);
         }
 
         if(!empty($data['approver_user_id'])) {
