@@ -11,6 +11,7 @@ use App\Models\Donation;
 use App\Models\Deposit;
 use App\Models\Event;
 use App\Models\Data;
+use App\Models\Notification;
 use App\Models\Survey_Question;
 
 use App\Http\Controllers\UserController;
@@ -666,6 +667,28 @@ $app->delete('/events/{event_id}/users/{user_id}', function($event_id, $user_id)
 
 	$event->find($event_id)->deleteUserConnection($user_id);
 	return ""; 
+});
+
+////////////////////////////////// Notifications //////////////////////////////
+$app->post('/notifications', function(Request $request) use($app) {
+	$notification_model = new Notification;
+	$notification = $notification_model->add($request->all());
+
+	return JSend::success("Notification created", ['notification' => $notification]);
+});
+
+$app->get('/notifications', function(Request $request) use($app) {
+	$search_fields = ['id', 'user_id', 'phone', 'imei', 'fcm_regid', 'platform', 'app', 'status'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+		$search[$key] = $request->input($key);
+	}
+
+	$notification = new Notification;
+	$notifications = $notification->search($search);
+
+	return JSend::success("Notifications", ['notifications' => $notifications]);
 });
 
 ////////////////////////////////// Survey /////////////////////////////////////

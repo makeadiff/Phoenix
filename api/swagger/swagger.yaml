@@ -1845,7 +1845,103 @@ paths:
         404:
           description: Can't find any event with the given ID
 
-
+  ######## Notifications
+  /notifications:
+    get:
+      tags:
+        - notification
+        - search 
+      summary: Search thru push notification
+      description: Return a list of all push notification registerations that matches the given parameters
+      parameters:
+        - name: user_id
+          in: query
+          type: integer
+          description: ID of the user who should be sent the notification
+        - name: id
+          in: query
+          type: integer
+          description: ID of the push notification registeration.
+        - name: phone
+          in: query
+          type: integer
+          description: Phone number of the user who should be sent the notification
+        - name: imei
+          in: query
+          type: integer
+          description: IMEI Number of the device to which the notification should be sent
+        - name: fcm_regid
+          in: query
+          type: string
+          description: FCM Registeration ID
+        - name: platform
+          in: query
+          type: string
+          enum:
+            - Web
+            - Android
+            - Ios
+          description: Platform of the device to which the notification should be sent
+        - name: app
+          in: query
+          description: The app to which the notification should be sent.
+          type: string
+          enum:
+            - Website
+            - UPMA
+            - Donut
+            - ''
+      responses:
+        200:
+          description: List of all notification registeration that matches the given parameters
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Notification"
+        404:
+          description: Can't find any notification registeration that matched the given parameters
+    post:
+      tags:
+        - notification
+        - create
+      summary: Add a new push notification registeration
+      description: New push notification registeration by app, user and device 
+      parameters:
+        - name: user_id
+          in: formData
+          type: integer
+          description: ID of the user whose device this is
+        - name: imei
+          in: formData
+          type: integer
+          description: IMEI Number of the device
+        - name: fcm_regid
+          in: formData
+          type: string
+          description: FCM Registeration ID
+        - name: platform
+          in: formData
+          type: string
+          enum:
+            - Web
+            - Android
+            - Ios
+          description: Platform of the device to which the notification should be sent
+        - name: app
+          in: formData
+          description: The app to which the notification should be sent.
+          type: string
+          enum:
+            - Website
+            - UPMA
+            - Donut
+            - ''
+      responses:
+        200:
+          description: Created the notification registeration
+        400:
+          description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+          
 # Class
 
 # GET /classes/{class_id}
@@ -2141,4 +2237,25 @@ definitions:
           - cant_go
       reason:
         type: string
-
+  Notification:
+    type: "object"
+    properties:
+      user_id:
+        type: integer
+      imei:
+        type: integer
+      fcm_regid:
+        type: string
+      platform:
+        type: string
+        enum:
+          - Web
+          - Android
+          - Ios
+      app:
+        type: string
+        enum:
+          - Website
+          - UPMA
+          - Donut
+          - ''
