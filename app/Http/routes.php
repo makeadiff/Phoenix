@@ -12,7 +12,8 @@ use App\Models\Deposit;
 use App\Models\Event;
 use App\Models\Data;
 use App\Models\Notification;
-use App\Models\Survey_Question;
+use App\Models\Survey;
+use App\Models\Survey_Template;
 
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -698,6 +699,79 @@ $app->get('/survey_temp', function(Request $request) use ($app) {
 
 	return JSend::success("Survey Questions", $questions);
 });
+
+$app->get('/survey_templates', function(Request $request) use ($app) {
+	$search_fields = ['id', 'name', 'vertical_id', 'responder', 'status'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+		$search[$key] = $request->input($key);
+	}
+
+	$survey_templates = Survey_Template::search($search);
+
+	return JSend::success("Survey Templates", $survey_templates);
+});
+
+$app->get('/survey_templates/{survey_template_id}', function($survey_template_id) use ($app) {
+	$survey_template = (new Survey_Template)->fetch($survey_template_id);
+
+	return JSend::success("Survey Template", $survey_template);
+});
+
+$app->get('/surveys', function(Request $request) use ($app) {
+	$search_fields = ['id', 'name', 'vertical_id', 'responder', 'survey_template_id'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+		$search[$key] = $request->input($key);
+	}
+
+	$survey_templates = Survey::search($search);
+
+	return JSend::success("Survey", $survey_templates);
+});
+
+$app->get('/surveys/{survey_id}', function($survey_id) use ($app) {
+	$survey = (new Survey)->fetch($survey_id);
+
+	return JSend::success("Survey Template", $survey);
+});
+
+
+/*
+	GET /survey_templates
+POST /survey_templates
+	GET /survey_templates/{survey_template_id}
+POST /survey_templates/{survey_template_id}
+DELETE /survey_templates/{survey_template_id}
+GET /survey_templates/{survey_template_id}/surveys - Alias
+
+GET /surveys
+		?survey_template_id
+GET /surveys/{survey_id}
+POST /surveys/{survey_id}
+
+GET /survey_templates/{survey_template_id}/questions
+GET /survey_templates/{survey_template_id}/categorized_questions - Returns Questions using the category format. 
+GET /survey_templates/{survey_template_id}/questions/{question_id}/choices
+POST /survey_templates/{survey_template_id}/questions/{question_id}/choices
+GET /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}
+POST /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}
+GET /surveys/{survey_id}/questions
+GET /surveys/{survey_id}/categorized_questions - Returns Questions using the category format. 
+POST /survey_templates/{survey_template_id}/questions - Create new question
+POST /survey_templates/{survey_template_id}/questions/{question_id} - Edit Existing Question
+
+GET /surveys/{survey_id}/response_count
+
+GET /surveys/{survey_id}/responses
+POST /surveys/{survey_id}/responses
+		?question_id,responder_id
+GET /surveys/{survey_id}/questions/{question_id}/responses
+POST /surveys/{survey_id}/questions/{question_id}/responses
+
+ */
 
 ////////////////////////////////// Placeholders ///////////////////////////////
 $app->get('/custom/video_analytics', function(Request $request) use($app) {
