@@ -18,7 +18,7 @@ final class Survey_Choice extends Common
     {
         $q = app('db')->table('Survey_Choice');
 
-        $q->select("id", "name", "description", "value");
+        $q->select("id", "name", "description", "value", 'sort_order');
 
         if(!isset($data['status'])) $data['status'] = 1;
         if($data['status'] !== false) $q->where('status', $data['status']); // Setting status as '0' gets you even the deleted question

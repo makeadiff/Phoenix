@@ -35,7 +35,7 @@ final class Survey_Question extends Common
     {
         $q = app('db')->table('Survey_Question');
 
-        $q->select("id", "question", "survey_question_category_id", 'response_type', 'required', app('db')->raw("'question' AS type"));
+        $q->select("id", "question", "survey_question_category_id", 'response_type', 'required', 'sort_order', app('db')->raw("'question' AS type"));
 
         if(!isset($data['status'])) $data['status'] = 1;
         if($data['status'] !== false) $q->where('status', $data['status']); // Setting status as '0' gets you even the deleted question
@@ -76,12 +76,12 @@ final class Survey_Question extends Common
             return $this->error("Can't find Survey Template ID. Make sure its passed as an argument like this - $survey_question->inCategorizedFormat(3)");
         }
 
-        $questions = $this->search(['survey_template_id' => $survey_template_id, 'survey_question_category_id' => 0]);
+        $questions = Survey_Question::search(['survey_template_id' => $survey_template_id, 'survey_question_category_id' => 0]);
 
         $categories = Survey_Question_Category::inSurveyTemplate($survey_template_id);
         foreach ($categories as $category) {
             $category->type = 'category';
-            $category->questions = $this->search(['survey_template_id' => $survey_template_id, 'survey_question_category_id' => $category->id]);
+            $category->questions = Survey_Question::search(['survey_template_id' => $survey_template_id, 'survey_question_category_id' => $category->id]);
 
             $questions[] = $category;
         }

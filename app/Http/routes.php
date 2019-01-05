@@ -14,6 +14,8 @@ use App\Models\Data;
 use App\Models\Notification;
 use App\Models\Survey;
 use App\Models\Survey_Template;
+use App\Models\Survey_Question;
+use App\Models\Survey_Choice;
 
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -719,6 +721,39 @@ $app->get('/survey_templates/{survey_template_id}', function($survey_template_id
 	return JSend::success("Survey Template", $survey_template);
 });
 
+$app->get('/survey_templates/{survey_template_id}/surveys', function($survey_template_id) use ($app) {
+	$surveys = Survey::search(['survey_template_id' => $survey_template_id]);
+
+	return JSend::success("Surveys in Template $survey_template_id", $surveys);
+});
+
+$app->get('/survey_templates/{survey_template_id}/questions', function($survey_template_id) use ($app) {
+	$questions = Survey_Question::search(['survey_template_id' => $survey_template_id]);
+
+	return JSend::success("Questions in Template: $survey_template_id", $questions);
+});
+$app->get('/survey_templates/{survey_template_id}/categorized_questions', function($survey_template_id) use ($app) {
+	$questions = (new Survey_Question)->inCategorizedFormat($survey_template_id);
+
+	return JSend::success("Questions in Template: $survey_template_id", $questions);
+});
+$app->get('/survey_templates/{survey_template_id}/questions/{question_id}', function($survey_template_id, $question_id) use ($app) {
+	$question = (new Survey_Question)->fetch($question_id);
+
+	return JSend::success("Question ID : $question_id", $question);
+});
+$app->get('/survey_templates/{survey_template_id}/questions/{question_id}/choices', function($survey_template_id, $question_id) use ($app) {
+	$choices = Survey_Choice::inQuestion($question_id);
+
+	return JSend::success("Choices for question ID : $question_id", $choices);
+});
+$app->get('/survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}', function($survey_template_id, $question_id, $choice_id) use ($app) {
+	$choice = (new Survey_Choice)->fetch($choice_id);
+
+	return JSend::success("Survey Choice ID : $choice_id", $choice);
+});
+
+
 $app->get('/surveys', function(Request $request) use ($app) {
 	$search_fields = ['id', 'name', 'vertical_id', 'responder', 'survey_template_id'];
 	$search = [];
@@ -727,9 +762,9 @@ $app->get('/surveys', function(Request $request) use ($app) {
 		$search[$key] = $request->input($key);
 	}
 
-	$survey_templates = Survey::search($search);
+	$surveys = Survey::search($search);
 
-	return JSend::success("Survey", $survey_templates);
+	return JSend::success("Survey", $surveys);
 });
 
 $app->get('/surveys/{survey_id}', function($survey_id) use ($app) {
@@ -745,23 +780,26 @@ POST /survey_templates
 	GET /survey_templates/{survey_template_id}
 POST /survey_templates/{survey_template_id}
 DELETE /survey_templates/{survey_template_id}
-GET /survey_templates/{survey_template_id}/surveys - Alias
+	GET /survey_templates/{survey_template_id}/surveys - Alias
 
-GET /surveys
+	GET /surveys
 		?survey_template_id
-GET /surveys/{survey_id}
+	GET /surveys/{survey_id}
 POST /surveys/{survey_id}
 
-GET /survey_templates/{survey_template_id}/questions
-GET /survey_templates/{survey_template_id}/categorized_questions - Returns Questions using the category format. 
-GET /survey_templates/{survey_template_id}/questions/{question_id}/choices
+	GET /survey_templates/{survey_template_id}/questions
+	GET /survey_templates/{survey_template_id}/categorized_questions - Returns Questions using the category format. 
+	GET /survey_templates/{survey_template_id}/questions/{question_id}/choices
 POST /survey_templates/{survey_template_id}/questions/{question_id}/choices
-GET /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}
+	GET /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}
 POST /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}
-GET /surveys/{survey_id}/questions
-GET /surveys/{survey_id}/categorized_questions - Returns Questions using the category format. 
 POST /survey_templates/{survey_template_id}/questions - Create new question
 POST /survey_templates/{survey_template_id}/questions/{question_id} - Edit Existing Question
+	GET /survey_templates/{survey_template_id}/questions/{question_id}
+
+GET /surveys/{survey_id}/questions - alias
+GET /surveys/{survey_id}/categorized_questions - Returns Questions using the category format  - alias
+
 
 GET /surveys/{survey_id}/response_count
 
@@ -771,6 +809,11 @@ POST /surveys/{survey_id}/responses
 GET /surveys/{survey_id}/questions/{question_id}/responses
 POST /surveys/{survey_id}/questions/{question_id}/responses
 
+
+INSERT INTO Survey_Question(id,question,survey_template_id,response_type,sort_order,status,required) SELECT id,question,survey_id,type,sort_order,status,'1' as requried FROM SurveyQuestion 
+
+INSERT INTO Survey_Response(id,survey_id,responder_id,survey_question_id,survey_choice_id,response,added_on,added_by_user_id)
+	SELECT id,'1' AS survey_id,user_id, question_id,answer_id,answer,added_on,user_id FROM SurveyResponse
  */
 
 ////////////////////////////////// Placeholders ///////////////////////////////
