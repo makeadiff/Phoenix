@@ -40,9 +40,12 @@ final class User extends Common
         if(isset($data['city_id']) and $data['city_id'] != 0) $q->where('User.city_id', $data['city_id']);
         
         if(empty($data['user_type'])) $data['user_type'] = 'volunteer';
-        if($data['user_type'] !== false) $q->where('User.user_type', $data['user_type']);
+        if(!empty($data['not_user_type'])) {
+            $q->whereNotIn('User.user_type', $data['not_user_type']);
+        } else if($data['user_type'] !== false) {
+            $q->where('User.user_type', $data['user_type']);
+        }
 
-        if(!empty($data['not_user_type'])) $q->where_not_in('User.user_type', $data['not_user_type']);
         if(!empty($data['id'])) $q->where('User.id', $data['id']);
         if(!empty($data['user_id'])) $q->where('User.id', $data['user_id']);
         if(!empty($data['name'])) $q->where('User.name', 'like', '%' . $data['name'] . '%');
@@ -119,7 +122,7 @@ final class User extends Common
 
         // :TODO: Pagination
 
-        // dd($q->toSql(), $q->getBindings());
+        // dd($q->toSql(), $q->getBindings(), $data);
 
         $results = $q->get();
 

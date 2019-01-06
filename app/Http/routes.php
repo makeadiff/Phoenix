@@ -279,7 +279,7 @@ $app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($
 // $app->post('/users/{user_id}','UserController@edit');
 
 $app->get('/users', function(Request $request) use ($app) {
-	$search_fields = ['id','identifier', 'name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id','project_id'];
+	$search_fields = ['id','identifier', 'name','phone','email','mad_email','group_id','group_in','city_id','user_type','center_id','project_id', 'not_user_type'];
 	$search = [];
 	foreach ($search_fields as $key) {
 		if(!$request->input($key)) continue;
@@ -288,6 +288,9 @@ $app->get('/users', function(Request $request) use ($app) {
 			$search['user_group'] = [$request->input('group_id')];
 		} elseif ($key == 'group_in') {
 			$search['user_group'] = explode(",", $request->input('group_in'));
+
+		} elseif ($key == 'not_user_type') {
+			$search['not_user_type'] = explode(",", $request->input('not_user_type'));
 		} else {
 			$search[$key] = $request->input($key);
 		}
