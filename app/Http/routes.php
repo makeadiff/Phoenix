@@ -16,6 +16,7 @@ use App\Models\Survey;
 use App\Models\Survey_Template;
 use App\Models\Survey_Question;
 use App\Models\Survey_Choice;
+use App\Models\Survey_Response;
 
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -695,13 +696,6 @@ $app->get('/notifications', function(Request $request) use($app) {
 });
 
 ////////////////////////////////// Survey /////////////////////////////////////
-$app->get('/survey_temp', function(Request $request) use ($app) {
-	$question_model = new Survey_Question;
-	$questions = $question_model->inCategorizedFormat(2);
-
-	return JSend::success("Survey Questions", $questions);
-});
-
 $app->get('/survey_templates', function(Request $request) use ($app) {
 	$search_fields = ['id', 'name', 'vertical_id', 'responder', 'status'];
 	$search = [];
@@ -753,7 +747,6 @@ $app->get('/survey_templates/{survey_template_id}/questions/{question_id}/choice
 	return JSend::success("Survey Choice ID : $choice_id", $choice);
 });
 
-
 $app->get('/surveys', function(Request $request) use ($app) {
 	$search_fields = ['id', 'name', 'vertical_id', 'responder', 'survey_template_id'];
 	$search = [];
@@ -771,6 +764,22 @@ $app->get('/surveys/{survey_id}', function($survey_id) use ($app) {
 	$survey = (new Survey)->fetch($survey_id);
 
 	return JSend::success("Survey Template", $survey);
+});
+
+$app->get('/surveys/{survey_id}/questions/{question_id}/responses', function($survey_id, $question_id) use ($app) {
+	$responses = Survey_Response::search(['survey_id' => $survey_id, 'question_id' => $question_id]);
+
+	return JSend::success("Responses for question ID: $question_id", $responses);
+});
+$app->get('/surveys/{survey_id}/questions/{question_id}/responses/{response_id}', function($survey_id, $question_id, $response_id) use ($app) {
+	$response = (new Survey_Response)->fetch($response_id);
+
+	return JSend::success("Response ID: $response_id", $response);
+});
+$app->get('/surveys/{survey_id}/responses', function($survey_id) use ($app) {
+	$responses = Survey_Response::inSurvey($survey_id);
+
+	return JSend::success("Responses for Survey ID: $survey_id", $responses);
 });
 
 
@@ -800,13 +809,10 @@ POST /survey_templates/{survey_template_id}/questions/{question_id} - Edit Exist
 GET /surveys/{survey_id}/questions - alias
 GET /surveys/{survey_id}/categorized_questions - Returns Questions using the category format  - alias
 
-
-GET /surveys/{survey_id}/response_count
-
-GET /surveys/{survey_id}/responses
+	GET /surveys/{survey_id}/responses
 POST /surveys/{survey_id}/responses
 		?question_id,responder_id
-GET /surveys/{survey_id}/questions/{question_id}/responses
+	GET /surveys/{survey_id}/questions/{question_id}/responses
 POST /surveys/{survey_id}/questions/{question_id}/responses
 
 
