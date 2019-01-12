@@ -7,6 +7,7 @@ final class Survey_Template extends Common
 {
     protected $table = 'Survey_Template';
     const CREATED_AT = 'added_on';
+    const UPDATED_AT = null;
     public $timestamps = true;
     protected $fillable = ['name', 'description', 'vertical_id', 'responder', 'status'];
 
@@ -37,6 +38,11 @@ final class Survey_Template extends Common
 
         $results = $q->get();
         return $results;
+    }
+
+    public static function add($fields)
+    {
+        return Survey_Template::create($fields);
     }
 
 }

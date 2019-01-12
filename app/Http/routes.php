@@ -715,10 +715,3 @@ $app->post("/$url_prefix/survey_templates", ['middleware' => 'auth.basic', 'uses
 $app->post("/$url_prefix/survey_templates/{survey_template_id}/questions", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addSurveyQuestion']);
 $app->post("/$url_prefix/survey_templates/{survey_template_id}/questions/{question_id}/choices", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addSurveyChoice']);
 
-
-/**
- * Possible Changes...
- *
- * Event.starts_on -> start_on
- * UserEvent.created_on -> added_on
- */
