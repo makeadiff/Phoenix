@@ -8,6 +8,7 @@ final class Survey_Question extends Common
 {
     protected $table = 'Survey_Question';
     public $timestamps = false;
+    protected $fillable = ['question', 'survey_question_category_id', 'survey_template_id', 'response_type', 'required', 'sort_order'];
 
 	public function responses()
     {
@@ -87,6 +88,11 @@ final class Survey_Question extends Common
         }
 
         return $questions;
+    }
+
+    public static function add($fields)
+    {
+        return Survey_Question::create($fields);
     }
 
 }

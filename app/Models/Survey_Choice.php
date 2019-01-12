@@ -7,6 +7,7 @@ final class Survey_Choice extends Common
 {
     protected $table = 'Survey_Choice';
     public $timestamps = false;
+    protected $fillable = ['name', 'description', 'survey_question_id', 'sort_order', 'value', 'status'];
 
     public function question()
     {
@@ -37,6 +38,11 @@ final class Survey_Choice extends Common
     public static function inQuestion($survey_question_id)
     {
         return Survey_Choice::search(['survey_question_id' => $survey_question_id]);
+    }
+
+    public static function add($fields)
+    {
+        return Survey_Choice::create($fields);
     }
 
 }
