@@ -5,6 +5,7 @@ use App\Models\Survey;
 use App\Models\Survey_Template;
 use App\Models\Survey_Question;
 use App\Models\Survey_Choice;
+use App\Models\Survey_Response;
 
 use Illuminate\Http\Request;
 use Validator;
@@ -33,7 +34,7 @@ class SurveyController extends Controller
         return JSend::success("Added a Survey Template", $survey_template);
     }
 
-    public function addSurveyQuestion($survey_template_id, Request $request)
+    public function addQuestion($survey_template_id, Request $request)
     {
         $body = $request->getContent();
         if($body) { // If you want to add multiple questions together.
@@ -42,11 +43,15 @@ class SurveyController extends Controller
             $data = [array_filter($request->only('question', 'survey_question_category_id', 'survey_template_id', 'response_type', 'required', 'sort_order', 'choices'))];
         }
 
-        $questions = $this->addQuestions($survey_template_id, $data);
-        return JSend::success("Added Questions to Survey Template ID : $survey_template_id", $questions);
+        $question_model = new Survey_Question;
+        $questions = $question_model->addMany($data, $survey_template_id);
+
+        if(count($questions) == 1) $questions = $questions[0];
+        if($questions) return JSend::success("Added Questions to Survey Template ID : $survey_template_id", $questions);
+        else return JSend::fail("Error adding questions", $question_model->errors);
     }
 
-    public function addSurveyChoice($survey_template_id, $question_id, Request $request) 
+    public function addChoice($survey_template_id, $question_id, Request $request) 
     {
         // This can create multiple Choices - or a single choice depending on the input - https://apihandyman.io/api-design-tips-and-tricks-getting-creating-updating-or-deleting-multiple-resources-in-one-api-call/#create-multiple-resources
         $body = $request->getContent();
@@ -56,57 +61,35 @@ class SurveyController extends Controller
             $data = [array_filter($request->only('name', 'description', 'value', 'survey_question_id', 'sort_order'))];
         }
 
-        $this->addChoices($question_id, $data);
-        return JSend::success("Added Choices for question ID : $question_id", $choices);
+        $choice_model = new Survey_Choice;
+        $choices = $choice_model->addMany($data, $question_id);
+
+        if(count($choices) == 1) $choices = $choices[0];
+        if($choices) return JSend::success("Added Choices for question ID : $question_id", $choices);
+        else return JSend::fail("Error adding choice", $choice_model->errors);
     }
 
-    public function addQuestions($survey_template_id, $data)
+    public function addResponse($survey_id, Request $request) 
     {
-        $questions = [];
-        foreach ($data as $index => $fields) {
-            if(empty($fields['survey_template_id'])) $fields['survey_template_id'] = $survey_template_id;
-
-            // Validation...
-            $validator = Validator::make($fields, [
-                'question'              => 'required',
-                'survey_template_id'    => 'required|integer|exists:Survey_Template,id',
-                'response_type'         => 'required|in:text,choice,number,1-10,1-5,yes-no,date,datetime,file'
-            ]);
-            if ($validator->fails()) {
-                return JSend::fail("Survey Question insert validation failed", $validator->errors());
-            }
-
-            $questions[] = Survey_Question::add($fields);
-            if($fields['response_type'] == 'choice' and isset($fields['choices']) and is_array($fields['choices'])) {
-                $last_question = end($questions);
-                $this->addChoices($last_question->id, $fields['choices']);
-            }
-        }
-
-        if(count($questions) === 1) return $questions[0];
-        return $questions;
+        return $this->addQuestionResponse($survey_id, false, $request);
     }
 
-    public function addChoices($survey_question_id, $data)
+    public function addQuestionResponse($survey_id, $question_id, Request $request) 
     {
-        $choices = [];
-        foreach ($data as $index => $fields) {
-            if(empty($fields['survey_question_id'])) $fields['survey_question_id'] = $survey_question_id;
-
-            // Validation...
-            $validator = Validator::make($fields, [
-                'name'                  => 'required',
-                'survey_question_id'    => 'required|integer|exists:Survey_Question,id'
-            ]);
-            if ($validator->fails()) {
-                return JSend::fail("Survey Choice insert validation failed", $validator->errors());
-            }
-
-            $choices[] = Survey_Choice::add($fields);
+        $body = $request->getContent();
+        if($body) {
+            $data = json_decode($body, true);
+        } else {
+            $data = [array_filter($request->only('responder_id', 'survey_question_id', 'survey_choice_id', 'response', 'added_by_user_id'))];
         }
 
-        if(count($choices) === 1) return $choices[0];
-        return $choices;
+        $response_model = new Survey_Response;
+
+        $responses = $response_model->addMany($data, $survey_id, $question_id);
+        if(count($responses) == 1) $responses = $responses[0];
+
+        if(!$responses) return JSend::fail("Error adding response", $response_model->errors);
+        return JSend::success("Added Responses for Survey ID : $survey_id", $responses);
     }
 
 }

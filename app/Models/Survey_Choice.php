@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Validator;
 
 final class Survey_Choice extends Common  
 {
@@ -40,9 +41,25 @@ final class Survey_Choice extends Common
         return Survey_Choice::search(['survey_question_id' => $survey_question_id]);
     }
 
-    public static function add($fields)
+    public function addMany($data, $survey_question_id = 0)
     {
-        return Survey_Choice::create($fields);
+        $choices = [];
+        foreach ($data as $index => $fields) {
+            if(empty($fields['survey_question_id']) and $survey_question_id) $fields['survey_question_id'] = $survey_question_id;
+
+            // Validation...
+            $validator = Validator::make($fields, [
+                'name'                  => 'required',
+                'survey_question_id'    => 'required|integer|exists:Survey_Question,id'
+            ]);
+            if ($validator->fails()) {
+                $this->error($validator->errors());
+            } else {
+                $choices[] = Survey_Choice::create($fields);
+            }
+        }
+
+        return $choices;
     }
 
 }

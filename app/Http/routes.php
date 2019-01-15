@@ -712,6 +712,8 @@ $app->post("/$url_prefix/students/{student_id}", ['middleware' => 'auth.basic', 
 $app->post("/$url_prefix/events", ['middleware' => 'auth.basic', 'uses' => 'EventController@add']);
 $app->post("/$url_prefix/events/{event_id}", ['middleware' => 'auth.basic', 'uses' => 'EventController@edit']);
 $app->post("/$url_prefix/survey_templates", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addSurveyTemplate']);
-$app->post("/$url_prefix/survey_templates/{survey_template_id}/questions", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addSurveyQuestion']);
-$app->post("/$url_prefix/survey_templates/{survey_template_id}/questions/{question_id}/choices", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addSurveyChoice']);
+$app->post("/$url_prefix/survey_templates/{survey_template_id}/questions", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addQuestion']);
+$app->post("/$url_prefix/survey_templates/{survey_template_id}/questions/{question_id}/choices", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addChoice']);
+$app->post("/$url_prefix/surveys/{survey_id}/responses", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addResponse']);
+$app->post("/$url_prefix/surveys/{survey_id}/questions/{question_id}/responses", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addQuestionResponse']);
 

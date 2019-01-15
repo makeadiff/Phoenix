@@ -20,7 +20,8 @@ securityDefinitions:
     type: basic
 security:
   - basicAuth: []
-  
+
+# TODO: Break into smaller files - https://azimi.me/2015/07/16/split-swagger-into-smaller-files.html  
 # To create docs, use this command
 # bootprint openapi <swagger.yaml> <output_folder>
 #     bootprint should be installed for this to work - use 'sudo npm install -g spectacle-docs' to install bootprint.
@@ -1845,6 +1846,439 @@ paths:
         404:
           description: Can't find any event with the given ID
 
+  ######## Surveys
+  /survey_templates:
+    get:
+      tags:
+        - survey 
+        - survey_template
+        - search
+      summary: Search thru survey templates
+      description: Search the survey templates table and return the rows matched by the given parameters
+      parameters:
+        - name: id
+          in: query
+          type: integer
+          description: ID of the template
+        - name: name
+          in: query
+          type: string
+          description: Name of the survey template
+        - name: vertical_id
+          in: query
+          type: integer
+          description: ID of the vertical that this survey is associated with
+        - name: responder
+          in: query
+          type: string
+          enum:
+            - User 
+            - Student
+            - Center 
+            - City
+          description: Target responder for the survey will be this.
+        - name: status
+          in: query
+          type: string 
+          enum:
+            - 0
+            - 1
+          description: Active/inactive survey templates
+      responses:
+        200:
+          description: List of all survey templates matching given parameters
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyTemplate"
+    post:
+      tags:
+        - survey 
+        - survey_template
+        - create
+      summary: Create new survey template
+      description: Create a survey template with the provided data
+      parameters:
+        - name: name
+          in: query
+          type: string
+          required: true
+          description: Name of the survey template
+        - name: vertical_id
+          in: query
+          type: integer
+          description: ID of the vertical that this survey is associated with
+        - name: responder
+          in: query
+          type: string
+          enum:
+            - User 
+            - Student
+            - Center 
+            - City
+          required: true
+          description: Target responder for the survey will be this.
+      responses:
+        200:
+          description: Returns the created Template
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyTemplate"
+
+  /survey_templates/{survey_template_id}:
+    get:
+      tags:
+        - survey
+        - survey_template 
+      summary: Fetch one survey template
+      description: Returns a survey template who's ID is given 
+      parameters:
+        - name: survey_template_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the survey template
+      responses:
+        200:
+          description: Returns the created Template
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyTemplate"
+    post:
+      tags:
+        - survey
+        - survey_template
+      summary: Edit the given survey template
+      description: Edit the given survey template with the provided data 
+      parameters:
+        - name: survey_template_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the template that should be edited
+        - name: name
+          in: formData
+          type: string
+          description: Name of the survey template
+        - name: vertical_id
+          in: formData
+          type: integer
+          description: ID of the vertical that this survey is associated with
+        - name: responder
+          in: formData
+          type: string
+          enum:
+            - User 
+            - Student
+            - Center 
+            - City
+          description: Target responder for the survey will be this.
+      responses:
+        200:
+          description: Returns the edited Template
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyTemplate"
+
+  /survey_templates/{survey_template_id}/surveys:
+    get:
+      tags:
+        - survey 
+      summary: Returns all surveys created from the given survey template.
+      description: Returns all the surveys created using the survey template of the given ID 
+      parameters:
+        - name: survey_template_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the template
+      responses:
+        200:
+          description: Returns all the surveys under the given template.
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Survey"
+
+  /survey_templates/{survey_template_id}/questions:
+    get:
+      tags:
+        - survey 
+        - question
+      summary: Returns all questions in the given survey template.
+      description: Returns all the questions in the survey template of the given ID 
+      parameters:
+        - name: survey_template_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the template
+      responses:
+        200:
+          description: Returns all the questions under the given template.
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyQuestion"
+
+  /survey_templates/{survey_template_id}/categorized_questions:
+    get:
+      tags:
+        - survey 
+        - question
+      summary: Returns questions in the given survey template in categorized format.
+      description: This will return questions within their catogries. Very useful if the template have question categories. 
+      parameters:
+        - name: survey_template_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the template
+      responses:
+        200:
+          description: Returns all the questions under the given template.
+
+  /survey_templates/{survey_template_id}/questions/{question_id}:
+    get:
+      tags:
+        - survey 
+        - question
+      summary: Returns a specific question
+      description: Returns the question with the given ID 
+      parameters:
+        - name: survey_template_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the template
+        - name: question_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the question
+      responses:
+        200:
+          description: Returns the question
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyQuestion"
+
+  /survey_templates/{survey_template_id}/questions/{question_id}/choices:
+    get:
+      tags:
+        - survey 
+        - choice
+      summary: Returns the choices in a given question
+      description: Returns the choices in the question whose ID is given.
+      parameters:
+        - name: survey_template_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the template
+        - name: question_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the question
+      responses:
+        200:
+          description: Returns the choices
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyChoice"
+    post:
+      tags:
+        - survey 
+        - choice 
+      summary: Add choices to a given question 
+      description: Add choices/options to the question who's ID is given. You can supply multiple choices to this path in the post raw body - and all of that can be added at one go.
+      parameters:
+        - name: survey_template_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the template
+        - name: question_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the question
+        - name: name 
+          in: formData
+          type: string
+          required: true
+          description: The name of the choice.
+        - name: description
+          in: formData
+          type: string
+          description: Some description about the choice.
+        - name: value
+          in: formData
+          type: integer
+          description: Value assigned to this choice. Not used at the moment.
+        - name: sort_order
+          in: formData
+          type: integer
+          description: If you wish the choices to be sorted in a specific order, use this field.
+      responses:
+        200:
+          description: Choices were added to the question
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyChoice"
+
+  /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}:
+    get:
+      tags:
+        - survey 
+        - choice
+      summary: Returns one choice 
+      description: Returns the choice whose ID is given
+      parameters:
+        - name: survey_template_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the template
+        - name: question_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the question
+        - name: choice_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the question
+      responses:
+        200:
+          description: Returns one choice
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyChoice"
+    post:
+      tags:
+        - survey 
+        - choice 
+      summary: Edits a choice
+      description: Edit the choice who's ID is given
+      parameters:
+        - name: survey_template_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the template
+        - name: question_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the question
+        - name: name 
+          in: formData
+          type: string
+          required: true
+          description: The name of the choice.
+        - name: description
+          in: formData
+          type: string
+          description: Some description about the choice.
+        - name: value
+          in: formData
+          type: integer
+          description: Value assigned to this choice. Not used at the moment.
+        - name: sort_order
+          in: formData
+          type: integer
+          description: If you wish the choices to be sorted in a specific order, use this field.
+      responses:
+        200:
+          description: Edited the choice.
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyChoice"
+  /surveys:
+    get:
+      tags:
+        - survey 
+      summary: Surveys that matches the parameters
+      description:  Returns surveys that matches the given parameters.
+      parameters:
+        - name: id 
+          in: query
+          type: integer
+          description: ID of the survey to be returned 
+        - name: name
+          in: query
+          type: string
+          description: Search for this name
+        - name: vertical_id
+          in: query
+          type: integer
+          description: Returns only surveys for this vertical
+        - name: responder
+          in: query
+          type: string
+          enum:
+            - User 
+            - City 
+            - Student
+            - Center
+          description: Returns only survey for this type of responder.
+        - name: survey_template_id
+          in: query
+          type: integer
+          description: Returns the surveys made from this template only.
+      responses:
+        200: 
+          description: Ok
+    post:
+      tags:
+        - survey 
+      summary: Create a new survey from a template 
+      description: Creates a new survey from the given data.
+      parameters:
+        - name: id 
+          in: query
+          type: integer
+          description: ID of the survey to be returned 
+        - name: name
+          in: query
+          type: string
+          description: Search for this name
+        - name: vertical_id
+          in: query
+          type: integer
+          description: Returns only surveys for this vertical
+        - name: responder
+          in: query
+          type: string
+          enum:
+            - User 
+            - City 
+            - Student
+            - Center
+          description: Returns only survey for this type of responder.
+        - name: survey_template_id
+          in: query
+          type: integer
+          description: Returns the surveys made from this template only.
+      responses:
+        200: 
+          description: Created the survey 
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Survey"
+        
   ######## Notifications
   /notifications:
     get:
@@ -2237,6 +2671,95 @@ definitions:
           - cant_go
       reason:
         type: string
+  SurveyTemplate:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      added_on:
+        type: string
+        format: "date-time"
+      vertical_id:
+        type: integer
+      responder:
+        type: string
+        enum:
+          - User
+          - Student
+          - Center
+          - City
+      status:
+        type: string
+        enum:
+          - 0
+          - 1
+  Survey:
+    type: "object"
+    properties:
+      survey_template_id:
+        type: integer
+      added_by_user_id:
+        type: integer
+  SurveyQuestion:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      question:
+        type: string
+      survey_question_category_id:
+        type: integer
+      survey_template_id:
+        type: integer
+      response_type:
+        type: string
+        enum:
+          - text
+          - choice
+          - 1-5
+          - 1-10
+          - number 
+          - yes-no
+          - date 
+          - datetime
+          - file 
+      required:
+        type: string
+        enum:
+          - 1
+          - 0
+      sort_order:
+        type: integer
+      status:
+        type: string
+        enum:
+          - 1
+          - 0
+  SurveyChoice:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      value:
+        type: integer
+      survey_question_id:
+        type: integer
+      sort_order:
+        type: integer
+      status:
+        type: string
+        enum:
+          - 0
+          - 1
+
   Notification:
     type: "object"
     properties:

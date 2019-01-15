@@ -89,11 +89,11 @@ $app->get('/surveys/{survey_id}/responses', function($survey_id) use ($app) {
 	return JSend::success("Responses for Survey ID: $survey_id", $responses);
 });
 
-// $url_prefix = 'v1';
+
 
 /*
 	GET /survey_templates
-POST /survey_templates
+	POST /survey_templates
 	GET /survey_templates/{survey_template_id}
 POST /survey_templates/{survey_template_id}
 DELETE /survey_templates/{survey_template_id}
@@ -107,21 +107,21 @@ POST /surveys/{survey_id}
 	GET /survey_templates/{survey_template_id}/questions
 	GET /survey_templates/{survey_template_id}/categorized_questions - Returns Questions using the category format. 
 	GET /survey_templates/{survey_template_id}/questions/{question_id}/choices
-POST /survey_templates/{survey_template_id}/questions/{question_id}/choices
+	POST /survey_templates/{survey_template_id}/questions/{question_id}/choices
 	GET /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}
 POST /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}
-POST /survey_templates/{survey_template_id}/questions - Create new question
+	POST /survey_templates/{survey_template_id}/questions - Create new question
 POST /survey_templates/{survey_template_id}/questions/{question_id} - Edit Existing Question
 	GET /survey_templates/{survey_template_id}/questions/{question_id}
 
-GET /surveys/{survey_id}/questions - alias
-GET /surveys/{survey_id}/categorized_questions - Returns Questions using the category format  - alias
+	GET /surveys/{survey_id}/questions - alias
+	GET /surveys/{survey_id}/categorized_questions - Returns Questions using the category format  - alias
 
 	GET /surveys/{survey_id}/responses
-POST /surveys/{survey_id}/responses
+	POST /surveys/{survey_id}/responses
 		?question_id,responder_id
 	GET /surveys/{survey_id}/questions/{question_id}/responses
-POST /surveys/{survey_id}/questions/{question_id}/responses
+	POST /surveys/{survey_id}/questions/{question_id}/responses
 
 
 INSERT INTO Survey_Question(id,question,survey_template_id,response_type,sort_order,status,required) SELECT id,question,survey_id,type,sort_order,status,'1' as requried FROM SurveyQuestion 

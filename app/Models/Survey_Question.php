@@ -3,6 +3,8 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Survey_Question_Category;
+use App\Models\Survey_Choice;
+use Validator;
 
 final class Survey_Question extends Common  
 {
@@ -90,9 +92,35 @@ final class Survey_Question extends Common
         return $questions;
     }
 
-    public static function add($fields)
+     public function addMany($data, $survey_template_id = 0)
     {
-        return Survey_Question::create($fields);
+        $questions = [];
+        $choice_model = new Survey_Choice;
+        foreach ($data as $index => $fields) {
+            if(empty($fields['survey_template_id']) and $survey_template_id) $fields['survey_template_id'] = $survey_template_id;
+
+            // Validation...
+            $validator = Validator::make($fields, [
+                'question'              => 'required',
+                'survey_template_id'    => 'required|integer|exists:Survey_Template,id',
+                'response_type'         => 'required|in:text,choice,number,1-10,1-5,yes-no,date,datetime,file'
+            ]);
+            if ($validator->fails()) {
+                $this->error($validator->errors());
+            } else {
+                $questions[] = Survey_Question::create($fields);
+                
+                if($fields['response_type'] == 'choice' and isset($fields['choices']) and is_array($fields['choices'])) {
+                    $last_question = end($questions);
+                    $status = $choice_model->addMany($fields['choices'], $last_question->id);
+                    if(!$status) {
+                        $this->error($choice_model->errors);
+                    }
+                }
+            }
+        }
+
+        return $questions;
     }
 
 }
