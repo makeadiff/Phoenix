@@ -42,18 +42,18 @@ $app->get('/survey_templates/{survey_template_id}/categorized_questions', functi
 	return JSend::success("Questions in Template: $survey_template_id", $questions);
 });
 
-$app->get('/survey_templates/{survey_template_id}/questions/{question_id}', function($survey_template_id, $question_id) use ($app) {
-	$question = (new Survey_Question)->fetch($question_id);
+$app->get('/survey_templates/{survey_template_id}/questions/{survey_question_id}', function($survey_template_id, $survey_question_id) use ($app) {
+	$question = (new Survey_Question)->fetch($survey_question_id);
 
-	return JSend::success("Question ID : $question_id", $question);
+	return JSend::success("Question ID : $survey_question_id", $question);
 });
-$app->get('/survey_templates/{survey_template_id}/questions/{question_id}/choices', function($survey_template_id, $question_id) use ($app) {
-	$choices = Survey_Choice::inQuestion($question_id);
+$app->get('/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices', function($survey_template_id, $survey_question_id) use ($app) {
+	$choices = Survey_Choice::inQuestion($survey_question_id);
 
-	return JSend::success("Choices for question ID : $question_id", $choices);
+	return JSend::success("Choices for question ID : $survey_question_id", $choices);
 });
 
-$app->get('/survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}', function($survey_template_id, $question_id, $choice_id) use ($app) {
+$app->get('/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices/{choice_id}', function($survey_template_id, $survey_question_id, $choice_id) use ($app) {
 	$choice = (new Survey_Choice)->fetch($choice_id);
 
 	return JSend::success("Survey Choice ID : $choice_id", $choice);

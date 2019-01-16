@@ -2023,6 +2023,65 @@ paths:
             type: "object"
             items:
               $ref: "#/definitions/SurveyQuestion"
+    post:
+      tags:
+        - survey 
+        - question
+      summary: Creates a question
+      description: Creates one question or a set of questions.
+      parameters:
+        - name: survey_template_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the template
+        - name: question
+          in: formData
+          required: true
+          type: string
+          description: The question text.
+        - name: survey_question_category_id
+          in: formData
+          type: integer
+          description: If this question is part of a category, the ID of the category goes here. Else 0.
+        - name: response_type
+          in: formData
+          type: string
+          enum:
+            - text
+            - choice
+            - number
+            - 1-10
+            - 1-5
+            - yes-no
+            - date
+            - datetime
+            - file
+          description: 
+        - name: required
+          in: formData
+          type: string
+          enum:
+            - 0
+            - 1
+          description: Is this field a required field(1). Or optional(0)
+        - name: sort_order
+          in: formData
+          type: string
+          description: If you want the the question to be shown in an given order, use this.
+        - name: status
+          type: string
+          enum:
+            - 0
+            - 1
+          description: Use this to delete/restore any question. Only question with status=1 are shown.
+      responses:
+        200:
+          description: Creates the question
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyQuestion"
 
   /survey_templates/{survey_template_id}/categorized_questions:
     get:
@@ -2041,7 +2100,7 @@ paths:
         200:
           description: Returns all the questions under the given template.
 
-  /survey_templates/{survey_template_id}/questions/{question_id}:
+  /survey_templates/{survey_template_id}/questions/{survey_question_id}:
     get:
       tags:
         - survey 
@@ -2054,7 +2113,7 @@ paths:
           type: integer
           required: true
           description: ID of the template
-        - name: question_id
+        - name: survey_question_id
           in: path 
           type: integer
           required: true
@@ -2062,6 +2121,70 @@ paths:
       responses:
         200:
           description: Returns the question
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyQuestion"
+    post:
+      tags:
+        - survey 
+        - question
+      summary: Edit a specific question
+      description: Edit the question with the given ID 
+      parameters:
+        - name: survey_template_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the template
+        - name: survey_question_id
+          in: path 
+          type: integer
+          required: true
+          description: ID of the question
+        - name: question
+          in: formData
+          required: true
+          type: string
+          description: The question text.
+        - name: survey_question_category_id
+          in: formData
+          type: integer
+          description: If this question is part of a category, the ID of the category goes here. Else 0.
+        - name: response_type
+          in: formData
+          type: string
+          enum:
+            - text
+            - choice
+            - number
+            - 1-10
+            - 1-5
+            - yes-no
+            - date
+            - datetime
+            - file
+          description: 
+        - name: required
+          in: formData
+          type: string
+          enum:
+            - 0
+            - 1
+          description: Is this field a required field(1). Or optional(0)
+        - name: sort_order
+          in: formData
+          type: string
+          description: If you want the the question to be shown in an given order, use this.
+        - name: status
+          type: string
+          enum:
+            - 0
+            - 1
+          description: Use this to delete/restore any question. Only question with status=1 are shown.
+      responses:
+        200:
+          description: Updates the question
           schema:
             type: "object"
             items:
@@ -2246,31 +2369,14 @@ paths:
       summary: Create a new survey from a template 
       description: Creates a new survey from the given data.
       parameters:
-        - name: id 
-          in: query
-          type: integer
-          description: ID of the survey to be returned 
-        - name: name
-          in: query
-          type: string
-          description: Search for this name
-        - name: vertical_id
-          in: query
-          type: integer
-          description: Returns only surveys for this vertical
-        - name: responder
-          in: query
-          type: string
-          enum:
-            - User 
-            - City 
-            - Student
-            - Center
-          description: Returns only survey for this type of responder.
         - name: survey_template_id
-          in: query
+          in: formData
           type: integer
           description: Returns the surveys made from this template only.
+        - name: added_by_user_id
+          in: formData
+          type: integer
+          description: 
       responses:
         200: 
           description: Created the survey 
@@ -2278,7 +2384,158 @@ paths:
             type: "object"
             items:
               $ref: "#/definitions/Survey"
-        
+  /surveys/{survey_id}:
+    get:
+      tags:
+        - survey
+      summary: Return one survey instance
+      description:  Returns one survey instance
+      parameters:
+        - name: survey_id 
+          in: path
+          type: integer
+          description: ID of the survey to be returned 
+      responses:
+        200:
+          description: Ok
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Survey"
+
+  /surveys/{survey_id}/responses:
+    get:
+      tags:
+        - survey
+        - response
+      summary: Get responses to the given survey
+      description:  Returns all the responses for all questions in the given survey
+      parameters:
+        - name: survey_id
+          in: path
+          type: integer
+          description: ID of the survey whose responses should be returned.
+        - name: survey_question_id
+          in: query
+          type: string
+          description: Search for this name
+        - name: responder_id
+          in: query
+          type: integer
+          description: Returns only surveys for this vertical
+      responses:
+        200: 
+          description: Ok
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyResponse"
+    post:
+      tags:
+        - survey 
+        - response
+      summary: Create a new response for a survey
+      description: Create a full response set for a survey. All the parameters can be passed in the raw body of the request.
+      parameters:
+        - name: survey_id
+          in: path
+          type: integer
+          description: Create response set for this survey
+        - name: added_by_user_id
+          in: formData
+          type: integer
+          description: The id of the user who entered this data
+        - name: responder_id
+          in: formData
+          type: integer
+          description: The ID of the user/student/etc who this survey is attached to.
+        - name: survey_question_id
+          in: formData
+          type: integer
+          description: The ID of the question who's answer is given in this set. 
+        - name: suvey_choice_id
+          in: formData
+          type: integer
+          description: The ID of the choice made for this survey 
+        - name: response
+          in: formData
+          type: integer
+          description: Textual response for the given question.
+      responses:
+        200: 
+          description: Created the survey response
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyResponse"
+
+  /surveys/{survey_id}/questions/{survey_question_id}/responses:
+    get:
+      tags:
+        - survey
+        - response
+        - question
+      summary: Get response of the given question in given survey
+      description: Returns the response of the given question in a given survey
+      parameters:
+        - name: survey_id
+          in: path
+          type: integer
+          description: ID of the survey whose responses should be returned.
+        - name: survey_question_id
+          in: path
+          type: string
+          description: Search for this name
+        - name: responder_id
+          in: query
+          type: integer
+          description: Returns only surveys for this vertical
+      responses:
+        200: 
+          description: Ok
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyResponse"
+    post:
+      tags:
+        - survey 
+        - response
+      summary: Create a new response for a survey question
+      description: Create one response for a survey question
+      parameters:
+        - name: survey_id
+          in: path
+          type: integer
+          description: Create response set for this survey
+        - name: survey_question_id
+          in: path
+          type: integer
+          description: The ID of the question who's answer is given in this set. 
+        - name: added_by_user_id
+          in: formData
+          type: integer
+          description: The id of the user who entered this data
+        - name: responder_id
+          in: formData
+          type: integer
+          description: The ID of the user/student/etc who this survey is attached to.
+        - name: suvey_choice_id
+          in: formData
+          type: integer
+          description: The ID of the choice made for this survey 
+        - name: response
+          in: formData
+          type: integer
+          description: Textual response for the given question.
+      responses:
+        200: 
+          description: Created the survey response
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/SurveyResponse"
+
   ######## Notifications
   /notifications:
     get:
@@ -2759,7 +3016,26 @@ definitions:
         enum:
           - 0
           - 1
-
+  SurveyResponse:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      survey_id:
+        type: integer
+      responder_id:
+        type: integer
+      survey_question_id:
+        type: integer
+      survey_choice_id:
+        type: integer
+      response:
+        type: string
+      added_on:
+        type: string
+        format: "date-time"
+      added_by_user_id:
+        type: integer
   Notification:
     type: "object"
     properties:
