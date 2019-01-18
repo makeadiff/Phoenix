@@ -14,79 +14,82 @@ $app->get('/survey_templates', function(Request $request) use ($app) {
 	$search = array_filter($request->only('id', 'name', 'vertical_id', 'responder', 'status'));
 	$survey_templates = Survey_Template::search($search);
 
-	return JSend::success("Survey Templates", $survey_templates);
+	return JSend::success("Survey Templates", ['survey_templates' => $survey_templates]);
 });
 
 $app->get('/survey_templates/{survey_template_id}', function($survey_template_id) use ($app) {
 	$survey_template = (new Survey_Template)->fetch($survey_template_id);
 
-	return JSend::success("Survey Template", $survey_template);
+	return JSend::success("Survey Template", ['survey_templates' => $survey_template]);
 });
 
 $app->get('/survey_templates/{survey_template_id}/surveys', function($survey_template_id) use ($app) {
 	$surveys = Survey::search(['survey_template_id' => $survey_template_id]);
 
-	return JSend::success("Surveys in Template $survey_template_id", $surveys);
+	return JSend::success("Surveys in Template $survey_template_id", ['surveys' => $surveys]);
 });
 
 $app->get('/survey_templates/{survey_template_id}/questions', function($survey_template_id, Request $request) use ($app) {
 	$request->merge(['survey_template_id' => $survey_template_id]);
 	$questions = Survey_Question::search($request->all());
 
-	return JSend::success("Questions in Template: $survey_template_id", $questions);
+	return JSend::success("Questions in Template: $survey_template_id", ['questions' => $questions]);
 });
 
 $app->get('/survey_templates/{survey_template_id}/categorized_questions', function($survey_template_id) use ($app) {
 	$questions = (new Survey_Question)->inCategorizedFormat($survey_template_id);
 
-	return JSend::success("Questions in Template: $survey_template_id", $questions);
+	return JSend::success("Questions in Template: $survey_template_id", ['questions' => $questions]);
 });
 
 $app->get('/survey_templates/{survey_template_id}/questions/{survey_question_id}', function($survey_template_id, $survey_question_id) use ($app) {
 	$question = (new Survey_Question)->fetch($survey_question_id);
 
-	return JSend::success("Question ID : $survey_question_id", $question);
+	return JSend::success("Question ID : $survey_question_id", ['questions' => $question]);
 });
 $app->get('/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices', function($survey_template_id, $survey_question_id) use ($app) {
 	$choices = Survey_Choice::inQuestion($survey_question_id);
 
-	return JSend::success("Choices for question ID : $survey_question_id", $choices);
+	return JSend::success("Choices for question ID : $survey_question_id", ['choices' => $choices]);
 });
 
-$app->get('/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices/{choice_id}', function($survey_template_id, $survey_question_id, $choice_id) use ($app) {
-	$choice = (new Survey_Choice)->fetch($choice_id);
+$app->get('/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices/{survey_choice_id}', function($survey_template_id, $survey_question_id, $survey_choice_id) use ($app) {
+	$choice = (new Survey_Choice)->fetch($survey_choice_id);
 
-	return JSend::success("Survey Choice ID : $choice_id", $choice);
+	return JSend::success("Survey Choice ID : $survey_choice_id", ['choices' => $choice]);
 });
 
 $app->get('/surveys', function(Request $request) use ($app) {
 	$search = array_filter($request->only('id', 'name', 'vertical_id', 'responder', 'survey_template_id'));
-
 	$surveys = Survey::search($search);
-
-	return JSend::success("Survey", $surveys);
+	return JSend::success("Survey", ['surveys' => $surveys]);
 });
+$app->post('/surveys', function(Request $request) use ($app) {
+	$survey = Survey::add($request->survey_template_id, $request->added_by_user_id);
+	return JSend::success("Survey Instance Created", ['surveys' => $survey]);
+});
+
 
 $app->get('/surveys/{survey_id}', function($survey_id) use ($app) {
 	$survey = (new Survey)->fetch($survey_id);
 
-	return JSend::success("Survey Template", $survey);
+	return JSend::success("Survey Template", ['surveys' => $survey]);
 });
 
 $app->get('/surveys/{survey_id}/questions/{question_id}/responses', function($survey_id, $question_id) use ($app) {
 	$responses = Survey_Response::search(['survey_id' => $survey_id, 'question_id' => $question_id]);
 
-	return JSend::success("Responses for question ID: $question_id", $responses);
+	return JSend::success("Responses for question ID: $question_id", ['responses' => $responses]);
 });
 $app->get('/surveys/{survey_id}/questions/{question_id}/responses/{response_id}', function($survey_id, $question_id, $response_id) use ($app) {
 	$response = (new Survey_Response)->fetch($response_id);
 
-	return JSend::success("Response ID: $response_id", $response);
+	return JSend::success("Response ID: $response_id", ['responses' => $response]);
 });
 $app->get('/surveys/{survey_id}/responses', function($survey_id) use ($app) {
 	$responses = Survey_Response::inSurvey($survey_id);
 
-	return JSend::success("Responses for Survey ID: $survey_id", $responses);
+	return JSend::success("Responses for Survey ID: $survey_id", ['responses' => $responses]);
 });
 
 
@@ -108,8 +111,8 @@ POST /surveys/{survey_id}
 	GET /survey_templates/{survey_template_id}/categorized_questions - Returns Questions using the category format. 
 	GET /survey_templates/{survey_template_id}/questions/{question_id}/choices
 	POST /survey_templates/{survey_template_id}/questions/{question_id}/choices
-	GET /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}
-POST /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}
+	GET /survey_templates/{survey_template_id}/questions/{question_id}/choices/{survey_choice_id}
+POST /survey_templates/{survey_template_id}/questions/{question_id}/choices/{survey_choice_id}
 	POST /survey_templates/{survey_template_id}/questions - Create new question
 POST /survey_templates/{survey_template_id}/questions/{question_id} - Edit Existing Question
 	GET /survey_templates/{survey_template_id}/questions/{question_id}

@@ -2,11 +2,13 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Validator;
 
 final class Survey extends Common  
 {
     protected $table = 'Survey';
     const CREATED_AT = 'added_on';
+    const UPDATED_AT = null;
     public $timestamps = true;
     protected $fillable = ['survey_template_id', 'added_by_user_id'];
 
@@ -39,13 +41,28 @@ final class Survey extends Common
         return $results;
     }
 
-    public function fetch($survey_id) {
+    public function fetch($survey_id)
+    {
         if(!$survey_id) return false;
 
         $survey = Survey::find($survey_id);
         $survey->template_name = $survey->template()->name;
         $survey->responder = $survey->template()->responder;
         return $survey;
+    }
+
+    public static function add($survey_template_id, $added_by_user_id)
+    {
+        $fields = ['survey_template_id' => $survey_template_id, 'added_by_user_id' => $added_by_user_id];
+        $validator = Validator::make($fields, [
+            'survey_template_id'    => 'required|integer|exists:Survey_Template,id',
+            'added_by_user_id'      => 'required|integer|exists:User,id'
+        ]);
+        if ($validator->fails()) {
+            return $this->error($validator->errors());
+        } else {
+            return Survey::create($fields);
+        }
     }
 }
 

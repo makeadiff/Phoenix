@@ -2190,7 +2190,7 @@ paths:
             items:
               $ref: "#/definitions/SurveyQuestion"
 
-  /survey_templates/{survey_template_id}/questions/{question_id}/choices:
+  /survey_templates/{survey_template_id}/questions/{survey_question_id}/choices:
     get:
       tags:
         - survey 
@@ -2203,7 +2203,7 @@ paths:
           type: integer
           required: true
           description: ID of the template
-        - name: question_id
+        - name: survey_question_id
           in: path 
           type: integer
           required: true
@@ -2227,7 +2227,7 @@ paths:
           type: integer
           required: true
           description: ID of the template
-        - name: question_id
+        - name: survey_question_id
           in: path 
           type: integer
           required: true
@@ -2257,7 +2257,7 @@ paths:
             items:
               $ref: "#/definitions/SurveyChoice"
 
-  /survey_templates/{survey_template_id}/questions/{question_id}/choices/{choice_id}:
+  /survey_templates/{survey_template_id}/questions/{survey_question_id}/choices/{survey_choice_id}:
     get:
       tags:
         - survey 
@@ -2270,12 +2270,12 @@ paths:
           type: integer
           required: true
           description: ID of the template
-        - name: question_id
+        - name: survey_question_id
           in: path 
           type: integer
           required: true
           description: ID of the question
-        - name: choice_id
+        - name: survey_choice_id
           in: path 
           type: integer
           required: true
@@ -2299,7 +2299,7 @@ paths:
           type: integer
           required: true
           description: ID of the template
-        - name: question_id
+        - name: survey_question_id
           in: path 
           type: integer
           required: true
@@ -2470,33 +2470,6 @@ paths:
               $ref: "#/definitions/SurveyResponse"
 
   /surveys/{survey_id}/questions/{survey_question_id}/responses:
-    get:
-      tags:
-        - survey
-        - response
-        - question
-      summary: Get response of the given question in given survey
-      description: Returns the response of the given question in a given survey
-      parameters:
-        - name: survey_id
-          in: path
-          type: integer
-          description: ID of the survey whose responses should be returned.
-        - name: survey_question_id
-          in: path
-          type: string
-          description: Search for this name
-        - name: responder_id
-          in: query
-          type: integer
-          description: Returns only surveys for this vertical
-      responses:
-        200: 
-          description: Ok
-          schema:
-            type: "object"
-            items:
-              $ref: "#/definitions/SurveyResponse"
     post:
       tags:
         - survey 

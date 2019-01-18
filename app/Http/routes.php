@@ -44,7 +44,7 @@ $app->get('/cities/{city_id}', function ($city_id) use ($app) {
 	$city = (new City)->fetch($city_id);
    	if(!$city) return response(JSend::fail("Can't find any city with the id $city_id"), 404);
 
-    return JSend::success("Details for city $city_id", ['city' => $city]);
+    return JSend::success("Details for city $city_id", ['cities' => $city]);
 });
 
 $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
@@ -105,7 +105,7 @@ $app->get('/groups/{group_id}', function($group_id) use ($app) {
 	$group = (new Group)->fetch($group_id);
 	if(!$group) return response(JSend::fail("Can't find any group with ID $group_id"), 404);
 
-	return JSend::success("User Group: $group_id", ['group' => $group]);
+	return JSend::success("User Group: $group_id", ['groups' => $group]);
 });
 
 $app->get('/verticals', function() use ($app) {
@@ -138,7 +138,7 @@ $app->get('/centers/{center_id}', function($center_id) use ($app) {
 	$center = (new Center)->fetch($center_id);
 	if(!$center) return response(JSend::fail("Can't find any center with ID $center_id"), 404);
 
-	return JSend::success("Center ID : $center_id", ['center' => $center]);
+	return JSend::success("Center ID : $center_id", ['centers' => $center]);
 });
 
 $app->get('/centers/{center_id}/teachers', function($center_id) use ($app) {
@@ -188,7 +188,7 @@ $app->get('/batches/{batch_id}', function($batch_id) use ($app) {
 	$batch = (new Batch)->fetch($batch_id, false);
 	if(!$batch) return response(JSend::fail("Can't find any batch with ID $batch_id"), 404);
 
-	return JSend::success("Batch ID : $batch_id", ['batch' => $batch]);
+	return JSend::success("Batch ID : $batch_id", ['batches' => $batch]);
 });
 $app->get('/batches/{batch_id}/teachers', function($batch_id) use ($app) {
 	$batch = (new Batch)->fetch($batch_id, false);
@@ -212,7 +212,7 @@ $app->get('/levels/{level_id}', function($level_id) use ($app) {
 	$level = (new Level)->fetch($level_id, false);
 	if(!$level) return response(JSend::fail("Can't find any level with ID $level_id"), 404);
 
-	return JSend::success("Level ID : $level_id", ['level' => $level]);
+	return JSend::success("Level ID : $level_id", ['levels' => $level]);
 });
 $app->get('/levels/{level_id}/students', function($level_id) use ($app) {
 	$level = (new Level)->fetch($level_id, false);
@@ -263,7 +263,7 @@ $app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($
 		return response(JSend::fail($error), 400);
 	}
 
-	return JSend::success("Welcome back, $data[name]", ['user' => $data]);
+	return JSend::success("Welcome back, $data[name]", ['users' => $data]);
 });
 
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
@@ -301,7 +301,7 @@ $app->get('/users/{user_id}', function($user_id) use ($app) {
 		return response(JSend::error("Can't find user with user id '$user_id'"), 404);
 	}
 
-	return JSend::success("User details for {$details->name}", ['user' => $details]);
+	return JSend::success("User details for {$details->name}", ['users' => $details]);
 });
 
 $app->get('/users/{user_id}/credit', function($user_id) use ($app) {
@@ -711,9 +711,10 @@ $app->post("/$url_prefix/students", ['middleware' => 'auth.basic', 'uses' => 'St
 $app->post("/$url_prefix/students/{student_id}", ['middleware' => 'auth.basic', 'uses' => 'StudentController@edit']);
 $app->post("/$url_prefix/events", ['middleware' => 'auth.basic', 'uses' => 'EventController@add']);
 $app->post("/$url_prefix/events/{event_id}", ['middleware' => 'auth.basic', 'uses' => 'EventController@edit']);
+
 $app->post("/$url_prefix/survey_templates", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addSurveyTemplate']);
 $app->post("/$url_prefix/survey_templates/{survey_template_id}/questions", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addQuestion']);
-$app->post("/$url_prefix/survey_templates/{survey_template_id}/questions/{question_id}/choices", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addChoice']);
+$app->post("/$url_prefix/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addChoice']);
 $app->post("/$url_prefix/surveys/{survey_id}/responses", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addResponse']);
-$app->post("/$url_prefix/surveys/{survey_id}/questions/{question_id}/responses", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addQuestionResponse']);
+$app->post("/$url_prefix/surveys/{survey_id}/questions/{survey_question_id}/responses", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addQuestionResponse']);
 
