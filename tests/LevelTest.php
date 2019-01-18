@@ -17,7 +17,7 @@ class LevelTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->level->name, '6 A');
+        $this->assertEquals($data->data->levels->name, '6 A');
         $this->assertEquals(200, $this->response->status());
     }
 

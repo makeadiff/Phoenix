@@ -60,7 +60,7 @@ class GroupTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->group->name, 'ES Volunteer');
+        $this->assertEquals($data->data->groups->name, 'ES Volunteer');
         $this->assertEquals(200, $this->response->status());
     }
 

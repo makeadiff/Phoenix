@@ -17,7 +17,7 @@ class CityTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->city->name, 'Bangalore');
+        $this->assertEquals($data->data->cities->name, 'Bangalore');
         $this->assertEquals(200, $this->response->status());
     }
 
@@ -56,7 +56,7 @@ class CityTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->users[0]->name, 'Buffy');
+        $this->assertEquals($data->data->users[0]->name, 'Data');
         $this->assertEquals(200, $this->response->status());
     }
 
@@ -80,7 +80,7 @@ class CityTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $search_for = 'Crusher';
+        $search_for = 'Data';
         $found = false;
         foreach ($data->data->users as $key => $info) {
             if($info->name == $search_for) {

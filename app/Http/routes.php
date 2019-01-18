@@ -148,7 +148,7 @@ $app->get('/centers/{center_id}/teachers', function($center_id) use ($app) {
 	$user = new User;
 	$teachers = $user->search(['center_id' => $center_id]);
 
-	return JSend::success("Teachers in Center $center_id", ['teachers' => $teachers]);
+	return JSend::success("Teachers in Center $center_id", ['users' => $teachers]);
 });
 
 $app->get('/centers/{center_id}/students', function ($center_id) use ($app) {

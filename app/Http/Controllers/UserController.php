@@ -32,7 +32,7 @@ class UserController extends Controller
         $user = new User;
         $result = $user->add($request->all());
 
-        return JSend::success("Created the user successfully", array('user' => $result));
+        return JSend::success("Created the user successfully", array('users' => $result));
     }
 
     public function edit(Request $request, $user_id)
@@ -60,6 +60,6 @@ class UserController extends Controller
         
         $result = $user->find($user_id)->edit($request->all());
 
-        return JSend::success("Edited the user", array('user' => $result));
+        return JSend::success("Edited the user", array('users' => $result));
     }
 }

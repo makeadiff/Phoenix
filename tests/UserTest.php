@@ -17,7 +17,7 @@ class UserTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->user->name, 'Binny V A');
+        $this->assertEquals($data->data->users->name, 'Binny V A');
         $this->assertEquals(200, $this->response->status());
     }
 
@@ -88,7 +88,7 @@ class UserTest extends TestCase
 
         $data = json_decode($response->getContent());
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->user->email, $email);
+        $this->assertEquals($data->data->users->email, $email);
         $this->assertEquals(200, $this->response->status());
         $this->seeInDatabase('User', array('email' => $email));
 
@@ -137,7 +137,7 @@ class UserTest extends TestCase
         $this->load('/users/login?email=sulu.simulation@makeadiff.in&password=pass');
         $data = json_decode($this->response->getContent());
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->user->name, 'Sulu');
+        $this->assertEquals($data->data->users->name, 'Sulu');
     }
 
     /// Path: GET   /users/{user_id}/groups

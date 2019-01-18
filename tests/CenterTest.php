@@ -39,7 +39,7 @@ class CenterTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->center->name, 'Start Rek');
+        $this->assertEquals($data->data->centers->name, 'Start Rek');
         $this->assertEquals(200, $this->response->status());
     }
 
@@ -52,9 +52,10 @@ class CenterTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $search_for = 'Neelix';
+        $search_for = 'Forge';
         $found = false;
-        foreach ($data->data->teachers as $key => $info) {
+
+        foreach ($data->data->users as $key => $info) {
             if($info->name == $search_for) {
                 $found = true;
                 break;

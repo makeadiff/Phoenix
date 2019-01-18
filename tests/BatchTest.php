@@ -17,7 +17,7 @@ class BatchTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->batch->name, 'Sunday 12:00 AM');
+        $this->assertEquals($data->data->batches->name, 'Sunday 12:00 AM');
         $this->assertEquals(200, $this->response->status());
     }
 
