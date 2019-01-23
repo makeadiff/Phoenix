@@ -24,7 +24,7 @@ final class Survey_Template extends Common
     {
         $q = app('db')->table('Survey_Template');
 
-        $q->select("id", "name", "description", "responder", 'vertical_id', 'status');
+        $q->select("id", "name", "description", "responder", 'vertical_id', "options", 'status');
 
         if(!isset($data['status'])) $data['status'] = 1;
         if($data['status'] !== false) $q->where('status', $data['status']); // Setting status as '0' gets you even the deleted question

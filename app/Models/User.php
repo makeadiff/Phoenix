@@ -78,10 +78,10 @@ final class User extends Common
             $q->where('Group.type', $data['user_group_type']);
             $q->where('UserGroup.year', $this->year);
         }
-        if(!empty($data['user_group_vertical_id'])) {
+        if(!empty($data['vertical_id'])) {
             $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
-            $q->whereIn('Group.vertical_id', $data['user_group_vertical_id']);
+            $q->where('Group.vertical_id', $data['vertical_id']);
             $q->where('UserGroup.year', $this->year);
         }
         if(!empty($data['center_id'])) {

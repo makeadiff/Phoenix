@@ -25,7 +25,7 @@ final class Survey extends Common
     {
         $q = app('db')->table('Survey');
 
-        $q->select("Survey.id", "Survey_Template.name", "Survey_Template.description", "Survey_Template.responder", 'Survey_Template.vertical_id', 'Survey.survey_template_id');
+        $q->select("Survey.id", "Survey_Template.name", "Survey_Template.description", "Survey_Template.responder", 'Survey_Template.vertical_id', 'Survey_Template.options', 'Survey.survey_template_id');
         $q->join("Survey_Template", "Survey_Template.id", '=', 'Survey.survey_template_id');
 
         if(!empty($data['id'])) $q->where('Survey.id', $data['id']);
@@ -46,9 +46,13 @@ final class Survey extends Common
         if(!$survey_id) return false;
 
         $survey = Survey::find($survey_id);
-        $survey->template_name = $survey->template()->name;
-        $survey->responder = $survey->template()->responder;
-        return $survey;
+        if($survey) {
+            $survey->template_name = $survey->template()->name;
+            $survey->responder = $survey->template()->responder;
+            $survey->options = $survey->template()->options;
+            return $survey;
+        }
+        return false;
     }
 
     public static function add($survey_template_id, $added_by_user_id)

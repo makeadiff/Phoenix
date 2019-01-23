@@ -44,7 +44,7 @@ final class Survey_Question extends Common
         if($data['status'] !== false) $q->where('status', $data['status']); // Setting status as '0' gets you even the deleted question
         
         if(isset($data['survey_template_id']) and $data['survey_template_id'] != 0) $q->where('survey_template_id', $data['survey_template_id']);
-        if(!empty($data['survey_question_category_id'])) $q->where('survey_question_category_id', $data['survey_question_category_id']);
+        if(isset($data['survey_question_category_id'])) $q->where('survey_question_category_id', $data['survey_question_category_id']);
         if(!empty($data['id'])) $q->where('id', $data['id']);
         if(!empty($data['question_id'])) $q->where('id', $data['question_id']);
         if(!empty($data['response_type'])) $q->where('response_type', $data['response_type']);
@@ -55,7 +55,7 @@ final class Survey_Question extends Common
             if($survey) $q->where("survey_template_id", $survey->survey_template_id);
         }
         $q->orderby('sort_order');
-        // dd($q->toSql(), $q->getBindings());
+        // dd($q->toSql(), $q->getBindings(), $data);
 
         $results = $q->get();
 
