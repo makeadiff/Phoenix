@@ -47,9 +47,11 @@ final class Survey extends Common
 
         $survey = Survey::find($survey_id);
         if($survey) {
-            $survey->template_name = $survey->template()->name;
-            $survey->responder = $survey->template()->responder;
-            $survey->options = $survey->template()->options;
+            $template = $survey->template();
+            $survey->template_name = $template->name;
+            $survey->description = $template->description;
+            $survey->responder = $template->responder;
+            $survey->options = $template->options;
             return $survey;
         }
         return false;
