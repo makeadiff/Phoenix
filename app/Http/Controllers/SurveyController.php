@@ -28,12 +28,13 @@ class SurveyController extends Controller
         $survey_template = Survey_Template::add($fields);
         if(!empty($fields['questions'])) {
             $questions = json_decode($fields['questions'], true);
-            if($questions) $this->addQuestions($survey_template->id, $questions);
+            $question_model = new Survey_Question;
+            $question_model->addMany($questions, $survey_template->id);
         }
 
         // :TODO: - Maybe create an instance along with the template. Because an instance is what people want.
 
-        return JSend::success("Added a Survey Template", $survey_template);
+        return JSend::success("Added a Survey Template", ['templates' => $survey_template]);
     }
 
     public function addQuestion($survey_template_id, Request $request)
@@ -49,7 +50,7 @@ class SurveyController extends Controller
         $questions = $question_model->addMany($data, $survey_template_id);
 
         if(count($questions) == 1) $questions = $questions[0];
-        if($questions) return JSend::success("Added Questions to Survey Template ID : $survey_template_id", $questions);
+        if($questions) return JSend::success("Added Questions to Survey Template ID : $survey_template_id", ['questions' => $questions]);
         else return JSend::fail("Error adding questions", $question_model->errors);
     }
 
@@ -67,7 +68,7 @@ class SurveyController extends Controller
         $choices = $choice_model->addMany($data, $question_id);
 
         if(count($choices) == 1) $choices = $choices[0];
-        if($choices) return JSend::success("Added Choices for question ID : $question_id", $choices);
+        if($choices) return JSend::success("Added Choices for question ID : $question_id", ['choices' => $choices]);
         else return JSend::fail("Error adding choice", $choice_model->errors);
     }
 
@@ -91,7 +92,7 @@ class SurveyController extends Controller
         if(count($responses) == 1) $responses = $responses[0];
 
         if(!$responses) return JSend::fail("Error adding response", $response_model->errors);
-        return JSend::success("Added Responses for Survey ID : $survey_id", $responses);
+        return JSend::success("Added Responses for Survey ID : $survey_id", ['responses' => $responses]);
     }
 
 }

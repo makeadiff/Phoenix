@@ -14,13 +14,13 @@ $app->get('/survey_templates', function(Request $request) use ($app) {
 	$search = array_filter($request->only('id', 'name', 'vertical_id', 'responder', 'status'));
 	$survey_templates = Survey_Template::search($search);
 
-	return JSend::success("Survey Templates", ['survey_templates' => $survey_templates]);
+	return JSend::success("Survey Templates", ['templates' => $survey_templates]);
 });
 
 $app->get('/survey_templates/{survey_template_id}', function($survey_template_id) use ($app) {
 	$survey_template = (new Survey_Template)->fetch($survey_template_id);
 
-	return JSend::success("Survey Template", ['survey_templates' => $survey_template]);
+	return JSend::success("Survey Template", ['templates' => $survey_template]);
 });
 
 $app->get('/survey_templates/{survey_template_id}/surveys', function($survey_template_id) use ($app) {
@@ -65,7 +65,11 @@ $app->get('/surveys', function(Request $request) use ($app) {
 	return JSend::success("Survey", ['surveys' => $surveys]);
 });
 $app->post('/surveys', function(Request $request) use ($app) {
-	$survey = Survey::add($request->survey_template_id, $request->added_by_user_id);
+	$survey_model = new Survey;
+	$survey = $survey_model->add($request->survey_template_id, $request->added_by_user_id);
+
+	if(!$survey) return JSend::error("Error creating survey instance", $survey_model->errors);
+	
 	return JSend::success("Survey Instance Created", ['surveys' => $survey]);
 });
 

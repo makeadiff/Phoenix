@@ -96,6 +96,7 @@ final class Survey_Question extends Common
     {
         $questions = [];
         $choice_model = new Survey_Choice;
+        $sort_order  = 0;
         foreach ($data as $index => $fields) {
             if(empty($fields['survey_template_id']) and $survey_template_id) $fields['survey_template_id'] = $survey_template_id;
 
@@ -108,10 +109,12 @@ final class Survey_Question extends Common
             if ($validator->fails()) {
                 $this->error($validator->errors());
             } else {
-                $questions[] = Survey_Question::create($fields);
+                $sort_order += 10;
+                $fields['sort_order'] = $sort_order;
+                $last_question = json_decode(json_encode(Survey_Question::create($fields))); // I was not getting the ID without doing this. Because it was protected.
+                $questions[] = $last_question;
                 
                 if($fields['response_type'] == 'choice' and isset($fields['choices']) and is_array($fields['choices'])) {
-                    $last_question = end($questions);
                     $status = $choice_model->addMany($fields['choices'], $last_question->id);
                     if(!$status) {
                         $this->error($choice_model->errors);

@@ -44,7 +44,8 @@ final class Survey_Choice extends Common
     public function addMany($data, $survey_question_id = 0)
     {
         $choices = [];
-        foreach ($data as $index => $fields) {
+        $sort_order = 0;
+        foreach ($data as $fields) {
             if(empty($fields['survey_question_id']) and $survey_question_id) $fields['survey_question_id'] = $survey_question_id;
 
             // Validation...
@@ -55,6 +56,8 @@ final class Survey_Choice extends Common
             if ($validator->fails()) {
                 $this->error($validator->errors());
             } else {
+                $sort_order += 10;
+                $fields['sort_order'] = $sort_order;
                 $choices[] = Survey_Choice::create($fields);
             }
         }

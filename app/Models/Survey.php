@@ -57,7 +57,7 @@ final class Survey extends Common
         return false;
     }
 
-    public static function add($survey_template_id, $added_by_user_id)
+    public function add($survey_template_id, $added_by_user_id)
     {
         $fields = ['survey_template_id' => $survey_template_id, 'added_by_user_id' => $added_by_user_id];
         $validator = Validator::make($fields, [
@@ -67,7 +67,7 @@ final class Survey extends Common
         if ($validator->fails()) {
             return $this->error($validator->errors());
         } else {
-            return Survey::create($fields);
+            return $this->create($fields);
         }
     }
 }
