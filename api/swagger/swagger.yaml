@@ -2754,6 +2754,10 @@ definitions:
         type: integer
       center_id:
         type: integer
+      project_id:
+        type: integer
+      vertical_id:
+        type: integer
       status:
         type: string
         enum:

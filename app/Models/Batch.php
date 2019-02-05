@@ -19,7 +19,7 @@ final class Batch extends Common
     public function search($data) {
         $search_fields = ['id', 'day', 'class_time', 'center_id', 'project_id', 'year', 'status'];
         $q = app('db')->table('Batch');
-        $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status');
+        $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status', 'project_id');
         if(!isset($data['status'])) $data['status'] = '1';
         if(!isset($data['year'])) $data['year'] = $this->year;
 
@@ -38,8 +38,10 @@ final class Batch extends Common
 
         $q->orderBy('day', 'class_time');
         $results = $q->get();
+
         foreach ($results as $key => $row) {
             $results[$key]->name = $this->getName($row->day, $row->class_time);
+            $results[$key]->vertical_id = $this->getVerticalIdFromProjectId($results[$key]->project_id);
         }
 
         return $results;
@@ -53,6 +55,7 @@ final class Batch extends Common
             $this->item = $this->find($id);
         $this->item->name = $this->getName($this->item->day, $this->item->class_time);
         $this->item->center = $this->item->center()->name;
+        $this->item->vertical_id = $this->getVerticalIdFromProjectId($this->item->project_id);
         return $this->item;
     }
 
@@ -77,6 +80,18 @@ final class Batch extends Common
     public function getName($day, $time) {
         $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return $days[$day] . ' ' . date('h:i A', strtotime('2018-01-21 ' . $time));
+    }
+
+    private function getVerticalIdFromProjectId($project_id)
+    {
+        $project_vertical_mapping = [
+            1   => 3,
+            2   => 19,
+            4   => 5,
+            5   => 18
+        ];
+
+        return $project_vertical_mapping[$project_id];
     }
 
 }
