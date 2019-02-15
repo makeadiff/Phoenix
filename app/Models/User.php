@@ -153,7 +153,7 @@ final class User extends Common
 
         $data->groups = $data->groups();
         $data->city = $data->city()->name;
-        
+
         return $data;
     }
 
@@ -280,6 +280,7 @@ final class User extends Common
         $data = $user->first();
 
         if($data) {
+            $is_correct = false;
             if($password) {
                 $is_correct = Hash::check($password, $data->password_hash);
             } elseif($auth_token) {
