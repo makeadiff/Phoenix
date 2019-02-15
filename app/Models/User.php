@@ -11,6 +11,7 @@ final class User extends Common
     const UPDATED_AT = 'updated_on';
     protected $table = 'User';
     public $timestamps = true;
+    protected $hidden = ['pivot'];
     protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','status','user_type', 'joined_on', 'left_on'];
 
     public function groups()
@@ -126,6 +127,11 @@ final class User extends Common
 
         $results = $q->get();
 
+        // Add groups to each volunter that was returned.
+        for($i=0; $i<count($results); $i++) {
+            $results[$i]->groups = User::fetch($results[$i]->id)->groups;
+        }
+
         // dd($results);
         
         return $results;
@@ -145,16 +151,9 @@ final class User extends Common
         $data = $user->find($user_id);
         if(!$data) return false;
 
-        // All this to remove the 'pivot' key in the group
-        $raw_groups = $data->groups();
-        $groups = [];
-        foreach ($raw_groups as $g) {
-            unset($g->pivot);
-            $groups[] = $g;
-        }
-        $data->groups = $groups;
-
+        $data->groups = $data->groups();
         $data->city = $data->city()->name;
+        
         return $data;
     }
 
@@ -272,7 +271,7 @@ final class User extends Common
         return $this->find($this->id)->setCredit($new_credit);
     }
 
-    public function login($email_or_phone, $password)
+    public function login($email_or_phone, $password, $auth_token='')
     {
         $user = User::where('status', '1')->where('user_type','volunteer');
         $user->where(function($q) use ($email_or_phone) {
@@ -281,15 +280,20 @@ final class User extends Common
         $data = $user->first();
 
         if($data) {
-            $password_is_correct = Hash::check($password, $data->password_hash);
+            if($password) {
+                $is_correct = Hash::check($password, $data->password_hash);
+            } elseif($auth_token) {
+                $is_correct = ($data->auth_token == $auth_token);
+            }
 
-            if(!$password_is_correct) { // Incorrect password
+            if(!$is_correct) { // Incorrect password / Auth key
                 $data = null;
                 $this->errors[] = "Incorrect password provided";
             } else {
                 $user_id = $data->getKey();
                 return $this->fetch($user_id);
             }
+
         } else {
             $this->errors[] = "Can't find any user with the given email/phone";
         }

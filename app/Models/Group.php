@@ -6,7 +6,8 @@ use App\Models\Common;
 final class Group extends Common  
 {
     protected $table = 'Group';
-    public $timestamps = false;
+    public $timestamps = false;    
+    protected $hidden = ['pivot'];
 
 	public function users()
     {

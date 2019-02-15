@@ -254,7 +254,11 @@ $app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($
 	$phone_or_email = $request->input('phone');
 	if(!$phone_or_email) $phone_or_email = $request->input('email');
 	if(!$phone_or_email) $phone_or_email = $request->input('identifier');
-	$data = $user->login($phone_or_email, $request->input('password'));
+
+	if($request->input('password'))
+		$data = $user->login($phone_or_email, $request->input('password'));
+	elseif($request->input('auth_token')) 
+		$data = $user->login($phone_or_email, false, $request->input('auth_token'));
 
 	if(!$data) {
 		$error = "Invalid username/password";

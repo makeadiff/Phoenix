@@ -463,7 +463,9 @@ final class Donation extends Common
 
         $this->chain($donation_id);
 
-        if($deleter_id) {
+        $finance_team_user_ids = [170992, 163416, 104282, 148674, 1]; // These users can delete any Donation. Finance people. :HARDCODE:
+
+        if($deleter_id and !in_array($deleter_id, $finance_team_user_ids)) {
             $donations_for_deletion = $this->search(array('fundraiser_user_id' => $deleter_id))->merge($this->search(array('approver_user_id' => $deleter_id)));
             if(!$donations_for_deletion->count() or !$donations_for_deletion) return JSend::fail("Can't find any donations that can be deleted by '$deleter_id'");
             $donation_ids_for_deletion = $donations_for_deletion->filter(function ($val) { return $val->id; });
