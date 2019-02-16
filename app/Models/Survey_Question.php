@@ -38,7 +38,7 @@ final class Survey_Question extends Common
     {
         $q = app('db')->table('Survey_Question');
 
-        $q->select("id", "question", "survey_question_category_id", 'response_type', 'required', 'sort_order', app('db')->raw("'question' AS type"));
+        $q->select("id", "question", "description", "survey_question_category_id", 'response_type', 'required', 'sort_order', 'options', app('db')->raw("'question' AS type"));
 
         if(!isset($data['status'])) $data['status'] = 1;
         if($data['status'] !== false) $q->where('status', $data['status']); // Setting status as '0' gets you even the deleted question
@@ -60,7 +60,7 @@ final class Survey_Question extends Common
         $results = $q->get();
 
         foreach ($results as $index => $question) {
-            if($question->response_type == 'choice') {
+            if($question->response_type == 'choice' or $question->response_type == 'multi-choice') {
                 $results[$index]->choices = Survey_Choice::inQuestion($question->id);
             }
         }
