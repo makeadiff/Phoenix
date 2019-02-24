@@ -73,7 +73,7 @@ final class Contact extends Common
             'status'	=> 1
         ]);
 
-        if($contact)	{
+        if($contact and $contact->is_applicant)	{
 			// Send Data to Zoho
 			$all_sexes = [
 				'm'		=> 'Male',
