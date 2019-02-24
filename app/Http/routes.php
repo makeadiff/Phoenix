@@ -12,6 +12,7 @@ use App\Models\Deposit;
 use App\Models\Event;
 use App\Models\Data;
 use App\Models\Notification;
+use App\Models\Contact;
 
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -379,6 +380,16 @@ $app->delete('/users/{user_id}/groups/{group_id}', function($user_id, $group_id)
 	return ""; // JSend::success("Removed user from the given group.", ['groups' => $groups]);
 });
 
+//////////////////////////////////////////////////////// Contacts /////////////////////////////////
+$app->post('/applicants', function (Request $request) {
+	$contact = new Contact;
+	$data = $request->all();
+	$data['is_applicant'] = 1;
+
+	$status = $contact->add($data);
+	return JSend::success("Added the applicant successfully", ['applicant' => $status]);
+});
+
 ///////////////////////////////////////////////////////// Student Calls //////////////////////////////////////////////
 // These calls are commented intentionally - the actual calls are at the end of this file. These lines are here to denote that there are more routes.
 // $app->post('/students','StudentController@add');
@@ -695,6 +706,10 @@ $app->get('/notifications', function(Request $request) use($app) {
 $app->get('/custom/video_analytics', function(Request $request) use($app) {
 
 	return JSend::success("Data catured");
+});
+$app->get('/custom/care_collective_count', function(Request $request) use($app) {
+	$contact = new Contact;
+	return JSend::success("Care Collective Count", ['count' => $contact->getCount()]);
 });
 
 ////////////////////////////////// Debug //////////////////////////
