@@ -8,7 +8,7 @@ class Common extends Model
     public $errors = [];
 
     public $year;
-    protected $id = 0;
+    protected $item_id = 0;
     protected $item = 0;
 
     public function __construct(array $attributes = [])
@@ -26,7 +26,7 @@ class Common extends Model
 
     public function fetch($id)
     {
-        $this->id = $id;
+        $this->item_id = $id;
         $this->item = $this->where('status', '1')->find($id);
 
         return $this->item;
@@ -67,16 +67,19 @@ class Common extends Model
     /// This is necessary to make the methord chaining work. With this, you can do stuff like - $item->find(3)->remove();
     protected function chain($id) {
         if($id) {
-            $this->id = $id;
+            $this->item_id = $id;
         }
-        if(!$this->id and $this->attributes['id']) {
-            $this->id = $this->attributes['id'];
+        if(!$this->item_id and $this->attributes['id']) {
+            $this->item_id = $this->attributes['id'];
+        }
+        if(!$this->item_id and $this->attributes['item_id']) {
+            $this->item_id = $this->attributes['item_id'];
         }
 
         if(!$this->item) {
-            $this->item = $this->find($this->id);
+            $this->item = $this->find($this->item_id);
         }
 
-        return $this->id;
+        return $this->item_id;
     }
 }

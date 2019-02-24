@@ -47,7 +47,7 @@ final class Level extends Common
     }
 
     public function fetch($id, $is_active = true) {
-        $this->id = $id;
+        $this->id = $this->item_id = $id;
 
         if($is_active)
             $this->item = $this->where('status', '1')->where('year', $this->year)->find($id);

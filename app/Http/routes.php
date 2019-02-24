@@ -387,9 +387,25 @@ $app->post('/applicants', function (Request $request) {
 	$data['is_applicant'] = 1;
 
 	$status = $contact->add($data);
+	if(!$status) {
+		return JSend::error("Could not create contact - errors in input", $contact->errors);
+	}
 	return JSend::success("Added the applicant successfully", ['applicant' => $status]);
 });
 
+$app->post('/contacts', function (Request $request) {
+	$contact = new Contact;
+	$data = $request->all();
+	if(!isset($data['is_applicant'])) $data['is_applicant'] = 0;
+	if(!isset($data['is_subscribed'])) $data['is_subscribed'] = 0;
+	if(!isset($data['is_care_collective'])) $data['is_care_collective'] = 0;
+
+	$status = $contact->add($data);
+	if(!$status) {
+		return JSend::error("Could not create contact - errors in input", $contact->errors);
+	}
+	return JSend::success("Added the contact successfully", ['contact' => $status]);
+});
 ///////////////////////////////////////////////////////// Student Calls //////////////////////////////////////////////
 // These calls are commented intentionally - the actual calls are at the end of this file. These lines are here to denote that there are more routes.
 // $app->post('/students','StudentController@add');

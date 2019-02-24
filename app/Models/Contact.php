@@ -2,6 +2,9 @@
 namespace App\Models;
 
 use App\Models\Common;
+use JSend;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
 
 final class Contact extends Common  
 {
@@ -39,6 +42,20 @@ final class Contact extends Common
 
     public function add($data)
     {
+        $validation_rules = [
+            'name'      => 'required|max:50',
+            'email'     => 'required|email|unique:Contact',
+            'phone'     => 'required|unique:Contact|regex:/[\+0-9]{10,13}/',
+            'city_id'   => 'required|numeric|exists:City,id'
+        ];
+        
+        $validator = \Validator::make($data, $validation_rules);
+
+        if ($validator->fails()) {
+        	$this->errors =  $validator->errors();
+            return false;
+        }
+
         $contact = Contact::create([
             'name' => $data['name'],
             'email'=> $data['email'],
@@ -56,6 +73,77 @@ final class Contact extends Common
             'status'	=> 1
         ]);
 
+        if($contact)	{
+			// Send Data to Zoho
+			$all_sexes = [
+				'm'		=> 'Male',
+				'f'		=> 'Female',
+				'o'		=> 'Other'
+			];
+			$all_cities = [
+				0 => 'None',
+				1 => 'Bangalore',
+				2 => 'Mangalore',
+				3 => 'Trivandrum',
+				4 => 'Mumbai',
+				5 => 'Pune',
+				6 => 'Chennai',
+				8 => 'Vellore',
+				10 => 'Cochin',
+				11 => 'Hyderabad',
+				12 => 'Delhi',
+				13 => 'Chandigarh',
+				14 => 'Kolkata',
+				15 => 'Nagpur',
+				16 => 'Coimbatore',
+				17 => 'Vizag',
+				18 => 'Vijayawada',
+				19 => 'Gwalior',
+				20 => 'Lucknow',
+				21 => 'Bhopal',
+				22 => 'Mysore',
+				23 => 'Guntur',
+				24 => 'Ahmedabad',
+				25 => 'Dehradun'];
+			$client = new Client(); //GuzzleHttp\Client
+			$result = $client->post('https://creator.zoho.com/api/jithincn1/json/recruitment-management/form/Registration/record/add', [
+			    'form_params' => [
+   					'authtoken'			=> '205aee93fdc5f6d2d61b5833625f86ce',
+					'scope'				=> 'creatorapi',
+					'campaign_id' 		=> isset($data['campaign']) ? $data['campaign'] : '',
+					'Applicant_Name'	=> $data['name'],
+					'Gender'			=> isset($data['sex']) ? $all_sexes[$data['sex']] : 'Female',
+					'City'				=> $all_cities[$data['city_id']],
+					'Date_of_Birth'		=> isset($data['birthday']) ? date('d-M-Y', strtotime($data['birthday'])) : '01-01-2000',
+					'Email'				=> $data['email'],
+					'Address_for_correspondence'	=> isset($data['address']) ? $data['address'] : '',
+					'Mobile_Number'		=> $data['phone'],
+					'Occupation'		=> isset($data['job_status']) ? $data['job_status'] : '',
+					'Reason_for_choosing_to_volunteer_at_MAD'	=> isset($data['why_mad']) ? $data['why_mad'] : '',
+					'MAD_Applicant_Id'	=> $contact['id'],	// 'Unique_Applicant_ID'	=> $status['id'],
+			    ]
+			]);
+			$response = $result->getBody();
+			$zoho_response = json_decode($response);
+			$zoho_user_id = @$zoho_response->formname[1]->operation[1]->values->ID;
+
+			if($zoho_user_id) $this->setInfo($contact->id, 'zoho_user_id', $zoho_user_id);
+		}
+
         return $contact;
+    }
+
+    public function setInfo($contact_id, $key, $value)
+    {
+    	$contact = Contact::find($contact_id);
+
+    	$info = [];
+    	if($contact->info) {
+    		$info = json_decode($contact->info);
+    	}
+
+    	$info[$key] = $value;
+    	$contact->info = json_encode($info);
+    	return $contact->save();
     }
 }
