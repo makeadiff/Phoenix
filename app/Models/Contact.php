@@ -43,10 +43,10 @@ final class Contact extends Common
     public function add($data)
     {
         $validation_rules = [
-            'name'      => 'required|max:50',
+            'name'      => 'max:50',
             'email'     => 'required|email|unique:Contact',
-            'phone'     => 'required|unique:Contact|regex:/[\+0-9]{10,13}/',
-            'city_id'   => 'required|numeric|exists:City,id'
+            'phone'     => 'unique:Contact|regex:/[\+0-9]{10,13}/',
+            'city_id'   => 'numeric|exists:City,id'
         ];
         
         $validator = \Validator::make($data, $validation_rules);
@@ -57,10 +57,10 @@ final class Contact extends Common
         }
 
         $contact = Contact::create([
-            'name' => $data['name'],
+            'name' => isset($data['name']) ? $data['name'] : '',
             'email'=> $data['email'],
-            'phone'=> $data['phone'],
-            'city_id' => $data['city_id'],
+            'phone'=> isset($data['phone']) ? $data['phone'] : '',
+            'city_id' => isset($data['city_id']) ? $data['city_id'] : '0',
             'birthday' => isset($data['birthday']) ? $data['birthday'] : '',
             'sex' => isset($data['sex']) ? $data['sex'] : 'f',
             'source' => isset($data['source']) ? $data['source'] : 'other',
