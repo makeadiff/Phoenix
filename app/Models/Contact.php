@@ -11,7 +11,7 @@ final class Contact extends Common
     protected $table = 'Contact';
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
-    protected $fillable = ['email','phone','name','sex','address','source','birthday','city_id','company','latitude','longitute','job_status', 'status', 'why_mad'];
+    protected $fillable = ['email','phone','name','sex','address','source','birthday','city_id','company','latitude','longitute','job_status', 'status', 'why_mad', 'is_applicant', 'is_subscribed', 'is_care_collective'];
     
     public static function search($data)
     {
