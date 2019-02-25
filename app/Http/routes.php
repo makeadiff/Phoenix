@@ -396,9 +396,9 @@ $app->post('/applicants', function (Request $request) {
 $app->post('/contacts', function (Request $request) {
 	$contact = new Contact;
 	$data = $request->all();
-	if(!isset($data['is_applicant'])) $data['is_applicant'] = 0;
-	if(!isset($data['is_subscribed'])) $data['is_subscribed'] = 0;
-	if(!isset($data['is_care_collective'])) $data['is_care_collective'] = 0;
+	// if(!isset($data['is_applicant'])) $data['is_applicant'] = 0;
+	// if(!isset($data['is_subscribed'])) $data['is_subscribed'] = 0;
+	// if(!isset($data['is_care_collective'])) $data['is_care_collective'] = 0;
 
 	$status = $contact->add($data);
 	if(!$status) {

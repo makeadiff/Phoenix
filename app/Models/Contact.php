@@ -17,7 +17,7 @@ final class Contact extends Common
     {
         $search_fields = ['id', 'name','city_id', 'email', 'phone', 'is_applicant', 'is_subscribed', 'is_care_collective'];
         $q = app('db')->table('Contact');
-        $q->select('id', 'name', 'email', 'phone', 'city_id', 'added_on', 'source');
+        $q->select('id', 'name', 'email', 'phone', 'city_id', 'added_on', 'source', 'is_applicant', 'is_subscribed', 'is_care_collective' );
         $q->where('status', '1');
 
         foreach ($search_fields as $field) {
@@ -42,6 +42,22 @@ final class Contact extends Common
 
     public function add($data)
     {
+        $exists = $this->search(['email' => $data['email']]); // Check if it already exits
+        if(count($exists)) {
+            $contact = $exists[0];
+            if(
+                ($contact->is_care_collective != @$data['is_care_collective']) or
+                ($contact->is_applicant != @$data['is_applicant']) or
+                ($contact->is_subscribed != @$data['is_subscribed'])
+            ) {
+                $this->item_id = $contact->id;
+                return $this->edit($data);
+            } else {
+                $this->errors = ["The given Email is already in our system."];
+                return false;
+            }
+        }
+
         $validation_rules = [
             'name'      => 'max:50',
             'email'     => 'required|email|unique:Contact',
@@ -59,7 +75,7 @@ final class Contact extends Common
         $contact = Contact::create([
             'name' => isset($data['name']) ? $data['name'] : '',
             'email'=> $data['email'],
-            'phone'=> isset($data['phone']) ? $data['phone'] : '',
+            'phone'=> isset($data['phone']) ? $this->correctPhoneNumber($data['phone']) : '',
             'city_id' => isset($data['city_id']) ? $data['city_id'] : '0',
             'birthday' => isset($data['birthday']) ? $data['birthday'] : '',
             'sex' => isset($data['sex']) ? $data['sex'] : 'f',
@@ -133,6 +149,22 @@ final class Contact extends Common
         return $contact;
     }
 
+    public function edit($data, $contact_id = false)
+    {
+        $this->chain($contact_id);
+
+        foreach ($this->fillable as $key) {
+            if(!isset($data[$key])) continue;
+
+            if($key == 'phone') $data[$key] = $this->correctPhoneNumber($data[$key]);
+    
+            $this->item->$key = $data[$key];
+        }
+        $this->item->save();
+
+        return $this->item;
+    }
+
     public function setInfo($contact_id, $key, $value)
     {
     	$contact = Contact::find($contact_id);
@@ -145,5 +177,14 @@ final class Contact extends Common
     	$info[$key] = $value;
     	$contact->info = json_encode($info);
     	return $contact->save();
+    }
+
+    /// Changes the phone number format from +91976063565 to 9746063565. Remove the 91 at the starting.
+    private function correctPhoneNumber($phone) 
+    {
+        if(strlen($phone) > 10) {
+            return preg_replace('/^\+?91\D?/', '', $phone);
+        }
+        return $phone;
     }
 }
