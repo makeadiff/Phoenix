@@ -739,6 +739,12 @@ $app->get('/events/{event_id}/send_invites', function($event_id) use($app) {
 
 	return JSend::success("Sent event invites.", ['invited_user_count' => count($invited_users)]);
 });
+// $app->get('/donations/{donation_id}/send_receipt', function($donation_id) use($app) {
+// 	$donation = new Donation;
+// 	$donation->sendReceipt('send', $donation_id); // If you want this to work, change this function to public in the Donation model
+
+// 	return JSend::success("Sent the receipt.");
+// });
 
 require base_path('app/Http/routes-surveys.php');
 });

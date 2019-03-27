@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Hash;
 
 final class User extends Common
 {
-    const CREATED_AT = 'joined_on';
+    const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $table = 'User';
     public $timestamps = true;
     protected $hidden = ['pivot'];
-    protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','status','user_type', 'joined_on', 'left_on'];
+    protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
 
     public function groups()
     {
@@ -171,11 +171,52 @@ final class User extends Common
             'source'    => isset($data['source']) ? $data['source'] : 'other',
             'birthday'  => isset($data['birthday']) ? $data['birthday'] : '',
             'city_id'   => $data['city_id'],
+            'applied_role'=>isset($data['profile']) ? $data['profile'] : '',
             'credit'    => isset($data['credit']) ? $data['credit'] : '3',
             'status'    => isset($data['status']) ? $data['status'] : '1',
             'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
             'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s')
         ]);
+
+        if($user) {
+            // Send Data to Zoho
+            $all_sexes = [
+                'm'     => 'Male',
+                'f'     => 'Female',
+                'u'     => 'Other'
+            ];
+            $response = load('https://creator.zoho.com/api/jithincn1/json/recruitment-management/form/Registration/record/add', [
+                'method'    => 'post',
+                'post_data' => [
+                    'authtoken'         => '205aee93fdc5f6d2d61b5833625f86ce',
+                    'scope'             => 'creatorapi',
+                    'campaign_id'       => isset($data['campaign']) ? $data['campaign'] : '',
+                    'Applicant_Name'    => $data['name'],
+                    'Gender'            => $all_sexes[$data['sex']],
+                    'City'              => $data['cities'][$data['city_id']],
+                    'Date_of_Birth'     => date('d-M-Y', strtotime($data['birthday'])),
+                    'Email'             => $data['email'],
+                    'Address_for_correspondence'    => $data['address'],
+                    'Mobile_Number'     => $data['phone'],
+                    'Occupation'        => $data['job_status'],
+                    'Reason_for_choosing_to_volunteer_at_MAD'   => $data['why_mad'],
+                    'Latitude'          => "0002",  // :HARDCODE: - Researved for future update.
+                    'Longitude'         => "00002",
+                    'Role_Type'         => "Teaching",
+                    'First_Priority'    => "Fundraising Volunteer",
+                    'Second_Priority'   => "Aftercare ASV",
+                    'Third_Priority'    => "Aftercare Wingmen",
+                    'MAD_Applicant_Id'  => $status['id'],   // 'Unique_Applicant_ID'    => $status['id'],
+                ]
+            ]);
+            $zoho_response = json_decode($response);
+            $zoho_user_id = @$zoho_response->formname[1]->operation[1]->values->ID;
+
+            if($zoho_user_id and $user->id) {
+                $user->zoho_user_id = $zoho_user_id;
+                $user->save();
+            }
+        } 
 
         return $user;
     }
