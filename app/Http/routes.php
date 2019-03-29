@@ -303,7 +303,7 @@ $app->get('/users', function(Request $request) use ($app) {
 
 $app->get('/users/{user_id}', function($user_id) use ($app) {
 	$user = new User;
-	$details = $user->fetch($user_id);
+	$details = $user->fetch($user_id, false); // Right now this returns applicants as well. Migt be a problem later on. :TODO:
 
 	if(!$details) {
 		return response(JSend::error("Can't find user with user id '$user_id'"), 404);
