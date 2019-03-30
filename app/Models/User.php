@@ -217,7 +217,10 @@ final class User extends Common
                 22 => 'Mysore',
                 23 => 'Guntur',
                 24 => 'Ahmedabad',
-                25 => 'Dehradun'];
+                25 => 'Dehradun',
+                26 => 'Leadership',
+                28 => 'Test'
+            ];
             $client = new Client(); //GuzzleHttp\Client
             $result = $client->post('https://creator.zoho.com/api/jithincn1/json/recruitment-management/form/Registration/record/add', [
                 'form_params' => [
