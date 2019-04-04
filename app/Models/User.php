@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Models\Group;
+use App\Models\Log;
 use App\Models\Common;
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\GuzzleException;
@@ -375,6 +376,12 @@ final class User extends Common
 				$this->errors[] = "Incorrect password provided";
 			} else {
 				$user_id = $data->getKey();
+
+				// Log the login
+				$login_type = 'Username/Password';
+				if($auth_token) $login_type = 'Auth Token';
+				Log::add(['name' => 'user_login', 'user_id' => $user_id, 'data' => ['entry_point' => 'Phoenix', 'login_type' => $login_type]]);
+
 				return $this->fetch($user_id);
 			}
 
