@@ -187,79 +187,79 @@ final class User extends Common
 			'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s')
 		]);
 
-		// if($user) {
-		// 	// Send Data to Zoho
-		// 	$all_sexes = [
-		// 		'm'     => 'Male',
-		// 		'f'     => 'Female',
-		// 		'o'     => 'Other'
-		// 	];
-		// 	$all_cities = [
-		// 		0 => 'None',
-		// 		1 => 'Bangalore',
-		// 		2 => 'Mangalore',
-		// 		3 => 'Trivandrum',
-		// 		4 => 'Mumbai',
-		// 		5 => 'Pune',
-		// 		6 => 'Chennai',
-		// 		8 => 'Vellore',
-		// 		10 => 'Cochin',
-		// 		11 => 'Hyderabad',
-		// 		12 => 'Delhi',
-		// 		13 => 'Chandigarh',
-		// 		14 => 'Kolkata',
-		// 		15 => 'Nagpur',
-		// 		16 => 'Coimbatore',
-		// 		17 => 'Vizag',
-		// 		18 => 'Vijayawada',
-		// 		19 => 'Gwalior',
-		// 		20 => 'Lucknow',
-		// 		21 => 'Bhopal',
-		// 		22 => 'Mysore',
-		// 		23 => 'Guntur',
-		// 		24 => 'Ahmedabad',
-		// 		25 => 'Dehradun',
-		// 		26 => 'Leadership',
-		// 		28 => 'Test'
-		// 	];
-		// 	$client = new Client(['http_errors' => false]); //GuzzleHttp\Client
-		// 	$response = '';
-		// 	try {
-		// 		$result = $client->post('https://creator.zoho.com/api/jithincn1/json/recruitment-management/form/Registration/record/add', [
-		// 			'form_params' => [
-		// 				'authtoken'         => '205aee93fdc5f6d2d61b5833625f86ce',
-		// 				'scope'             => 'creatorapi',
-		// 				'campaign_id'       => isset($data['campaign']) ? $data['campaign'] : '',
-		// 				'Applicant_Name'    => $data['name'],
-		// 				'Gender'            => isset($data['sex']) ? $all_sexes[$data['sex']] : 'Female',
-		// 				'City'              => $all_cities[$data['city_id']],
-		// 				'Date_of_Birth'     => isset($data['birthday']) ? date('d-M-Y', strtotime($data['birthday'])) : '01-Jan-2000',
-		// 				'Email'             => $data['email'],
-		// 				'Address_for_correspondence'    => isset($data['address']) ? $data['address'] : '',
-		// 				'Mobile_Number'     => $data['phone'],
-		// 				'Occupation'        => isset($data['job_status']) ? $data['job_status'] : '',
-		// 				'Reason_for_choosing_to_volunteer_at_MAD'   => isset($data['why_mad']) ? $data['why_mad'] : '',
-		// 				'MAD_Applicant_Id'  => $user->id,  // 'Unique_Applicant_ID'    => $status['id'],
-		// 			]
-		// 		]);
-		// 		$response = $result->getBody();
-		// 	} catch(Exception $e) {
-		// 		// Can't send data to Zoho
+		if($user) {
+			// Send Data to Zoho
+			$all_sexes = [
+				'm'     => 'Male',
+				'f'     => 'Female',
+				'o'     => 'Other'
+			];
+			$all_cities = [
+				0 => 'None',
+				1 => 'Bangalore',
+				2 => 'Mangalore',
+				3 => 'Trivandrum',
+				4 => 'Mumbai',
+				5 => 'Pune',
+				6 => 'Chennai',
+				8 => 'Vellore',
+				10 => 'Cochin',
+				11 => 'Hyderabad',
+				12 => 'Delhi',
+				13 => 'Chandigarh',
+				14 => 'Kolkata',
+				15 => 'Nagpur',
+				16 => 'Coimbatore',
+				17 => 'Vizag',
+				18 => 'Vijayawada',
+				19 => 'Gwalior',
+				20 => 'Lucknow',
+				21 => 'Bhopal',
+				22 => 'Mysore',
+				23 => 'Guntur',
+				24 => 'Ahmedabad',
+				25 => 'Dehradun',
+				26 => 'Leadership',
+				28 => 'Test'
+			];
+			$client = new Client(['http_errors' => false]); //GuzzleHttp\Client
+			$response = '';
+			try {
+				$result = $client->post('https://creator.zoho.com/api/jithincn1/json/recruitment-management/form/Registration/record/add', [
+					'form_params' => [
+						'authtoken'         => '205aee93fdc5f6d2d61b5833625f86ce',
+						'scope'             => 'creatorapi',
+						'campaign_id'       => isset($data['campaign']) ? $data['campaign'] : '',
+						'Applicant_Name'    => $data['name'],
+						'Gender'            => isset($data['sex']) ? $all_sexes[$data['sex']] : 'Female',
+						'City'              => $all_cities[$data['city_id']],
+						'Date_of_Birth'     => isset($data['birthday']) ? date('d-M-Y', strtotime($data['birthday'])) : '01-Jan-2000',
+						'Email'             => $data['email'],
+						'Address_for_correspondence'    => isset($data['address']) ? $data['address'] : '',
+						'Mobile_Number'     => $data['phone'],
+						'Occupation'        => isset($data['job_status']) ? $data['job_status'] : '',
+						'Reason_for_choosing_to_volunteer_at_MAD'   => isset($data['why_mad']) ? $data['why_mad'] : '',
+						'MAD_Applicant_Id'  => $user->id,  // 'Unique_Applicant_ID'    => $status['id'],
+					]
+				]);
+				$response = $result->getBody();
+			} catch(Exception $e) {
+				// Can't send data to Zoho
 				
-		// 	} finally {
-		// 		if($response) {
-		// 			$zoho_response = json_decode($response);
-		// 			$zoho_user_id = @$zoho_response->formname[1]->operation[1]->values->ID;
+			} finally {
+				if($response) {
+					$zoho_response = json_decode($response);
+					$zoho_user_id = @$zoho_response->formname[1]->operation[1]->values->ID;
 
-		// 			if($zoho_user_id and $user->id) {
-		// 				$user->zoho_user_id = $zoho_user_id;
-		// 				$user->save();
-		// 			}
-		// 		}
+					if($zoho_user_id and $user->id) {
+						$user->zoho_user_id = $zoho_user_id;
+						$user->save();
+					}
+				}
 
-		// 	}
-		// 	// $user->zoho_response = $zoho_response; // Use this if you want to debug the zoho call.
-		// } 
+			}
+			// $user->zoho_response = $zoho_response; // Use this if you want to debug the zoho call.
+		} 
 
 		return $user;
 	}
