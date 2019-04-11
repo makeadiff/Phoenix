@@ -277,7 +277,7 @@ $app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($
 // $app->post('/users/{user_id}','UserController@edit');
 
 $app->get('/users', function(Request $request) use ($app) {
-	$search_fields = ['id','identifier', 'name','phone','email','mad_email','group_id','group_in','vertical_id','city_id','user_type','center_id','project_id', 'not_user_type'];
+	$search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','group_id','group_in','vertical_id','city_id','user_type','center_id','project_id', 'not_user_type'];
 	$search = [];
 	foreach ($search_fields as $key) {
 		if(!$request->input($key)) continue;
@@ -303,7 +303,7 @@ $app->get('/users', function(Request $request) use ($app) {
 
 $app->get('/users/{user_id}', function($user_id) use ($app) {
 	$user = new User;
-	$details = $user->fetch($user_id, false); // Right now this returns applicants as well. Migt be a problem later on. :TODO:
+	$details = $user->fetch($user_id, false); // Right now this returns applicants as well - it was needed for Zoho. Migt be a problem later on. :TODO:
 
 	if(!$details) {
 		return response(JSend::error("Can't find user with user id '$user_id'"), 404);
