@@ -16,6 +16,7 @@ final class User extends Common
 	public $timestamps = true;
 	protected $hidden = ['pivot'];
 	protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
+	public $enable_logging = true; // Used to disable logging the basic auth authentications for API Calls
 
 	public function groups()
 	{
@@ -377,10 +378,12 @@ final class User extends Common
 			} else {
 				$user_id = $data->getKey();
 
-				// Log the login
-				$login_type = 'Username/Password';
-				if($auth_token) $login_type = 'Auth Token';
-				Log::add(['name' => 'user_login', 'user_id' => $user_id, 'data' => ['entry_point' => 'Phoenix', 'login_type' => $login_type]]);
+				if($this->enable_logging) {
+					// Log the login
+					$login_type = 'Username/Password';
+					if($auth_token) $login_type = 'Auth Token';
+					Log::add(['name' => 'user_login', 'user_id' => $user_id, 'data' => ['entry_point' => 'Phoenix', 'login_type' => $login_type]]);
+				}
 
 				return $this->fetch($user_id);
 			}
