@@ -39,9 +39,9 @@ final class User extends Common
 
         if(!isset($data['status'])) $data['status'] = 1;
         if($data['status'] !== false) $q->where('User.status', $data['status']); // Setting status as '0' gets you even the deleted users
-        
+
         if(isset($data['city_id']) and $data['city_id'] != 0) $q->where('User.city_id', $data['city_id']);
-        
+
         if(empty($data['user_type'])) $data['user_type'] = 'volunteer';
         if(!empty($data['not_user_type'])) {
             $q->whereNotIn('User.user_type', $data['not_user_type']);
@@ -53,7 +53,7 @@ final class User extends Common
         if(!empty($data['user_id'])) $q->where('User.id', $data['user_id']);
         if(!empty($data['name'])) $q->where('User.name', 'like', '%' . $data['name'] . '%');
         if(!empty($data['phone'])) $q->where('User.phone', $data['phone']);
-        
+
         if(!empty($data['email'])) $q->where('User.email', $data['email']);
         if(!empty($data['mad_email'])) $q->where('User.mad_email', $data['mad_email']);
         if(!empty($data['any_email'])) $q->where('User.email', $data['any_email'])->orWhere("User.mad_email", $data['any_email']);
@@ -68,7 +68,7 @@ final class User extends Common
         }
 
         if(!empty($data['left_on'])) $q->where('DATE_FORMAT(User.left_on, "%Y-%m")', date('Y-m', strtotime($data['left_on'])));
-        
+
         if(!empty($data['user_group'])) {
             if(!is_array($data['user_group'])) $data['user_group'] = array($data['user_group']);
             $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
@@ -141,7 +141,7 @@ final class User extends Common
         }
 
         // dd($results);
-        
+
         return $results;
     }
 
@@ -152,7 +152,7 @@ final class User extends Common
     public function fetch($user_id, $only_volunteers = true) {
         if(!$user_id) return false;
 
-        $user = User::select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on', 
+        $user = User::select('id', 'name', 'email', 'mad_email','phone', 'sex', 'photo', 'joined_on', 'address', 'birthday', 'left_on',
                                 'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->where('status','1');
         if($only_volunteers) $user = $user->where('user_type', 'volunteer');
 
@@ -167,24 +167,60 @@ final class User extends Common
 
     public function add($data)
     {
-        $user = User::create([
-            'email'     => $data['email'],
-            'mad_email' => isset($data['mad_email']) ? $data['mad_email'] : '',
-            'phone'     => User::correctPhoneNumber($data['phone']),
-            'name'      => $data['name'],
-            'sex'       => isset($data['sex']) ? $data['sex'] : 'f',
-            'password'  => Hash::make($data['password']),
-            'address'   => isset($data['address']) ? $data['address'] : '',
-            'bio'       => isset($data['bio']) ? $data['bio'] : '',
-            'source'    => isset($data['source']) ? $data['source'] : 'other',
-            'birthday'  => isset($data['birthday']) ? $data['birthday'] : '',
-            'city_id'   => $data['city_id'],
-            'applied_role'=>isset($data['profile']) ? $data['profile'] : '',
-            'credit'    => isset($data['credit']) ? $data['credit'] : '3',
-            'status'    => isset($data['status']) ? $data['status'] : '1',
-            'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
-            'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s')
-        ]);
+
+        $q = app('db')->table($this->table);
+        $q->select('id','email','phone','user_type');
+        $q->where('user_type','<>','volunteer')->where('user_type','<>','applicant');
+        $q->where('email',$data['email'])->orWhere('phone',$data['phone']);
+
+        if(isset($data['mad_email'])){
+          $q->where('mad_email',$data['mad_email']);
+        }
+
+        $results = $q->first();
+
+        if(empty($results)){
+
+          $user = User::create([
+              'email'     => $data['email'],
+              'mad_email' => isset($data['mad_email']) ? $data['mad_email'] : '',
+              'phone'     => User::correctPhoneNumber($data['phone']),
+              'name'      => $data['name'],
+              'sex'       => isset($data['sex']) ? $data['sex'] : 'f',
+              'password'  => Hash::make($data['password']),
+              'address'   => isset($data['address']) ? $data['address'] : '',
+              'bio'       => isset($data['bio']) ? $data['bio'] : '',
+              'source'    => isset($data['source']) ? $data['source'] : 'other',
+              'birthday'  => isset($data['birthday']) ? $data['birthday'] : '',
+              'city_id'   => $data['city_id'],
+              'applied_role'=>isset($data['profile']) ? $data['profile'] : '',
+              'credit'    => isset($data['credit']) ? $data['credit'] : '3',
+              'status'    => isset($data['status']) ? $data['status'] : '1',
+              'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
+              'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s')
+          ]);
+
+        }else{
+          $user = User::where('id',$results->id)->first();
+          $user->email        = $data['email'];
+          $user->mad_email    = isset($data['mad_email']) ? $data['mad_email'] : '';
+          $user->phone        = User::correctPhoneNumber($data['phone']);
+          $user->name         = $data['name'];
+          $user->sex          = isset($data['sex']) ? $data['sex'] : 'f';
+          $user->password     = Hash::make($data['password']);
+          $user->address      = isset($data['address']) ? $data['address'] : '';
+          $user->bio          = isset($data['bio']) ? $data['bio'] : '';
+          $user->source       = isset($data['source']) ? $data['source'] : 'other';
+          $user->birthday     = isset($data['birthday']) ? $data['birthday'] : '';
+          $user->city_id      = $data['city_id'];
+          $user->applied_role = isset($data['profile']) ? $data['profile'] : '';
+          $user->credit       = isset($data['credit']) ? $data['credit'] : '3';
+          $user->status       = isset($data['status']) ? $data['status'] : '1';
+          $user->user_type    = isset($data['user_type']) ? $data['user_type'] : 'applicant';
+          $user->joined_on    = isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s');
+          $user->save();
+        }
+
 
         if($user) {
             // Send Data to Zoho
@@ -245,7 +281,7 @@ final class User extends Common
                 $user->save();
             }
             // $user->zoho_response = $zoho_response; // Use this if you want to debug the zoho call.
-        } 
+        }
 
         return $user;
     }
@@ -270,7 +306,7 @@ final class User extends Common
     public function addGroup($group_id, $user_id = false)
     {
         $this->chain($user_id);
-        
+
         // Check if the user has the group already.
         $existing_groups = $this->groups();
         $group_found = false;
@@ -295,7 +331,7 @@ final class User extends Common
     public function removeGroup($group_id, $user_id = false)
     {
         $this->chain($user_id);
-        
+
         // Check if the user has the group.
         $existing_groups = $this->groups();
         $group_found = false;
@@ -320,8 +356,8 @@ final class User extends Common
     public function setCredit($credit, $user_id = false)
     {
         $this->chain($user_id);
-        
-        $this->item->credit = $credit; 
+
+        $this->item->credit = $credit;
         return $this->item->save();
     }
 
@@ -370,7 +406,7 @@ final class User extends Common
         }
         return false;
     }
-    
+
     /// Changes the phone number format from +91976063565 to 9746063565. Remove the 91 at the starting.
     private function correctPhoneNumber($phone) {
         if(strlen($phone) > 10) {

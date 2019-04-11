@@ -53,7 +53,7 @@ $app->get('/cities/{city_id}/users', function ($city_id) use ($app) {
 	if(!$city) return response(JSend::fail("Can't find any city with ID $city_id"), 404);
 
     $users = (new User)->search(array('city_id' => $city_id));
-    
+
     return JSend::success("List of users returned", ['users' => $users]);
 });
 
@@ -62,7 +62,7 @@ $app->get('/cities/{city_id}/teachers', function ($city_id) use ($app) {
 	if(!$city) return response(JSend::fail("Can't find any city with ID $city_id"), 404);
 
 	$users = (new User)->search(array('city_id' => $city_id, 'user_group' => 9));
-    
+
     return JSend::success("List of teachers returned", ['users' => $users]);
 });
 
@@ -71,7 +71,7 @@ $app->get('/cities/{city_id}/fellows', function ($city_id) use ($app) {
 	if(!$city) return response(JSend::fail("Can't find any city with ID $city_id"), 404);
 
 	$users = (new User)->search(array('city_id' => $city_id, 'user_group_type' => 'fellow'));
-    
+
     return JSend::success("List of fellows returned", ['users' => $users]);
 });
 
@@ -90,7 +90,7 @@ $app->get('/cities/{city_id}/students', function ($city_id) use ($app) {
 
 	$student = new Student;
     $students = $student->search(array('city_id' => $city_id));
-    
+
     return JSend::success("List of students in $city[name]", ['students' => $students]);
 });
 
@@ -158,7 +158,7 @@ $app->get('/centers/{center_id}/students', function ($center_id) use ($app) {
 
 	$student = new Student;
     $students = $student->search(array('center_id' => $center_id));
-    
+
     return JSend::success("List of students in $center[name]", ['students' => $students]);
 });
 
@@ -179,7 +179,7 @@ $app->get('/centers/{center_id}/levels', function ($center_id, Request $request)
 
 	$project_id = $request->input('project_id');
 	if(!$project_id) $project_id = 1;
- 
+
     $levels = (new Level)->search(['center_id' => $center_id, 'project_id' => $project_id]);
     return JSend::success("List of levels in $center[name]", ['levels' => $levels]);
 });
@@ -258,13 +258,13 @@ $app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($
 
 	if($request->input('password'))
 		$data = $user->login($phone_or_email, $request->input('password'));
-	elseif($request->input('auth_token')) 
+	elseif($request->input('auth_token'))
 		$data = $user->login($phone_or_email, false, $request->input('auth_token'));
 
 	if(!$data) {
 		$error = "Invalid username/password";
 		if(count($user->errors)) $error = implode(", ", $user->errors);
-		
+
 		return response(JSend::fail($error), 400);
 	}
 
@@ -336,7 +336,7 @@ $app->post('/users/{user_id}/credit', function($user_id, Request $request) use (
     }
 
 	$user->find($user_id)->editCredit($request->input('credit'), $request->input('updated_by_user_id'), $request->input('reason'));
-	
+
 	return JSend::success("Edit the credits for user $user_id", ['credit' => $request->input('credit')]);
 });
 
@@ -651,7 +651,7 @@ $app->post('/events/{event_id}/users', function($event_id, Request $request) use
 
 	$send_invites = $request->input('send_invite_emails') == 'true' ? true : false;
 	$event->invite($user_ids, $send_invites);
-	
+
 	$count = count($user_ids);
 
 	return JSend::success( $count . " users invited to event", ['invited_count' => $count]);
@@ -692,7 +692,7 @@ $app->delete('/events/{event_id}/users/{user_id}', function($event_id, $user_id)
 	if(!count($data)) return response(JSend::fail("Can't find event with ID $event_id / User with ID $user_id", $event->errors), 404);
 
 	$event->find($event_id)->deleteUserConnection($user_id);
-	return ""; 
+	return "";
 });
 
 ////////////////////////////////// Notifications //////////////////////////////
@@ -761,4 +761,3 @@ $app->post("/$url_prefix/survey_templates/{survey_template_id}/questions", ['mid
 $app->post("/$url_prefix/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addChoice']);
 $app->post("/$url_prefix/surveys/{survey_id}/responses", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addResponse']);
 $app->post("/$url_prefix/surveys/{survey_id}/questions/{survey_question_id}/responses", ['middleware' => 'auth.basic', 'uses' => 'SurveyController@addQuestionResponse']);
-
