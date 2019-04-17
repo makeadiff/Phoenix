@@ -249,6 +249,23 @@ $app->post('/classes/{class_id}/data/{name}', function(Request $request, $class_
 	return JSend::success("Data '$data_name' for class $class_id", ['data' => $data]);
 });
 
+
+///////////////////////////////////////////////// Data ////////////////////////////////////////
+// GET,POST /users/{user_id}/data 
+// GET,POST,DELETE /users/{user_id}/data/{name}
+// GET,POST /students/{student_id}/data 
+// GET,POST,DELETE /students/{student_id}/data/{name}
+// GET,POST /centers/{center_id}/data 
+// GET,POST,DELETE /centers/{center_id}/data/{name}
+// GET /data
+// $app->get('/users/{user_id}/data/{name}', function($user_id, $data_name) {
+// 	$data = (new Data)->get('Class', $user_id, $data_name)->getData();
+// 	if(!$data) return response(JSend::fail("Can't find any Data with user ID $user_id"), 404);
+
+// 	return JSend::success("Data '$data_name' for user $user_id", ['data' => $data]);
+// });
+
+
 ////////////////////////////////////////////////// Auth //////////////////////////////////////////////////////
 $app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($app) {
 	$user = new User;
