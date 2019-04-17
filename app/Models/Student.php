@@ -53,6 +53,7 @@ final class Student extends Common
         $this->student = $data;
 
         $data->center = $data->center()->name;
+        $data->city_id = $data->center()->city_id;
         return $data;
     }
 

@@ -169,59 +169,57 @@ final class User extends Common
 
 	public function add($data)
 	{
-    $q = app('db')->table($this->table);
-    $q->select('id','email','phone','user_type');
-    $q->where('user_type','<>','volunteer')->where('user_type','<>','applicant');
-    $q->where('email',$data['email'])->orWhere('phone',$data['phone']);
+	    $q = app('db')->table($this->table);
+	    $q->select('id','email','phone','user_type');
+	    $q->where('user_type','<>','volunteer')->where('user_type','<>','applicant');
+	    $q->where('email',$data['email'])->orWhere('phone',$data['phone']);
 
-    if(isset($data['mad_email'])){
-      $q->where('mad_email',$data['mad_email']);
-    }
+	    if(isset($data['mad_email'])){
+	      $q->where('mad_email',$data['mad_email']);
+	    }
 
-    $results = $q->first();
+	    $results = $q->first();
 
-    if(empty($results)){
+	    if(empty($results)){
+	    	$user = User::create([
+	          'email'     => $data['email'],
+	          'mad_email' => isset($data['mad_email']) ? $data['mad_email'] : '',
+	          'phone'     => User::correctPhoneNumber($data['phone']),
+	          'name'      => $data['name'],
+	          'sex'       => isset($data['sex']) ? $data['sex'] : 'f',
+	          'password'  => Hash::make($data['password']),
+	          'address'   => isset($data['address']) ? $data['address'] : '',
+	          'bio'       => isset($data['bio']) ? $data['bio'] : '',
+	          'source'    => isset($data['source']) ? $data['source'] : 'other',
+	          'birthday'  => isset($data['birthday']) ? $data['birthday'] : '',
+	          'city_id'   => $data['city_id'],
+	          'applied_role'=>isset($data['profile']) ? $data['profile'] : '',
+	          'credit'    => isset($data['credit']) ? $data['credit'] : '3',
+	          'status'    => isset($data['status']) ? $data['status'] : '1',
+	          'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
+	          'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s')
+	      	]);
 
-      $user = User::create([
-          'email'     => $data['email'],
-          'mad_email' => isset($data['mad_email']) ? $data['mad_email'] : '',
-          'phone'     => User::correctPhoneNumber($data['phone']),
-          'name'      => $data['name'],
-          'sex'       => isset($data['sex']) ? $data['sex'] : 'f',
-          'password'  => Hash::make($data['password']),
-          'address'   => isset($data['address']) ? $data['address'] : '',
-          'bio'       => isset($data['bio']) ? $data['bio'] : '',
-          'source'    => isset($data['source']) ? $data['source'] : 'other',
-          'birthday'  => isset($data['birthday']) ? $data['birthday'] : '',
-          'city_id'   => $data['city_id'],
-          'applied_role'=>isset($data['profile']) ? $data['profile'] : '',
-          'credit'    => isset($data['credit']) ? $data['credit'] : '3',
-          'status'    => isset($data['status']) ? $data['status'] : '1',
-          'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
-          'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s')
-      ]);
-
-    }else{
-      $user = User::where('id',$results->id)->first();
-      $user->email        = $data['email'];
-      $user->mad_email    = isset($data['mad_email']) ? $data['mad_email'] : '';
-      $user->phone        = User::correctPhoneNumber($data['phone']);
-      $user->name         = $data['name'];
-      $user->sex          = isset($data['sex']) ? $data['sex'] : 'f';
-      $user->password     = Hash::make($data['password']);
-      $user->address      = isset($data['address']) ? $data['address'] : '';
-      $user->bio          = isset($data['bio']) ? $data['bio'] : '';
-      $user->source       = isset($data['source']) ? $data['source'] : 'other';
-      $user->birthday     = isset($data['birthday']) ? $data['birthday'] : '';
-      $user->city_id      = $data['city_id'];
-      $user->applied_role = isset($data['profile']) ? $data['profile'] : '';
-      $user->credit       = isset($data['credit']) ? $data['credit'] : '3';
-      $user->status       = isset($data['status']) ? $data['status'] : '1';
-      $user->user_type    = isset($data['user_type']) ? $data['user_type'] : 'applicant';
-      $user->joined_on    = isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s');
-      $user->save();
-    }
-
+	    } else {
+			$user = User::where('id',$results->id)->first();
+			$user->email        = $data['email'];
+			$user->mad_email    = isset($data['mad_email']) ? $data['mad_email'] : '';
+			$user->phone        = User::correctPhoneNumber($data['phone']);
+			$user->name         = $data['name'];
+			$user->sex          = isset($data['sex']) ? $data['sex'] : 'f';
+			$user->password     = Hash::make($data['password']);
+			$user->address      = isset($data['address']) ? $data['address'] : '';
+			$user->bio          = isset($data['bio']) ? $data['bio'] : '';
+			$user->source       = isset($data['source']) ? $data['source'] : 'other';
+			$user->birthday     = isset($data['birthday']) ? $data['birthday'] : '';
+			$user->city_id      = $data['city_id'];
+			$user->applied_role = isset($data['profile']) ? $data['profile'] : '';
+			$user->credit       = isset($data['credit']) ? $data['credit'] : '3';
+			$user->status       = isset($data['status']) ? $data['status'] : '1';
+			$user->user_type    = isset($data['user_type']) ? $data['user_type'] : 'applicant';
+			$user->joined_on    = isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s');
+			$user->save();
+	    }
 
 		if($user) {
 			// Send Data to Zoho
