@@ -477,6 +477,80 @@ paths:
   #      default:
   #        description: User logged out.
   
+  /users/{user_id}/data/{data_name}:
+    get:
+      tags:
+        - user
+        - data 
+      summary: Get data point about the user who's ID is given 
+      description: Returns the provided data point of the user with the given user_id.
+      parameters:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's data point should be returned.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be returned. The key part of the key/value pair.
+      responses:
+        '200':
+          description: Data point of the given user/data point name combo will be returned.
+        404:
+          description: Given user_id / data point name can't be found in database.
+    post:
+      tags:
+        - user
+        - data
+      summary: Save the data point to the given user
+      description: This lets you set any give data point to any user.
+      parameters:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's data point should be set.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be set. The key part of the key/value pair.
+        - name: data
+          in: query
+          type: string
+          required: true
+          description: The data that should be set to the user/data point name pair. This is the value part.
+      responses:
+        '200':
+          description: Data point of the given user/data point name combo will be set.
+        404:
+          description: Given user_id / data point name can't be found in database.
+    delete:
+      tags:
+        - user
+        - data
+        - delete
+      summary: Delete the data point of the given user
+      description: This lets you delete any given data point of any user.
+      parameters:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's data point should be set.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be set. The key part of the key/value pair.
+      responses:
+        '200':
+          description: Data point of the given user/data point name combo is deleted.
+        404:
+          description: Given user_id / data point name can't be found in the database.
+
   ########################################### Cities
   /cities:
     get:
@@ -834,7 +908,81 @@ paths:
         404:
           description: Can't find any centers with the given ID
 
-  ###################################### Students
+  /centers/{center_id}/data/{data_name}:
+    get:
+      tags:
+        - center
+        - data 
+      summary: Get data point about the center who's ID is given 
+      description: Returns the provided data point of the center with the given center_id.
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the center who's data point should be returned.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be returned. The key part of the key/value pair.
+      responses:
+        '200':
+          description: Data point of the given center/data point name combo will be returned.
+        404:
+          description: Given center_id / data point name can't be found in database.
+    post:
+      tags:
+        - center
+        - data
+      summary: Save the data point to the given center
+      description: This lets you set any give data point to any center.
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the center who's data point should be set.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be set. The key part of the key/value pair.
+        - name: data
+          in: query
+          type: string
+          required: true
+          description: The data that should be set to the center/data point name pair. This is the value part.
+      responses:
+        '200':
+          description: Data point of the given center/data point name combo will be set.
+        404:
+          description: Given center_id / data point name can't be found in database.
+    delete:
+      tags:
+        - center
+        - data
+        - delete
+      summary: Delete the data point of the given center
+      description: This lets you delete any given data point of any center.
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the center of which's data point should be set.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be set. The key part of the key/value pair.
+      responses:
+        '200':
+          description: Data point of the given center/data point name combo is deleted.
+        404:
+          description: Given center_id / data point name can't be found in the database.
+
+  ############################### Students
   
   /students:
     get:
@@ -964,6 +1112,80 @@ paths:
           description: Student was deleted
         404:
           description: Couldn't find the student with the given {student_id}
+
+  /students/{student_id}/data/{data_name}:
+    get:
+      tags:
+        - student
+        - data 
+      summary: Get data point about the student who's ID is given 
+      description: Returns the provided data point of the student with the given student_id.
+      parameters:
+        - name: student_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the student who's data point should be returned.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be returned. The key part of the key/value pair.
+      responses:
+        '200':
+          description: Data point of the given student/data point name combo will be returned.
+        404:
+          description: Given student_id / data point name can't be found in database.
+    post:
+      tags:
+        - student
+        - data
+      summary: Save the data point to the given student
+      description: This lets you set any give data point to any student.
+      parameters:
+        - name: student_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the student who's data point should be set.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be set. The key part of the key/value pair.
+        - name: data
+          in: query
+          type: string
+          required: true
+          description: The data that should be set to the student/data point name pair. This is the value part.
+      responses:
+        '200':
+          description: Data point of the given student/data point name combo will be set.
+        404:
+          description: Given student_id / data point name can't be found in database.
+    delete:
+      tags:
+        - student
+        - data
+        - delete
+      summary: Delete the data point of the given student
+      description: This lets you delete any given data point of any student.
+      parameters:
+        - name: student_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the student who's data point should be set.
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The data point that should be set. The key part of the key/value pair.
+      responses:
+        '200':
+          description: Data point of the given student/data point name combo is deleted.
+        404:
+          description: Given student_id / data point name can't be found in the database.
 
   ############################# Level
   /levels/{level_id}:

@@ -233,21 +233,73 @@ $app->get('/levels/{level_id}/batches', function($level_id) use ($app) {
 });
 
 
-/////////////////////////////////////////////////// Class ////////////////////////////////////////////////////
-$app->get('/classes/{class_id}/data/{name}', function($class_id, $data_name) {
-	$data = (new Data)->get('Class', $class_id, $data_name)->getData();
-	if(!$data) return response(JSend::fail("Can't find any Data with class ID $class_id"), 404);
+///////////////////////////////////////////////// Data ////////////////////////////////////////
+function getData($item, $item_id, $data_name) {
+	$data = (new Data)->get($item, $item_id, $data_name)->getData();
+	if(!$data) return response(JSend::fail("Can't find any Data with $item ID $item_id"), 404);
 
-	return JSend::success("Data '$data_name' for class $class_id", ['data' => $data]);
-});
-
-$app->post('/classes/{class_id}/data/{name}', function(Request $request, $class_id, $data_name) {
+	return JSend::success("Data '$data_name' for $item $item_id", ['data' => $data]);
+}
+function postData($item, $item_id, $data_name, $request) {
 	$data = $request->input('data');
+	if($data) (new Data)->get($item, $item_id, $data_name)->setData($data);
 
-	if($data) (new Data)->get('Class', $class_id, $data_name)->setData($data);
+	return JSend::success("Data '$data_name' for $item $item_id", ['data' => $data]);
+}
+function deleteData($item, $item_id, $data_name) {
+	(new Data)->get($item, $item_id, $data_name)->remove();
 
-	return JSend::success("Data '$data_name' for class $class_id", ['data' => $data]);
+	return ""; // JSend::success("Data '$data_name' for $item $item_id has been deleted");
+}
+
+$app->get('/classes/{class_id}/data/{name}', function($item_id, $data_name) {
+	return getData('Class', $item_id, $data_name);
 });
+$app->post('/classes/{class_id}/data/{name}', function(Request $request, $item_id, $data_name) {
+	return postData('Class', $item_id, $data_name, $request);
+});
+$app->delete('/classes/{class_id}/data/{name}', function($item_id, $data_name) {
+	return deleteData('Class', $item_id, $data_name);
+});
+
+$app->get('/users/{user_id}/data/{name}', function($item_id, $data_name) {
+	return getData('User', $item_id, $data_name);
+});
+$app->post('/users/{user_id}/data/{name}', function(Request $request, $item_id, $data_name) {
+	return postData('User', $item_id, $data_name, $request);
+});
+$app->delete('/users/{user_id}/data/{name}', function($item_id, $data_name) {
+	return deleteData('User', $item_id, $data_name);
+});
+
+$app->get('/students/{student_id}/data/{name}', function($item_id, $data_name) {
+	return getData('Student', $item_id, $data_name);
+});
+$app->post('/students/{student_id}/data/{name}', function(Request $request, $item_id, $data_name) {
+	return postData('Student', $item_id, $data_name, $request);
+});
+$app->delete('/students/{student_id}/data/{name}', function($item_id, $data_name) {
+	return deleteData('Student', $item_id, $data_name);
+});
+
+$app->get('/centers/{center_id}/data/{name}', function($item_id, $data_name) {
+	return getData('Center', $item_id, $data_name);
+});
+$app->post('/centers/{center_id}/data/{name}', function(Request $request, $item_id, $data_name) {
+	return postData('Center', $item_id, $data_name, $request);
+});
+$app->delete('/centers/{center_id}/data/{name}', function($item_id, $data_name) {
+	return deleteData('Center', $item_id, $data_name);
+});
+
+// GET,POST /users/{user_id}/data 
+	// GET,POST,DELETE /users/{user_id}/data/{name}
+// GET,POST /students/{student_id}/data 
+	// GET,POST,DELETE /students/{student_id}/data/{name}
+// GET,POST /centers/{center_id}/data 
+	// GET,POST,DELETE /centers/{center_id}/data/{name}
+// GET,POST /data
+// Next up - contact, city, 
 
 ////////////////////////////////////////////////// Auth //////////////////////////////////////////////////////
 $app->addRoute(['POST','GET'], '/users/login', function(Request $request) use ($app) {

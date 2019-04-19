@@ -63,6 +63,7 @@ final class Data extends Common
         $q = app('db')->table('Data');
         $q->where('item', $item)->where('item_id', $item_id)->where('name', $name);
         if($year) $q->where('year', $year);
+
         $this->item = $q->first();
         $this->item_copy = (object) ['item' => $item, 'item_id' => $item_id, 'name' => $name, 'year' => $year];
 
