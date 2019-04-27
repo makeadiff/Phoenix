@@ -358,7 +358,7 @@ Route::get('/users/{user_id}', function($user_id) {
 	$details = $user->fetch($user_id, false); // Right now this returns applicants as well - it was needed for Zoho. Migt be a problem later on. :TODO:
 
 	if(!$details) {
-		return JSend::error("Can't find user with user id '$user_id'", []);
+		return JSend::fail("Can't find user with user id '$user_id'");
 	}
 
 	return JSend::success("User details for {$details->name}", ['users' => $details]);
@@ -367,7 +367,7 @@ Route::get('/users/{user_id}', function($user_id) {
 Route::get('/users/{user_id}/credit', function($user_id) {
 	$user = new User;
 	$info = $user->fetch($user_id);
-	if(!$info) return JSend::error("Can't find user with user id '$user_id'", []);
+	if(!$info) return JSend::fail("Can't find user with user id '$user_id'");
 
 	$credit = intval($info->credit);
 	return JSend::success("Credits for user $user_id", ['credit' => $credit]);
@@ -375,7 +375,7 @@ Route::get('/users/{user_id}/credit', function($user_id) {
 Route::post('/users/{user_id}/credit', function($user_id, Request $request) {
 	$user = new User;
 	$info = $user->fetch($user_id);
-	if(!$info) return JSend::error("Can't find user with user id '$user_id'", []);
+	if(!$info) return JSend::fail("Can't find user with user id '$user_id'");
 
 	$validator = \Validator::make($request->all(), [
 		'credit'      			=> 'required|numeric',

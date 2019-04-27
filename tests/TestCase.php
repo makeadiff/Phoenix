@@ -10,7 +10,7 @@ abstract class TestCase extends BaseTestCase
     protected $baseUrl = 'http://localhost/Experiments/Php/Laravel-latest/';
 	protected $only_priority_tests = false;
     protected $write_to_db = true;
-    protected $url_prefix = '/api/v1';
+    protected $url_prefix = '/v1';
     protected $response;
     protected $call_headers = [
             // "HTTP_Authorization" => "Basic " . base64_encode("sulu.simulation@makeadiff.in:pass"), // This should be there - but for some reason php thows up an error.

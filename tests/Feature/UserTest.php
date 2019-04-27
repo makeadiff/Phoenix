@@ -32,8 +32,8 @@ class UserTest extends TestCase
         $this->load('/users/29');
         $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'error');
-        $this->assertEquals($data->message, "Can't find user with user id '29'");
+        $this->assertEquals($data->status, 'fail');
+        $this->assertEquals($data->data[0], "Can't find user with user id '29'");
         $this->response->assertStatus(404);
     }
 
