@@ -15,8 +15,7 @@ final class Center extends Common
 
     public function city()
     {
-         $city = $this->belongsTo('App\Models\City', 'city_id');
-         return $city->first();
+        return $this->belongsTo('App\Models\City', 'city_id');
     }
 
     public static function getAll()

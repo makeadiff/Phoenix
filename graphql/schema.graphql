@@ -1,0 +1,90 @@
+# "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-01-01 13:00:00`."
+# scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+# "A date string with format `Y-m-d`, e.g. `2011-05-23`."
+# scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+type Query {
+    users: [User!]! @paginate(type: "paginator" model: "App\\Models\\User")
+    user(id: ID @eq): User @find(model: "App\\Models\\User")
+}
+
+type User {
+	id: ID!
+	name: String!
+	email: String
+	phone: String
+	mad_email: String
+	credit: Int
+	city_id: Int
+	city: String
+	joined_on: String
+	left_on: String
+	reason_for_leaving: String
+	user_type: String
+	address: String
+	birthday: String
+	photo: String
+	sex: String
+	status: String
+	groups: [Group]
+	data: [Data]
+	city: City @belongsTo
+}
+
+type Student {
+	id: ID!
+	name: String!
+	description: String
+	birthday: String
+	added_on: String
+	center_id: Int
+	sex: String
+	center: Center
+}
+
+type Center {
+	id: ID!
+	name: String!
+	teachers: [User]
+	students: [Student]
+}
+
+type City {
+	id: ID!
+	name: String!
+	president_id: Int
+	type: String
+	users: [User]
+}
+
+
+type Group {
+	id: ID!
+	name: String!
+	vertical_id: Int
+	vertical: Vertical
+}
+
+type Vertical {
+	id: ID!
+	name: String!
+}
+
+type City {
+	id: ID!
+	name: String!
+	president_id: Int
+	type: String
+	users: [User]
+}
+
+
+type Data {
+	name: String!
+	data: String!
+	item: String
+	item_id: Int
+	year: Int
+}
+

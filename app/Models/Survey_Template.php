@@ -26,7 +26,7 @@ final class Survey_Template extends Common
 
         $q->select("id", "name", "description", "responder", 'vertical_id', "options", 'status');
 
-        if(!isset($data['status'])) $data['status'] = 1;
+        if(!isset($data['status'])) $data['status'] = '1';
         if($data['status'] !== false) $q->where('status', $data['status']); // Setting status as '0' gets you even the deleted question
         
         if(!empty($data['id'])) $q->where('id', $data['id']);

@@ -24,14 +24,12 @@ final class Survey_Question extends Common
 
     public function survey_template()
     {
-         $template = $this->belongsTo('App\Models\Survey_Template', 'survey_template_id');
-         return $template->first();
+        return $this->belongsTo('App\Models\Survey_Template', 'survey_template_id');
     }
 
     public function survey_question_category()
     {
-         $category = $this->belongsTo('App\Models\Survey_Question_Category', 'survey_question_category_id');
-         return $category->first();
+        return $this->belongsTo('App\Models\Survey_Question_Category', 'survey_question_category_id');
     }
 
     public static function search($data) 
@@ -40,7 +38,7 @@ final class Survey_Question extends Common
 
         $q->select("id", "question", "description", "survey_question_category_id", 'response_type', 'required', 'sort_order', 'options', app('db')->raw("'question' AS type"));
 
-        if(!isset($data['status'])) $data['status'] = 1;
+        if(!isset($data['status'])) $data['status'] = '1';
         if($data['status'] !== false) $q->where('status', $data['status']); // Setting status as '0' gets you even the deleted question
         
         if(isset($data['survey_template_id']) and $data['survey_template_id'] != 0) $q->where('survey_template_id', $data['survey_template_id']);

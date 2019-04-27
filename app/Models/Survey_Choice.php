@@ -12,8 +12,7 @@ final class Survey_Choice extends Common
 
     public function question()
     {
-         $question = $this->belongsTo('App\Models\Survey_Question', 'survey_question_id');
-         return $question->first();
+        return $this->belongsTo('App\Models\Survey_Question', 'survey_question_id');
     }
 
     public static function search($data) 
@@ -22,7 +21,7 @@ final class Survey_Choice extends Common
 
         $q->select("id", "name", "description", "value", 'sort_order');
 
-        if(!isset($data['status'])) $data['status'] = 1;
+        if(!isset($data['status'])) $data['status'] = '1';
         if($data['status'] !== false) $q->where('status', $data['status']); // Setting status as '0' gets you even the deleted question
         
         if(isset($data['survey_question_id']) and $data['survey_question_id'] != 0) $q->where('survey_question_id', $data['survey_question_id']);

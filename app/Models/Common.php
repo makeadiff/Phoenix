@@ -53,7 +53,7 @@ class Common extends Model
         $this->chain($id);
 
         $this->item = $this->find($id);
-        $this->item->status = 0;
+        $this->item->status = '0';
         $this->item->save();
 
         return $this->item;

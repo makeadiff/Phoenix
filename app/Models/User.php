@@ -22,14 +22,18 @@ final class User extends Common
 	{
 		$groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->wherePivot('year',$this->year)->select('Group.id','Group.vertical_id', 'Group.name', 'Group.type');
 		$groups->orderByRaw("FIELD(Group.type, 'executive', 'national', 'strat', 'fellow', 'volunteer')");
-		return $groups->get();
+		return $groups;
 	}
 
 	public function city()
 	{
-		 $city = $this->belongsTo('App\Models\City', 'city_id');
-		 return $city->first();
+		return $this->belongsTo(City::class);
 	}
+
+	// public function data()
+	// {
+	// 	return $this->morphMany(Data::class, 'item', 'item_id');
+	// }
 
 	public function search($data)
 	{
@@ -39,7 +43,7 @@ final class User extends Common
 					"User.user_type","User.address","User.sex", "User.status", "User.city_id", app('db')->raw("City.name AS city_name"));
 		$q->join("City", "City.id", '=', 'User.city_id');
 
-		if(!isset($data['status'])) $data['status'] = 1;
+		if(!isset($data['status'])) $data['status'] = '1';
 		if($data['status'] !== false) $q->where('User.status', $data['status']); // Setting status as '0' gets you even the deleted users
 
 		if(isset($data['city_id']) and $data['city_id'] != 0) $q->where('User.city_id', $data['city_id']);
@@ -161,8 +165,8 @@ final class User extends Common
 		$data = $user->find($user_id);
 		if(!$data) return false;
 
-		$data->groups = $data->groups();
-		$data->city = $data->city()->name;
+		$data->groups = $data->groups()->get();
+		$data->city = $data->city()->first()->name;
 
 		return $data;
 	}
@@ -187,11 +191,11 @@ final class User extends Common
 	          'phone'     => User::correctPhoneNumber($data['phone']),
 	          'name'      => $data['name'],
 	          'sex'       => isset($data['sex']) ? $data['sex'] : 'f',
-	          'password'  => Hash::make($data['password']),
+	          'password_hash' => Hash::make($data['password']),
 	          'address'   => isset($data['address']) ? $data['address'] : '',
 	          'bio'       => isset($data['bio']) ? $data['bio'] : '',
 	          'source'    => isset($data['source']) ? $data['source'] : 'other',
-	          'birthday'  => isset($data['birthday']) ? $data['birthday'] : '',
+	          'birthday'  => isset($data['birthday']) ? $data['birthday'] : null,
 	          'city_id'   => $data['city_id'],
 	          'applied_role'=>isset($data['profile']) ? $data['profile'] : '',
 	          'credit'    => isset($data['credit']) ? $data['credit'] : '3',
@@ -207,11 +211,11 @@ final class User extends Common
 			$user->phone        = User::correctPhoneNumber($data['phone']);
 			$user->name         = $data['name'];
 			$user->sex          = isset($data['sex']) ? $data['sex'] : 'f';
-			$user->password     = Hash::make($data['password']);
+			$user->password_hash= Hash::make($data['password']);
 			$user->address      = isset($data['address']) ? $data['address'] : '';
 			$user->bio          = isset($data['bio']) ? $data['bio'] : '';
 			$user->source       = isset($data['source']) ? $data['source'] : 'other';
-			$user->birthday     = isset($data['birthday']) ? $data['birthday'] : '';
+			$user->birthday     = isset($data['birthday']) ? $data['birthday'] : null;
 			$user->city_id      = $data['city_id'];
 			$user->applied_role = isset($data['profile']) ? $data['profile'] : '';
 			$user->credit       = isset($data['credit']) ? $data['credit'] : '3';
@@ -320,7 +324,7 @@ final class User extends Common
 		$this->chain($user_id);
 
 		// Check if the user has the group already.
-		$existing_groups = $this->groups();
+		$existing_groups = $this->groups()->get();
 		$group_found = false;
 		foreach ($existing_groups as $grp) {
 			if($grp->id == $group_id) {
@@ -345,7 +349,7 @@ final class User extends Common
 		$this->chain($user_id);
 
 		// Check if the user has the group.
-		$existing_groups = $this->groups();
+		$existing_groups = $this->groups()->get();
 		$group_found = false;
 		foreach ($existing_groups as $grp) {
 			if($grp->id == $group_id) {

@@ -18,22 +18,20 @@ final class Deposit extends Common
     {
         $connection = $this->belongsToMany('App\Models\Donation', 'Donut_DonationDeposit');
 
-        $donations = $connection->get();
-        foreach ($donations as $i => $don) {
-            $donations[$i]->donor = $don->donor()->name;
-            $donations[$i]->fundraiser = $don->fundraiser()->name;
-        }
-        return $donations;
+        // $donations = $connection->get();
+        // foreach ($donations as $i => $don) {
+        //     $donations[$i]->donor = $don->donor()->first()->name;
+        //     $donations[$i]->fundraiser = $don->fundraiser()->first()->name;
+        // }
+        return $connection;
     }
 
     public function collected_from() {
-        $user = $this->belongsTo("App\Models\User", 'collected_from_user_id');
-        return $user->first();
+        return $this->belongsTo("App\Models\User", 'collected_from_user_id');
     }
 
     public function given_to() {
-        $user = $this->belongsTo("App\Models\User", 'given_to_user_id');
-        return $user->first();
+        return $this->belongsTo("App\Models\User", 'given_to_user_id');
     }
 
     public function add($collected_from_user_id, $given_to_user_id, $donation_ids, $deposit_information = '') {
@@ -70,7 +68,7 @@ final class Deposit extends Common
         $deposit_id = Deposit::insertGetId([
             'collected_from_user_id'=> $collected_from_user_id,
             'given_to_user_id'      => $given_to_user_id,
-            'reviewed_on'           => '0000-00-00 00:00:00',
+            'reviewed_on'           => null,
             'added_on'              => date('Y-m-d H:i:s'),
             'status'                => 'pending',
             'amount'                => $amount,
@@ -120,7 +118,7 @@ final class Deposit extends Common
 
         foreach ($deposits as $index => $dep) {
             $deposits[$index]->collected_from_user_name = $user->find($dep->collected_from_user_id)->name;
-            $deposits[$index]->donations = $this->find($dep->id)->donations();
+            $deposits[$index]->donations = $this->find($dep->id)->donations()->get();
         }
 
         return $deposits;
@@ -131,7 +129,7 @@ final class Deposit extends Common
 
         if(!$current_user_id) return $this->error("Please include the ID of the user reviewing the deposit.");
 
-        $donations = $this->item->donations();
+        $donations = $this->item->donations()->get();
         if(!count($donations)) return $this->error("There are no donations associated with this deposit.");
 
         foreach ($donations as $donation) {
@@ -167,7 +165,7 @@ final class Deposit extends Common
         $deposit = $this->find($deposit_id);
         if(!$deposit) return false;
 
-        $deposit->donations = $deposit->donations();
+        $deposit->donations = $deposit->donations()->get();
 
         return $deposit;
     }

@@ -32,7 +32,7 @@ final class Group extends Common
             if($field === 'name') $q->where($field, 'like', '%' . $data[$field] . '%');
             else $q->where($field, $data[$field]);
         }
-        $q->orderBy('type', 'name');
+        $q->orderBy('type')->orderBy('name');
         $results = $q->get();
 
         return $results;

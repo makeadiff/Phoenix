@@ -14,8 +14,7 @@ final class Donor extends Common
 
     public function donation()
     {
-        $donations = $this->hasMany('App\Models\Donation', 'donor_id');
-        return $donations->get();
+        return $this->hasMany('App\Models\Donation', 'donor_id');
     }
 
     /// Used to find a donor who matches multiple fields - email and phone. If none found, create the donor.

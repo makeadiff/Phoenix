@@ -1,10 +1,17 @@
 <?php
+namespace Tests;
 
-class TestCase extends Laravel\Lumen\Testing\TestCase
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+
+abstract class TestCase extends BaseTestCase
 {
-    protected $only_priority_tests = false;
+	use CreatesApplication;
+    
+    protected $baseUrl = 'http://localhost/Experiments/Php/Laravel-latest/';
+	protected $only_priority_tests = false;
     protected $write_to_db = true;
-    protected $url_prefix = '/v1';
+    protected $url_prefix = '/api/v1';
+    protected $response;
     protected $call_headers = [
             // "HTTP_Authorization" => "Basic " . base64_encode("sulu.simulation@makeadiff.in:pass"), // This should be there - but for some reason php thows up an error.
             "PHP_AUTH_USER"      => "sulu.simulation@makeadiff.in",
@@ -12,16 +19,11 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     ];
 
     public function load($url, $method = 'GET', $form_data = []) {
-        return $this->call($method, $this->url_prefix . $url, $form_data, [], [], $this->call_headers);
+        $this->withoutMiddleware();
+    	$this->response = $this->call($method, $this->url_prefix . $url, $form_data, [], [], $this->call_headers);
+
+        return $this->response;
     }
 
-    /**
-     * Creates the application.
-     *
-     * @return \Laravel\Lumen\Application
-     */
-    public function createApplication()
-    {
-        return require __DIR__.'/../bootstrap/app.php';
-    }
+
 }

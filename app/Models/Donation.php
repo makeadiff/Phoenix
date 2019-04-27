@@ -27,20 +27,17 @@ final class Donation extends Common
     
     public function fundraiser()
     {
-        $fundraiser = $this->belongsTo('App\Models\User', 'fundraiser_user_id');
-        return $fundraiser->first();
+        return $this->belongsTo('App\Models\User', 'fundraiser_user_id');
     }
 
     public function donor()
     {
-        $donor = $this->belongsTo('App\Models\Donor', 'donor_id');
-        return $donor->first();
+        return $this->belongsTo('App\Models\Donor', 'donor_id');
     }
 
     public function deposit()
     {
-        $deposits = $this->belongsToMany("App\Models\Deposit", 'Donut_DonationDeposit');
-        return $deposits->get();
+        return $this->belongsToMany("App\Models\Deposit", 'Donut_DonationDeposit');
     }
 
     public function search($data)
@@ -130,7 +127,7 @@ final class Donation extends Common
                         unset($donations[$index]); // Deposit info not present - undeposited.
                     }
 
-                    if($deposit_info and ($deposit_info->status == 'approved' or $deposit_info->status == 'pending')) {// Approved or pending deposit
+                    if($deposit_info and isset($deposit_info->status) and ($deposit_info->status == 'approved' or $deposit_info->status == 'pending')) {// Approved or pending deposit
                         if(!$data['deposited']) unset($donations[$index]); // If they want only undeposited donations, unset
                     } else if($data['deposited']) unset($donations[$index]); // Only deposited donations go thru.
                 }
@@ -152,11 +149,11 @@ final class Donation extends Common
 
     public function fetch($donation_id, $include_deposit_info = false) {
         $data = Donation::search(['id' => $donation_id, 'include_deposit_info' => $include_deposit_info]);
-        if(!$data) {
+        if(!$data or !count($data)) {
             $data = Donation::search(['id' => $donation_id]); // Try finding the donation without deposit info.
-            if(!$data) return false;
+            if(!$data or !count($data)) return false;
         }
-        $data = reset($data);
+        $data = $data[0];
 
         $this->id = $donation_id;
         $this->item = $data;
@@ -194,8 +191,8 @@ final class Donation extends Common
             'amount'            => $data['amount'],
             'added_on'          => $data['added_on'],
             'updated_on'        => $data['added_on'],
-            'nach_start_on'     => (!empty($data['nach_start_on']) ? $data['nach_start_on'] : ''),
-            'nach_end_on'       => (!empty($data['nach_end_on']) ? $data['nach_end_on'] : ''),
+            'nach_start_on'     => (!empty($data['nach_start_on']) ? $data['nach_start_on'] : null),
+            'nach_end_on'       => (!empty($data['nach_end_on']) ? $data['nach_end_on'] : null),
             'comment'           => (!empty($data['comment']) ? $data['comment'] : ''),
             'cheque_no'         => (!empty($data['cheque_no']) ? $data['cheque_no'] : ''),
             'status'            => 'collected',
@@ -227,7 +224,7 @@ final class Donation extends Common
                 $base_path . '/public/assets/mad-letterhead-right.png'
             ];
             $mail->images = $images;
-            $mail->send();
+            $mail->send(); // $mail->queue();
         }
 
         return $donation;
