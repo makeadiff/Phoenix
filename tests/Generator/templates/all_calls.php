@@ -1,4 +1,4 @@
-<h1>Implementation Status</h1>
+<br /><br /><h1>Implementation Status</h1>
 
 <table class="table table-striped">
 	<tr><th>Count</th><th>Verb</th><th>End Point</th><th>Documentation</th><th>Implemented</th><th>Auto Tested</th></tr>
