@@ -18,11 +18,9 @@ class UserController extends Controller
     {
         $validation_rules = [
             'name'      => 'required|max:50',
-            // 'email'     => 'required|email',
             'email'     => 'required|email|unique:User,email,well_wisher,user_type,user_type,!alumni',
             'mad_email' => 'email|regex:/.+\@makeadiff\.in$/',
             'password'  => 'required',
-            // 'phone'     => 'required|regex:/[\+0-9]{10,13}/',
             'phone'     => 'required|unique:User,phone,well_wisher,user_type,user_type,!alumni|regex:/[\+0-9]{10}/',
             'city_id'   => 'required|numeric|exists:City,id'
         ];
@@ -30,7 +28,7 @@ class UserController extends Controller
         $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
 
         if ($validator->fails()) {
-            return response(JSend::fail("Unable to create user - errors in input", $validator->errors()), 400);
+            return JSend::fail("Unable to create user - errors in input", $validator->errors(), 400);
         }
 
         $user = new User;

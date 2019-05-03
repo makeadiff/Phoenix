@@ -17,10 +17,9 @@ class UserTest extends TestCase
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $this->load('/users/1');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->users->name, 'Binny V A');
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->users->name, 'Binny V A');
         $this->response->assertStatus(200);
     }
 
@@ -30,10 +29,9 @@ class UserTest extends TestCase
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $this->load('/users/29');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'fail');
-        $this->assertEquals($data->data[0], "Can't find user with user id '29'");
+        $this->assertEquals($this->response_data->status, 'fail');
+        $this->assertEquals($this->response_data->data[0], "Can't find user with user id '29'");
         $this->response->assertStatus(404);
     }
 
@@ -43,24 +41,21 @@ class UserTest extends TestCase
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $this->load('/users?name=Binny');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->users[0]->name, "Binny V A");
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");
         $this->response->assertStatus(200);
 
         $this->load('/users?phone=9746068565');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->users[0]->name, "Binny V A");
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");
         $this->response->assertStatus(200);
 
         $this->load('/users?email=binnyva@gmail.com&mad_email=cto@makeadiff.in&city_id=26&user_type=volunteer');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->users[0]->name, "Binny V A");
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");
         $this->response->assertStatus(200);
 
         // :TODO:
@@ -87,15 +82,14 @@ class UserTest extends TestCase
             'user_type' => 'volunteer'
         );
 
-        $response = $this->load('/users', 'POST', $user);
+        $this->load('/users', 'POST', $user);
 
-        $data = json_decode($response->getContent());
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->users->email, $email);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->users->email, $email);
         $this->response->assertStatus(200);
-        $this->seeInDatabase('User', array('email' => $email));
+        $this->assertDatabaseHas('User', array('email' => $email));
 
-        // :TODO: DELETE FROM User WEHRE id=$data->data->user->id
+        // :TODO: DELETE FROM User WEHRE id=$this->response_data->data->user->id
     }
 
     /// Path: POST /users
@@ -113,11 +107,10 @@ class UserTest extends TestCase
             'user_type' => 'volunteer'
         );
 
-        $response = $this->load('/users', 'POST', $user);
+        $this->load('/users', 'POST', $user);
 
-        $data = json_decode($response->getContent());
-        $this->assertEquals($data->status, 'fail');
-        $this->assertEquals($data->data->email[0], "The email has already been taken.");
+        $this->assertEquals($this->response_data->status, 'fail');
+        $this->assertEquals($this->response_data->data->email[0], "Entered Email ID already exists in the MAD System");
         $this->response->assertStatus(400);
     }
 
@@ -127,9 +120,11 @@ class UserTest extends TestCase
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
         if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
 
-        $response = $this->load('/users/6', 'DELETE');
+        $user_id = 567;
+
+        $this->load('/users/' . $user_id, 'DELETE');
         $this->response->assertStatus(200);
-        $this->seeInDatabase('User', array('id' => '6', 'status' => '0'));
+        $this->assertDatabaseHas('User', array('id' => $user_id, 'status' => '0'));
     }
 
     /// Path: GET  /users/login
@@ -138,9 +133,8 @@ class UserTest extends TestCase
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $this->load('/users/login?email=sulu.simulation@makeadiff.in&password=pass');
-        $data = json_decode($this->response->getContent());
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->users->name, 'Sulu');
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->users->name, 'Sulu');
     }
 
     /// Path: GET   /users/{user_id}/groups
@@ -149,12 +143,11 @@ class UserTest extends TestCase
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $this->load('/users/1/groups');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
+        $this->assertEquals($this->response_data->status, 'success');
         $search_for = 'ES Volunteer';
         $found = false;
-        foreach ($data->data->groups as $key => $info) {
+        foreach ($this->response_data->data->groups as $key => $info) {
             if($info->name == $search_for) {
                 $found = true;
                 break;
@@ -170,10 +163,9 @@ class UserTest extends TestCase
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $this->load('/users/1/credit');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->assertTrue(is_numeric($data->data->credit));
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertTrue(is_numeric($this->response_data->data->credit));
         $this->response->assertStatus(200);
     }
 

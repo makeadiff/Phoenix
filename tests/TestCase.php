@@ -21,6 +21,7 @@ abstract class TestCase extends BaseTestCase
     public function load($url, $method = 'GET', $form_data = []) {
         $this->withoutMiddleware();
     	$this->response = $this->call($method, $this->url_prefix . $url, $form_data, [], [], $this->call_headers);
+        $this->response_data = json_decode($this->response->getContent());
 
         return $this->response;
     }

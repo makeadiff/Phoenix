@@ -395,7 +395,7 @@ Route::post('/users/{user_id}/credit', function($user_id, Request $request) {
 Route::delete('/users/{user_id}', function($user_id) {
 	$user = new User;
 	$info = $user->fetch($user_id, false);
-	if(!$info) return JSend::fail("Can't find user with user id '$user_id'", []);
+	if(!$info) return JSend::fail("Can't find user with user id '$user_id'");
 
 	$info = $user->remove($user_id);
 
@@ -405,7 +405,7 @@ Route::delete('/users/{user_id}', function($user_id) {
 Route::get('/users/{user_id}/groups', function($user_id) {
 	$user = new User;
 	$info = $user->fetch($user_id);
-	if(!$info) return JSend::fail("Can't find user with user id '$user_id'", []);
+	if(!$info) return JSend::fail("Can't find user with user id '$user_id'");
 
 	return JSend::success("User Groups for user $user_id", ['groups' => $info->groups]);
 });
