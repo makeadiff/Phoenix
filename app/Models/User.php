@@ -20,7 +20,7 @@ final class User extends Common
 
 	public function groups()
 	{
-		$groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->wherePivot('year',$this->year)->select('Group.id','Group.vertical_id', 'Group.name', 'Group.type');
+		$groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->where('Group.status', '=', '1')->wherePivot('year',$this->year)->select('Group.id','Group.vertical_id', 'Group.name', 'Group.type');
 		$groups->orderByRaw("FIELD(Group.type, 'executive', 'national', 'strat', 'fellow', 'volunteer')");
 		return $groups;
 	}

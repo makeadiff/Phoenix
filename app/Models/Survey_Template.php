@@ -13,11 +13,11 @@ final class Survey_Template extends Common
 
     public function surveys()
     {
-         return $this->hasMany('App\Models\Survey', 'survey_template_id');
+         return $this->hasMany('App\Models\Survey', 'survey_template_id')->where('Survey.status', '=', '1');
     }
     public function questions()
     {
-        return $this->hasMany('App\Models\Survey_Question');
+        return $this->hasMany('App\Models\Survey_Question')->where('Survey_Question.status', '=', '1');
     }
 
     public static function search($data)

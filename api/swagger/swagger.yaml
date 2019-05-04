@@ -8,6 +8,7 @@ info:
     * Responses will be follow [JSend conventions](http://labs.omniti.com/labs/jsend)
     * [Coversheet](https://docs.google.com/document/d/19OeIL2O_PAaDMjMx_ZdL2eTp2pmtZ1EUDDrWmRfScAE)
     * [Reference Document](https://docs.google.com/document/d/1YgDsgXaLp5HERyIkqpBCSs398C1xc54cE1Th6shs17o)
+    * [Example Calls](https://documenter.getpostman.com/view/2544548/S1LsZW8A)
 
 host: makeadiff.in
 basePath: /api/v1/
@@ -1320,7 +1321,7 @@ paths:
           description: Can't find any batch with the given {batch_id}
 
   ############################ Classes
-  /classes/{class_id}/data/{name}:
+  /classes/{class_id}/data/{data_name}:
     get:
       tags:
         - class

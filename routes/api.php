@@ -252,56 +252,50 @@ if(!function_exists('getData')) { // It was causing some wierd issues in 'php ar
 	}
 }
 
-Route::get('/classes/{class_id}/data/{name}', function($item_id, $data_name) {
+Route::get('/classes/{class_id}/data/{data_name}', function($item_id, $data_name) {
 	return getData('Class', $item_id, $data_name);
 });
-Route::post('/classes/{class_id}/data/{name}', function(Request $request, $item_id, $data_name) {
+Route::post('/classes/{class_id}/data/{data_name}', function(Request $request, $item_id, $data_name) {
 	return postData('Class', $item_id, $data_name, $request);
 });
-Route::delete('/classes/{class_id}/data/{name}', function($item_id, $data_name) {
+Route::delete('/classes/{class_id}/data/{data_name}', function($item_id, $data_name) {
 	return deleteData('Class', $item_id, $data_name);
 });
 
-Route::get('/users/{user_id}/data/{name}', function($item_id, $data_name) {
+Route::get('/users/{user_id}/data/{data_name}', function($item_id, $data_name) {
 	return getData('User', $item_id, $data_name);
 });
-Route::post('/users/{user_id}/data/{name}', function(Request $request, $item_id, $data_name) {
+Route::post('/users/{user_id}/data/{data_name}', function(Request $request, $item_id, $data_name) {
 	return postData('User', $item_id, $data_name, $request);
 });
-Route::delete('/users/{user_id}/data/{name}', function($item_id, $data_name) {
+Route::delete('/users/{user_id}/data/{data_name}', function($item_id, $data_name) {
 	return deleteData('User', $item_id, $data_name);
 });
 
-Route::get('/students/{student_id}/data/{name}', function($item_id, $data_name) {
+Route::get('/students/{student_id}/data/{data_name}', function($item_id, $data_name) {
 	return getData('Student', $item_id, $data_name);
 });
-Route::post('/students/{student_id}/data/{name}', function(Request $request, $item_id, $data_name) {
+Route::post('/students/{student_id}/data/{data_name}', function(Request $request, $item_id, $data_name) {
 	return postData('Student', $item_id, $data_name, $request);
 });
-Route::delete('/students/{student_id}/data/{name}', function($item_id, $data_name) {
+Route::delete('/students/{student_id}/data/{data_name}', function($item_id, $data_name) {
 	return deleteData('Student', $item_id, $data_name);
 });
 
-Route::get('/centers/{center_id}/data/{name}', function($item_id, $data_name) {
+Route::get('/centers/{center_id}/data/{data_name}', function($item_id, $data_name) {
 	return getData('Center', $item_id, $data_name);
 });
-Route::post('/centers/{center_id}/data/{name}', function(Request $request, $item_id, $data_name) {
+Route::post('/centers/{center_id}/data/{data_name}', function(Request $request, $item_id, $data_name) {
 	return postData('Center', $item_id, $data_name, $request);
 });
-Route::delete('/centers/{center_id}/data/{name}', function($item_id, $data_name) {
+Route::delete('/centers/{center_id}/data/{data_name}', function($item_id, $data_name) {
 	return deleteData('Center', $item_id, $data_name);
 });
 
-// GET,POST /users/{user_id}/data 
-	// GET,POST,DELETE /users/{user_id}/data/{name}
-// GET,POST /students/{student_id}/data 
-	// GET,POST,DELETE /students/{student_id}/data/{name}
-// GET,POST /centers/{center_id}/data 
-	// GET,POST,DELETE /centers/{center_id}/data/{name}
-// GET,POST /data
-// Next up - contact, city, 
-
 ////////////////////////////////////////////////// Auth //////////////////////////////////////////////////////
+/*
+Route::post('/users/login', function(Request $request) {  // - This line is here to get this call picked up the the all_call.php monitor.
+*/
 Route::addRoute(['POST','GET'], '/users/login', function(Request $request) {
 	$user = new User;
 	$phone_or_email = $request->input('phone');
@@ -324,10 +318,6 @@ Route::addRoute(['POST','GET'], '/users/login', function(Request $request) {
 });
 
 ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
-// These calls are commented intentionally - the actual calls are at the end of this file. These lines are here to denote that there are more routes.
-// Route::post('/users','UserController@add');
-// Route::post('/users/{user_id}','UserController@edit');
-
 Route::get('/users', function(Request $request) {
 	$search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','group_id','group_in','vertical_id','city_id','user_type','center_id','project_id', 'not_user_type'];
 	$search = [];
@@ -801,15 +791,16 @@ Route::get('/events/{event_id}/send_invites', function($event_id) {
 require base_path('routes/api-surveys.php');
 });
 
-Route::post("/$url_prefix/users", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'UserController@add']);
-Route::post("/$url_prefix/users/{user_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'UserController@edit']);
-Route::post("/$url_prefix/students", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'StudentController@add']);
-Route::post("/$url_prefix/students/{student_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'StudentController@edit']);
-Route::post("/$url_prefix/events", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@add']);
-Route::post("/$url_prefix/events/{event_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@edit']);
+Route::post("/users", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'UserController@add', 'prefix' => $url_prefix]);
+Route::post("/users/{user_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'UserController@edit', 'prefix' => $url_prefix]);
+Route::post("/students", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'StudentController@add', 'prefix' => $url_prefix]);
+Route::post("/students/{student_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'StudentController@edit', 'prefix' => $url_prefix]);
+Route::post("/events", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@add', 'prefix' => $url_prefix]);
+Route::post("/events/{event_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@edit', 'prefix' => $url_prefix]);
 
-Route::post("/$url_prefix/survey_templates", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addSurveyTemplate']);
-Route::post("/$url_prefix/survey_templates/{survey_template_id}/questions", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addQuestion']);
-Route::post("/$url_prefix/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addChoice']);
-Route::post("/$url_prefix/surveys/{survey_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addResponse']);
-Route::post("/$url_prefix/surveys/{survey_id}/questions/{survey_question_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addQuestionResponse']);
+Route::post("/survey_templates", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix]);
+Route::post("/survey_templates/{survey_template_id}/questions", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix]);
+Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix]);
+Route::post("/surveys/{survey_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix]);
+Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix]);
+ 

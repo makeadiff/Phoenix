@@ -20,7 +20,7 @@ $routes = '/mnt/x/Data/www/Projects/Phoenix/routes/api-surveys.php';
 $route_lines = array_merge($route_lines, explode("\n", file_get_contents($routes)));
 
 foreach ($route_lines as $l) {
-	if(preg_match('/^Route\:\:([^\(]+)\([\"\'](?:\/\$url_prefix)?([^\']+)[\"\']\,/', $l, $matches)) {
+	if(preg_match('/^Route\:\:([^\(]+)\([\"\']([^\']+)[\"\']\,/', $l, $matches)) {
 		$verb = $matches[1];
 		$path = $matches[2];
 

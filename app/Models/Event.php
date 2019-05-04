@@ -31,6 +31,23 @@ final class Event extends Common
         return $this->belongsTo('App\Models\User', 'created_by_user_id');
     }
 
+    public function invitees() 
+    {
+        return $this->belongsToMany("App\Models\User", 'UserEvent');
+    }
+
+    public function attendees()
+    {
+        return $this->belongsToMany("App\Models\User", 'UserEvent')->where("UserEvent.present", '=', '1');
+    }
+
+    public function eventType()
+    {
+        if(!$this->id) return false;
+
+        return app('db')->table("Event_Type")->where("id", $this->event_type_id)->pluck('name')->first();
+    }
+
     public function search($data) 
     {
         $search_fields = ['id', 'name', 'description', 'starts_on', 'place', 'city_id', 'event_type_id','vertical_id', 'created_by_user_id', 'status'];

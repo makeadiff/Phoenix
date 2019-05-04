@@ -1,12 +1,20 @@
-# "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-01-01 13:00:00`."
-# scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-01-01 13:00:00`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
-# "A date string with format `Y-m-d`, e.g. `2011-05-23`."
-# scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+"A date string with format `Y-m-d`, e.g. `2011-05-23`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
 type Query {
     users: [User!]! @paginate(type: "paginator" model: "App\\Models\\User")
     user(id: ID @eq): User @find(model: "App\\Models\\User")
+    centers: [Center!]! @paginate(type: "paginator" model: "App\\Models\\Center")
+    center(id: ID @eq): Center @find(model: "App\\Models\\Center")
+    cities: [City!]! @all
+    city(id: ID @eq): City @find(model: "App\\Models\\City")
+    batch(id: ID @eq): Batch @find(model: "App\\Models\\Batch")
+    level(id: ID @eq): Level @find(model: "App\\Models\\Level")
+    events(city_id: ID @eq): Event @paginate(type: "paginator" model: "App\\Models\\Event")
+    event(id: ID @eq): Event @find(model: "App\\Models\\Event")
 }
 
 type User {
@@ -40,7 +48,7 @@ type Student {
 	added_on: String
 	center_id: Int
 	sex: String
-	center: Center
+	center: Center @belongsTo
 }
 
 type Center {
@@ -48,6 +56,9 @@ type Center {
 	name: String!
 	teachers: [User]
 	students: [Student]
+	batches: [Batch]
+	levels: [Level]
+	city: City @belongsTo
 }
 
 type City {
@@ -56,8 +67,8 @@ type City {
 	president_id: Int
 	type: String
 	users: [User]
+	centers: [Center]
 }
-
 
 type Group {
 	id: ID!
@@ -71,14 +82,41 @@ type Vertical {
 	name: String!
 }
 
-type City {
+type Batch {
 	id: ID!
-	name: String!
-	president_id: Int
-	type: String
-	users: [User]
+	name: String @method(name: "name")
+	day: String
+	class_time: String
+	center: Center
+	levels: [Level]
 }
 
+type Level {
+	id: ID!
+	name: String!
+	grade: String!
+	center: Center
+	batches: [Batch]
+}
+
+type Event {
+	id: ID!
+	name: String!
+	description: String
+	place: String
+	type: String
+	city_id: ID
+	event_type_id: ID
+	status: String
+	event_type: String @method(name: "eventType")
+	invitees: [User]
+	attendees: [User]
+}
+
+type Event_Type {
+	id: ID!
+	name: String!
+}
 
 type Data {
 	name: String!

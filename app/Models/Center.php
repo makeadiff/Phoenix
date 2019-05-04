@@ -10,7 +10,7 @@ final class Center extends Common
 
 	public function users()
     {
-        return $this->hasMany('App\Models\User');
+        return $this->hasMany('App\Models\User')->where('User.status','=','1')->where('User.user_type','=','volunteer');
     }
 
     public function city()

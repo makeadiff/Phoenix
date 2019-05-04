@@ -14,6 +14,10 @@ final class Batch extends Common
     {
         return $this->belongsTo('App\Models\Center', 'center_id');
     }
+    public function levels()
+    {
+        return $this->belongsToMany("App\Models\Level", 'BatchLevel')->where('BatchLevel.year', '=', $this->year);
+    }
 
     public function search($data) {
         $search_fields = ['id', 'day', 'class_time', 'center_id', 'project_id', 'year', 'status'];
@@ -79,6 +83,12 @@ final class Batch extends Common
     public function getName($day, $time) {
         $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return $days[$day] . ' ' . date('h:i A', strtotime('2018-01-21 ' . $time));
+    }
+
+    public function name() {
+        if(!$this->id) return false;
+
+        return $this->getName($this->day, $this->class_time);
     }
 
     private function getVerticalIdFromProjectId($project_id)
