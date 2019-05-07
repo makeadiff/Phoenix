@@ -11,6 +11,11 @@ final class Data extends Common
     const UPDATED_AT = false;
     protected $fillable = ['name', 'item', 'item_id', 'year', 'added_by_user_id', 'data'];
 
+    // public function item()
+    // {
+    //     return $this->morphTo();
+    // }
+
     public static function search($data)
     {
         $search_fields = ['id', 'item','item_id','name', 'year'];

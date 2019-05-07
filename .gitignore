@@ -1,4 +1,11 @@
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
 /vendor
 .env
-Phoenix.sublime-workspace
-api/swagger/batman-swagger.yaml
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log

@@ -12,8 +12,7 @@ final class Level extends Common
 
     public function center()
     {
-        $center = $this->belongsTo('App\Models\Center', 'center_id');
-        return $center->first();
+        return $this->belongsTo('App\Models\Center', 'center_id');
     }
 
     public function search($data) {
@@ -37,8 +36,10 @@ final class Level extends Common
             $q->where('BatchLevel.batch_id', $data['batch_id']);
         }
 
-        $q->orderBy('grade', 'name');
+        $q->orderBy('grade', 'asc')->orderBy('name', 'asc');
+        // dd($q->toSql(), $q->getBindings(), $data);
         $results = $q->get();
+
         foreach ($results as $key => $row) {
             $results[$key]->name = $row->grade . ' ' . $row->name;
         }
@@ -56,7 +57,7 @@ final class Level extends Common
         if(!$this->item) return false;
         
         $this->item->name = $this->item->grade . ' ' . $this->item->name;
-        $this->item->center = $this->item->center()->name;
+        $this->item->center = $this->item->center()->first()->name;
         return $this->item;
     }
 

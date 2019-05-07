@@ -1,11 +1,13 @@
 <?php
 require('iframe.php');
+require_once "Spyc.php";
 /// Purpose : Reads Swagger YAML Files and generate PhpUnit Test files for those calls.
 
 $html = new HTML;
 
 $swagger_file = '/mnt/x/Data/www/Projects/Phoenix/api/swagger/swagger.yaml';
-$api = yaml_parse(file_get_contents($swagger_file));
+$api = spyc_load_file($swagger_file);
+// $api = yaml_parse(file_get_contents($swagger_file));
 $api_base_path = 'http://localhost/Projects/Phoenix/v1';
 
 $path = i($QUERY, 'path');
@@ -25,7 +27,13 @@ $templates['404'] = file_get_contents('code/404.txt');
 $templates['list'] = file_get_contents('code/list.txt');
 
 $tables = ['User', 'Group', 'City', 'Class', 'Batch', 'Level', 'Center', 'Student'];
-$all_test_types = ['single' => 'Single', '404' => 'Not Found - 404', 'list' => 'List', 'search' => 'Search', 'create' => 'Create', 'edit' => 'Edit', 'delete' => 'Delete'];
+$all_test_types = [	'single'=> 'Single', 
+					'404'	=> 'Not Found - 404', 
+					'list'	=> 'List', 
+					'search'=> 'Search', 
+					'create'=> 'Create', 
+					'edit'	=> 'Edit', 
+					'delete'=> 'Delete'];
 
 $variables = parsePath($path);
 
@@ -44,7 +52,7 @@ if($action == 'Generate Tests') {
 
 	$assertions = '';
 	for($i = 0; $i < count($data_paths); $i++) {
-		if(!$data_paths[$i] or $data_paths[$i] == '$data->data->') continue;
+		if(!$data_paths[$i] or $data_paths[$i] == '$this->response_data->data->') continue;
 
 		$assertion_replaces = array(
 			'%DATA-PATH%'	=> $data_paths[$i],
@@ -71,8 +79,8 @@ if($action == 'Generate Tests') {
 	);
 
 	$code = str_replace(
-				array_keys($replaces), 
-				array_values($replaces), 
+				array_keys($replaces),
+				array_values($replaces),
 				$templates[$test_type]);
 
 	render('output.php');

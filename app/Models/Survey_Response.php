@@ -86,7 +86,7 @@ final class Survey_Response extends Common
         if(!$response_id) return false;
 
         $response = Survey_Response::find($response_id);
-        if($response) {
+        if($response and $response->survey_choice_id) {
             $response->choice = (new Survey_Choice)->fetch($response->survey_choice_id)->name;
         }
         return $response;

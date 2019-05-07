@@ -12,6 +12,15 @@
 		},
 		{
 			"path": "bootstrap"
+		},
+		{
+			"path": "routes"
+		},
+		{
+			"path": "graphql"
+		},
+		{
+			"path": "config"
 		}
 	]
 }

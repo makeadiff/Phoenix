@@ -10,11 +10,11 @@ final class City extends Common
 
 	public function users()
     {
-        return $this->hasMany('App\Models\User');
+        return $this->hasMany('App\Models\User')->where('User.status', '=', '1')->where('User.user_type', '=', 'volunteer');
     }
     public function centers()
     {
-        return $this->hasMany('App\Models\Center');
+        return $this->hasMany('App\Models\Center')->where('Center.status', '=', '1');
     }
 
     public function fetch($id) {

@@ -14,7 +14,7 @@ final class Survey extends Common
 
     public function template()
     {
-         return $this->belongsTo('App\Models\Survey_Template', 'survey_template_id')->first();
+         return $this->belongsTo('App\Models\Survey_Template', 'survey_template_id');
     }
     public function responses()
     {
@@ -47,7 +47,7 @@ final class Survey extends Common
 
         $survey = Survey::find($survey_id);
         if($survey) {
-            $template = $survey->template();
+            $template = $survey->template()->first();
             $survey->template_name = $template->name;
             $survey->description = $template->description;
             $survey->responder = $template->responder;

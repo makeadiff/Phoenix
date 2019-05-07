@@ -1,4 +1,4 @@
-<h1>Generate Tests</h1>
+<br /><br /><h1>Generate Tests</h1>
 
 <form action="" method="post" class="form-area">
 <fieldset id="step-1">
