@@ -265,7 +265,7 @@ final class User extends Common
 			try {
 				$result = $client->post('https://creator.zoho.com/api/jithincn1/json/recruitment-management/form/Registration/record/add', [
 					'form_params' => [
-						'authtoken'         => '5d0c1b2ae32aa289281ad2792a57bfd2',
+						'authtoken'         => '4f1c9be22a7d8fdd2c2a1a6e2921fa13',
 						'scope'             => 'creatorapi',
 						'campaign_id'       => isset($data['campaign']) ? $data['campaign'] : '',
 						'Applicant_Name'    => $data['name'],
