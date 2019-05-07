@@ -11,7 +11,7 @@ final class Group extends Common
 
 	public function users()
     {
-        return $this->belongsToMany('App\Models\User')->wherePivot('year',$this->year);
+        return $this->belongsToMany('App\Models\User')->where('User.status', '=', '1')->where('User.user_type', '=', 'volunteer')->wherePivot('year',$this->year);
     }
 
     public function vertical()
@@ -32,7 +32,7 @@ final class Group extends Common
             if($field === 'name') $q->where($field, 'like', '%' . $data[$field] . '%');
             else $q->where($field, $data[$field]);
         }
-        $q->orderBy('type', 'name');
+        $q->orderBy('type')->orderBy('name');
         $results = $q->get();
 
         return $results;

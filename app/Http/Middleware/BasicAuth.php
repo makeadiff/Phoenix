@@ -25,7 +25,7 @@ class BasicAuth
         define('DEVELOPER_GROUP_ID', 388);
 
         if(!in_array(DEVELOPER_GROUP_ID, $group_ids)) {
-            return response('{"status": "fail", "data": ["Your auth account does not have the Developer user group. Contact the tech team of MAD to add this to your account."]}', 401);
+            return response('{"status": "fail", "data": ["Your auth account does not have the Developer user group. Contact the tech team to add this to your account."]}', 401);
         }
 
         return $next($request);

@@ -12,8 +12,7 @@ final class Student extends Common
 
     public function center()
     {
-        $center = $this->belongsTo('App\Models\Center', 'center_id');
-        return $center->first();
+        return $this->belongsTo('App\Models\Center', 'center_id');
     }
 
     public function search($data)
@@ -52,8 +51,8 @@ final class Student extends Common
         $this->id = $student_id;
         $this->student = $data;
 
-        $data->center = $data->center()->name;
-        $data->city_id = $data->center()->city_id;
+        $data->city_id = $data->center()->first()->city_id;
+        $data->center = $data->center()->first()->name;
         return $data;
     }
 

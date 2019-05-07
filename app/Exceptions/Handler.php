@@ -3,65 +3,57 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\ErrorException;
 
 class Handler extends ExceptionHandler
 {
     /**
-     * A list of the exception types that should not be reported.
+     * A list of the exception types that are not reported.
      *
      * @var array
      */
     protected $dontReport = [
-        AuthorizationException::class,
-        HttpException::class,
-        ModelNotFoundException::class,
-        ValidationException::class,
+        //
+    ];
+
+    /**
+     * A list of the inputs that are never flashed for validation exceptions.
+     *
+     * @var array
+     */
+    protected $dontFlash = [
+        'password',
+        'password_confirmation',
     ];
 
     /**
      * Report or log an exception.
      *
-     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
-     *
-     * @param  \Exception  $e
+     * @param  \Exception  $exception
      * @return void
      */
-    public function report(Exception $e)
+    public function report(Exception $exception)
     {
-        parent::report($e);
+        parent::report($exception);
     }
 
     /**
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $e
+     * @param  \Exception  $exception
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $e)
+    public function render($request, Exception $exception)
     {
-        if ($e instanceof NotFoundHttpException) {
-            return response(\JSend::fail("Can't find the End Point you are trying to access."), 404);
-            
-        } elseif($e instanceof \ErrorException) {
-            error_reporting(0);
-            $status = 500;
-            $exception = get_class($e); // Reflection might be better here
-            $message = $e->getMessage();
-            $trace = $e->getTrace();
+        // if ($exception instanceof NotFoundHttpException) {
+        //     if ($request->is('api/*')) {
+        //         return response()->json(['message' => 'Not Found', 'status' => 'fail'], 404);
+        //     }
+        //     return response()->view('404', [], 404);
+        // }
 
-            return response(\JSend::error("Internal Server Error", ['exception' => $exception, 'message' => $message, 'trace' => $trace[0]]), $status);
-        } else {
-            return parent::render($request, $e);
-        }
-
-        return parent::render($request, $e);
+        return parent::render($request, $exception);
     }
 }

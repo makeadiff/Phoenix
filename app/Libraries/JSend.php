@@ -3,19 +3,19 @@
 
 class JSend
 {
-    static public function success($message, $data = array()) {
-		return JSend::situation('success', $message, $data);
+    static public function success($message, $data = array(), $response_code = 200) {
+		return JSend::situation('success', $message, $data, $response_code);
 	}
 
-	static public function fail($message, $data = array()) {
-		return JSend::situation('fail', $message, $data);
+	static public function fail($message, $data = array(), $response_code = 404) {
+		return JSend::situation('fail', $message, $data, $response_code);
 	}
 
-	static public function error($message, $data = array()) {
-		return JSend::situation('error', $message, $data);
+	static public function error($message, $data = array(), $response_code = 500) {
+		return JSend::situation('error', $message, $data, $response_code);
 	}
 
-	static public function situation($status, $message, $data) {
+	static public function situation($status, $message, $data, $response_code = 200) {
 		$template = array(
 			'success'	=> true,
 			'error'		=> false,
@@ -50,6 +50,6 @@ class JSend
 		if($data)
 			$template['data'] = $data;
 
-		return json_encode($template);
+		return response(json_encode($template), $response_code)->header('Content-type', 'application/json');
 	}
 }

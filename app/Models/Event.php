@@ -28,8 +28,24 @@ final class Event extends Common
 
     public function creator()
     {
-        $creator = $this->belongsTo('App\Models\User', 'created_by_user_id');
-        return $creator->first();
+        return $this->belongsTo('App\Models\User', 'created_by_user_id');
+    }
+
+    public function invitees() 
+    {
+        return $this->belongsToMany("App\Models\User", 'UserEvent');
+    }
+
+    public function attendees()
+    {
+        return $this->belongsToMany("App\Models\User", 'UserEvent')->where("UserEvent.present", '=', '1');
+    }
+
+    public function eventType()
+    {
+        if(!$this->id) return false;
+
+        return app('db')->table("Event_Type")->where("id", $this->event_type_id)->pluck('name')->first();
     }
 
     public function search($data) 
@@ -51,7 +67,7 @@ final class Event extends Common
         $q->where("Event.starts_on", '>', $this->year . '-05-01 00:00:00');
 
         $q->join('Event_Type', 'Event.event_type_id', '=', 'Event_Type.id');
-        $q->orderBy('Event.starts_on', 'Event.name');
+        $q->orderBy('Event.starts_on')->orderBy('Event.name');
         $results = $q->get();
         // dd($q->toSql(), $q->getBindings());
 

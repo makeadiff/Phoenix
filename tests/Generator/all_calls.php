@@ -1,8 +1,10 @@
 <?php
 require('iframe.php');
+require_once "Spyc.php";
 
 $swagger_file = '/mnt/x/Data/www/Projects/Phoenix/api/swagger/swagger.yaml';
-$api = yaml_parse(file_get_contents($swagger_file));
+$api = spyc_load_file($swagger_file);
+// $api = yaml_parse(file_get_contents($swagger_file));
 $api_base_path = 'http://localhost/Projects/Phoenix/public';
 
 $all_paths = array();
@@ -11,14 +13,14 @@ foreach ($api['paths'] as $path => $data) {
 }
 
 $done_paths = array();
-$routes = '/mnt/x/Data/www/Projects/Phoenix/app/Http/routes.php';
+$routes = '/mnt/x/Data/www/Projects/Phoenix/routes/api.php';
 $route_lines = explode("\n", file_get_contents($routes));
 
-$routes = '/mnt/x/Data/www/Projects/Phoenix/app/Http/routes-surveys.php';
+$routes = '/mnt/x/Data/www/Projects/Phoenix/routes/api-surveys.php';
 $route_lines = array_merge($route_lines, explode("\n", file_get_contents($routes)));
 
 foreach ($route_lines as $l) {
-	if(preg_match('/^\$app\-\>([^\(]+)\([\"\'](?:\/\$url_prefix)?([^\']+)[\"\']\,/', $l, $matches)) {
+	if(preg_match('/^Route\:\:([^\(]+)\([\"\']([^\']+)[\"\']\,/', $l, $matches)) {
 		$verb = $matches[1];
 		$path = $matches[2];
 
@@ -28,7 +30,7 @@ foreach ($route_lines as $l) {
 }
 
 $tested_paths = [];
-$test_files_location = '/mnt/x/Data/www/Projects/Phoenix/tests/';
+$test_files_location = '/mnt/x/Data/www/Projects/Phoenix/tests/Feature';
 $files = ls('*.php', $test_files_location);
 $test_calls = [];
 foreach ($files as $f) {

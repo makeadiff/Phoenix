@@ -10,7 +10,7 @@ final class Vertical extends Common
 
 	public function groups()
     {
-        return $this->hasMany('App\Models\Group');
+        return $this->hasMany('App\Models\Group')->where('Group.status', '=', '1');
     }
 
     public static function getAll()

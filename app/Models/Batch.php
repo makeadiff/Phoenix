@@ -12,14 +12,17 @@ final class Batch extends Common
 
     public function center()
     {
-        $center = $this->belongsTo('App\Models\Center', 'center_id');
-        return $center->first();
+        return $this->belongsTo('App\Models\Center', 'center_id');
+    }
+    public function levels()
+    {
+        return $this->belongsToMany("App\Models\Level", 'BatchLevel')->where('BatchLevel.year', '=', $this->year);
     }
 
     public function search($data) {
         $search_fields = ['id', 'day', 'class_time', 'center_id', 'project_id', 'year', 'status'];
         $q = app('db')->table('Batch');
-        $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status', 'project_id');
+        $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status', 'Batch.project_id');
         if(!isset($data['status'])) $data['status'] = '1';
         if(!isset($data['year'])) $data['year'] = $this->year;
 
@@ -36,7 +39,7 @@ final class Batch extends Common
             $q->where('BatchLevel.level_id', $data['level_id']);
         }
 
-        $q->orderBy('day', 'class_time');
+        $q->orderBy('day')->orderBy('class_time');
         $results = $q->get();
 
         foreach ($results as $key => $row) {
@@ -54,7 +57,7 @@ final class Batch extends Common
         else 
             $this->item = $this->find($id);
         $this->item->name = $this->getName($this->item->day, $this->item->class_time);
-        $this->item->center = $this->item->center()->name;
+        $this->item->center = $this->item->center()->first()->name;
         $this->item->vertical_id = $this->getVerticalIdFromProjectId($this->item->project_id);
         return $this->item;
     }
@@ -80,6 +83,12 @@ final class Batch extends Common
     public function getName($day, $time) {
         $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return $days[$day] . ' ' . date('h:i A', strtotime('2018-01-21 ' . $time));
+    }
+
+    public function name() {
+        if(!$this->id) return false;
+
+        return $this->getName($this->day, $this->class_time);
     }
 
     private function getVerticalIdFromProjectId($project_id)

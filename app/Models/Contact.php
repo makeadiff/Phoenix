@@ -26,7 +26,7 @@ final class Contact extends Common
             if($field === 'name') $q->where($field, 'like', '%' . $data[$field] . '%');
             else $q->where($field, $data[$field]);
         }
-        $q->orderBy('city_id', 'name');
+        $q->orderBy('city_id')->orderBy('name');
         $results = $q->get();
 
         return $results;
