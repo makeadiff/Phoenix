@@ -83,7 +83,7 @@ class CityTest extends TestCase
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $search_for = 'Data';
+        $search_for = 'Riker';
         $found = false;
         foreach ($data->data->users as $key => $info) {
             if($info->name == $search_for) {
