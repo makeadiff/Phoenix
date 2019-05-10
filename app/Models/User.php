@@ -183,6 +183,7 @@ final class User extends Common
 	    }
 
 	    $results = $q->first();
+	    $zoho_user_id = isset($data['zoho_user_id']) ? $data['zoho_user_id'] : 0;
 
 	    if(empty($results)){
 	    	$user = User::create([
@@ -201,7 +202,8 @@ final class User extends Common
 	          'credit'    => isset($data['credit']) ? $data['credit'] : '3',
 	          'status'    => isset($data['status']) ? $data['status'] : '1',
 	          'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
-	          'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s')
+	          'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s'),
+	          'zoho_user_id'=>$zoho_user_id
 	      	]);
 
 	    } else {
@@ -224,8 +226,8 @@ final class User extends Common
 			$user->joined_on    = isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s');
 			$user->save();
 	    }
-
-		if($user and (!isset($data['push_to_zoho']) or $data['push_to_zoho'])) {
+		
+		if($user and !$zoho_user_id) {
 			// Send Data to Zoho
 			$all_sexes = [
 				'm'     => 'Male',
@@ -302,13 +304,13 @@ final class User extends Common
 						$user->save();
 					}
 				}
-
 			}
 			// $user->zoho_response = $zoho_response; // Use this if you want to debug the zoho call. This will show up in the AJAX call to our API
 		}
 
 		return $user;
 	}
+
 
 	public function edit($data, $user_id = false)
 	{
