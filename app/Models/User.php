@@ -225,7 +225,7 @@ final class User extends Common
 			$user->save();
 	    }
 
-		if($user and (!isset($data['push_to_zoho']) or !isset($data['push_to_zoho']))) {
+		if($user and (!isset($data['push_to_zoho']) or $data['push_to_zoho'])) {
 			// Send Data to Zoho
 			$all_sexes = [
 				'm'     => 'Male',
