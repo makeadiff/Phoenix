@@ -225,7 +225,7 @@ final class User extends Common
 			$user->save();
 	    }
 
-		if($user) {
+		if($user and (!isset($data['push_to_zoho']) or !isset($data['push_to_zoho']))) {
 			// Send Data to Zoho
 			$all_sexes = [
 				'm'     => 'Male',
@@ -260,6 +260,13 @@ final class User extends Common
 				26 => 'Leadership',
 				28 => 'Test'
 			];
+			$role_types = [
+				'teaching'	=> 'Teaching Volunteer',
+				'wingman'	=> 'Wingman (Youth Mentoring)',
+				'fundraising'=>'Fundraising Volunteer',
+				'hc'		=> 'Human Capital Volunteer',
+				'other'		=> 'Other'
+			];
 			$client = new Client(['http_errors' => false]); //GuzzleHttp\Client
 			$response = '';
 			try {
@@ -275,7 +282,8 @@ final class User extends Common
 						'Email'             => $data['email'],
 						'Address_for_correspondence'    => isset($data['address']) ? $data['address'] : '',
 						'Mobile_Number'     => $data['phone'],
-						'Occupation'        => isset($data['job_status']) ? $data['job_status'] : '',
+						'Occupation'        => isset($data['job_status']) ? ucwords($data['job_status']) : '',
+						'Role_Type'			=> $role_types[$data['profile']],
 						'Reason_for_choosing_to_volunteer_at_MAD'   => isset($data['why_mad']) ? $data['why_mad'] : '',
 						'MAD_Applicant_Id'  => $user->id,  // 'Unique_Applicant_ID'    => $status['id'],
 					]
@@ -296,7 +304,7 @@ final class User extends Common
 				}
 
 			}
-			// $user->zoho_response = $zoho_response; // Use this if you want to debug the zoho call.
+			// $user->zoho_response = $zoho_response; // Use this if you want to debug the zoho call. This will show up in the AJAX call to our API
 		}
 
 		return $user;
