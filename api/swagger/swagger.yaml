@@ -617,6 +617,10 @@ paths:
           required: true
           type: integer
           description: ID of the city
+        - name: project_id
+          in: query
+          type: integer
+          description: Returns teachers of this project. If not given, defaults to 1(Ed Support)
       responses:
         200:
           description: Returns the list of teachers

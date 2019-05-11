@@ -55,11 +55,15 @@ Route::get('/cities/{city_id}/users', function ($city_id) {
     return JSend::success("List of users returned", ['users' => $users]);
 });
 
-Route::get('/cities/{city_id}/teachers', function ($city_id) {
+Route::get('/cities/{city_id}/teachers', function ($city_id, Request $request) {
 	$city = (new City)->fetch($city_id);
 	if(!$city) return JSend::fail("Can't find any city with ID $city_id");
+	$teacher_user_group_id = config('constants.group.ed.teacher.id');
 
-	$users = (new User)->search(array('city_id' => $city_id, 'user_group' => 9));
+	$project_id = $request->input('project_id');
+	if($project_id == config('constants.project.fp.id')) $teacher_user_group_id = config('constants.group.fp.teacher.id');
+
+	$users = (new User)->search(array('city_id' => $city_id, 'user_group' => $teacher_user_group_id));
 
     return JSend::success("List of teachers returned", ['users' => $users]);
 });

@@ -80,18 +80,21 @@ final class User extends Common
 			$q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
 			$q->whereIn('UserGroup.group_id', $data['user_group']);
 			$q->where('UserGroup.year', $this->year);
+			$q->distinct();
 		}
 		if(!empty($data['user_group_type'])) {
 			$q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
 			$q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
 			$q->where('Group.type', $data['user_group_type']);
 			$q->where('UserGroup.year', $this->year);
+			$q->distinct();
 		}
 		if(!empty($data['vertical_id'])) {
 			$q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
 			$q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
 			$q->where('Group.vertical_id', $data['vertical_id']);
 			$q->where('UserGroup.year', $this->year);
+			$q->distinct();
 		}
 		if(!empty($data['center_id'])) {
 			$mentor_group_id = 8; // :HARDCODE:
