@@ -15,6 +15,14 @@ final class Student extends Common
         return $this->belongsTo('App\Models\Center', 'center_id');
     }
 
+    public function level($project_id = 1)
+    {
+        $levels = $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')->where('Level.status','1')->where('Level.year',$this->year)->where("Level.project_id", $project_id);
+        $levels->select('Level.id', 'Level.name', 'Level.grade', 'Level.center_id', 'Level.project_id', app('db')->raw("CONCAT(Level.grade, ' ', Level.name) AS level_name"));
+        $levels->orderBy("grade")->orderBy("name");
+        return $levels;
+    }
+
     public function search($data)
     {
         $q = app('db')->table($this->table);

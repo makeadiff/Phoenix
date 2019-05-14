@@ -14,6 +14,14 @@ final class Level extends Common
     {
         return $this->belongsTo('App\Models\Center', 'center_id');
     }
+    public function students()
+    {
+        return $this->belongsToMany('App\Models\Student', 'StudentLevel', 'level_id', 'student_id');
+    }
+    public function batches()
+    {
+        return $this->belongsToMany('App\Models\Batch', 'BatchLevel', 'level_id', 'batch_id')->where('BatchLevel.year', $this->year);
+    }
 
     public function search($data) {
         $search_fields = ['id', 'name', 'grade', 'center_id', 'project_id', 'year', 'status'];
