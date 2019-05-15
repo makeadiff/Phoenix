@@ -69,6 +69,12 @@ final class Level extends Common
         return $this->item;
     }
 
+    public function name() {
+        if(!$this->id) return false;
+
+        return $this->grade . ' ' . $this->name;
+    }
+
     public function inCenter($center_id) {
         return $this->search(['center_id' => $center_id]);
     }
