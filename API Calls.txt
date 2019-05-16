@@ -1,0 +1,70 @@
+Done
+----
+/api/check_user_exists - GET /users
+/api/user_add - POST /users
+/api/user_details - GET /users/{user_id}
+/api/user_login - POST /users/login
+/api/user_convert_to_teacher - POST /users/{user_id}/groups/{group_id}
+/api/user_get_teachers - GET /cites/{city_id}/teachers
+/api/get_students
+/api/get_centers_in_city
+/api/get_batches_and_levels_in_center
+
+
+Low Priority
+------------
+/api/teacher_report_aggregate
+/api/_getStudentData($report_type, $report_name, $reduce_function) {
+/api/teacher_report_student_attendance
+/api/teacher_report_check_for_understanding
+/api/teacher_report_child_participation
+/api/mentor_report_aggregate
+/api/_getBatchData($report_name, $reduce_function) {
+/api/mentor_report_zero_hour_attendance
+/api/mentor_class_satisfaction
+/api/mentor_child_participation
+/api/mentor_child_check_for_understanding
+/api/center_child_participation
+/api/center_child_cfu
+/api/center_volunteer_subsitutions
+
+ - Handled by Survey Engine, ideally
+/api/active_is_event
+/api/is_questions
+/api/is_existing_responses
+/api/is_save
+
+
+High Priority
+-------------
+
+/api/user_class_info
+	GET /users/{user_id}/class_info | unupdated_classes
+	{users(id: {user_id} { id name classes})}
+/api/user_batch_info
+	GET /users/{user_id}/batch_info
+	{users(id: {user_id} { id name batches})}
+/api/class_get_last
+	GET /users/{user_id}/last_class
+/api/get_class_on
+	GET /classes
+/api/browse_class($batch_id = 0, $level_id = 0, $from_date = '', $direction = '+') {
+	GET /classes
+/api/open_class($class_id = 0, $class_info = false, $user_id=0) {
+	GET /classes/{class_id}
+/api/class_save_student_participation
+	POST /classes/{class_id}/student_attendance | students
+/api/class_get_last_batch
+	GET /users/{user_id}/last_batch
+/api/open_batch($batch_id='', $from_date='', $project_id='') {
+	GET /batches/{batch_id}
+/api/class_get_batch($batch_id = 0, $class_on = false) {
+	GET /batches/{batch_id}
+/api/all_levels_in_batch($batch_id = 0) {
+	/batches/{batch_id}/levels
+/api/save_extra_class($batch_id = 0, $class_on = '', $levels = array()) {
+	POST /classes
+
+/api/class_save
+	POST /classes
+

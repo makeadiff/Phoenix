@@ -48,7 +48,7 @@ final class Event extends Common
 
     public function eventsInCity($city_id)
     {
-        // return app('db')->table("Event")->where("status", '1')->where("starts_on", '>=', $this->year_start_time)->get(); // ->where("city_id", $city_id)
+        return app('db')->table("Event")->where("status", '1')->where("starts_on", '>=', $this->year_start_time)->where("city_id", $city_id)->get();
     }
 
     public function eventType()

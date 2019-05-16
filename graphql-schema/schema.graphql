@@ -13,7 +13,7 @@ type Query {
     city(id: ID @eq): City @find(model: "App\\Models\\City")
     batch(id: ID @eq): Batch @find(model: "App\\Models\\Batch")
     level(id: ID @eq): Level @find(model: "App\\Models\\Level")
-    eventsInCity(city_id: ID @eq): [Event] @all(model: "App\\Models\\Event")
+    eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php
     event(id: ID @eq): Event @find(model: "App\\Models\\Event")
     class(id: ID @eq): Class @find(model: "App\\Models\\Classes")
 }
