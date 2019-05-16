@@ -13,7 +13,7 @@ type Query {
     city(id: ID @eq): City @find(model: "App\\Models\\City")
     batch(id: ID @eq): Batch @find(model: "App\\Models\\Batch")
     level(id: ID @eq): Level @find(model: "App\\Models\\Level")
-    events(city_id: ID @eq): Event @paginate(type: "paginator" model: "App\\Models\\Event")
+    eventsInCity(city_id: ID @eq): [Event] @all(model: "App\\Models\\Event")
     event(id: ID @eq): Event @find(model: "App\\Models\\Event")
     class(id: ID @eq): Class @find(model: "App\\Models\\Classes")
 }
@@ -39,12 +39,19 @@ type User {
 	groups: [Group]
 	data: [Data]
 	city: City @belongsTo
-	pivot: UserTeacherAttendance
+	pivot: UserPivot
 }
-type UserTeacherAttendance {
-	status: String,
+type UserPivot {
+	# UserClass data - teacher attendance
+	status: String
 	substitute_id: Int
 	zero_hour_attendance: Int
+
+	# UserEvent data - event attendance
+	present: Int
+	late: Int
+	user_choice: Int
+	reason: String
 }
 
 type Student {
@@ -137,9 +144,11 @@ type Event {
 	place: String
 	type: String
 	city_id: ID
+	starts_on: DateTime
 	event_type_id: ID
 	status: String
 	event_type: String @method(name: "eventType")
+	city: City
 	invitees: [User]
 	attendees: [User]
 }

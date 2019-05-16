@@ -18,6 +18,15 @@ final class Center extends Common
         return $this->belongsTo('App\Models\City', 'city_id');
     }
 
+    public function batches()
+    {
+        return $this->hasMany('App\Models\Batch')->where('Batch.status','1')->where('Batch.year', $this->year);
+    }
+    public function levels()
+    {
+        return $this->hasMany('App\Models\Level')->where('Level.status','1')->where('Level.year',$this->year);
+    }
+
     public static function getAll()
     {
         return Center::where('status', '1')->orderBy('name')->get();

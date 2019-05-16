@@ -8,6 +8,8 @@ class Common extends Model
     public $errors = [];
 
     public $year;
+    public $year_start_date;
+    public $year_start_time;
     protected $item_id = 0;
     protected $item = 0;
 
@@ -22,6 +24,8 @@ class Common extends Model
         $start_year = date('Y');
         if($this_month < $start_month) $start_year = date('Y')-1;
         $this->year = $start_year;
+        $this->year_start_date = $start_year . "-0{$start_month}-01";
+        $this->year_start_time = $this->year_start_date . ' 00:00:00';
     }
 
     public function fetch($id)

@@ -26,6 +26,11 @@ final class Event extends Common
 
     protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'event_type_id','vertical_id', 'user_selection_options', 'created_by_user_id', 'latitude', 'longitude', 'status'];
 
+    public function city()
+    {
+        return $this->belongsTo('App\Models\City', 'city_id');
+    }
+
     public function creator()
     {
         return $this->belongsTo('App\Models\User', 'created_by_user_id');
@@ -33,12 +38,17 @@ final class Event extends Common
 
     public function invitees() 
     {
-        return $this->belongsToMany("App\Models\User", 'UserEvent');
+        return $this->belongsToMany("App\Models\User", 'UserEvent')->withPivot('present', 'late', 'user_choice', 'reason');
     }
 
     public function attendees()
     {
-        return $this->belongsToMany("App\Models\User", 'UserEvent')->where("UserEvent.present", '=', '1');
+        return $this->belongsToMany("App\Models\User", 'UserEvent')->where("UserEvent.present", '=', '1')->withPivot('present', 'late', 'user_choice', 'reason');
+    }
+
+    public function eventsInCity($city_id)
+    {
+        // return app('db')->table("Event")->where("status", '1')->where("starts_on", '>=', $this->year_start_time)->get(); // ->where("city_id", $city_id)
     }
 
     public function eventType()
@@ -64,7 +74,7 @@ final class Event extends Common
                 $q->where("Event." . $field, 'LIKE', "%" . $data[$field] . "%");
             else $q->where("Event." . $field, $data[$field]);
         }
-        $q->where("Event.starts_on", '>', $this->year . '-05-01 00:00:00');
+        $q->where("Event.starts_on", '>=', $this->year_start_time);
 
         $q->join('Event_Type', 'Event.event_type_id', '=', 'Event_Type.id');
         $q->orderBy('Event.starts_on')->orderBy('Event.name');
