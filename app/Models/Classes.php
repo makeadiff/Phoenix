@@ -37,24 +37,34 @@ final class Classes extends Common
     }
 
     public function search($data) {
-        $search_fields = ['batch_id', 'level_id', 'project_id', 'status', 'class_date', 'direction'];
+        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'direction'];
         $q = app('db')->table('Class');
         $q->select('Class.id', 'Class.batch_id', 'Class.level_id', 'Class.class_on', 'Class.class_type', 'Class.class_satisfaction', 'Class.cancel_option', 'Class.cancel_reason', 'Class.status');
 
         foreach ($search_fields as $field) {
-            if(empty($data[$field])) continue;
-            elseif($field == 'class_date') {
+            if(empty($data[$field])) {
+                continue;
+            } elseif($field == 'class_date') {
                 $q->whereDate("Class.class_on", $data[$field]);
-            }
-            elseif($field == 'direction') {
+
+            } elseif($field == 'teacher_id') {
+                $q->join("UserClass", "Class.id", '=', 'UserClass.class_id');
+                $q->where("UserClass.user_id", $data[$field]);
+
+            } elseif($field == 'substitute_id') {
+                $q->join("UserClass", "Class.id", '=', 'UserClass.class_id');
+                $q->where("UserClass.substitute_id", $data[$field]);
+                
+            } elseif($field == 'direction') {
                 // :TODO
-            }
-            else {
+            } else {
                 $q->where("Class." . $field, $data[$field]);
             }
         }
 
-        $q->orderBy('day')->orderBy('class_on');
+        $q->where("Class.class_on", '>=', $this->year_start_time);
+
+        $q->orderBy('class_on');
         $results = $q->get();
 
         return $results;

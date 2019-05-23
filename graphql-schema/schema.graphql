@@ -16,6 +16,7 @@ type Query {
     eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php
     event(id: ID @eq): Event @find(model: "App\\Models\\Event")
     class(id: ID @eq): Class @find(model: "App\\Models\\Classes")
+    classSearch(teacher_id: ID, status: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php
 }
 
 type User {
@@ -39,6 +40,7 @@ type User {
 	groups: [Group]
 	data: [Data]
 	city: City @belongsTo
+	classes(status: String): [Class] @hasMany(relation: "classes")
 	pivot: UserPivot
 }
 type UserPivot {

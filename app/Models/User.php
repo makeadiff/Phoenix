@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\Group;
 use App\Models\Log;
 use App\Models\Common;
+use App\Models\Classes;
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -27,6 +28,14 @@ final class User extends Common
 	public function city()
 	{
 		return $this->belongsTo(City::class);
+	}
+
+	public function classes($status = '')
+	{
+		$classes = $this->belongsToMany("App\Models\Classes", 'UserClass', 'user_id', 'class_id')->where('Class.class_on', '>=', $this->year_start_time);
+		if($status) $classes->where('Class.status', $status);
+		$classes->orderBy("Class.class_on");
+		return $classes;
 	}
 
 	// public function data()
