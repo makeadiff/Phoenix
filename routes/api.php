@@ -17,7 +17,7 @@ use App\Models\Contact;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
-header("Access-Control-Allow-Origin: *");
+// header("Access-Control-Allow-Origin: *");
 
 Route::get('/', function () {
 	$result = [];
