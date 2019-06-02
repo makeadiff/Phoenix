@@ -131,7 +131,7 @@ paths:
           format: "date-time"
           in: formData
           description: The date they joined 
-          # example: "2009-05-09"
+          # example: "2009-05-09 00:00:00"
         - name: city_id
           type: integer
           in: formData
