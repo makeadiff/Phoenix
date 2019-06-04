@@ -25,7 +25,8 @@ final class Survey extends Common
     {
         $q = app('db')->table('Survey');
 
-        $q->select("Survey.id", "Survey_Template.name", "Survey_Template.description", "Survey_Template.responder", 'Survey_Template.vertical_id', 'Survey_Template.options', 'Survey.survey_template_id');
+        $q->select("Survey.id", "Survey.name", "Survey_Template.description", "Survey_Template.responder", 'Survey_Template.vertical_id', 
+                    'Survey_Template.options', 'Survey.survey_template_id', app('db')->raw("Survey_Template.name AS template_name"));
         $q->join("Survey_Template", "Survey_Template.id", '=', 'Survey.survey_template_id');
 
         if(!empty($data['id'])) $q->where('Survey.id', $data['id']);
