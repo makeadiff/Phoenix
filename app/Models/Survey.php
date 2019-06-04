@@ -10,7 +10,7 @@ final class Survey extends Common
     const CREATED_AT = 'added_on';
     const UPDATED_AT = null;
     public $timestamps = true;
-    protected $fillable = ['survey_template_id', 'added_by_user_id'];
+    protected $fillable = ['survey_template_id', 'added_by_user_id', 'name'];
 
     public function template()
     {
