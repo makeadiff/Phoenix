@@ -37,7 +37,7 @@ final class Donation extends Common
 
     public function deposit()
     {
-        return $this->belongsToMany("App\Models\Deposit", 'Donut_DonationDeposit')->where('Deposit.status', '!=', 'rejected');
+        return $this->belongsToMany("App\Models\Deposit", 'Donut_DonationDeposit', 'donation_id', 'deposit_id')->where('Deposit.status', '!=', 'rejected');
     }
 
     public function search($data)

@@ -66,7 +66,7 @@ Route::get('/surveys', function(Request $request) {
 });
 Route::post('/surveys', function(Request $request) {
 	$survey_model = new Survey;
-	$survey = $survey_model->add($request->survey_template_id, $request->added_by_user_id);
+	$survey = $survey_model->add($request->survey_template_id, $request->name, $request->added_by_user_id);
 
 	if(!$survey) return JSend::error("Error creating survey instance", $survey_model->errors);
 	

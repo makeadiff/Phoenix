@@ -18,6 +18,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
 header("Access-Control-Allow-Origin: *");
+header('Access-Control-Allow-Headers: authorization');
 
 Route::get('/', function () {
 	$result = [];
