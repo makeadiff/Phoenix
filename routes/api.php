@@ -17,6 +17,7 @@ use App\Models\Contact;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
+// CORS handling.
 header("Access-Control-Allow-Origin: *");
 header('Access-Control-Allow-Headers: Authorization,Content-Type,Origin,Accept');
 
