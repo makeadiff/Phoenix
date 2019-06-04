@@ -3144,6 +3144,10 @@ definitions:
         type: integer
       added_by_user_id:
         type: integer
+      survey_id:
+        type: integer
+      name:
+        type: string
   SurveyQuestion:
     type: "object"
     properties:
