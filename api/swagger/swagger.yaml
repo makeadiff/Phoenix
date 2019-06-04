@@ -10,6 +10,8 @@ info:
     * [Reference Document](https://docs.google.com/document/d/1YgDsgXaLp5HERyIkqpBCSs398C1xc54cE1Th6shs17o)
     * [Example Calls](https://documenter.getpostman.com/view/2544548/S1LsZW8A)
 
+    You'll requrie a user account given by the MAD Tech team to make any calls to this API.
+
 host: makeadiff.in
 basePath: /api/v1/
 consumes:
@@ -29,6 +31,8 @@ security:
 # OR 
 # spectacle -d <swagger.yaml>
 #     spectacle should be installed for this to work - use 'sudo npm install -g spectacle-docs' to install spectacle.
+# OR - and this is my prefered way...
+# Just access the doc.html file in this folder. It dynamically reads the YAML file and creates a view for the docs.
 
 paths:
   ############################### User
@@ -91,7 +95,7 @@ paths:
           description: Returns the list of users according to the given parameters.
           schema:
             type: "array"
-            items: 
+            items:
               $ref: "#/definitions/User"
     post:
       tags:
@@ -170,7 +174,6 @@ paths:
         '200':
           description: Returns the user details
           schema:
-            type: "object"
             $ref: "#/definitions/User"
         '404':
           description: Can't find user with given ID
@@ -1068,7 +1071,6 @@ paths:
         200:
           description: Returns the student details
           schema:
-            type: "object"
             $ref: "#/definitions/Student"
         404:
           description: Can't find student with given ID
@@ -1226,7 +1228,6 @@ paths:
         200:
           description: List of all the students in that level.
           schema:
-            type: "object"
             $ref: "#/definitions/Student"
         404:
           description: Can't find any level with the given {level_id}
@@ -1248,7 +1249,6 @@ paths:
         200:
           description: List of all the batches in the given level.
           schema:
-            type: "object"
             $ref: "#/definitions/Batch"
         404:
           description: Can't find any level with the given {level_id}
@@ -1291,7 +1291,6 @@ paths:
         200:
           description: List of all the teachers in that batch.
           schema:
-            type: "object"
             $ref: "#/definitions/User"
         404:
           description: Can't find any batch with the given {batch_id}
@@ -1313,7 +1312,6 @@ paths:
         200:
           description: List of all the levels in that batch.
           schema:
-            type: "object"
             $ref: "#/definitions/Level"
         404:
           description: Can't find any batch with the given {batch_id}
@@ -1547,7 +1545,6 @@ paths:
         200:
           description: Returns the donation details
           schema:
-            type: "object"
             $ref: "#/definitions/Donation"
         404:
           description: Can't find donation with given ID
@@ -1633,7 +1630,6 @@ paths:
         200:
           description: Created the deposit.
           schema:
-            type: "object"
             $ref: "#/definitions/Deposit"
         400:
           description: Errors in input.
@@ -1798,7 +1794,6 @@ paths:
         200:
           description: Returns the Event details
           schema:
-            type: "object"
             $ref: "#/definitions/Event"
         404:
           description: Can't find event with given ID
@@ -1923,7 +1918,6 @@ paths:
         200:
           description: Returns all the users connected to the event.
           schema:
-            type: "object"
             $ref: "#/definitions/UserEvent"
         404:
           description: Can't find any event with the given ID
@@ -2061,7 +2055,6 @@ paths:
         200:
           description: List of all users who attended the event.
           schema:
-            type: "object"
             $ref: "#/definitions/UserEvent"
         404:
           description: Can't find any event with the given ID
@@ -2142,7 +2135,6 @@ paths:
         200:
           description: Returns the created Template
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyTemplate"
 
   /survey_templates/{survey_template_id}:
@@ -2162,7 +2154,6 @@ paths:
         200:
           description: Returns the created Template
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyTemplate"
     post:
       tags:
@@ -2197,7 +2188,6 @@ paths:
         200:
           description: Returns the edited Template
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyTemplate"
 
   /survey_templates/{survey_template_id}/surveys:
@@ -2216,7 +2206,6 @@ paths:
         200:
           description: Returns all the surveys under the given template.
           schema:
-            type: "object"
             $ref: "#/definitions/Survey"
 
   /survey_templates/{survey_template_id}/questions:
@@ -2236,7 +2225,6 @@ paths:
         200:
           description: Returns all the questions under the given template.
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyQuestion"
     post:
       tags:
@@ -2294,7 +2282,6 @@ paths:
         200:
           description: Creates the question
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyQuestion"
 
   /survey_templates/{survey_template_id}/categorized_questions:
@@ -2336,7 +2323,6 @@ paths:
         200:
           description: Returns the question
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyQuestion"
     post:
       tags:
@@ -2399,7 +2385,6 @@ paths:
         200:
           description: Updates the question
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyQuestion"
 
   /survey_templates/{survey_template_id}/questions/{survey_question_id}/choices:
@@ -2424,7 +2409,6 @@ paths:
         200:
           description: Returns the choices
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyChoice"
     post:
       tags:
@@ -2464,7 +2448,6 @@ paths:
         200:
           description: Choices were added to the question
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyChoice"
 
   /survey_templates/{survey_template_id}/questions/{survey_question_id}/choices/{survey_choice_id}:
@@ -2494,7 +2477,6 @@ paths:
         200:
           description: Returns one choice
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyChoice"
     post:
       tags:
@@ -2534,7 +2516,6 @@ paths:
         200:
           description: Edited the choice.
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyChoice"
   /surveys:
     get:
@@ -2594,7 +2575,6 @@ paths:
         200: 
           description: Created the survey 
           schema:
-            type: "object"
             $ref: "#/definitions/Survey"
   /surveys/{survey_id}:
     get:
@@ -2611,7 +2591,6 @@ paths:
         200:
           description: Ok
           schema:
-            type: "object"
             $ref: "#/definitions/Survey"
 
   /surveys/{survey_id}/responses:
@@ -2638,7 +2617,6 @@ paths:
         200: 
           description: Ok
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyResponse"
     post:
       tags:
@@ -2675,7 +2653,6 @@ paths:
         200: 
           description: Created the survey response
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyResponse"
 
   /surveys/{survey_id}/questions/{survey_question_id}/responses:
@@ -2714,7 +2691,6 @@ paths:
         200: 
           description: Created the survey response
           schema:
-            type: "object"
             $ref: "#/definitions/SurveyResponse"
 
   ######## Notifications
@@ -2767,7 +2743,6 @@ paths:
         200:
           description: List of all notification registeration that matches the given parameters
           schema:
-            type: "object"
             $ref: "#/definitions/Notification"
         404:
           description: Can't find any notification registeration that matched the given parameters
@@ -2924,9 +2899,9 @@ definitions:
       sex:
         type: string
         enum:
-        - "m"
-        - "f"
-        - "u"
+          - "m"
+          - "f"
+          - "u"
   City:
     type: "object"
     properties:
@@ -2964,8 +2939,8 @@ definitions:
       status:
         type: string
         enum:
-        - "1"
-        - "0"
+          - "1"
+          - "0"
   Level:
     type: "object"
     properties:
@@ -2980,8 +2955,8 @@ definitions:
       status:
         type: string
         enum:
-        - "1"
-        - "0"
+          - "1"
+          - "0"
   Donation:
     type: "object"
     properties:
@@ -3148,6 +3123,10 @@ definitions:
         type: integer
       added_by_user_id:
         type: integer
+      survey_id:
+        type: integer
+      name:
+        type: string
   SurveyQuestion:
     type: "object"
     properties:
@@ -3170,7 +3149,8 @@ definitions:
           - yes-no
           - date 
           - datetime
-          - file 
+          - file
+          - longtext
       required:
         type: string
         enum:

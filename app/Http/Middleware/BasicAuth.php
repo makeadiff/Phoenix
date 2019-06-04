@@ -2,7 +2,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Auth;
 use App\Models\User;
 
 class BasicAuth
@@ -12,9 +11,12 @@ class BasicAuth
     	$username = $request->getUser();
     	$password = $request->getPassword();
 
-        $user = new User;
-        $user->enable_logging = false;
-    	$info = $user->login($username, $password);
+        $info = false;
+        if($username and $password) {
+            $user = new User;
+            $user->enable_logging = false;
+        	$info = $user->login($username, $password);
+        }
 
     	if(!$info) {
             $headers = array('WWW-Authenticate' => 'Basic');
