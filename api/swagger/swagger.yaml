@@ -171,8 +171,7 @@ paths:
           description: Returns the user details
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/User"
+            $ref: "#/definitions/User"
         '404':
           description: Can't find user with given ID
     post:
@@ -1066,8 +1065,7 @@ paths:
           description: Returns the student details
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Student"
+            $ref: "#/definitions/Student"
         404:
           description: Can't find student with given ID
         400:
@@ -1225,8 +1223,7 @@ paths:
           description: List of all the students in that level.
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Student"
+            $ref: "#/definitions/Student"
         404:
           description: Can't find any level with the given {level_id}
 
@@ -1248,8 +1245,7 @@ paths:
           description: List of all the batches in the given level.
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Batch"
+            $ref: "#/definitions/Batch"
         404:
           description: Can't find any level with the given {level_id}
 
@@ -1292,8 +1288,7 @@ paths:
           description: List of all the teachers in that batch.
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/User"
+            $ref: "#/definitions/User"
         404:
           description: Can't find any batch with the given {batch_id}
 
@@ -1315,8 +1310,7 @@ paths:
           description: List of all the levels in that batch.
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Level"
+            $ref: "#/definitions/Level"
         404:
           description: Can't find any batch with the given {batch_id}
 
@@ -1550,8 +1544,7 @@ paths:
           description: Returns the donation details
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Donation"
+            $ref: "#/definitions/Donation"
         404:
           description: Can't find donation with given ID
 
@@ -1637,8 +1630,7 @@ paths:
           description: Created the deposit.
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Deposit"
+            $ref: "#/definitions/Deposit"
         400:
           description: Errors in input.
   /deposits/{deposit_id}:
@@ -1803,8 +1795,7 @@ paths:
           description: Returns the Event details
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Event"
+            $ref: "#/definitions/Event"
         404:
           description: Can't find event with given ID
           
@@ -1929,8 +1920,7 @@ paths:
           description: Returns all the users connected to the event.
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/UserEvent"
+            $ref: "#/definitions/UserEvent"
         404:
           description: Can't find any event with the given ID
 
@@ -2068,8 +2058,7 @@ paths:
           description: List of all users who attended the event.
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/UserEvent"
+            $ref: "#/definitions/UserEvent"
         404:
           description: Can't find any event with the given ID
 
@@ -2115,7 +2104,7 @@ paths:
         200:
           description: List of all survey templates matching given parameters
           schema:
-            type: "object"
+            type: "array"
             items:
               $ref: "#/definitions/SurveyTemplate"
     post:
@@ -2150,8 +2139,7 @@ paths:
           description: Returns the created Template
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyTemplate"
+            $ref: "#/definitions/SurveyTemplate"
 
   /survey_templates/{survey_template_id}:
     get:
@@ -2171,8 +2159,7 @@ paths:
           description: Returns the created Template
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyTemplate"
+            $ref: "#/definitions/SurveyTemplate"
     post:
       tags:
         - survey
@@ -2207,8 +2194,7 @@ paths:
           description: Returns the edited Template
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyTemplate"
+            $ref: "#/definitions/SurveyTemplate"
 
   /survey_templates/{survey_template_id}/surveys:
     get:
@@ -2227,8 +2213,7 @@ paths:
           description: Returns all the surveys under the given template.
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Survey"
+            $ref: "#/definitions/Survey"
 
   /survey_templates/{survey_template_id}/questions:
     get:
@@ -2248,8 +2233,7 @@ paths:
           description: Returns all the questions under the given template.
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyQuestion"
+            $ref: "#/definitions/SurveyQuestion"
     post:
       tags:
         - survey 
@@ -2307,8 +2291,7 @@ paths:
           description: Creates the question
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyQuestion"
+            $ref: "#/definitions/SurveyQuestion"
 
   /survey_templates/{survey_template_id}/categorized_questions:
     get:
@@ -2350,8 +2333,7 @@ paths:
           description: Returns the question
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyQuestion"
+            $ref: "#/definitions/SurveyQuestion"
     post:
       tags:
         - survey 
@@ -2414,8 +2396,7 @@ paths:
           description: Updates the question
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyQuestion"
+            $ref: "#/definitions/SurveyQuestion"
 
   /survey_templates/{survey_template_id}/questions/{survey_question_id}/choices:
     get:
@@ -2440,8 +2421,7 @@ paths:
           description: Returns the choices
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyChoice"
+            $ref: "#/definitions/SurveyChoice"
     post:
       tags:
         - survey 
@@ -2481,8 +2461,7 @@ paths:
           description: Choices were added to the question
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyChoice"
+            $ref: "#/definitions/SurveyChoice"
 
   /survey_templates/{survey_template_id}/questions/{survey_question_id}/choices/{survey_choice_id}:
     get:
@@ -2512,8 +2491,7 @@ paths:
           description: Returns one choice
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyChoice"
+            $ref: "#/definitions/SurveyChoice"
     post:
       tags:
         - survey 
@@ -2553,8 +2531,7 @@ paths:
           description: Edited the choice.
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyChoice"
+            $ref: "#/definitions/SurveyChoice"
   /surveys:
     get:
       tags:
@@ -2599,18 +2576,22 @@ paths:
         - name: survey_template_id
           in: formData
           type: integer
-          description: Returns the surveys made from this template only.
+          description: Creates a survey instance for this template
+          required: true
+        - name: name
+          in: formData
+          type: string
+          description: Name of the survey instance. This will help you distinguish between multiple survey instances of the same template.
         - name: added_by_user_id
           in: formData
           type: integer
-          description: 
+          description: The ID of the user who is creating the instance.
       responses:
         200: 
           description: Created the survey 
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Survey"
+            $ref: "#/definitions/Survey"
   /surveys/{survey_id}:
     get:
       tags:
@@ -2627,8 +2608,7 @@ paths:
           description: Ok
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Survey"
+            $ref: "#/definitions/Survey"
 
   /surveys/{survey_id}/responses:
     get:
@@ -2655,8 +2635,7 @@ paths:
           description: Ok
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyResponse"
+            $ref: "#/definitions/SurveyResponse"
     post:
       tags:
         - survey 
@@ -2693,8 +2672,7 @@ paths:
           description: Created the survey response
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyResponse"
+            $ref: "#/definitions/SurveyResponse"
 
   /surveys/{survey_id}/questions/{survey_question_id}/responses:
     post:
@@ -2733,8 +2711,7 @@ paths:
           description: Created the survey response
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/SurveyResponse"
+            $ref: "#/definitions/SurveyResponse"
 
   ######## Notifications
   /notifications:
@@ -2787,8 +2764,7 @@ paths:
           description: List of all notification registeration that matches the given parameters
           schema:
             type: "object"
-            items:
-              $ref: "#/definitions/Notification"
+            $ref: "#/definitions/Notification"
         404:
           description: Can't find any notification registeration that matched the given parameters
     post:
