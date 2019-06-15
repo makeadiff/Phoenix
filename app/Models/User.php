@@ -38,6 +38,27 @@ final class User extends Common
 		return $classes;
 	}
 
+	/// Connects to all the batches the current user mentors.
+	public function batches($status = false)
+	{
+		$batches = $this->hasMany("App\Models\Batch", 'batch_head_id');
+		$batches->select("Batch.id", "Batch.class_time", "Batch.day", "Batch.batch_head_id");
+		$batches->join("Class", "Class.batch_id", '=', 'Batch.id');
+		$batches->where('Batch.year', '=', $this->year)->where("Class.class_on", '>', date('Y-m-d H:i:s'))->where("Batch.status", '=', '1');
+		if($status) $batches->where('Class.status', $status);
+		$batches->orderBy("Class.class_on");
+		return $batches;
+
+		/*
+		"SELECT DISTINCT B.id AS batch_id, B.day, B.class_time, C.class_on, Ctr.id AS center_id, Ctr.name AS center_name
+			FROM Batch B
+			INNER JOIN Class C ON C.batch_id=B.id
+			INNER JOIN Center Ctr ON B.center_id=Ctr.id
+			WHERE B.status='1' AND B.batch_head_id='$user_id' AND B.year='{$this->year}'
+				AND C.class_on=(SELECT class_on FROM Class WHERE batch_id=B.id AND class_on < NOW() ORDER BY class_on DESC LIMIT 0,1)"
+		*/
+	}
+
 	// public function data()
 	// {
 	// 	return $this->morphMany(Data::class, 'item', 'item_id');

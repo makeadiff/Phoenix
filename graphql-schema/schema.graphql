@@ -40,7 +40,8 @@ type User {
 	groups: [Group]
 	data: [Data]
 	city: City @belongsTo
-	classes(status: String): [Class] @hasMany(relation: "classes")
+	classes: [Class] @hasMany(relation: "classes") # :TODO: - Ideally, this should take an argument - (status: String)
+	batches: [Batch] @hasMany
 	pivot: UserPivot
 }
 type UserPivot {
