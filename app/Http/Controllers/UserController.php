@@ -43,7 +43,7 @@ class UserController extends Controller
         $exists = $user->fetch($user_id, false);
 
         if(!$exists) {
-            return response(JSend::fail("Can't find any user with the given ID"), 404);
+            return JSend::fail("Can't find any user with the given ID", [], 404);
         }
 
         $validation_rules = [
@@ -57,7 +57,7 @@ class UserController extends Controller
         $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
 
         if ($validator->fails()) {
-            return response(JSend::fail("Unable to create user - errors in input.", $validator->errors()), 400);
+            return JSend::fail("Unable to create user - errors in input.", $validator->errors(), 400);
         }
 
         $result = $user->find($user_id)->edit($request->all());
