@@ -58,6 +58,10 @@ final class Event extends Common
         return app('db')->table("Event_Type")->where("id", $this->event_type_id)->pluck('name')->first();
     }
 
+    public function filter($data) {
+        return $this->where("city_id", $data['city_id'])->get();
+    }
+
     public function search($data) 
     {
         $search_fields = ['id', 'name', 'description', 'starts_on', 'place', 'city_id', 'event_type_id','vertical_id', 'created_by_user_id', 'status'];

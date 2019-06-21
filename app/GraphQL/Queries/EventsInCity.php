@@ -18,7 +18,10 @@ class EventsInCity
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $events = (new Event)->eventsInCity($args);
-        return $events;
+        // $events = (new Event)->eventsInCity($args);
+        // return $events;
+        // 
+        $events = new Event;
+        return $events->filter($args);
     }
 }
