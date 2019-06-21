@@ -40,10 +40,11 @@ High Priority
 
 /api/user_class_info
 	GET /users/{user_id}/class_info | unupdated_classes
-	{users(id: {user_id} { id name classes})}
+	{users(id: {user_id} { id name classes})} - Done
 /api/user_batch_info
 	GET /users/{user_id}/batch_info
-	{users(id: {user_id} { id name batches})}
+	{users(id: {user_id} { id name batches})} - Done
+
 /api/class_get_last
 	GET /users/{user_id}/last_class
 /api/get_class_on
@@ -52,6 +53,7 @@ High Priority
 	GET /classes
 /api/open_class($class_id = 0, $class_info = false, $user_id=0) {
 	GET /classes/{class_id}
+	{classes(id: ) {}} - Done
 /api/class_save_student_participation
 	POST /classes/{class_id}/student_attendance | students
 /api/class_get_last_batch

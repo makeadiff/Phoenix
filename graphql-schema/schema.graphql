@@ -16,7 +16,7 @@ type Query {
     eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php
     event(id: ID @eq): Event @find(model: "App\\Models\\Event")
     class(id: ID @eq): Class @find(model: "App\\Models\\Classes")
-    classSearch(teacher_id: ID, status: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php
+    classSearch(teacher_id: Int, status: String, batch_id: Int, level_id: Int, class_date: Date, direction: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php
 }
 
 type User {

@@ -65,6 +65,8 @@ final class Classes extends Common
         $q->where("Class.class_on", '>=', $this->year_start_time);
 
         $q->orderBy('class_on');
+        // dd($q->toSql(), $q->getBindings(), $data);
+
         $results = $q->get();
 
         return $results;

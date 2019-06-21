@@ -48,15 +48,6 @@ final class User extends Common
 		if($status) $batches->where('Class.status', $status);
 		$batches->orderBy("Class.class_on");
 		return $batches;
-
-		/*
-		"SELECT DISTINCT B.id AS batch_id, B.day, B.class_time, C.class_on, Ctr.id AS center_id, Ctr.name AS center_name
-			FROM Batch B
-			INNER JOIN Class C ON C.batch_id=B.id
-			INNER JOIN Center Ctr ON B.center_id=Ctr.id
-			WHERE B.status='1' AND B.batch_head_id='$user_id' AND B.year='{$this->year}'
-				AND C.class_on=(SELECT class_on FROM Class WHERE batch_id=B.id AND class_on < NOW() ORDER BY class_on DESC LIMIT 0,1)"
-		*/
 	}
 
 	// public function data()
@@ -352,7 +343,7 @@ final class User extends Common
 			if(!isset($data[$key])) continue;
 
 			if($key == 'phone') $data[$key] = $this->correctPhoneNumber($data[$key]);
-			if($key == 'password') $data[$key] = Hash::make($data[$key]);
+			if($key == 'password') $data['password_hash'] = Hash::make($data[$key]);
 
 			$this->item->$key = $data[$key];
 		}
