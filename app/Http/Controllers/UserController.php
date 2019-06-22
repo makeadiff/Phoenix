@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use JSend;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -11,7 +12,8 @@ class UserController extends Controller
             'city_id.exists'    => "Can't find any city with that ID",
             'mad_email.regex'   => "The 'mad_email' you gave was not a makeadiff.in email. Enter this only if you are a fellow - and have a makeadiff.in email id.",
             'email.unique'      => 'Entered Email ID already exists in the MAD System',
-            'phone.unique'      => 'Entered Phone already exists in the MAD System'
+            'phone.unique'      => 'Entered Phone already exists in the MAD System',
+            'sex.regex'         => "Sex field should have one of these values - 'm','f' or 'o'"
         ];
 
     public function add(Request $request)
@@ -21,6 +23,7 @@ class UserController extends Controller
             'email'     => 'required|email|unique:User,email,well_wisher,user_type,user_type,!alumni',
             'mad_email' => 'email|regex:/.+\@makeadiff\.in$/',
             'password'  => 'required',
+            'sex'       => 'regex:/^[mfo]$/',
             'phone'     => 'required|unique:User,phone,well_wisher,user_type,user_type,!alumni|regex:/[\+0-9]{10}/',
             'city_id'   => 'required|numeric|exists:City,id'
         ];
@@ -48,9 +51,10 @@ class UserController extends Controller
 
         $validation_rules = [
             'name'      => 'max:50',
-            'email'     => 'email|unique:User',
-            'mad_email' => 'email|unique:User|regex:/.+\@makeadiff\.in$/',
-            'phone'     => 'unique:User|regex:/[\+0-9]{10,13}/',
+            'email'     => ['email', Rule::unique('User')->ignore($user_id)],
+            'mad_email' => ['email|nullable|regex:/.+\@makeadiff\.in$/', Rule::unique('User')->ignore($user_id)],
+            'sex'       => 'regex:/^[mfo]$/',
+            'phone'     => ['regex:/[\+0-9]{10,13}/', Rule::unique('User')->ignore($user_id)],
             'city_id'   => 'numeric|exists:City,id'
         ];
 
