@@ -20,7 +20,19 @@ class classSearch
     {
         $class_model = new Classes;
         $classes = $class_model->search($args);
+        // foreach($args as $key => $value) {
+        //     $class_model->where($key, $value);
+        // }
 
         return $classes;
+    }
+
+    public function teacher_id($builder, int $value)
+    {
+        return $builder->where('teacher_id', $value);
+    }
+    public function status($builder, string $value)
+    {
+        return $builder->where('status', $value);
     }
 }

@@ -17,6 +17,10 @@ type Query {
     event(id: ID @eq): Event @find(model: "App\\Models\\Event")
     class(id: ID @eq): Class @find(model: "App\\Models\\Classes")
     classSearch(teacher_id: Int, status: String, batch_id: Int, level_id: Int, class_date: Date, direction: String): [ClassSearchResult] #Custom - app/GraphQL/Queries/ClassSearch.php
+    #classSearch(
+    #	teacher_id: Int #@builder(method: "App\\GraphQL\\Queries\\classSearch@teacher_id")
+    #	# status: String @builder(method: "App\GraphQL\Queries\classSearch@status")
+    #) [Class]
 }
 
 type User {

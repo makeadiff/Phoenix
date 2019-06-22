@@ -39,7 +39,18 @@ final class Classes extends Common
     public function search($data) {
         $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'direction'];
         $q = app('db')->table('Class');
-        $q->select('Class.id', 'Class.batch_id', 'Class.level_id', 'Class.class_on', 'Class.class_type', 'Class.class_satisfaction', 'Class.cancel_option', 'Class.cancel_reason', 'Class.status');
+        $q->select('Class.id', 'Class.batch_id', 'Class.level_id', 'Class.class_on', 'Class.class_type', 'Class.class_satisfaction', 'Class.cancel_option', 'Class.cancel_reason', 'Class.status AS class_status');
+        $q->select('UserClass.id AS user_class_id', 'UserClass.substitute_id', 'UserClass.zero_hour_attendance', 'UserClass.status AS status');
+
+        $q->join("UserClass", 'UserClass.class_id', '=', 'Class.id');
+        $q->join("Batch", 'Batch.id', '=', 'Class.batch_id');
+        $q->join("Level", 'Level.id', '=', 'Class.level_id');
+
+        $q->where("Batch.year", '=', $this->year);
+        $q->where("Batch.status", '=', '1');
+        $q->where("Batch.project_id", '=', $data['project_id']);
+        $q->where("Level.year", '=', $this->year);
+        $q->where("Level.status", '=', '1');
 
         foreach ($search_fields as $field) {
             if(empty($data[$field])) {
@@ -48,11 +59,9 @@ final class Classes extends Common
                 $q->whereDate("Class.class_on", $data[$field]);
 
             } elseif($field == 'teacher_id') {
-                $q->join("UserClass", "Class.id", '=', 'UserClass.class_id');
                 $q->where("UserClass.user_id", $data[$field]);
 
             } elseif($field == 'substitute_id') {
-                $q->join("UserClass", "Class.id", '=', 'UserClass.class_id');
                 $q->where("UserClass.substitute_id", $data[$field]);
                 
             } elseif($field == 'direction') {
@@ -65,12 +74,33 @@ final class Classes extends Common
         $q->where("Class.class_on", '>=', $this->year_start_time);
 
         $q->orderBy('class_on');
-        // dd($q->toSql(), $q->getBindings(), $data);
+        // dump($q->toSql(), $q->getBindings(), $data);
 
         $results = $q->get();
+        // dd($results);
 
         return $results;
     }
+
+    // /// Find the next class in the given batch from the given date in either direction.
+    // function get_next_class($batch_id, $level_id, $from_date, $direction) {
+    //     if($direction == "+") {
+    //         $where = '>';
+    //         $order = 'ASC';
+    //         $time  = '23:59:59';
+    //     } else {
+    //         $where = '<';
+    //         $order = 'DESC';
+    //         $time  = '00:00:00';
+    //     }
+
+    //     $level_check = '';
+    //     if($level_id) $level_check = " AND level_id=$level_id";
+
+    //     $next_class = $this->db->query("SELECT * FROM Class WHERE class_on $where '$from_date $time' $level_check AND batch_id=$batch_id ORDER BY class_on $order LIMIT 0,1")->row();
+
+    //     return $next_class;
+    // }
 
     // public function fetch($id, $is_active = true) {
     //     $this->id = $id;

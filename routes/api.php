@@ -4,6 +4,7 @@ use App\Models\Group;
 use App\Models\Vertical;
 use App\Models\City;
 use App\Models\Center;
+use App\Models\Classes;
 use App\Models\Student;
 use App\Models\Batch;
 use App\Models\Level;
@@ -236,6 +237,33 @@ Route::get('/levels/{level_id}/batches', function($level_id) {
 	return JSend::success("Levels in batch $level_id", ['batches' => $batches]);
 });
 
+///////////////////////////////////////////////// Classes /////////////////////////////////////
+Route::get('/classes', function(Request $request) {
+	$search_fields = ['id','teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'direction', 'project_id'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+
+		$search[$key] = $request->input($key);
+
+		// if($key == 'group_id') {
+		// 	$search['user_group'] = [$request->input('group_id')];
+		// } elseif ($key == 'group_in') {
+		// 	$search['user_group'] = explode(",", $request->input('group_in'));
+
+		// } elseif ($key == 'not_user_type') {
+		// 	$search['not_user_type'] = explode(",", $request->input('not_user_type'));
+		// } else {
+		// 	$search[$key] = $request->input($key);
+		// }
+	}
+	if(!isset($search['project_id'])) $search['project_id'] = 1;
+
+	$classes = new Classes;
+	$data = $classes->search($search);
+
+	return JSend::success("Search Results", ['classes' => $data]);
+});
 
 ///////////////////////////////////////////////// Data ////////////////////////////////////////
 if(!function_exists('getData')) { // It was causing some wierd issues in 'php artisan config:cache' command.
