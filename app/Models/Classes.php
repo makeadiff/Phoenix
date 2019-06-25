@@ -37,49 +37,48 @@ final class Classes extends Common
     }
 
     public function search($data) {
-        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'direction'];
         $q = app('db')->table('Class');
-        $q->select('Class.id', 'Class.batch_id', 'Class.level_id', 'Class.class_on', 'Class.class_type', 'Class.class_satisfaction', 'Class.cancel_option', 'Class.cancel_reason', 'Class.status AS class_status');
-        $q->select('UserClass.id AS user_class_id', 'UserClass.substitute_id', 'UserClass.zero_hour_attendance', 'UserClass.status AS status');
+        return $this->baseSearch($data, $q);
+    }
 
+    /// This is a seperate function because even Project->classes() uses almost the exact same thing.
+    public function baseSearch($search, $q = false)
+    {
+        // teacher_id: Int, status: String, batch_id: Int, level_id: Int, project_id: Int, class_date: Date, direction: String)
+        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'direction'];
+        $q->select('Class.id', 'Class.batch_id', 'Class.level_id', 'Class.class_on', 'Class.class_type', 'Class.class_satisfaction', 'Class.cancel_option', 'Class.cancel_reason', 'Class.status AS class_status',
+                    'UserClass.id AS user_class_id', 'UserClass.substitute_id', 'UserClass.zero_hour_attendance', 'UserClass.status AS status');
         $q->join("UserClass", 'UserClass.class_id', '=', 'Class.id');
         $q->join("Batch", 'Batch.id', '=', 'Class.batch_id');
         $q->join("Level", 'Level.id', '=', 'Class.level_id');
 
         $q->where("Batch.year", '=', $this->year);
         $q->where("Batch.status", '=', '1');
-        $q->where("Batch.project_id", '=', $data['project_id']);
         $q->where("Level.year", '=', $this->year);
         $q->where("Level.status", '=', '1');
 
         foreach ($search_fields as $field) {
-            if(empty($data[$field])) {
+            if(empty($search[$field])) {
                 continue;
             } elseif($field == 'class_date') {
-                $q->whereDate("Class.class_on", $data[$field]);
+                $q->whereDate("Class.class_on", $search[$field]);
 
             } elseif($field == 'teacher_id') {
-                $q->where("UserClass.user_id", $data[$field]);
+                $q->where("UserClass.user_id", $search[$field]);
 
             } elseif($field == 'substitute_id') {
-                $q->where("UserClass.substitute_id", $data[$field]);
+                $q->where("UserClass.substitute_id", $search[$field]);
                 
             } elseif($field == 'direction') {
                 // :TODO
             } else {
-                $q->where("Class." . $field, $data[$field]);
+                $q->where("Class." . $field, $search[$field]);
             }
         }
 
         $q->where("Class.class_on", '>=', $this->year_start_time);
 
-        $q->orderBy('class_on');
-        // dump($q->toSql(), $q->getBindings(), $data);
-
-        $results = $q->get();
-        // dd($results);
-
-        return $results;
+        return $q;
     }
 
     // /// Find the next class in the given batch from the given date in either direction.

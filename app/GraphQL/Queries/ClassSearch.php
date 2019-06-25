@@ -4,6 +4,7 @@ namespace App\GraphQL\Queries;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use App\Models\Classes;
+use App\Models\Project;
 
 class classSearch
 {
@@ -18,11 +19,15 @@ class classSearch
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $class_model = new Classes;
-        $classes = $class_model->search($args);
-        // foreach($args as $key => $value) {
-        //     $class_model->where($key, $value);
-        // }
+        // $class_model = new Classes;
+        // $classes = $class_model->search($args);
+        $project_model = new Project;
+
+        $project_id = 1;
+        if($args['project_id']) $project_id = $args['project_id'];
+        $classes = $project_model->find($project_id)->classes($args)->get();
+
+        // dump($classes);
 
         return $classes;
     }
