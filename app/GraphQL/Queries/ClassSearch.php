@@ -19,8 +19,11 @@ class classSearch
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
+        // This is a better way - but doesn't work.
         // $class_model = new Classes;
-        // $classes = $class_model->search($args);
+        // $classes = $class_model->search($args)->get();
+
+        // Use the project model to connect with the class because I can't figure out how to do it directly. Tried posting the question on stack overflow as well - https://stackoverflow.com/questions/56713311/implementing-search-funtionality-in-laravel-lighthouse-graphql-api
         $project_model = new Project;
 
         $project_id = 1;
