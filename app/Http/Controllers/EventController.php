@@ -20,6 +20,7 @@ class EventController extends Controller
             // 'city_id'               => 'sometimes|required|numeric|exists:City,id', // Disabled because I can't get 0 to validate.
             'created_by_user_id'    => 'required|numeric|exists:User,id',
             'event_type_id'         => 'required|numeric|exists:Event_Type,id',
+            'place'                 => 'max:200'
         ];
         
         $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
