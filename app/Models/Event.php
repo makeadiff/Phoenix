@@ -110,7 +110,8 @@ final class Event extends Common
             'city_id'       => $data['city_id'],
             'event_type_id' => $data['event_type_id'],
             'vertical_id'   => isset($data['vertical_id']) ? $data['vertical_id'] : 0,
-            'created_by_user_id'   => $data['created_by_user_id'],
+            'template_event_id' => isset($data['template_event_id']) ? $data['template_event_id'] : 0,
+            'created_by_user_id'=> $data['created_by_user_id'],
             'latitude'      => isset($data['latitude']) ? $data['latitude'] : '',
             'longitude'     => isset($data['longitude']) ? $data['longitude'] : '',
         ]);
