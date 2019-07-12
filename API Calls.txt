@@ -40,7 +40,7 @@ High Priority
 
 /api/user_class_info
 	GET /users/{user_id}/class_info | unupdated_classes
-	{users(id: {user_id} { id name classes})} - Done
+	{users(id: {user_id}) { id name classes }} - Done
 /api/user_batch_info
 	GET /users/{user_id}/batch_info
 	{users(id: {user_id} { id name batches})} - Done
@@ -50,23 +50,27 @@ High Priority
 
 /api/class_get_last
 	GET /users/{user_id}/last_class
+	classSearch(teacher_id: $teacher_id, status: "projected") - Done
 /api/get_class_on
 	GET /classes
-/api/browse_class($batch_id = 0, $level_id = 0, $from_date = '', $direction = '+') {
-	GET /classes
-/api/class_save_student_participation
-	POST /classes/{class_id}/student_attendance | students
+	classSearch(teacher_id: $teacher_id, class_date: "$date") - Done
 /api/class_get_last_batch
 	GET /users/{user_id}/last_batch
 /api/open_batch($batch_id='', $from_date='', $project_id='') {
-	GET /batches/{batch_id}
+	GET /batches/{batch_id} - Done
 /api/class_get_batch($batch_id = 0, $class_on = false) {
-	GET /batches/{batch_id}
+	GET /batches/{batch_id} - Done
 /api/all_levels_in_batch($batch_id = 0) {
-	/batches/{batch_id}/levels
-/api/save_extra_class($batch_id = 0, $class_on = '', $levels = array()) {
-	POST /classes
+	/batches/{batch_id}/levels - Done
+	{batch(id: $batch_id) { id name levels {id level_name}}} - Done
 
+/api/browse_class($batch_id = 0, $level_id = 0, $from_date = '', $direction = '+') {
+	GET /classes
+
+/api/class_save_student_participation
+	POST /classes/{class_id}/student_attendance | students
 /api/class_save
+	POST /classes
+/api/save_extra_class($batch_id = 0, $class_on = '', $levels = array()) {
 	POST /classes
 

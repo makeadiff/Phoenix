@@ -3,10 +3,10 @@ namespace App\GraphQL\Queries;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-use App\Models\Classes;
+use App\Models\Batch;
 use App\Models\Project;
 
-class classSearch
+class batchSearch
 {
     /**
      * Return a value for the field.
@@ -19,26 +19,15 @@ class classSearch
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        // This is a better way - but doesn't work.
-        // $class_model = new Classes;
-        // $classes = $class_model->search($args)->get();
-
-        // Use the project model to connect with the class because I can't figure out how to do it directly. Tried posting the question on stack overflow as well - https://stackoverflow.com/questions/56713311/implementing-search-funtionality-in-laravel-lighthouse-graphql-api
+        // Wierd way to do this - login given in ClassSearch.php
         $project_model = new Project;
 
         $project_id = 1;
         if(isset($args['project_id'])) $project_id = $args['project_id'];
-        $classes = $project_model->find($project_id)->classes($args)->get();
+        $batches = $project_model->find($project_id)->batches($args)->get();
 
-        return $classes;
-    }
-
-    public function teacher_id($builder, int $value)
-    {
-        return $builder->where('teacher_id', $value);
-    }
-    public function status($builder, string $value)
-    {
-        return $builder->where('status', $value);
+        return $batches;
     }
 }
+
+// :TODO: This does not work as expected. No relations work.

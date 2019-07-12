@@ -3,6 +3,7 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Classes;
+use App\Models\Batch;
 
 final class Project extends Common  
 {
@@ -16,11 +17,13 @@ final class Project extends Common
         return $classes;
     }
 
-    public function batches()
+    public function batches($search)
     {
-        return $this->hasMany('App\Models\Batch', 'project_id');
+        $q = $this->hasMany('App\Models\Batch', 'project_id');
+        $batches = (new Batch)->baseSearch($search, $q);
+        return $batches;
     }
-
+    
     public function fetch($id) {
         $this->id = $id;
         $this->item = $this->find($id);

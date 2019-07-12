@@ -45,9 +45,9 @@ final class Classes extends Common
     public function baseSearch($search, $q = false)
     {
         // teacher_id: Int, status: String, batch_id: Int, level_id: Int, project_id: Int, class_date: Date, direction: String)
-        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'direction'];
+        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'class_status', 'direction'];
         $q->select('Class.id', 'Class.batch_id', 'Class.level_id', 'Class.class_on', 'Class.class_type', 'Class.class_satisfaction', 'Class.cancel_option', 'Class.cancel_reason', 'Class.status AS class_status',
-                    'UserClass.id AS user_class_id', 'UserClass.substitute_id', 'UserClass.zero_hour_attendance', 'UserClass.status AS status');
+                        'UserClass.id AS user_class_id', 'UserClass.substitute_id', 'UserClass.zero_hour_attendance', 'UserClass.status AS status');
         $q->join("UserClass", 'UserClass.class_id', '=', 'Class.id');
         $q->join("Batch", 'Batch.id', '=', 'Class.batch_id');
         $q->join("Level", 'Level.id', '=', 'Class.level_id');
@@ -62,6 +62,9 @@ final class Classes extends Common
                 continue;
             } elseif($field == 'class_date') {
                 $q->whereDate("Class.class_on", $search[$field]);
+            
+            } elseif($field == 'class_status') {
+                $q->whereDate("Class.status", $search[$field]);
 
             } elseif($field == 'teacher_id') {
                 $q->where("UserClass.user_id", $search[$field]);
@@ -77,6 +80,7 @@ final class Classes extends Common
         }
 
         $q->where("Class.class_on", '>=', $this->year_start_time);
+        $q->orderBy("Class.class_on", "DESC");
 
         return $q;
     }
