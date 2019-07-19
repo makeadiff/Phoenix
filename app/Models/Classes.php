@@ -45,9 +45,9 @@ final class Classes extends Common
     public function baseSearch($search, $q = false)
     {
         // teacher_id: Int, status: String, batch_id: Int, level_id: Int, project_id: Int, class_date: Date, direction: String)
-        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'class_status', 'direction'];
-        $q->select('Class.id', 'Class.batch_id', 'Class.level_id', 'Class.class_on', 'Class.class_type', 'Class.class_satisfaction', 'Class.cancel_option', 'Class.cancel_reason', 'Class.status AS class_status',
-                        'UserClass.id AS user_class_id', 'UserClass.substitute_id', 'UserClass.zero_hour_attendance', 'UserClass.status AS status');
+        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'class_status', 'direction', 'from_date', 'limit'];
+        $q->select('Class.id', 'Class.batch_id', 'Class.level_id', 'Class.class_on', 'Class.class_type', 'Class.class_satisfaction', 'Class.cancel_option', 'Class.cancel_reason',
+                        'Class.status AS class_status', 'UserClass.id AS user_class_id', 'UserClass.substitute_id', 'UserClass.zero_hour_attendance', 'UserClass.status AS status'); // ->distinct('Class.id');
         $q->join("UserClass", 'UserClass.class_id', '=', 'Class.id');
         $q->join("Batch", 'Batch.id', '=', 'Class.batch_id');
         $q->join("Level", 'Level.id', '=', 'Class.level_id');
@@ -72,15 +72,52 @@ final class Classes extends Common
             } elseif($field == 'substitute_id') {
                 $q->where("UserClass.substitute_id", $search[$field]);
                 
-            } elseif($field == 'direction') {
-                // :TODO
+            } elseif($field == 'direction' and isset($search['from_date'])) {
+                if($search['direction'] == '+') {
+                    $q->where("Class.class_on", '>', date('Y-m-d', strtotime($search['from_date'])) . ' 23:59:59');
+                } elseif($search['direction'] == '-') {
+                    $q->where("Class.class_on", '<', date('Y-m-d', strtotime($search['from_date'])) . ' 00:00:00');
+                }
+
+            } elseif($field == 'limit') {
+                // Limit by one day - This will only show the classes of the given batch for the next one day - weather its a + or - direction.
+                if($search['limit'] == 'day' and isset($search['batch_id'])) {
+                    $next_class_day_query = app('db')->table('Class')->select('class_on');
+                    if(isset($search['direction']) and isset($search['from_date'])) {
+                        if($search['direction'] == '+') {
+                            $next_class_day_query->where("class_on", '>', date('Y-m-d', strtotime($search['from_date'])) . ' 23:59:59');
+                            $next_class_day_query->orderBy("class_on", "ASC");
+                        } elseif($search['direction'] == '-') {
+                            $next_class_day_query->where("class_on", '<', date('Y-m-d', strtotime($search['from_date'])) . ' 00:00:00');
+                            $next_class_day_query->orderBy("class_on", "DESC");
+                        }
+                    }
+                    $next_class_day_query->where('Class.batch_id', $search['batch_id']);
+                    $next_class_day_query->limit(1);
+                    $next_class_day = $next_class_day_query->value('class_on');
+
+                    if($next_class_day) {
+                        $q->where("Class.class_on", $next_class_day);
+                    }
+
+                // Limit by a number.
+                } else {
+                    $q->limit($search['limit']);
+                }
+
+            } elseif($field == 'from_date') {
+                continue; // Ignore - only used with 'direction'
+
             } else {
                 $q->where("Class." . $field, $search[$field]);
             }
         }
 
         $q->where("Class.class_on", '>=', $this->year_start_time);
-        $q->orderBy("Class.class_on", "DESC");
+        $q->orderBy("Class.class_on", "ASC");
+        $q->groupBy("Class.id");
+
+        // dd($q->toSql(), $q->getBindings(), $search);
 
         return $q;
     }

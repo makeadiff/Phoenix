@@ -23,6 +23,11 @@ final class Batch extends Common
         return $this->belongsToMany("App\Models\User", 'UserBatch');
     }
 
+    public function classes()
+    {
+        return $this->hasMany("App\Models\Classes");
+    }
+
     public function search($data) 
     {
         $q = app('db')->table('Batch');
@@ -38,8 +43,7 @@ final class Batch extends Common
 
     public function baseSearch($data, $q)
     {
-        $search_fields = ['id', 'day', 'center_id', 'level_id',  'project_id', 'year', 'teacher_id'];
-        $q = app('db')->table('Batch');
+        $search_fields = ['id', 'day', 'center_id', 'level_id', 'batch_id', 'project_id', 'year', 'teacher_id', 'mentor_id', 'direction', 'from_date', 'limit'];
         $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status', 'Batch.project_id')->distinct();
         if(!isset($data['status'])) $data['status'] = '1';
         if(!isset($data['year'])) $data['year'] = $this->year;
@@ -55,13 +59,35 @@ final class Batch extends Common
         }
 
         foreach ($search_fields as $field) {
-            if(empty($data[$field])) continue;
+            if(empty($data[$field])) {
+                continue;
+            } elseif($field == 'batch_id') {
+                $q->where("Batch.id", $data[$field]);
 
-            else if($field == 'teacher_id') {
+            } elseif($field == 'teacher_id') {
                 $q->where("UserBatch.user_id", $data[$field]);
+
+            } elseif ($field == 'mentor_id') {
+                $q->where("Batch.batch_head_id", $data[$field]);
 
             } else if($field == 'level_id') {
                 $q->where('BatchLevel.level_id', $data['level_id']);
+
+            } elseif($field == 'direction' and isset($data['from_date'])) {
+                $q->join("Class", 'Class.batch_id', '=', 'Batch.id');
+                $q->orderBy("Class.class_on", "ASC");
+
+                if($data['direction'] == '+') {
+                    $q->where("Class.class_on", '>', date('Y-m-d', strtotime($search['from_date'])) . ' 23:59:59');
+                } elseif($data['direction'] == '-') {
+                    $q->where("Class.class_on", '<', date('Y-m-d', strtotime($search['from_date'])) . ' 00:00:00');
+                }
+
+            } elseif($field == 'limit') {
+                $q->limit($data['limit']);
+
+            } elseif($field == 'from_date') {
+                continue; // Ignore - only used with 'direction'
 
             } else {
                 $q->where("Batch." . $field, $data[$field]);

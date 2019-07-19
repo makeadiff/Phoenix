@@ -19,7 +19,7 @@ class batchSearch
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        // Wierd way to do this - login given in ClassSearch.php
+        // Wierd way to do this - logic given in ClassSearch.php
         $project_model = new Project;
 
         $project_id = 1;
@@ -29,5 +29,3 @@ class batchSearch
         return $batches;
     }
 }
-
-// :TODO: This does not work as expected. No relations work.

@@ -50,14 +50,16 @@ High Priority
 
 /api/class_get_last
 	GET /users/{user_id}/last_class
-	classSearch(teacher_id: $teacher_id, status: "projected") - Done
+	{classSearch(teacher_id: $teacher_id, status: "projected")} - Done
 /api/get_class_on
 	GET /classes
-	classSearch(teacher_id: $teacher_id, class_date: "$date") - Done
+	{classSearch(teacher_id: $teacher_id, class_date: "$date")} - Done
 /api/class_get_last_batch
 	GET /users/{user_id}/last_batch
+	{batchSearch(teacher_id: $teacher_id, project_id: $project_id, mentor_id: $mentor_id)} - Done
 /api/open_batch($batch_id='', $from_date='', $project_id='') {
 	GET /batches/{batch_id} - Done
+	{batch(id: $batch_id) {}} - Done
 /api/class_get_batch($batch_id = 0, $class_on = false) {
 	GET /batches/{batch_id} - Done
 /api/all_levels_in_batch($batch_id = 0) {
@@ -66,6 +68,8 @@ High Priority
 
 /api/browse_class($batch_id = 0, $level_id = 0, $from_date = '', $direction = '+') {
 	GET /classes
+	{classSearch(teacher_id: $teacher_id, class_date: "$date")} - Done
+	
 
 /api/class_save_student_participation
 	POST /classes/{class_id}/student_attendance | students

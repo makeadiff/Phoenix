@@ -14,8 +14,8 @@ type Query {
     class(id: ID @eq): 	Class 	@find(model: "App\\Models\\Classes")
 
     eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php - This is just a sample 
-    batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
-    # classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, class_date: Date, direction: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php [ClassSearchResult]
+    batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, direction: String, from_date: Date, limit: Int): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
+    classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, class_date: Date, direction: String, from_date: Date, limit: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php [ClassSearchResult]
 
     users(name: String @eq, email: String @eq, phone: String @eq, city_id: Int @eq, status: String = "1" @eq, user_type: String = "volunteer" @eq): [User] @paginate(type: "paginator" model: "App\\Models\\User")
     centers(city_id: Int @eq, status: String = "1" @eq ): [Center!]! @all
@@ -117,6 +117,7 @@ type Batch {
 	center: Center @belongsTo
 	levels: [Level]
 	teachers: [User]
+	classes: [Class]
 }
 
 type Level {
