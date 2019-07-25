@@ -795,7 +795,14 @@ Route::get('/notifications', function(Request $request) {
 
 
 ////////////////////////////////// Placeholders ///////////////////////////////
-Route::get('/custom/video_analytics', function(Request $request) {
+Route::post('/custom/video_analytics', function(Request $request) {
+	// $file = $request->file("image");
+	// $status = $file->store('uploads');
+  
+	$data = $request->all();
+
+	$status = $data['image']->store('uploads');
+    dd($data['image'], $status);
 
 	return JSend::success("Data catured");
 });

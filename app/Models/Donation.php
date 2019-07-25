@@ -15,7 +15,7 @@ final class Donation extends Common
     protected $table = 'Donut_Donation';
     public $start_date = '2018-05-01 00:00:00';
     public $timestamps = true;
-    protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'cheque_no', 'added_on', 'updated_on', 'nach_start_on', 'nach_end_on', 'updated_by_user_id', 'comment'];
+    protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'reference_file', 'cheque_no', 'added_on', 'updated_on', 'nach_start_on', 'nach_end_on', 'updated_by_user_id', 'comment'];
     protected $donation_statuses = ['collected', 'deposited', 'receipted'];
     protected $national_account_user_id = 163416; // National Finance User ID.
 
@@ -45,8 +45,8 @@ final class Donation extends Common
         $q = app('db')->table($this->table);
 
         $q->select("Donut_Donation.id", 'Donut_Donation.type', 'Donut_Donation.fundraiser_user_id', 'Donut_Donation.donor_id', 'Donut_Donor.donor_finance_id', 'Donut_Donation.with_user_id', 'Donut_Donation.status', 
-                    'Donut_Donation.amount', 'Donut_Donation.cheque_no', 'Donut_Donation.added_on', 'Donut_Donation.updated_on', 'Donut_Donation.updated_by_user_id', 'Donut_Donation.comment', 
-                    'Donut_Donation.nach_start_on', 'Donut_Donation.nach_end_on', 'User.city_id', app('db')->raw('User.name AS fundraiser'), app('db')->raw('Donut_Donor.name AS donor'));
+                    'Donut_Donation.amount', 'Donut_Donation.reference_file', 'Donut_Donation.cheque_no', 'Donut_Donation.added_on', 'Donut_Donation.updated_on', 'Donut_Donation.updated_by_user_id', 
+                    'Donut_Donation.comment', 'Donut_Donation.nach_start_on', 'Donut_Donation.nach_end_on', 'User.city_id', app('db')->raw('User.name AS fundraiser'), app('db')->raw('Donut_Donor.name AS donor'));
         $q->join("User", "User.id", '=', 'Donut_Donation.fundraiser_user_id');
         $q->join("Donut_Donor", "Donut_Donor.id", '=', 'Donut_Donation.donor_id');
         
@@ -181,6 +181,12 @@ final class Donation extends Common
         } else {
             $data['added_on'] = date('Y-m-d H:i:s');
         }
+
+        // Upload NACH form image
+        $reference_file = '';
+        if($data['type'] == 'nach' and !is_string($data['reference_file']) and $data['reference_file']->isValid()) {
+            $reference_file = $data['reference_file']->store('uploads');
+        }
         
         $donation = Donation::create([
             'donor_id'          => $donor_id,
@@ -191,6 +197,7 @@ final class Donation extends Common
             'amount'            => $data['amount'],
             'added_on'          => $data['added_on'],
             'updated_on'        => $data['added_on'],
+            'reference_file'    => $reference_file,
             'nach_start_on'     => (!empty($data['nach_start_on']) ? $data['nach_start_on'] : null),
             'nach_end_on'       => (!empty($data['nach_end_on']) ? $data['nach_end_on'] : null),
             'comment'           => (!empty($data['comment']) ? $data['comment'] : ''),
