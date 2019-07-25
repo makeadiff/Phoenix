@@ -50,6 +50,14 @@ final class User extends Common
 		return $batches;
 	}
 
+	public function donations()
+	{
+		$donations = $this->hasMany("App\Models\Donation", 'fundraiser_user_id');
+		$donations->where("added_on", '>=', $this->year_start_date);
+		$donations->orderBy("added_on", 'desc');
+		return $donations;
+	}
+
 	// public function data()
 	// {
 	// 	return $this->morphMany(Data::class, 'item', 'item_id');

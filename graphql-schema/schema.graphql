@@ -12,6 +12,8 @@ type Query {
     level(id: ID @eq): 	Level 	@find(model: "App\\Models\\Level")
     event(id: ID @eq): 	Event 	@find(model: "App\\Models\\Event")
     class(id: ID @eq): 	Class 	@find(model: "App\\Models\\Classes")
+    donation(id: ID @eq): 	Donation 	@find(model: "App\\Models\\Donation")
+    donor(id: ID @eq): 	Donor 	@find(model: "App\\Models\\Donor")
 
     eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php - This is just a sample 
     batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, direction: String, from_date: Date, limit: Int): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
@@ -45,6 +47,7 @@ type User {
 	city: City @belongsTo
 	classes: [Class] @hasMany(relation: "classes") # :TODO: - Ideally, this should take an argument - (status: String)
 	batches: [Batch] @hasMany
+	donations: [Donation] @hasMany
 	pivot: UserPivot
 }
 type UserPivot {
@@ -164,6 +167,50 @@ type Event {
 type Event_Type {
 	id: ID!
 	name: String!
+}
+
+type Donation {
+	id: ID!
+	type: String
+	status: String
+	amount: Float
+	reference_file: String
+	nach_start_on: DateTime
+	nach_end_on: DateTime
+	cheque_no: String
+	added_on: DateTime
+	comment: String
+
+	with_user_id: Int
+	fundraiser_user_id: Int 
+	donor_id: Int
+
+	fundraiser: User
+	donor: Donor
+	deposit: [Deposit]
+}
+
+type Donor {
+	id: ID!
+	name: String
+	phone: String
+	email: String
+	address: String
+	donor_finance_id: Int
+	added_on: DateTime
+}
+
+type Deposit {
+	id: ID!
+	added_on: DateTime
+	reviewed_on: DateTime
+	amount: Float
+	status: String
+	collected_from_user_id: Int 
+	given_to_user_id: Int
+
+	collected_from: User 
+	given_to: User	
 }
 
 type Data {
