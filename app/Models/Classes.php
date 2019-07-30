@@ -44,6 +44,8 @@ final class Classes extends Common
     /// This is a seperate function because even Project->classes() uses almost the exact same thing.
     public function baseSearch($search, $q = false)
     {
+        if(!$q) $q = app('db')->table('Class');
+        
         // teacher_id: Int, status: String, batch_id: Int, level_id: Int, project_id: Int, class_date: Date, direction: String)
         $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'class_status', 'direction', 'from_date', 'limit'];
         $q->select('Class.id', 'Class.batch_id', 'Class.level_id', 'Class.class_on', 'Class.class_type', 'Class.class_satisfaction', 'Class.cancel_option', 'Class.cancel_reason',

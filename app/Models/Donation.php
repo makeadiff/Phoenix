@@ -42,7 +42,53 @@ final class Donation extends Common
 
     public function search($data)
     {
-        $q = app('db')->table($this->table);
+        $q = app('db')->table('Donut_Donation');
+        $donations = $this->baseSearch($data, $q);
+
+        // Find only deposited or undeposited donations - also used to include deposit info.
+        if(isset($data['deposited']) or (isset($data['include_deposit_info']) and $data['include_deposit_info'])) {
+            foreach ($donations as $index => $don) {
+                $donation_id = $don->id;
+                // Find all donations deposited by the current user which is still in pending or approved.
+                $q = app('db')->table("Donut_Deposit AS DP");
+                $q->select('DP.*', 'GU.name AS given_to_user_name', 'CU.name AS collected_from_user_name'); 
+                $q->join("Donut_DonationDeposit AS DD", 'DD.deposit_id', '=', 'DP.id');
+                $q->join("User AS GU", 'GU.id', '=', 'DP.given_to_user_id');
+                $q->join("User AS CU", 'CU.id', '=', 'DP.collected_from_user_id');
+                $q->where("DD.donation_id", $donation_id);
+                $q->whereIn("DP.status", ['approved', 'pending']);
+                $q->orderBy("DP.added_on", 'desc');
+
+                if(!empty($data['approver_user_id'])) {
+                    $q->where("DP.collected_from_user_id", $data['approver_user_id']);
+                }
+
+                $all_deposit_info = $q->get();
+                $deposit_info = reset($all_deposit_info);
+
+                if(isset($data['include_deposit_info']) and $data['include_deposit_info']) {
+                    $donations[$index]->deposit = $all_deposit_info;
+                }
+
+                if(isset($data['deposited'])) {
+                    // Find donations which had are in the deposits table with status of pending or approved
+                    if(!$deposit_info and $data['deposited']) {
+                        unset($donations[$index]); // Deposit info not present - undeposited.
+                    }
+
+                    if($deposit_info and isset($deposit_info->status) and ($deposit_info->status == 'approved' or $deposit_info->status == 'pending')) {// Approved or pending deposit
+                        if(!$data['deposited']) unset($donations[$index]); // If they want only undeposited donations, unset
+                    } else if($data['deposited']) unset($donations[$index]); // Only deposited donations go thru.
+                }
+            }
+        }
+
+        return $donations;
+    }
+
+    public function baseSearch($data, $q = false)
+    {
+        if(!$q) $q = app('db')->table('Donut_Donation');
 
         $q->select("Donut_Donation.id", 'Donut_Donation.type', 'Donut_Donation.fundraiser_user_id', 'Donut_Donation.donor_id', 'Donut_Donor.donor_finance_id', 'Donut_Donation.with_user_id', 'Donut_Donation.status', 
                     'Donut_Donation.amount', 'Donut_Donation.reference_file', 'Donut_Donation.cheque_no', 'Donut_Donation.added_on', 'Donut_Donation.updated_on', 'Donut_Donation.updated_by_user_id', 
@@ -92,49 +138,9 @@ final class Donation extends Common
         }
         $q->orderBy('Donut_Donation.added_on','desc');
 
-        // dd($q->toSql(), $q->getBindings());
+        dd($q->toSql(), $q->getBindings());
 
-        $donations = $q->get();
-
-        // Find only deposited or undeposited donations - also used to include deposit info.
-        if(isset($data['deposited']) or (isset($data['include_deposit_info']) and $data['include_deposit_info'])) {
-            foreach ($donations as $index => $don) {
-                $donation_id = $don->id;
-                // Find all donations deposited by the current user which is still in pending or approved.
-                $q = app('db')->table("Donut_Deposit AS DP");
-                $q->select('DP.*', 'GU.name AS given_to_user_name', 'CU.name AS collected_from_user_name'); 
-                $q->join("Donut_DonationDeposit AS DD", 'DD.deposit_id', '=', 'DP.id');
-                $q->join("User AS GU", 'GU.id', '=', 'DP.given_to_user_id');
-                $q->join("User AS CU", 'CU.id', '=', 'DP.collected_from_user_id');
-                $q->where("DD.donation_id", $donation_id);
-                $q->whereIn("DP.status", ['approved', 'pending']);
-                $q->orderBy("DP.added_on", 'desc');
-
-                if(!empty($data['approver_user_id'])) {
-                    $q->where("DP.collected_from_user_id", $data['approver_user_id']);
-                }
-
-                $all_deposit_info = $q->get();
-                $deposit_info = reset($all_deposit_info);
-
-                if(isset($data['include_deposit_info']) and $data['include_deposit_info']) {
-                    $donations[$index]->deposit = $all_deposit_info;
-                }
-
-                if(isset($data['deposited'])) {
-                    // Find donations which had are in the deposits table with status of pending or approved
-                    if(!$deposit_info and $data['deposited']) {
-                        unset($donations[$index]); // Deposit info not present - undeposited.
-                    }
-
-                    if($deposit_info and isset($deposit_info->status) and ($deposit_info->status == 'approved' or $deposit_info->status == 'pending')) {// Approved or pending deposit
-                        if(!$data['deposited']) unset($donations[$index]); // If they want only undeposited donations, unset
-                    } else if($data['deposited']) unset($donations[$index]); // Only deposited donations go thru.
-                }
-            }
-        }
-        
-        return $donations;
+        return $q;
     }
 
     /// Get all the donations donuted by the given user

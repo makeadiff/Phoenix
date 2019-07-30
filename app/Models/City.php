@@ -2,15 +2,18 @@
 namespace App\Models;
 
 use App\Models\Common;
+use App\Models\User;
 
 final class City extends Common  
 {
     protected $table = 'City';
     public $timestamps = false;
 
-	public function users()
+	public function users($search = false)
     {
-        return $this->hasMany('App\Models\User')->where('User.status', '=', '1')->where('User.user_type', '=', 'volunteer');
+        $q = $this->hasMany('App\Models\User', 'city_id');
+        $users = (new User)->baseSearch($search, $q);
+        return $users;
     }
     public function centers()
     {

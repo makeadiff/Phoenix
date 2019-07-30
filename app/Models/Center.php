@@ -26,6 +26,10 @@ final class Center extends Common
     {
         return $this->hasMany('App\Models\Level')->where('Level.status','1')->where('Level.year',$this->year);
     }
+    public function students()
+    {
+        return $this->hasMany('App\Models\Student')->where('Student.status','1')->orderBy("Student.name");
+    }
 
     public static function getAll()
     {

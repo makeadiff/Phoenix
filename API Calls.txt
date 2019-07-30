@@ -78,3 +78,55 @@ High Priority
 /api/save_extra_class($batch_id = 0, $class_on = '', $levels = array()) {
 	POST /classes
 
+
+
+REST to GraphQL Conversion
+--------------------------
+	/cities 
+	/cities/{city_id}
+	/cities/{city_id}/users
+/cities/{city_id}/teachers
+/cities/{city_id}/fellows
+	/cities/{city_id}/centers
+/cities/{city_id}/students	- Todo
+	/groups
+	/groups/{group_id}
+	/verticals
+/projects - Todo
+	/centers
+	/centers/{center_id}
+	/centers/{center_id}/teachers
+	/centers/{center_id}/students
+	/centers/{center_id}/batches
+	/centers/{center_id}/levels
+	/batches/{batch_id}
+	/batches/{batch_id}/teachers
+	/batches/{batch_id}/levels
+	/levels/{level_id}
+	/levels/{level_id}/students
+	/levels/{level_id}/batches
+	/classes
+/classes/{class_id}/data/{data_name}
+/users/{user_id}/data/{data_name}
+/students/{student_id}/data/{data_name}
+/centers/{center_id}/data/{data_name}
+	/users
+	/users/{user_id}
+/users/{user_id}/credit
+	/users/{user_id}/groups
+/students
+	/students/{student_id}
+/donations
+/donations/{donation_id}
+	/users/{user_id}/donations
+/deposits
+	/events
+	/events/{event_id}
+	/events/{event_id}/users
+	/events/{event_id}/attended
+/events/{event_id}/users/{user_id}
+/notifications
+/custom/care_collective_count
+/events/{event_id}/send_invites
+/donations/{donation_id}/send_receipt
+

@@ -63,9 +63,27 @@ final class User extends Common
 	// 	return $this->morphMany(Data::class, 'item', 'item_id');
 	// }
 
-	public function search($data)
+	public function search($data) {
+        $q = app('db')->table('User');
+        $results = $this->baseSearch($data, $q);
+
+        // Add groups to each volunter that was returned.
+		for($i=0; $i<count($results); $i++) {
+			$results[$i]->groups = [];
+			if($data['user_type'] == 'volunteer') {
+				$this_user = User::fetch($results[$i]->id);
+				if($this_user->groups) {
+					$results[$i]->groups = $this_user->groups;
+				}
+			}
+		}
+
+		return $results;
+    }
+
+	public function baseSearch($data, $q = false)
 	{
-		$q = app('db')->table($this->table);
+		if(!$q) $q = app('db')->table($this->table);
 
 		$q->select("User.id","User.name","User.email","User.phone","User.mad_email","User.credit","User.joined_on","User.left_on",
 					"User.user_type","User.address","User.sex", "User.status", "User.city_id", app('db')->raw("City.name AS city_name"));
@@ -161,25 +179,9 @@ final class User extends Common
 		$q->orderby('User.name');
 
 		// :TODO: Pagination
-
 		// dd($q->toSql(), $q->getBindings(), $data);
 
-		$results = $q->get();
-
-		// Add groups to each volunter that was returned.
-		for($i=0; $i<count($results); $i++) {
-			$results[$i]->groups = [];
-			if($data['user_type'] == 'volunteer') {
-				$this_user = User::fetch($results[$i]->id);
-				if($this_user->groups) {
-					$results[$i]->groups = $this_user->groups;
-				}
-			}
-		}
-
-		// dd($results);
-
-		return $results;
+		return $q;
 	}
 
 	public function inCity($city_id) {
