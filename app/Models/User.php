@@ -65,12 +65,12 @@ final class User extends Common
 
 	public function search($data) {
         $q = app('db')->table('User');
-        $results = $this->baseSearch($data, $q);
+        $results = $this->baseSearch($data, $q)->get();
 
         // Add groups to each volunter that was returned.
 		for($i=0; $i<count($results); $i++) {
 			$results[$i]->groups = [];
-			if($data['user_type'] == 'volunteer') {
+			if(!isset($data['user_type']) or $data['user_type'] == 'volunteer') {
 				$this_user = User::fetch($results[$i]->id);
 				if($this_user->groups) {
 					$results[$i]->groups = $this_user->groups;
@@ -88,6 +88,10 @@ final class User extends Common
 		$q->select("User.id","User.name","User.email","User.phone","User.mad_email","User.credit","User.joined_on","User.left_on",
 					"User.user_type","User.address","User.sex", "User.status", "User.city_id", app('db')->raw("City.name AS city_name"));
 		$q->join("City", "City.id", '=', 'User.city_id');
+
+		// Aliases. 
+		if(isset($data['group_id']) and !isset($data['user_group'])) $data['user_group'] = $data['group_id'];
+		if(isset($data['group_type']) and !isset($data['user_group_type'])) $data['user_group_type'] = $data['group_type'];
 
 		if(!isset($data['status'])) $data['status'] = '1';
 		if($data['status'] !== false) $q->where('User.status', $data['status']); // Setting status as '0' gets you even the deleted users

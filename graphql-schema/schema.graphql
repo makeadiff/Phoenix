@@ -22,7 +22,7 @@ type Query {
     batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, direction: String, from_date: Date, limit: Int): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
     classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, class_date: Date, direction: String, from_date: Date, limit: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php [ClassSearchResult]
     userSearch(city_id: Int!, name: String, phone: String, email: String, mad_email: String, any_email: String, identifier: String, left_on: Date,
-    	vertical_id: Int, status: String, user_type: String, not_user_type: String, center_id: Int, user_group: String, user_group_type: String): [User]
+    	vertical_id: Int, status: String, user_type: String, not_user_type: String, center_id: Int, group_id: Int, group_type: String): [User]
     
     donations(added_on: Date = "2019-05-01" @where(operator: ">="), amount: Int, status: String, type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): [Donation] @all(model: "App\\Models\\Donation")
     events(name: String @eq, starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, event_type_id: Int @eq, vertical_id: Int @eq, status: String = "1" @eq): [Event!]! @all
@@ -31,6 +31,7 @@ type Query {
     cities(type: String = "actual" @eq): [City!]! @all
     groups(group_type: String = "normal" @eq, status: String = "1" @eq, type: String @eq, vertical_id: Int @eq): [Group!]! @all
     verticals(status: String = "1" @eq): [Vertical!]! @all
+    projects(status: String = "1" @eq): [Project!]! @all
 }
 
 type User {
@@ -158,6 +159,12 @@ type Class {
 	students: [Student]
 	teachers: [User]
 	substitutes: [User]
+}
+
+type Project {
+	id: ID!
+	name: String
+	vertical_id: Int
 }
 
 type Event {
