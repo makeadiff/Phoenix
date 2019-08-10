@@ -7,6 +7,7 @@ use App\Models\Donor;
 use App\Libraries\SMS;
 use App\Libraries\Email;
 use Illuminate\Support\Facades\Storage;
+use \Datetime;
 
 final class Donation extends Common
 {
@@ -15,7 +16,8 @@ final class Donation extends Common
     protected $table = 'Donut_Donation';
     public $start_date = '2018-05-01 00:00:00';
     public $timestamps = true;
-    protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'reference_file', 'cheque_no', 'added_on', 'updated_on', 'nach_start_on', 'nach_end_on', 'updated_by_user_id', 'comment'];
+    protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'reference_file', 'cheque_no', 'added_on', 'updated_on', 
+                            'nach_start_on', 'nach_end_on', 'donation_repeat_count', 'updated_by_user_id', 'comment'];
     protected $donation_statuses = ['collected', 'deposited', 'receipted'];
     protected $national_account_user_id = 163416; // National Finance User ID.
 
@@ -43,7 +45,7 @@ final class Donation extends Common
     public function search($data)
     {
         $q = app('db')->table('Donut_Donation');
-        $donations = $this->baseSearch($data, $q);
+        $donations = $this->baseSearch($data, $q)->get();
 
         // Find only deposited or undeposited donations - also used to include deposit info.
         if(isset($data['deposited']) or (isset($data['include_deposit_info']) and $data['include_deposit_info'])) {
@@ -138,7 +140,7 @@ final class Donation extends Common
         }
         $q->orderBy('Donut_Donation.added_on','desc');
 
-        dd($q->toSql(), $q->getBindings());
+        // dd($q->toSql(), $q->getBindings());
 
         return $q;
     }
@@ -193,6 +195,15 @@ final class Donation extends Common
         if($data['type'] == 'nach' and !is_string($data['reference_file']) and $data['reference_file']->isValid()) {
             $reference_file = $data['reference_file']->store('uploads');
         }
+
+        $nach_start_on = (!empty($data['nach_start_on']) ? $data['nach_start_on'] : null);
+        $nach_end_on = (!empty($data['nach_end_on']) ? $data['nach_end_on'] : null);
+        $nach_start_datetime = new DateTime($nach_start_on);
+        $nach_end_datetime = new DateTime($nach_end_on);
+        $diff = $nach_end_datetime->diff($nach_start_datetime);
+        $diff_months = $diff->m;
+        if(!$diff_months) $diff_months = 1;
+        $donation_repeat_count = (!empty($data['donation_repeat_count']) and $data['donation_repeat_count']) ? $data['donation_repeat_count'] : $diff_months;
         
         $donation = Donation::create([
             'donor_id'          => $donor_id,
@@ -204,8 +215,9 @@ final class Donation extends Common
             'added_on'          => $data['added_on'],
             'updated_on'        => $data['added_on'],
             'reference_file'    => $reference_file,
-            'nach_start_on'     => (!empty($data['nach_start_on']) ? $data['nach_start_on'] : null),
-            'nach_end_on'       => (!empty($data['nach_end_on']) ? $data['nach_end_on'] : null),
+            'nach_start_on'     => $nach_start_on,
+            'nach_end_on'       => $nach_end_on,
+            'donation_repeat_count' => $donation_repeat_count,
             'comment'           => (!empty($data['comment']) ? $data['comment'] : ''),
             'cheque_no'         => (!empty($data['cheque_no']) ? $data['cheque_no'] : ''),
             'status'            => 'collected',
