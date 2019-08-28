@@ -574,6 +574,19 @@ Route::get('/donations/{donation_id}', function($donation_id) {
 	return JSend::success("Donation Details for $donation_id", ['donation' => $data]);
 });
 
+// DO NOT Document this call yet. Can be used to 'fake' the receipt. Ideally this should only be run for donatations that are approved by finance team.
+Route::get('/donations/{donation_id}/receipt.pdf', function($donation_id) {
+	$donation = new Donation;
+	$data = $donation->fetch($donation_id);
+
+	if(!$data) return JSend::fail("Can't find any donations with the ID $donation_id");
+
+	$receipt_path = $donation->generateReceipt($donation_id);
+	header("Content-Type: application/pdf");
+	// header("Content-disposition: attachment; filename=receipt.pdf");
+	readfile($receipt_path);
+});
+
 Route::delete('/donations/{donation_id}', function($donation_id) {
 	if(!$donation_id) return JSend::fail("Invalid donaiton ID - $donation_id");
 
@@ -822,12 +835,12 @@ Route::get('/events/{event_id}/send_invites', function($event_id) {
 
 	return JSend::success("Sent event invites.", ['invited_user_count' => count($invited_users)]);
 });
-// Route::get('/donations/{donation_id}/send_receipt', function($donation_id) {
-// 	$donation = new Donation;
-// 	$donation->sendReceipt('send', $donation_id); // If you want this to work, change this function to public in the Donation model
+Route::get('/donations/{donation_id}/send_receipt', function($donation_id) {
+	$donation = new Donation;
+	$donation->sendReceipt('send', $donation_id); // If you want this to work, change this function to public in the Donation model
 
-// 	return JSend::success("Sent the receipt.");
-// });
+	return JSend::success("Sent the receipt.");
+});
 
 require base_path('routes/api-surveys.php');
 });
