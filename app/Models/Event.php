@@ -24,7 +24,12 @@ final class Event extends Common
         	'cant_go'=>3,
         ];
 
-    protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'event_type_id','vertical_id', 'user_selection_options', 'created_by_user_id', 'latitude', 'longitude', 'status'];
+    protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'event_type_id','vertical_id', 'template_event_id', 'user_selection_options', 'created_by_user_id', 'latitude', 'longitude', 'status'];
+
+    public function city()
+    {
+        return $this->belongsTo('App\Models\City', 'city_id');
+    }
 
     public function creator()
     {
@@ -33,12 +38,17 @@ final class Event extends Common
 
     public function invitees() 
     {
-        return $this->belongsToMany("App\Models\User", 'UserEvent');
+        return $this->belongsToMany("App\Models\User", 'UserEvent')->withPivot('present', 'late', 'user_choice', 'reason');
     }
 
     public function attendees()
     {
-        return $this->belongsToMany("App\Models\User", 'UserEvent')->where("UserEvent.present", '=', '1');
+        return $this->belongsToMany("App\Models\User", 'UserEvent')->where("UserEvent.present", '=', '1')->withPivot('present', 'late', 'user_choice', 'reason');
+    }
+
+    public function eventsInCity($city_id)
+    {
+        return app('db')->table("Event")->where("status", '1')->where("starts_on", '>=', $this->year_start_time)->where("city_id", $city_id)->get();
     }
 
     public function eventType()
@@ -48,9 +58,13 @@ final class Event extends Common
         return app('db')->table("Event_Type")->where("id", $this->event_type_id)->pluck('name')->first();
     }
 
+    public function filter($data) {
+        return $this->where("city_id", $data['city_id'])->get();
+    }
+
     public function search($data) 
     {
-        $search_fields = ['id', 'name', 'description', 'starts_on', 'place', 'city_id', 'event_type_id','vertical_id', 'created_by_user_id', 'status'];
+        $search_fields = ['id', 'name', 'description', 'starts_on', 'place', 'city_id', 'event_type_id', 'template_event_id', 'vertical_id', 'created_by_user_id', 'status'];
 
         $q = app('db')->table('Event');
         $q->select('Event.id', 'Event.name', 'Event.description', 'Event.starts_on', 'Event.place', 'Event.city_id', 'Event.event_type_id', 'Event.created_by_user_id', 
@@ -64,7 +78,7 @@ final class Event extends Common
                 $q->where("Event." . $field, 'LIKE', "%" . $data[$field] . "%");
             else $q->where("Event." . $field, $data[$field]);
         }
-        $q->where("Event.starts_on", '>', $this->year . '-05-01 00:00:00');
+        $q->where("Event.starts_on", '>=', $this->year_start_time);
 
         $q->join('Event_Type', 'Event.event_type_id', '=', 'Event_Type.id');
         $q->orderBy('Event.starts_on')->orderBy('Event.name');

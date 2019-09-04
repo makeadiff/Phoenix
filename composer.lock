@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f20eb3d03d61cc99f2a271725607fb5",
+    "content-hash": "19129024692f9b7b8c65029313d4623e",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -1249,16 +1249,16 @@
         },
         {
             "name": "nuwave/lighthouse",
-            "version": "v3.4.0",
+            "version": "v3.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nuwave/lighthouse.git",
-                "reference": "21c46e84568fc65cbbfb172bf754d8e64e832bd9"
+                "reference": "cb0627424cd7028ddd1c3bf09be22fb6e84b1af4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nuwave/lighthouse/zipball/21c46e84568fc65cbbfb172bf754d8e64e832bd9",
-                "reference": "21c46e84568fc65cbbfb172bf754d8e64e832bd9",
+                "url": "https://api.github.com/repos/nuwave/lighthouse/zipball/cb0627424cd7028ddd1c3bf09be22fb6e84b1af4",
+                "reference": "cb0627424cd7028ddd1c3bf09be22fb6e84b1af4",
                 "shasum": ""
             },
             "require": {
@@ -1274,13 +1274,20 @@
                 "webonyx/graphql-php": "^0.13"
             },
             "require-dev": {
+                "bensampo/laravel-enum": "^1.19",
+                "laravel/lumen-framework": "5.5.*|5.6.*|5.7.*|5.8.*",
                 "laravel/scout": "^4.0",
+                "mll-lab/graphql-php-scalars": "^2.1",
                 "mockery/mockery": "^1.0",
                 "orchestra/database": "3.5.*|3.6.*|3.7.*|3.8.x-dev",
                 "orchestra/testbench": "3.5.*|3.6.*|3.7.*|3.8.*",
+                "phpbench/phpbench": "@dev",
                 "pusher/pusher-php-server": "^3.2"
             },
             "suggest": {
+                "bensampo/laravel-enum": "Convenient enum definitions that can easily be registered in your Schema",
+                "laravel/scout": "Required for the @search directive",
+                "mll-lab/graphql-php-scalars": "Useful scalar types, required for @whereConstraints",
                 "mll-lab/laravel-graphql-playground": "GraphQL IDE for better development workflow - integrated with Laravel"
             },
             "type": "library",
@@ -1308,6 +1315,11 @@
                     "name": "Christopher Moore",
                     "email": "chris@nuwavecommerce.com",
                     "homepage": "https://www.nuwavecommerce.com"
+                },
+                {
+                    "name": "Benedikt Franke",
+                    "email": "benedikt@franke.tech",
+                    "homepage": "https://franke.tech"
                 }
             ],
             "description": "Lighthouse is a schema first GraphQL package for Laravel applications.",
@@ -1318,7 +1330,7 @@
                 "laravel",
                 "laravel-graphql"
             ],
-            "time": "2019-04-18T18:23:44+00:00"
+            "time": "2019-05-27T07:10:46+00:00"
         },
         {
             "name": "opis/closure",
@@ -3414,6 +3426,57 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "ajthinking/tinx",
+            "version": "v2.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/furey/tinx.git",
+                "reference": "d1d13799e740ad689620479ec010270a8da46d0c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/furey/tinx/zipball/d1d13799e740ad689620479ec010270a8da46d0c",
+                "reference": "d1d13799e740ad689620479ec010270a8da46d0c",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/container": "^5.2",
+                "laravel/tinker": "~1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.4|^7.0"
+            },
+            "type": "laravel",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Ajthinking\\Tinx\\TinxServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ajthinking\\Tinx\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anders Jürisoo",
+                    "email": "jurisoo@hotmail.com"
+                },
+                {
+                    "name": "James Furey",
+                    "homepage": "https://github.com/furey"
+                }
+            ],
+            "description": "Reload your Laravel Tinker session from inside Tinker, plus magic shortcuts for first(), find(), where(), and more!",
+            "time": "2019-03-22T07:43:50+00:00"
+        },
         {
             "name": "barryvdh/laravel-debugbar",
             "version": "v3.2.3",

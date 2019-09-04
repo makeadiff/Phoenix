@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\Group;
 use App\Models\Log;
 use App\Models\Common;
+use App\Models\Classes;
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -14,7 +15,6 @@ final class User extends Common
 	const UPDATED_AT = 'updated_on';
 	protected $table = 'User';
 	public $timestamps = true;
-	protected $hidden = ['pivot'];
 	protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
 	public $enable_logging = true; // Used to disable logging the basic auth authentications for API Calls
 
@@ -30,18 +30,68 @@ final class User extends Common
 		return $this->belongsTo(City::class);
 	}
 
+	public function classes($status = '')
+	{
+		$classes = $this->belongsToMany("App\Models\Classes", 'UserClass', 'user_id', 'class_id')->where('Class.class_on', '>=', $this->year_start_time);
+		if($status) $classes->where('Class.status', $status);
+		$classes->orderBy("Class.class_on");
+		return $classes;
+	}
+
+	/// Connects to all the batches the current user mentors.
+	public function batches($status = false)
+	{
+		$batches = $this->hasMany("App\Models\Batch", 'batch_head_id');
+		$batches->select("Batch.id", "Batch.class_time", "Batch.day", "Batch.batch_head_id");
+		$batches->join("Class", "Class.batch_id", '=', 'Batch.id');
+		$batches->where('Batch.year', '=', $this->year)->where("Class.class_on", '>', date('Y-m-d H:i:s'))->where("Batch.status", '=', '1');
+		if($status) $batches->where('Class.status', $status);
+		$batches->orderBy("Class.class_on");
+		return $batches;
+	}
+
+	public function donations()
+	{
+		$donations = $this->hasMany("App\Models\Donation", 'fundraiser_user_id');
+		$donations->where("added_on", '>=', $this->year_start_date);
+		$donations->orderBy("added_on", 'desc');
+		return $donations;
+	}
+
 	// public function data()
 	// {
 	// 	return $this->morphMany(Data::class, 'item', 'item_id');
 	// }
 
-	public function search($data)
+	public function search($data) {
+        $q = app('db')->table('User');
+        $results = $this->baseSearch($data, $q)->get();
+
+        // Add groups to each volunter that was returned.
+		for($i=0; $i<count($results); $i++) {
+			$results[$i]->groups = [];
+			if(!isset($data['user_type']) or $data['user_type'] == 'volunteer') {
+				$this_user = User::fetch($results[$i]->id);
+				if($this_user->groups) {
+					$results[$i]->groups = $this_user->groups;
+				}
+			}
+		}
+
+		return $results;
+    }
+
+	public function baseSearch($data, $q = false)
 	{
-		$q = app('db')->table($this->table);
+		if(!$q) $q = app('db')->table($this->table);
 
 		$q->select("User.id","User.name","User.email","User.phone","User.mad_email","User.credit","User.joined_on","User.left_on",
 					"User.user_type","User.address","User.sex", "User.status", "User.city_id", app('db')->raw("City.name AS city_name"));
 		$q->join("City", "City.id", '=', 'User.city_id');
+
+		// Aliases. 
+		if(isset($data['group_id']) and !isset($data['user_group'])) $data['user_group'] = $data['group_id'];
+		if(isset($data['group_type']) and !isset($data['user_group_type'])) $data['user_group_type'] = $data['group_type'];
 
 		if(!isset($data['status'])) $data['status'] = '1';
 		if($data['status'] !== false) $q->where('User.status', $data['status']); // Setting status as '0' gets you even the deleted users
@@ -80,18 +130,21 @@ final class User extends Common
 			$q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
 			$q->whereIn('UserGroup.group_id', $data['user_group']);
 			$q->where('UserGroup.year', $this->year);
+			$q->distinct();
 		}
 		if(!empty($data['user_group_type'])) {
 			$q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
 			$q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
 			$q->where('Group.type', $data['user_group_type']);
 			$q->where('UserGroup.year', $this->year);
+			$q->distinct();
 		}
 		if(!empty($data['vertical_id'])) {
 			$q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
 			$q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
 			$q->where('Group.vertical_id', $data['vertical_id']);
 			$q->where('UserGroup.year', $this->year);
+			$q->distinct();
 		}
 		if(!empty($data['center_id'])) {
 			$mentor_group_id = 8; // :HARDCODE:
@@ -130,25 +183,9 @@ final class User extends Common
 		$q->orderby('User.name');
 
 		// :TODO: Pagination
-
 		// dd($q->toSql(), $q->getBindings(), $data);
 
-		$results = $q->get();
-
-		// Add groups to each volunter that was returned.
-		for($i=0; $i<count($results); $i++) {
-			$results[$i]->groups = [];
-			if($data['user_type'] == 'volunteer') {
-				$this_user = User::fetch($results[$i]->id);
-				if($this_user->groups) {
-					$results[$i]->groups = $this_user->groups;
-				}
-			}
-		}
-
-		// dd($results);
-
-		return $results;
+		return $q;
 	}
 
 	public function inCity($city_id) {
@@ -320,7 +357,7 @@ final class User extends Common
 			if(!isset($data[$key])) continue;
 
 			if($key == 'phone') $data[$key] = $this->correctPhoneNumber($data[$key]);
-			if($key == 'password') $data[$key] = Hash::make($data[$key]);
+			if($key == 'password') $data['password_hash'] = Hash::make($data[$key]);
 
 			$this->item->$key = $data[$key];
 		}

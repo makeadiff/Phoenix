@@ -5,16 +5,33 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
 type Query {
-    users: [User!]! @paginate(type: "paginator" model: "App\\Models\\User")
-    user(id: ID @eq): User @find(model: "App\\Models\\User")
-    centers: [Center!]! @paginate(type: "paginator" model: "App\\Models\\Center")
-    center(id: ID @eq): Center @find(model: "App\\Models\\Center")
-    cities: [City!]! @all
-    city(id: ID @eq): City @find(model: "App\\Models\\City")
-    batch(id: ID @eq): Batch @find(model: "App\\Models\\Batch")
-    level(id: ID @eq): Level @find(model: "App\\Models\\Level")
-    events(city_id: ID @eq): Event @paginate(type: "paginator" model: "App\\Models\\Event")
-    event(id: ID @eq): Event @find(model: "App\\Models\\Event")
+    user(id: ID @eq): 	User 	@find(model: "App\\Models\\User")
+    center(id: ID @eq): Center 	@find(model: "App\\Models\\Center")
+    city(id: ID @eq): 	City 	@find(model: "App\\Models\\City")
+    student(id: ID @eq):Student @find(model: "App\\Models\\Student")
+    group(id: ID @eq):	Group 	@find(model: "App\\Models\\Group")
+    vertical(id: ID @eq):	Vertical 	@find(model: "App\\Models\\Vertical")
+    batch(id: ID @eq): 	Batch 	@find(model: "App\\Models\\Batch")
+    level(id: ID @eq): 	Level 	@find(model: "App\\Models\\Level")
+    event(id: ID @eq): 	Event 	@find(model: "App\\Models\\Event")
+    class(id: ID @eq): 	Class 	@find(model: "App\\Models\\Classes")
+    donation(id: ID @eq): 	Donation 	@find(model: "App\\Models\\Donation")
+    donor(id: ID @eq): 	Donor 	@find(model: "App\\Models\\Donor")
+
+    eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php - This is just a sample 
+    batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, direction: String, from_date: Date, limit: Int): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
+    classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, class_date: Date, direction: String, from_date: Date, limit: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php [ClassSearchResult]
+    userSearch(city_id: Int!, name: String, phone: String, email: String, mad_email: String, any_email: String, identifier: String, left_on: Date,
+    	vertical_id: Int, status: String, user_type: String, not_user_type: String, center_id: Int, group_id: Int, group_type: String): [User]
+    
+    donations(added_on: Date = "2019-05-01" @where(operator: ">="), amount: Int, status: String, type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): [Donation] @all(model: "App\\Models\\Donation")
+    events(name: String @eq, starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, event_type_id: Int @eq, vertical_id: Int @eq, status: String = "1" @eq): [Event!]! @all
+    users(name: String @where(operator: "like"), email: String @eq, phone: String @eq, city_id: Int @eq, status: String = "1" @eq, user_type: String = "volunteer" @eq): [User] @paginate(type: "paginator" model: "App\\Models\\User")
+    centers(city_id: Int @eq, status: String = "1" @eq ): [Center!]! @all
+    cities(type: String = "actual" @eq): [City!]! @all
+    groups(group_type: String = "normal" @eq, status: String = "1" @eq, type: String @eq, vertical_id: Int @eq): [Group!]! @all
+    verticals(status: String = "1" @eq): [Vertical!]! @all
+    projects(status: String = "1" @eq): [Project!]! @all
 }
 
 type User {
@@ -38,6 +55,22 @@ type User {
 	groups: [Group]
 	data: [Data]
 	city: City @belongsTo
+	classes: [Class] @hasMany(relation: "classes") # :TODO: - Ideally, this should take an argument - (status: String)
+	batches: [Batch] @hasMany
+	donations: [Donation] @hasMany
+	pivot: UserPivot
+}
+type UserPivot {
+	# UserClass data - teacher attendance
+	status: String
+	substitute_id: Int
+	zero_hour_attendance: Int
+
+	# UserEvent data - event attendance
+	present: Int
+	late: Int
+	user_choice: Int
+	reason: String
 }
 
 type Student {
@@ -49,6 +82,13 @@ type Student {
 	center_id: Int
 	sex: String
 	center: Center @belongsTo
+	pivot: StudentAttendance
+}
+
+type StudentAttendance {
+	present: String
+	participation: Int
+	check_for_understanding: Int
 }
 
 type Center {
@@ -75,28 +115,58 @@ type Group {
 	name: String!
 	vertical_id: Int
 	vertical: Vertical
+	users: [User]
 }
 
 type Vertical {
 	id: ID!
 	name: String!
+	groups: [Group]
+	# users: [User]
 }
 
 type Batch {
 	id: ID!
-	name: String @method(name: "name")
+	batch_name: String @method(name: "name")
 	day: String
 	class_time: String
-	center: Center
+	project_id: Int
+	center: Center @belongsTo
 	levels: [Level]
+	teachers: [User]
+	classes: [Class]
 }
 
 type Level {
 	id: ID!
+	level_name: String @method(name: "name")
 	name: String!
 	grade: String!
-	center: Center
+	project_id: Int
+	center: Center @belongsTo
 	batches: [Batch]
+	students: [Student]
+}
+
+type Class {
+	id: ID!
+	class_on: DateTime
+	class_type: String
+	class_satisfaction: Int 
+	cancel_option: String
+	cancel_reason: String
+	status: String
+	level: Level @belongsTo
+	batch: Batch @belongsTo
+	students: [Student]
+	teachers: [User]
+	substitutes: [User]
+}
+
+type Project {
+	id: ID!
+	name: String
+	vertical_id: Int
 }
 
 type Event {
@@ -106,9 +176,11 @@ type Event {
 	place: String
 	type: String
 	city_id: ID
+	starts_on: DateTime
 	event_type_id: ID
 	status: String
 	event_type: String @method(name: "eventType")
+	city: City
 	invitees: [User]
 	attendees: [User]
 }
@@ -116,6 +188,50 @@ type Event {
 type Event_Type {
 	id: ID!
 	name: String!
+}
+
+type Donation {
+	id: ID!
+	type: String
+	status: String
+	amount: Float
+	reference_file: String
+	nach_start_on: DateTime
+	nach_end_on: DateTime
+	cheque_no: String
+	added_on: DateTime
+	comment: String
+
+	with_user_id: Int
+	fundraiser_user_id: Int 
+	donor_id: Int
+
+	fundraiser: User
+	donor: Donor
+	deposit: [Deposit]
+}
+
+type Donor {
+	id: ID!
+	name: String
+	phone: String
+	email: String
+	address: String
+	donor_finance_id: Int
+	added_on: DateTime
+}
+
+type Deposit {
+	id: ID!
+	added_on: DateTime
+	reviewed_on: DateTime
+	amount: Float
+	status: String
+	collected_from_user_id: Int 
+	given_to_user_id: Int
+
+	collected_from: User 
+	given_to: User	
 }
 
 type Data {

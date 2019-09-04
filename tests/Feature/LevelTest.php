@@ -50,11 +50,11 @@ class LevelTest extends TestCase
     {
         if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $this->load('/levels/6130/batches');
+        $this->load('/levels/7355/batches');
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
-        $search_for = 'Sunday 09:00 AM';
+        $search_for = 'Saturday 04:00 PM';
         $found = false;
         foreach ($data->data->batches as $key => $info) {
             if($info->name == $search_for) {

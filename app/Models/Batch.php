@@ -16,31 +16,22 @@ final class Batch extends Common
     }
     public function levels()
     {
-        return $this->belongsToMany("App\Models\Level", 'BatchLevel')->where('BatchLevel.year', '=', $this->year);
+        return $this->belongsToMany("App\Models\Level", 'BatchLevel'); // ->where('BatchLevel.year', '=', $this->year);
+    }
+    public function teachers()
+    {
+        return $this->belongsToMany("App\Models\User", 'UserBatch');
     }
 
-    public function search($data) {
-        $search_fields = ['id', 'day', 'class_time', 'center_id', 'project_id', 'year', 'status'];
+    public function classes()
+    {
+        return $this->hasMany("App\Models\Classes");
+    }
+
+    public function search($data) 
+    {
         $q = app('db')->table('Batch');
-        $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status', 'Batch.project_id');
-        if(!isset($data['status'])) $data['status'] = '1';
-        if(!isset($data['year'])) $data['year'] = $this->year;
-
-        foreach ($search_fields as $field) {
-            if(empty($data[$field])) continue;
-
-            else $q->where("Batch." . $field, $data[$field]);
-        }
-
-        if(!empty($data['level_id'])) {
-            $q->join('BatchLevel', 'Batch.id', '=', 'BatchLevel.batch_id');
-            $q->join("Level", 'Level.id', '=', 'BatchLevel.level_id');
-            $q->where("Level.year", $this->year)->where('Level.status', '1');
-            $q->where('BatchLevel.level_id', $data['level_id']);
-        }
-
-        $q->orderBy('day')->orderBy('class_time');
-        $results = $q->get();
+        $results = $this->baseSearch($data, $q)->get();
 
         foreach ($results as $key => $row) {
             $results[$key]->name = $this->getName($row->day, $row->class_time);
@@ -48,6 +39,66 @@ final class Batch extends Common
         }
 
         return $results;
+    }
+
+    public function baseSearch($data, $q)
+    {
+        $search_fields = ['id', 'day', 'center_id', 'level_id', 'batch_id', 'project_id', 'year', 'teacher_id', 'mentor_id', 'direction', 'from_date', 'limit'];
+        $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status', 'Batch.project_id')->distinct();
+        if(!isset($data['status'])) $data['status'] = '1';
+        if(!isset($data['year'])) $data['year'] = $this->year;
+
+        if(isset($data['teacher_id'])) {
+            $q->join("UserBatch", 'Batch.id', '=', 'UserBatch.batch_id');
+        }
+
+        if(isset($data['level_id'])) {
+            $q->join('BatchLevel', 'Batch.id', '=', 'BatchLevel.batch_id');
+            $q->join("Level", 'Level.id', '=', 'BatchLevel.level_id');
+            $q->where("Level.year", $this->year)->where('Level.status', '1');
+        }
+
+        foreach ($search_fields as $field) {
+            if(empty($data[$field])) {
+                continue;
+            } elseif($field == 'batch_id') {
+                $q->where("Batch.id", $data[$field]);
+
+            } elseif($field == 'teacher_id') {
+                $q->where("UserBatch.user_id", $data[$field]);
+
+            } elseif ($field == 'mentor_id') {
+                $q->where("Batch.batch_head_id", $data[$field]);
+
+            } else if($field == 'level_id') {
+                $q->where('BatchLevel.level_id', $data['level_id']);
+
+            } elseif($field == 'direction' and isset($data['from_date'])) {
+                $q->join("Class", 'Class.batch_id', '=', 'Batch.id');
+                $q->orderBy("Class.class_on", "ASC");
+
+                if($data['direction'] == '+') {
+                    $q->where("Class.class_on", '>', date('Y-m-d', strtotime($search['from_date'])) . ' 23:59:59');
+                } elseif($data['direction'] == '-') {
+                    $q->where("Class.class_on", '<', date('Y-m-d', strtotime($search['from_date'])) . ' 00:00:00');
+                }
+
+            } elseif($field == 'limit') {
+                $q->limit($data['limit']);
+
+            } elseif($field == 'from_date') {
+                continue; // Ignore - only used with 'direction'
+
+            } else {
+                $q->where("Batch." . $field, $data[$field]);
+            }
+        }
+
+        $q->orderBy('day')->orderBy('class_time');
+
+        // dd($results);
+
+        return $q;
     }
 
     public function fetch($id, $is_active = true) {
@@ -82,7 +133,7 @@ final class Batch extends Common
 
     public function getName($day, $time) {
         $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        return $days[$day] . ' ' . date('h:i A', strtotime('2018-01-21 ' . $time));
+        return $days[$day] . ' ' . date('h:i A', strtotime('2018-01-21 ' . $time)); // Random date. No relavence to the result.
     }
 
     public function name() {

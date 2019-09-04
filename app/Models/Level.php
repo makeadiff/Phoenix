@@ -14,6 +14,14 @@ final class Level extends Common
     {
         return $this->belongsTo('App\Models\Center', 'center_id');
     }
+    public function students()
+    {
+        return $this->belongsToMany('App\Models\Student', 'StudentLevel', 'level_id', 'student_id');
+    }
+    public function batches()
+    {
+        return $this->belongsToMany('App\Models\Batch', 'BatchLevel', 'level_id', 'batch_id')->where('BatchLevel.year', $this->year);
+    }
 
     public function search($data) {
         $search_fields = ['id', 'name', 'grade', 'center_id', 'project_id', 'year', 'status'];
@@ -59,6 +67,12 @@ final class Level extends Common
         $this->item->name = $this->item->grade . ' ' . $this->item->name;
         $this->item->center = $this->item->center()->first()->name;
         return $this->item;
+    }
+
+    public function name() {
+        if(!$this->id) return false;
+
+        return $this->grade . ' ' . $this->name;
     }
 
     public function inCenter($center_id) {

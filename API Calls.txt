@@ -1,0 +1,132 @@
+Done
+----
+/api/check_user_exists - GET /users
+/api/user_add - POST /users
+/api/user_details - GET /users/{user_id}
+/api/user_login - POST /users/login
+/api/user_convert_to_teacher - POST /users/{user_id}/groups/{group_id}
+/api/user_get_teachers - GET /cites/{city_id}/teachers
+/api/get_students
+/api/get_centers_in_city
+/api/get_batches_and_levels_in_center
+
+
+Low Priority
+------------
+/api/teacher_report_aggregate
+/api/_getStudentData($report_type, $report_name, $reduce_function) {
+/api/teacher_report_student_attendance
+/api/teacher_report_check_for_understanding
+/api/teacher_report_child_participation
+/api/mentor_report_aggregate
+/api/_getBatchData($report_name, $reduce_function) {
+/api/mentor_report_zero_hour_attendance
+/api/mentor_class_satisfaction
+/api/mentor_child_participation
+/api/mentor_child_check_for_understanding
+/api/center_child_participation
+/api/center_child_cfu
+/api/center_volunteer_subsitutions
+
+ - Handled by Survey Engine, ideally
+/api/active_is_event
+/api/is_questions
+/api/is_existing_responses
+/api/is_save
+
+
+High Priority
+-------------
+
+/api/user_class_info
+	GET /users/{user_id}/class_info | unupdated_classes
+	{users(id: {user_id}) { id name classes }} - Done
+/api/user_batch_info
+	GET /users/{user_id}/batch_info
+	{users(id: {user_id} { id name batches})} - Done
+/api/open_class($class_id = 0, $class_info = false, $user_id=0) {
+	GET /classes/{class_id}
+	{classes(id: ) {}} - Done
+
+/api/class_get_last
+	GET /users/{user_id}/last_class
+	{classSearch(teacher_id: $teacher_id, status: "projected")} - Done
+/api/get_class_on
+	GET /classes
+	{classSearch(teacher_id: $teacher_id, class_date: "$date")} - Done
+/api/class_get_last_batch
+	GET /users/{user_id}/last_batch
+	{batchSearch(teacher_id: $teacher_id, project_id: $project_id, mentor_id: $mentor_id)} - Done
+/api/open_batch($batch_id='', $from_date='', $project_id='') {
+	GET /batches/{batch_id} - Done
+	{batch(id: $batch_id) {}} - Done
+/api/class_get_batch($batch_id = 0, $class_on = false) {
+	GET /batches/{batch_id} - Done
+/api/all_levels_in_batch($batch_id = 0) {
+	/batches/{batch_id}/levels - Done
+	{batch(id: $batch_id) { id name levels {id level_name}}} - Done
+
+/api/browse_class($batch_id = 0, $level_id = 0, $from_date = '', $direction = '+') {
+	GET /classes
+	{classSearch(teacher_id: $teacher_id, class_date: "$date")} - Done
+	
+
+/api/class_save_student_participation
+	POST /classes/{class_id}/student_attendance | students
+/api/class_save
+	POST /classes
+/api/save_extra_class($batch_id = 0, $class_on = '', $levels = array()) {
+	POST /classes
+
+
+
+REST to GraphQL Conversion
+--------------------------
+	/cities 
+	/cities/{city_id}
+	/cities/{city_id}/users
+/cities/{city_id}/teachers 	- userSearch(city_id:26, user_group: 9)
+/cities/{city_id}/fellows - userSearch(city_id:26, user_group_type: "fellow")
+	/cities/{city_id}/centers
+	/cities/{city_id}/students - city > center > students
+	/groups
+	/groups/{group_id}
+	/verticals
+	/projects
+	/centers
+	/centers/{center_id}
+	/centers/{center_id}/teachers
+	/centers/{center_id}/students
+	/centers/{center_id}/batches
+	/centers/{center_id}/levels
+	/batches/{batch_id}
+	/batches/{batch_id}/teachers
+	/batches/{batch_id}/levels
+	/levels/{level_id}
+	/levels/{level_id}/students
+	/levels/{level_id}/batches
+	/classes
+/classes/{class_id}/data/{data_name}
+/users/{user_id}/data/{data_name}
+/students/{student_id}/data/{data_name}
+/centers/{center_id}/data/{data_name}
+	/users
+	/users/{user_id}
+/users/{user_id}/credit
+	/users/{user_id}/groups
+/students
+	/students/{student_id}
+	/donations
+	/donations/{donation_id}
+	/users/{user_id}/donations
+	/deposits
+	/events
+	/events/{event_id}
+	/events/{event_id}/users
+	/events/{event_id}/attended
+/events/{event_id}/users/{user_id}
+/notifications
+/custom/care_collective_count
+/events/{event_id}/send_invites
+/donations/{donation_id}/send_receipt
+

@@ -38,7 +38,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            'throttle:60,1',
+            'throttle:250,1', // Throttle - 250 attempts then locked out for 1 minute
             'bindings'
         ],
     ];

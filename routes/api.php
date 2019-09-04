@@ -4,6 +4,7 @@ use App\Models\Group;
 use App\Models\Vertical;
 use App\Models\City;
 use App\Models\Center;
+use App\Models\Classes;
 use App\Models\Student;
 use App\Models\Batch;
 use App\Models\Level;
@@ -57,11 +58,15 @@ Route::get('/cities/{city_id}/users', function ($city_id) {
     return JSend::success("List of users returned", ['users' => $users]);
 });
 
-Route::get('/cities/{city_id}/teachers', function ($city_id) {
+Route::get('/cities/{city_id}/teachers', function ($city_id, Request $request) {
 	$city = (new City)->fetch($city_id);
 	if(!$city) return JSend::fail("Can't find any city with ID $city_id");
+	$teacher_user_group_id = config('constants.group.ed.teacher.id');
 
-	$users = (new User)->search(array('city_id' => $city_id, 'user_group' => 9));
+	$project_id = $request->input('project_id');
+	if($project_id == config('constants.project.fp.id')) $teacher_user_group_id = config('constants.group.fp.teacher.id');
+
+	$users = (new User)->search(array('city_id' => $city_id, 'user_group' => $teacher_user_group_id));
 
     return JSend::success("List of teachers returned", ['users' => $users]);
 });
@@ -232,6 +237,33 @@ Route::get('/levels/{level_id}/batches', function($level_id) {
 	return JSend::success("Levels in batch $level_id", ['batches' => $batches]);
 });
 
+///////////////////////////////////////////////// Classes /////////////////////////////////////
+Route::get('/classes', function(Request $request) {
+	$search_fields = ['id','teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'direction', 'project_id'];
+	$search = [];
+	foreach ($search_fields as $key) {
+		if(!$request->input($key)) continue;
+
+		$search[$key] = $request->input($key);
+
+		// if($key == 'group_id') {
+		// 	$search['user_group'] = [$request->input('group_id')];
+		// } elseif ($key == 'group_in') {
+		// 	$search['user_group'] = explode(",", $request->input('group_in'));
+
+		// } elseif ($key == 'not_user_type') {
+		// 	$search['not_user_type'] = explode(",", $request->input('not_user_type'));
+		// } else {
+		// 	$search[$key] = $request->input($key);
+		// }
+	}
+	if(!isset($search['project_id'])) $search['project_id'] = 1;
+
+	$classes = new Classes;
+	$data = $classes->search($search);
+
+	return JSend::success("Search Results", ['classes' => $data]);
+});
 
 ///////////////////////////////////////////////// Data ////////////////////////////////////////
 if(!function_exists('getData')) { // It was causing some wierd issues in 'php artisan config:cache' command.
@@ -542,6 +574,19 @@ Route::get('/donations/{donation_id}', function($donation_id) {
 	return JSend::success("Donation Details for $donation_id", ['donation' => $data]);
 });
 
+// DO NOT Document this call yet. Can be used to 'fake' the receipt. Ideally this should only be run for donatations that are approved by finance team.
+Route::get('/donations/{donation_id}/receipt.pdf', function($donation_id) {
+	$donation = new Donation;
+	$data = $donation->fetch($donation_id);
+
+	if(!$data) return JSend::fail("Can't find any donations with the ID $donation_id");
+
+	$receipt_path = $donation->generateReceipt($donation_id);
+	header("Content-Type: application/pdf");
+	// header("Content-disposition: attachment; filename=receipt.pdf");
+	readfile($receipt_path);
+});
+
 Route::delete('/donations/{donation_id}', function($donation_id) {
 	if(!$donation_id) return JSend::fail("Invalid donaiton ID - $donation_id");
 
@@ -763,7 +808,14 @@ Route::get('/notifications', function(Request $request) {
 
 
 ////////////////////////////////// Placeholders ///////////////////////////////
-Route::get('/custom/video_analytics', function(Request $request) {
+Route::post('/custom/video_analytics', function(Request $request) {
+	// $file = $request->file("image");
+	// $status = $file->store('uploads');
+  
+	$data = $request->all();
+
+	$status = $data['image']->store('uploads');
+    dd($data['image'], $status);
 
 	return JSend::success("Data catured");
 });
@@ -783,12 +835,12 @@ Route::get('/events/{event_id}/send_invites', function($event_id) {
 
 	return JSend::success("Sent event invites.", ['invited_user_count' => count($invited_users)]);
 });
-// Route::get('/donations/{donation_id}/send_receipt', function($donation_id) {
-// 	$donation = new Donation;
-// 	$donation->sendReceipt('send', $donation_id); // If you want this to work, change this function to public in the Donation model
+Route::get('/donations/{donation_id}/send_receipt', function($donation_id) {
+	$donation = new Donation;
+	$donation->sendReceipt('send', $donation_id); // If you want this to work, change this function to public in the Donation model
 
-// 	return JSend::success("Sent the receipt.");
-// });
+	return JSend::success("Sent the receipt.");
+});
 
 require base_path('routes/api-surveys.php');
 });

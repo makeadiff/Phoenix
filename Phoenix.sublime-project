@@ -17,7 +17,7 @@
 			"path": "routes"
 		},
 		{
-			"path": "graphql"
+			"path": "graphql-schema"
 		},
 		{
 			"path": "config"
