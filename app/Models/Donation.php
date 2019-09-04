@@ -7,6 +7,7 @@ use App\Models\Donor;
 use App\Libraries\SMS;
 use App\Libraries\Email;
 use Illuminate\Support\Facades\Storage;
+use \Datetime;
 
 final class Donation extends Common
 {
@@ -15,7 +16,8 @@ final class Donation extends Common
     protected $table = 'Donut_Donation';
     public $start_date = '2018-05-01 00:00:00';
     public $timestamps = true;
-    protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'reference_file', 'cheque_no', 'added_on', 'updated_on', 'nach_start_on', 'nach_end_on', 'updated_by_user_id', 'comment'];
+    protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'reference_file', 'cheque_no', 'added_on', 'updated_on', 
+                            'nach_start_on', 'nach_end_on', 'donation_repeat_count', 'updated_by_user_id', 'comment'];
     protected $donation_statuses = ['collected', 'deposited', 'receipted'];
     protected $national_account_user_id = 163416; // National Finance User ID.
 
@@ -43,7 +45,7 @@ final class Donation extends Common
     public function search($data)
     {
         $q = app('db')->table('Donut_Donation');
-        $donations = $this->baseSearch($data, $q);
+        $donations = $this->baseSearch($data, $q)->get();
 
         // Find only deposited or undeposited donations - also used to include deposit info.
         if(isset($data['deposited']) or (isset($data['include_deposit_info']) and $data['include_deposit_info'])) {
@@ -105,7 +107,7 @@ final class Donation extends Common
         if(!empty($data['type'])) $q->where('Donut_Donation.type', $data['type']);
         if(!empty($data['type_in'])) $q->whereIn('Donut_Donation.type', $data['type_in']);
         if(!empty($data['from'])) $q->where('Donut_Donation.added_on', '>', date('Y-m-d 00:00:00', strtotime($data['from'])));
-        else $q->where('Donut_Donation.added_on', '>', $this->start_date);
+        elseif(empty($data['id'])) $q->where('Donut_Donation.added_on', '>', $this->start_date); // If ID is given, should find donation anywhere in history - not just this year.
         if(!empty($data['to'])) $q->where('Donut_Donation.added_on', '<', date('Y-m-d 00:00:00', strtotime($data['to'])));
         if(!empty($data['fundraiser_user_id'])) $q->where('Donut_Donation.fundraiser_user_id', $data['fundraiser_user_id']);
         if(!empty($data['updated_by_user_id'])) $q->where('Donut_Donation.updated_by_user_id', $data['updated_by_user_id']);
@@ -114,7 +116,7 @@ final class Donation extends Common
         if(!empty($data['donor_phone'])) $q->where('Donut_Donor.phone', $data['donor_phone']);
         if(!empty($data['donor_name'])) $q->where('Donut_Donor.name', 'LIKE', '%' . $data['donor_name'] . '%');
 
-        if(isset($data['deposited']) or isset($data['include_deposit_info'])) { //If either of these are set get only cash/cheque donations - and NACH forms.
+        if(isset($data['deposited']) or (isset($data['include_deposit_info']) and $data['include_deposit_info'])) { //If either of these are set get only cash/cheque donations - and NACH forms.
             $q->whereIn("Donut_Donation.type", ['cash', 'cheque', 'nach']);
         }
 
@@ -138,7 +140,7 @@ final class Donation extends Common
         }
         $q->orderBy('Donut_Donation.added_on','desc');
 
-        dd($q->toSql(), $q->getBindings());
+        // dd($q->toSql(), $q->getBindings(), $data);
 
         return $q;
     }
@@ -162,7 +164,7 @@ final class Donation extends Common
         $data = $data[0];
 
         $this->id = $donation_id;
-        $this->item = $data;
+        $this->item = $this->find($donation_id);
 
         return $data;
     }
@@ -193,6 +195,15 @@ final class Donation extends Common
         if($data['type'] == 'nach' and !is_string($data['reference_file']) and $data['reference_file']->isValid()) {
             $reference_file = $data['reference_file']->store('uploads');
         }
+
+        $nach_start_on = (!empty($data['nach_start_on']) ? $data['nach_start_on'] : null);
+        $nach_end_on = (!empty($data['nach_end_on']) ? $data['nach_end_on'] : null);
+        $nach_start_datetime = new DateTime($nach_start_on);
+        $nach_end_datetime = new DateTime($nach_end_on);
+        $diff = $nach_end_datetime->diff($nach_start_datetime);
+        $diff_months = $diff->m;
+        if(!$diff_months) $diff_months = 1;
+        $donation_repeat_count = (!empty($data['donation_repeat_count']) and $data['donation_repeat_count']) ? $data['donation_repeat_count'] : $diff_months;
         
         $donation = Donation::create([
             'donor_id'          => $donor_id,
@@ -204,8 +215,9 @@ final class Donation extends Common
             'added_on'          => $data['added_on'],
             'updated_on'        => $data['added_on'],
             'reference_file'    => $reference_file,
-            'nach_start_on'     => (!empty($data['nach_start_on']) ? $data['nach_start_on'] : null),
-            'nach_end_on'       => (!empty($data['nach_end_on']) ? $data['nach_end_on'] : null),
+            'nach_start_on'     => $nach_start_on,
+            'nach_end_on'       => $nach_end_on,
+            'donation_repeat_count' => $donation_repeat_count,
             'comment'           => (!empty($data['comment']) ? $data['comment'] : ''),
             'cheque_no'         => (!empty($data['cheque_no']) ? $data['cheque_no'] : ''),
             'status'            => 'collected',
@@ -279,7 +291,7 @@ final class Donation extends Common
         return $this->item;
     }
 
-    private function sendReceipt($send_email = 'send', $donation_id = false) {
+    public function sendReceipt($send_email = 'send', $donation_id = false) {
         $this->chain($donation_id);
         if(!$donation_id) $donation_id = $this->id;
         
@@ -288,15 +300,55 @@ final class Donation extends Common
 
         $base_path = app()->basePath();
         $base_url = url('/');
-        $donor = $this->item->donor();
+        $donor = $this->item->donor()->first();
 
+        $email_html = file_get_contents(base_path('resources/email_templates/donation_receipt.html'));
         $mail = new Email;
         $mail->from     = "noreply <noreply@makeadiff.in>";
         $mail->to       = $donor->email;
         $mail->subject  = "Donation Receipt";
 
-        $email_html = file_get_contents(base_path('resources/email_templates/donation_receipt.html'));
+        $replaces = [
+            '%ASSETS_PATH%' => base_path('public/assets'),
+            '%BASE_URL%'    => $base_url,
+            '%CREATED_AT%'  => date('dS M, Y h:i A', strtotime($this->item->added_on)),
+            '%DATE%'        => date('d/m/Y'),
+            '%AMOUNT%'      => $this->item->amount,
+            '%AMOUNT_TEXT%' => $this->convertNumber($this->item->amount),
+            '%DONATION_ID%' => $donation_id,
+            '%DONOR_NAME%'  => $donor->name
+        ];
 
+        $mail->html = str_replace(array_keys($replaces), array_values($replaces), $email_html);
+
+        $filename = $this->generateReceipt($donation_id);
+
+        // :TODO: This does'nt work properly. Implement this - https://laravel.com/docs/5.8/mail#inline-attachments properly.
+        $mail->images = [
+            'mad-letterhead-left.png'   => $base_path . '/public/assets/mad-letterhead-left.png',
+            'mad-letterhead-logo.png'   => $base_path . '/public/assets/mad-letterhead-logo.png',
+            'mad-letterhead-right.png'  => $base_path . '/public/assets/mad-letterhead-right.png',
+        ];
+        $mail->attachments = [$filename];
+
+        if($send_email == 'send') $mail->send();
+        else $mail->queue();
+
+        return true;
+    }
+
+    public function generateReceipt($donation_id = false)
+    {
+        $this->chain($donation_id);
+        if(!$donation_id) $donation_id = $this->id;
+
+        // :TODO: Generate only if status == 'receipted'. Don't want people to use this to fake the receipts.
+        // Ideally this should only be run for donatations that are approved by finance team.
+
+        $base_path = app()->basePath();
+        $base_url = url('/');
+        $donor = $this->item->donor()->first();
+        
         // Generate PDF Receipt, attach it.
         // https://github.com/barryvdh/laravel-dompdf
         $pdf = app('dompdf.wrapper');
@@ -313,24 +365,13 @@ final class Donation extends Common
             '%DONOR_NAME%'  => $donor->name
         ];
 
-        $mail->html = str_replace(array_keys($replaces), array_values($replaces), $email_html);
         $pdf_html = str_replace(array_keys($replaces), array_values($replaces), $pdf_html);
 
         $pdf->loadHTML($pdf_html);
         $filename = 'Donation_Receipt_' . $donation_id . '.pdf';
         Storage::put($filename, $pdf->output());
 
-        $mail->images = [
-            'mad-letterhead-left.png'   => $base_path . '/public/assets/mad-letterhead-left.png',
-            'mad-letterhead-logo.png'   => $base_path . '/public/assets/mad-letterhead-logo.png',
-            'mad-letterhead-right.png'  => $base_path . '/public/assets/mad-letterhead-right.png',
-        ];
-        $mail->attachments = [base_path('storage/app/' . $filename)];
-
-        if($send_email == 'send') $mail->send();
-        else $mail->queue();
-
-        return true;
+        return base_path('storage/app/' . $filename);
     }
 
     /// Used to validate the donation

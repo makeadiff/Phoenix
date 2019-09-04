@@ -18,13 +18,13 @@ final class Center extends Common
         return $this->belongsTo('App\Models\City', 'city_id');
     }
 
-    public function batches()
+    public function batches($project_id = 1)
     {
-        return $this->hasMany('App\Models\Batch')->where('Batch.status','1')->where('Batch.year', $this->year);
+        return $this->hasMany('App\Models\Batch')->where('Batch.status','1')->where('Batch.year', $this->year)->where('Batch.project_id', $project_id)->orderBy("Batch.day");
     }
-    public function levels()
+    public function levels($project_id = 1)
     {
-        return $this->hasMany('App\Models\Level')->where('Level.status','1')->where('Level.year',$this->year);
+        return $this->hasMany('App\Models\Level')->where('Level.status','1')->where('Level.year',$this->year)->where('Level.project_id', $project_id)->orderBy("Level.grade")->orderBy("Level.name");
     }
     public function students()
     {

@@ -130,6 +130,7 @@ type Batch {
 	batch_name: String @method(name: "name")
 	day: String
 	class_time: String
+	project_id: Int
 	center: Center @belongsTo
 	levels: [Level]
 	teachers: [User]
@@ -141,6 +142,7 @@ type Level {
 	level_name: String @method(name: "name")
 	name: String!
 	grade: String!
+	project_id: Int
 	center: Center @belongsTo
 	batches: [Batch]
 	students: [Student]
