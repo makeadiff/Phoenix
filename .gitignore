@@ -11,7 +11,6 @@ npm-debug.log
 yarn-error.log
 .editorconfig
 .gitattributes
-DB.txt
 Phoenix.sublime-workspace
 api/swagger/batman-swagger.yaml
 storage/tinx/
