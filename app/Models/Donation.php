@@ -323,6 +323,7 @@ final class Donation extends Common
 
         $filename = $this->generateReceipt($donation_id);
 
+        // :TODO: This does'nt work properly. Implement this - https://laravel.com/docs/5.8/mail#inline-attachments properly.
         $mail->images = [
             'mad-letterhead-left.png'   => $base_path . '/public/assets/mad-letterhead-left.png',
             'mad-letterhead-logo.png'   => $base_path . '/public/assets/mad-letterhead-logo.png',
