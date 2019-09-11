@@ -130,3 +130,114 @@ REST to GraphQL Conversion
 /events/{event_id}/send_invites
 /donations/{donation_id}/send_receipt
 
+
+
+
+MADApp/api/user_login
+{
+
+    "user_id": "1",
+    "key": "am3omo32hom4lnv32vO",
+    "name": "Binny VA",
+    "email": "binnyva@gmail.com",
+    "city_id": "26",
+    "credit": "-6.5",
+    "mentor": "1",
+    "connections": {
+
+        "teacher_at": [
+            {
+                "batch_id": "2652",
+                "level_id": "7794",
+                "level": "8 A",
+                "day": "0",
+                "class_time": "16:00:00",
+                "class_id": "418035",
+                "class_on": "2019-09-01 16:00:00",
+                "center_id": "184",
+                "center_name": "Test Center",
+                "batch_name": "Sunday, 4 PM"
+            }
+            -------- GraphQL -----------
+            {
+				classSearch(teacher_id:1, status: "projected") {
+			    id
+			    class_on
+			    status
+			    batch {
+			      id
+			      batch_name
+			      day
+			      center {
+			        id
+			        name
+			      }
+			    }
+			    level {
+			      id
+			      level_name
+			    }
+			  }
+			}
+			---------------------------
+        ],
+        "mentor_at": [
+            {
+                "batch_id": "2652",
+                "day": "0",
+                "class_time": "16:00:00",
+                "class_on": "2019-09-01 16:00:00",
+                "center_id": "184",
+                "center_name": "Test Center",
+                "batch_name": "Sunday, 4 PM"
+            },
+            ------- GraphQL -----------
+            {
+			  batchSearch(mentor_id: 1, class_status: "projected") {
+			    id
+			    batch_name
+			  }
+			}
+            ---------------------------
+            {
+                "batch_id": "2935",
+                "day": "3",
+                "class_time": "15:00:00",
+                "class_on": "2019-09-04 15:00:00",
+                "center_id": "245",
+                "center_name": "TR Shelter",
+                "batch_name": "Wednesday, 3 PM"
+            },
+            {
+                "batch_id": "2934",
+                "day": "0",
+                "class_time": "16:00:00",
+                "class_on": "2019-09-01 16:00:00",
+                "center_id": "245",
+                "center_name": "TR Shelter",
+                "batch_name": "Sunday, 4 PM"
+            }
+        ]
+    },
+    "groups": {
+        "1": "Leadership Team",
+        "8": "ES Mentors",
+        "9": "ES Volunteer",
+        "24": "Executive Team",
+        "339": "PR Volunteer",
+        "348": "Transition Readiness Wingman",
+        "373": "Tech",
+        "376": "Foundational Skills Volunteer",
+        "382": "Fellowship Evaluator",
+        "388": " Developer"
+    },
+    "positions": {
+        "0": "volunteer",
+        "6": "national",
+        "7": "executive"
+    },
+    "project_id": 5,
+    "status": "1",
+    "success": "1"
+
+}
