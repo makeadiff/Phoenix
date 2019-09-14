@@ -70,7 +70,10 @@ final class Classes extends Common
                 $q->whereDate("Class.class_on", '>=', $search[$field]);
 
             } elseif($field == 'class_status') {
-                $q->whereDate("Class.status", $search[$field]);
+                $q->where("Class.status", $search[$field]);
+
+            } elseif($field == 'status') {
+                $q->where("UserClass.status", $search[$field]);
 
             } elseif($field == 'teacher_id') {
                 $q->where("UserClass.user_id", $search[$field]);

@@ -196,6 +196,11 @@ MADApp/api/user_login
 			  batchSearch(mentor_id: 1, class_status: "projected") {
 			    id
 			    batch_name
+			    day
+			    center {
+			      id
+			      name
+			    }
 			  }
 			}
             ---------------------------
