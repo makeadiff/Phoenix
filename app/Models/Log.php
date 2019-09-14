@@ -37,7 +37,7 @@ final class Log extends Common
 		if(isset($data['log'])) $log_data = $data['log'];
 		elseif(isset($data['data'])) $log_data = json_encode($data['data']);
 
-		$log = Log::insert([
+		$log_id = Log::insertGetId([
 			'name'      => $data['name'],
 			'log'       => $log_data,
 			'user_id'   => isset($data['user_id']) ? $data['user_id'] : 0,
@@ -45,7 +45,7 @@ final class Log extends Common
 			'added_on'	=> date('Y-m-d H:i:s')
 		]);
 
-		return $log;
+		return $log_id;
 	}
 
 }

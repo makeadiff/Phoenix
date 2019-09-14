@@ -34,6 +34,10 @@ type Query {
     projects(status: String = "1" @eq): [Project!]! @all
 }
 
+type Mutation {
+	createLog(name: String, log: String, user_id: ID, added_on: DateTime): String
+}
+
 type User {
 	id: ID!
 	name: String!
@@ -232,6 +236,13 @@ type Deposit {
 
 	collected_from: User 
 	given_to: User	
+}
+
+type Log {
+	name: String
+	log: String
+	added_on: DateTime
+	user_id: Int
 }
 
 type Data {
