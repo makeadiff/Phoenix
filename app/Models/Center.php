@@ -8,9 +8,9 @@ final class Center extends Common
     protected $table = 'Center';
     public $timestamps = false;
 
-	public function users()
+    public function users()
     {
-        return $this->hasMany('App\Models\User')->where('User.status','=','1')->where('User.user_type','=','volunteer');
+        return $this->hasMany('App\Models\User')->where('User.status', '=', '1')->where('User.user_type', '=', 'volunteer');
     }
 
     public function city()
@@ -20,15 +20,15 @@ final class Center extends Common
 
     public function batches($project_id = 1)
     {
-        return $this->hasMany('App\Models\Batch')->where('Batch.status','1')->where('Batch.year', $this->year)->where('Batch.project_id', $project_id)->orderBy("Batch.day");
+        return $this->hasMany('App\Models\Batch')->where('Batch.status', '1')->where('Batch.year', $this->year)->where('Batch.project_id', $project_id)->orderBy("Batch.day");
     }
     public function levels($project_id = 1)
     {
-        return $this->hasMany('App\Models\Level')->where('Level.status','1')->where('Level.year',$this->year)->where('Level.project_id', $project_id)->orderBy("Level.grade")->orderBy("Level.name");
+        return $this->hasMany('App\Models\Level')->where('Level.status', '1')->where('Level.year', $this->year)->where('Level.project_id', $project_id)->orderBy("Level.grade")->orderBy("Level.name");
     }
     public function students()
     {
-        return $this->hasMany('App\Models\Student')->where('Student.status','1')->orderBy("Student.name");
+        return $this->hasMany('App\Models\Student')->where('Student.status', '1')->orderBy("Student.name");
     }
 
     public static function getAll()
@@ -44,10 +44,15 @@ final class Center extends Common
         $q->where('status', '1');
 
         foreach ($search_fields as $field) {
-            if(empty($data[$field])) continue;
+            if (empty($data[$field])) {
+                continue;
+            }
 
-            if($field === 'name') $q->where($field, 'like', '%' . $data[$field] . '%');
-            else $q->where($field, $data[$field]);
+            if ($field === 'name') {
+                $q->where($field, 'like', '%' . $data[$field] . '%');
+            } else {
+                $q->where($field, $data[$field]);
+            }
         }
         $q->orderBy('name');
         $results = $q->get();
@@ -59,6 +64,4 @@ final class Center extends Common
     {
         return Center::search(['city_id' => $city_id]);
     }
-
 }
-

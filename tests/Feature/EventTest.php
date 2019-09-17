@@ -8,7 +8,7 @@ use Tests\TestCase;
  */
 class EventTest extends TestCase
 {
-    /// Path: GET    /events 
+    /// Path: GET    /events
     public function testGetEventsList()
     {
         // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
@@ -20,7 +20,7 @@ class EventTest extends TestCase
         $search_for = 'test sid and mo'; // This will get deleted at some point. Plan for it.
         $found = false;
         foreach ($data->data->events as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -54,7 +54,7 @@ class EventTest extends TestCase
         $search_for = 'Abhijith Gopakumar';
         $found = false;
         foreach ($data->data->users as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -75,7 +75,7 @@ class EventTest extends TestCase
         $search_for = 'Adarsh Jeyes';
         $found = false;
         foreach ($data->data->users as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -96,7 +96,7 @@ class EventTest extends TestCase
         $search_for = 'Devyani Mahadevan';
         $found = false;
         foreach ($data->data->users as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -117,6 +117,4 @@ class EventTest extends TestCase
         $this->assertEquals($data->data->user->name, 'Shubhrav Phate');
         $this->response->assertStatus(200);
     }
-
-
 }

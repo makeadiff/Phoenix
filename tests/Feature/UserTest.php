@@ -14,7 +14,9 @@ class UserTest extends TestCase
     /// Path: GET    /users/{user_id}
     public function testGetUserSingle()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/users/1');
 
@@ -26,7 +28,9 @@ class UserTest extends TestCase
     /// Path: GET    /users/{user_id}   404
     public function testGetUserSingleNotFound()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/users/29');
 
@@ -36,9 +40,11 @@ class UserTest extends TestCase
     }
 
     /// Path: GET  /users
-    public function testGetUsers() 
+    public function testGetUsers()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/users?name=Binny');
 
@@ -67,8 +73,12 @@ class UserTest extends TestCase
     /// Path: POST /users
     public function testPostUsers()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
-        if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
 
         $email = 'test.test_dxd3@gmail.com';
         // This will create a new user.
@@ -95,8 +105,10 @@ class UserTest extends TestCase
     /// Path: POST /users
     public function testPostUsersExisting()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
-        // Should attempt create a duplicate 
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        // Should attempt create a duplicate
         $user = array(
             'name'  => 'Binny V A',
             'phone' => '9746068565',
@@ -115,10 +127,14 @@ class UserTest extends TestCase
     }
 
     /// Path: DELETE    /users/{user_id}
-    public function testDeleteUser() 
+    public function testDeleteUser()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
-        if(!$this->write_to_db) $this->markTestSkipped("Skipping as this test writes to the Database.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
 
         $user_id = 567;
 
@@ -128,9 +144,11 @@ class UserTest extends TestCase
     }
 
     /// Path: GET  /users/login
-    public function testGetUserLogin() 
+    public function testGetUserLogin()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/users/login?email=sulu.simulation@makeadiff.in&password=pass');
         $this->assertEquals($this->response_data->status, 'success');
@@ -140,7 +158,9 @@ class UserTest extends TestCase
     /// Path: GET   /users/{user_id}/groups
     public function testGetUserGroupList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/users/1/groups');
 
@@ -148,7 +168,7 @@ class UserTest extends TestCase
         $search_for = 'ES Volunteer';
         $found = false;
         foreach ($this->response_data->data->groups as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -160,7 +180,9 @@ class UserTest extends TestCase
     /// Path: GET   /users/{user_id}/credit
     public function testGetUsersCreditSingle()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/users/1/credit');
 
@@ -168,6 +190,4 @@ class UserTest extends TestCase
         $this->assertTrue(is_numeric($this->response_data->data->credit));
         $this->response->assertStatus(200);
     }
-
-
 }

@@ -23,20 +23,27 @@ final class Level extends Common
         return $this->belongsToMany('App\Models\Batch', 'BatchLevel', 'level_id', 'batch_id')->where('BatchLevel.year', $this->year);
     }
 
-    public function search($data) {
+    public function search($data)
+    {
         $search_fields = ['id', 'name', 'grade', 'center_id', 'project_id', 'year', 'status'];
         $q = app('db')->table('Level');
         $q->select('Level.id', 'name', 'grade', 'Level.center_id', 'Level.status');
-        if(!isset($data['status'])) $data['status'] = '1';
-        if(!isset($data['year'])) $data['year'] = $this->year;
-
-        foreach ($search_fields as $field) {
-            if(empty($data[$field])) continue;
-
-            else $q->where("Level." . $field, $data[$field]);
+        if (!isset($data['status'])) {
+            $data['status'] = '1';
+        }
+        if (!isset($data['year'])) {
+            $data['year'] = $this->year;
         }
 
-        if(!empty($data['batch_id'])) {
+        foreach ($search_fields as $field) {
+            if (empty($data[$field])) {
+                continue;
+            } else {
+                $q->where("Level." . $field, $data[$field]);
+            }
+        }
+
+        if (!empty($data['batch_id'])) {
             $q->join('BatchLevel', 'Level.id', '=', 'BatchLevel.level_id');
             $q->join("Batch", 'Batch.id', '=', 'BatchLevel.batch_id');
             $q->where("Batch.year", $this->year)->where('Batch.status', '1');
@@ -55,27 +62,35 @@ final class Level extends Common
         return $results;
     }
 
-    public function fetch($id, $is_active = true) {
+    public function fetch($id, $is_active = true)
+    {
         $this->id = $this->item_id = $id;
 
-        if($is_active)
+        if ($is_active) {
             $this->item = $this->where('status', '1')->where('year', $this->year)->find($id);
-        else 
+        } else {
             $this->item = $this->find($id);
-        if(!$this->item) return false;
+        }
+        if (!$this->item) {
+            return false;
+        }
         
         $this->item->name = $this->item->grade . ' ' . $this->item->name;
         $this->item->center = $this->item->center()->first()->name;
         return $this->item;
     }
 
-    public function name() {
-        if(!$this->id) return false;
+    public function name()
+    {
+        if (!$this->id) {
+            return false;
+        }
 
         return $this->grade . ' ' . $this->name;
     }
 
-    public function inCenter($center_id) {
+    public function inCenter($center_id)
+    {
         return $this->search(['center_id' => $center_id]);
     }
 

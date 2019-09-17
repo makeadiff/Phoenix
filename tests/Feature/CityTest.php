@@ -14,7 +14,9 @@ class CityTest extends TestCase
     /// Path: GET /cities/{city_id}
     public function testGetCitySingle()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/cities/1');
         $data = json_decode($this->response->getContent());
@@ -27,7 +29,9 @@ class CityTest extends TestCase
     /// Path: GET /cities/{city_id}     404
     public function testGetCitySingleNotFound()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/cities/200');
         $data = json_decode($this->response->getContent());
@@ -38,9 +42,11 @@ class CityTest extends TestCase
     }
 
     /// Path: GET /cities
-    public function testGetCities() 
+    public function testGetCities()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/cities');
         $data = json_decode($this->response->getContent());
@@ -53,7 +59,9 @@ class CityTest extends TestCase
     /// Path: GET /cities/{city_id}/users
     public function testGetCityUsersList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/cities/28/users');
         $data = json_decode($this->response->getContent());
@@ -66,7 +74,9 @@ class CityTest extends TestCase
     /// Path: GET /cities/{city_id}/users
     public function testGetCityUserList404()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/cities/200/users');
         $data = json_decode($this->response->getContent());
@@ -77,7 +87,9 @@ class CityTest extends TestCase
     /// Path: GET    /cities/{city_id}/teachers
     public function testGetCitiesTeachersList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/cities/28/teachers');
         $data = json_decode($this->response->getContent());
@@ -86,7 +98,7 @@ class CityTest extends TestCase
         $search_for = 'Riker';
         $found = false;
         foreach ($data->data->users as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -98,7 +110,9 @@ class CityTest extends TestCase
     /// Path: GET    /cities/{city_id}/fellows
     public function testGetCitiesFellowsList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/cities/28/fellows');
         $data = json_decode($this->response->getContent());
@@ -107,7 +121,7 @@ class CityTest extends TestCase
         $search_for = 'humancapital.test@makeadiff.in';
         $found = false;
         foreach ($data->data->users as $key => $info) {
-            if($info->email == $search_for) {
+            if ($info->email == $search_for) {
                 $found = true;
                 break;
             }
@@ -119,7 +133,9 @@ class CityTest extends TestCase
     /// Path: GET    /cities/{city_id}/centers
     public function testGetCitiesCentersList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/cities/1/centers');
         $data = json_decode($this->response->getContent());
@@ -128,7 +144,7 @@ class CityTest extends TestCase
         $search_for = 'Angels';
         $found = false;
         foreach ($data->data->centers as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -140,7 +156,9 @@ class CityTest extends TestCase
     /// Path: GET    /cities/{city_id}/students
     public function testGetCitiesStudentsList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/cities/28/students');
         $data = json_decode($this->response->getContent());
@@ -149,7 +167,7 @@ class CityTest extends TestCase
         $search_for = 'Leia';
         $found = false;
         foreach ($data->data->students as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -157,6 +175,4 @@ class CityTest extends TestCase
         $this->assertTrue($found);
         $this->response->assertStatus(200);
     }
-
-
 }

@@ -5,47 +5,57 @@ use App\Models\Common;
 
 final class Log extends Common
 {
-	const CREATED_AT = 'added_on';
-	const UPDATED_AT = false;
-	protected $table = 'Log';
-	public $timestamps = true;
-	protected $fillable = ['name', 'log', 'user_id','level'];
+    const CREATED_AT = 'added_on';
+    const UPDATED_AT = false;
+    protected $table = 'Log';
+    public $timestamps = true;
+    protected $fillable = ['name', 'log', 'user_id','level'];
 
-	public function search($data)
-	{
-		$q = app('db')->table('Log');
+    public function search($data)
+    {
+        $q = app('db')->table('Log');
 
-		$q->select('Log.id', 'Log.user_id', 'Log.added_on', 'Log.name', 'Log.log', 'User.city_id','User.name','User.phone','User.email','User.mad_email');
-		$q->join("User", "User.id", '=', 'Log.user_id');
-		
-		if(!empty($data['user_id'])) $q->where('Log.user_id', $data['user_id']);
-		if(!empty($data['name'])) $q->where('User.name', $data['name']);
-		if(!empty($data['log'])) $q->where('User.log', 'LIKE', '%' . $data['log'] . '%');
-		if(!empty($data['level'])) $q->where('User.level', $data['level']);
+        $q->select('Log.id', 'Log.user_id', 'Log.added_on', 'Log.name', 'Log.log', 'User.city_id', 'User.name', 'User.phone', 'User.email', 'User.mad_email');
+        $q->join("User", "User.id", '=', 'Log.user_id');
+        
+        if (!empty($data['user_id'])) {
+            $q->where('Log.user_id', $data['user_id']);
+        }
+        if (!empty($data['name'])) {
+            $q->where('User.name', $data['name']);
+        }
+        if (!empty($data['log'])) {
+            $q->where('User.log', 'LIKE', '%' . $data['log'] . '%');
+        }
+        if (!empty($data['level'])) {
+            $q->where('User.level', $data['level']);
+        }
 
-		$q->orderBy('Log.added_on','desc');
+        $q->orderBy('Log.added_on', 'desc');
 
-		// dd($q->toSql(), $q->getBindings());
-		$log = $q->get();
-		
-		return $log;
-	}
+        // dd($q->toSql(), $q->getBindings());
+        $log = $q->get();
+        
+        return $log;
+    }
 
-	public static function add($data)
-	{
-		$log_data = '';
-		if(isset($data['log'])) $log_data = $data['log'];
-		elseif(isset($data['data'])) $log_data = json_encode($data['data']);
+    public static function add($data)
+    {
+        $log_data = '';
+        if (isset($data['log'])) {
+            $log_data = $data['log'];
+        } elseif (isset($data['data'])) {
+            $log_data = json_encode($data['data']);
+        }
 
-		$log_id = Log::insertGetId([
-			'name'      => $data['name'],
-			'log'       => $log_data,
-			'user_id'   => isset($data['user_id']) ? $data['user_id'] : 0,
-			'level'     => isset($data['level']) ? $data['level'] : 'info',
-			'added_on'	=> date('Y-m-d H:i:s')
-		]);
+        $log = Log::insert([
+            'name'      => $data['name'],
+            'log'       => $log_data,
+            'user_id'   => isset($data['user_id']) ? $data['user_id'] : 0,
+            'level'     => isset($data['level']) ? $data['level'] : 'info',
+            'added_on'	=> date('Y-m-d H:i:s')
+        ]);
 
-		return $log_id;
-	}
-
+        return $log;
+    }
 }

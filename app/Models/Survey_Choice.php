@@ -4,7 +4,7 @@ namespace App\Models;
 use App\Models\Common;
 use Validator;
 
-final class Survey_Choice extends Common  
+final class Survey_Choice extends Common
 {
     protected $table = 'Survey_Choice';
     public $timestamps = false;
@@ -15,18 +15,28 @@ final class Survey_Choice extends Common
         return $this->belongsTo('App\Models\Survey_Question', 'survey_question_id');
     }
 
-    public static function search($data) 
+    public static function search($data)
     {
         $q = app('db')->table('Survey_Choice');
 
         $q->select("id", "name", "description", "value", 'sort_order');
 
-        if(!isset($data['status'])) $data['status'] = '1';
-        if($data['status'] !== false) $q->where('status', $data['status']); // Setting status as '0' gets you even the deleted question
+        if (!isset($data['status'])) {
+            $data['status'] = '1';
+        }
+        if ($data['status'] !== false) {
+            $q->where('status', $data['status']);
+        } // Setting status as '0' gets you even the deleted question
         
-        if(isset($data['survey_question_id']) and $data['survey_question_id'] != 0) $q->where('survey_question_id', $data['survey_question_id']);
-        if(!empty($data['id'])) $q->where('id', $data['id']);
-        if(!empty($data['choice_id'])) $q->where('id', $data['choice_id']);
+        if (isset($data['survey_question_id']) and $data['survey_question_id'] != 0) {
+            $q->where('survey_question_id', $data['survey_question_id']);
+        }
+        if (!empty($data['id'])) {
+            $q->where('id', $data['id']);
+        }
+        if (!empty($data['choice_id'])) {
+            $q->where('id', $data['choice_id']);
+        }
         
         $q->orderby('sort_order');
         // dd($q->toSql(), $q->getBindings());
@@ -45,7 +55,9 @@ final class Survey_Choice extends Common
         $choices = [];
         $sort_order = 0;
         foreach ($data as $fields) {
-            if(empty($fields['survey_question_id']) and $survey_question_id) $fields['survey_question_id'] = $survey_question_id;
+            if (empty($fields['survey_question_id']) and $survey_question_id) {
+                $fields['survey_question_id'] = $survey_question_id;
+            }
 
             // Validation...
             $validator = Validator::make($fields, [
@@ -63,6 +75,4 @@ final class Survey_Choice extends Common
 
         return $choices;
     }
-
 }
-

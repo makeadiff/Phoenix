@@ -20,8 +20,11 @@ class userSearch
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
         $city_model = new City;
-        if(isset($args['city_id'])) $city_id = $args['city_id'];
-        else return false;
+        if (isset($args['city_id'])) {
+            $city_id = $args['city_id'];
+        } else {
+            return false;
+        }
         $users = $city_model->fetch($city_id)->users($args)->get();
 
         return $users;

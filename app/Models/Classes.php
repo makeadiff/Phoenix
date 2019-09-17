@@ -25,7 +25,7 @@ final class Classes extends Common
     }
     public function students()
     {
-        return $this->belongsToMany('App\Models\Student','StudentClass','class_id', 'student_id')->withPivot('present', 'participation', 'check_for_understanding');
+        return $this->belongsToMany('App\Models\Student', 'StudentClass', 'class_id', 'student_id')->withPivot('present', 'participation', 'check_for_understanding');
     }
     public function teachers()
     {
@@ -36,7 +36,8 @@ final class Classes extends Common
         return $this->belongsToMany('App\Models\User', 'UserClass', 'class_id', 'substitute_id')->withPivot('substitute_id', 'user_id', 'zero_hour_attendance', 'status');
     }
 
-    public function search($data) {
+    public function search($data)
+    {
         $q = app('db')->table('Class');
         return $this->baseSearch($data, $q);
     }
@@ -44,12 +45,27 @@ final class Classes extends Common
     /// This is a seperate function because even Project->classes() uses almost the exact same thing.
     public function baseSearch($search, $q = false)
     {
-        if(!$q) $q = app('db')->table('Class');
+        if (!$q) {
+            $q = app('db')->table('Class');
+        }
         
         // teacher_id: Int, status: String, batch_id: Int, level_id: Int, project_id: Int, class_date: Date, direction: String)
         $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'center_id', 'project_id', 'status', 'class_date', 'class_date_to','class_date_from', 'class_status', 'direction', 'from_date', 'limit'];
-        $q->select('Class.id', 'Class.batch_id', 'Class.level_id', 'Class.class_on', 'Class.class_type', 'Class.class_satisfaction', 'Class.cancel_option', 'Class.cancel_reason',
-                        'Class.status AS class_status', 'UserClass.id AS user_class_id', 'UserClass.substitute_id', 'UserClass.zero_hour_attendance', 'UserClass.status AS status'); // ->distinct('Class.id');
+        $q->select(
+            'Class.id',
+            'Class.batch_id',
+            'Class.level_id',
+            'Class.class_on',
+            'Class.class_type',
+            'Class.class_satisfaction',
+            'Class.cancel_option',
+            'Class.cancel_reason',
+            'Class.status AS class_status',
+            'UserClass.id AS user_class_id',
+            'UserClass.substitute_id',
+            'UserClass.zero_hour_attendance',
+            'UserClass.status AS status'
+        ); // ->distinct('Class.id');
         $q->join("UserClass", 'UserClass.class_id', '=', 'Class.id');
         $q->join("Batch", 'Batch.id', '=', 'Class.batch_id');
         $q->join("Level", 'Level.id', '=', 'Class.level_id');
@@ -60,13 +76,13 @@ final class Classes extends Common
         $q->where("Level.status", '=', '1');
 
         foreach ($search_fields as $field) {
-            if(empty($search[$field])) {
+            if (empty($search[$field])) {
                 continue;
-            } elseif($field == 'class_date') {
+            } elseif ($field == 'class_date') {
                 $q->whereDate("Class.class_on", $search[$field]);
-            } elseif($field == 'class_date_to') {
+            } elseif ($field == 'class_date_to') {
                 $q->whereDate("Class.class_on", '<=', $search[$field]);
-            } elseif($field == 'class_date_from') {
+            } elseif ($field == 'class_date_from') {
                 $q->whereDate("Class.class_on", '>=', $search[$field]);
 
             } elseif($field == 'class_status') {
@@ -77,22 +93,20 @@ final class Classes extends Common
 
             } elseif($field == 'teacher_id') {
                 $q->where("UserClass.user_id", $search[$field]);
-
-            } elseif($field == 'center_id') {
-                $q->where("Batch.center_id", $search[$field]);
-
-            } elseif($field == 'substitute_id') {
-                $q->where("UserClass.substitute_id", $search[$field]);
                 
-            } elseif($field == 'limit') {
+            } elseif ($field == 'center_id') {
+                $q->where("Batch.center_id", $search[$field]);
+            } elseif ($field == 'substitute_id') {
+                $q->where("UserClass.substitute_id", $search[$field]);
+            } elseif ($field == 'limit') {
                 // Limit by one day - This will only show the classes of the given batch for the next one day - weather its a + or - direction.
-                if($search['limit'] == 'day' and isset($search['batch_id'])) {
+                if ($search['limit'] == 'day' and isset($search['batch_id'])) {
                     $next_class_day_query = app('db')->table('Class')->select('class_on');
-                    if(isset($search['direction']) and isset($search['from_date'])) {
-                        if($search['direction'] == '+') {
+                    if (isset($search['direction']) and isset($search['from_date'])) {
+                        if ($search['direction'] == '+') {
                             $next_class_day_query->where("class_on", '>', date('Y-m-d', strtotime($search['from_date'])) . ' 23:59:59');
                             $next_class_day_query->orderBy("class_on", "ASC");
-                        } elseif($search['direction'] == '-') {
+                        } elseif ($search['direction'] == '-') {
                             $next_class_day_query->where("class_on", '<', date('Y-m-d', strtotime($search['from_date'])) . ' 00:00:00');
                             $next_class_day_query->orderBy("class_on", "DESC");
                         }
@@ -101,25 +115,22 @@ final class Classes extends Common
                     $next_class_day_query->limit(1);
                     $next_class_day = $next_class_day_query->value('class_on');
 
-                    if($next_class_day) {
+                    if ($next_class_day) {
                         $q->where("Class.class_on", $next_class_day);
                     }
 
-                // Limit by a number.
+                    // Limit by a number.
                 } else {
                     $q->limit($search['limit']);
                 }
-
-            } elseif($field == 'direction' and isset($search['from_date'])) {
-                if($search['direction'] == '+') {
+            } elseif ($field == 'direction' and isset($search['from_date'])) {
+                if ($search['direction'] == '+') {
                     $q->where("Class.class_on", '>', date('Y-m-d', strtotime($search['from_date'])) . ' 23:59:59');
-                } elseif($search['direction'] == '-') {
+                } elseif ($search['direction'] == '-') {
                     $q->where("Class.class_on", '<', date('Y-m-d', strtotime($search['from_date'])) . ' 00:00:00');
                 }
-
-            } elseif($field == 'from_date') {
+            } elseif ($field == 'from_date') {
                 continue; // Ignore - only used with 'direction'
-
             } else {
                 $q->where("Class." . $field, $search[$field]);
             }
@@ -158,7 +169,7 @@ final class Classes extends Common
     //     $this->id = $id;
     //     if($is_active)
     //         $this->item = $this->where('status', '1')->where('year', $this->year)->find($id);
-    //     else 
+    //     else
     //         $this->item = $this->find($id);
     //     $this->item->name = $this->getName($this->item->day, $this->item->class_time);
     //     $this->item->center = $this->item->center()->first()->name;
