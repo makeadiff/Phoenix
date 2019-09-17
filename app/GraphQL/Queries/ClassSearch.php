@@ -27,7 +27,9 @@ class classSearch
         $project_model = new Project;
 
         $project_id = 1;
-        if(isset($args['project_id'])) $project_id = $args['project_id'];
+        if (isset($args['project_id'])) {
+            $project_id = $args['project_id'];
+        }
         $classes = $project_model->find($project_id)->classes($args)->get();
 
         return $classes;

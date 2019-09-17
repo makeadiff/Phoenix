@@ -20,7 +20,7 @@ class EventsInCity
     {
         // $events = (new Event)->eventsInCity($args);
         // return $events;
-        // 
+        //
         $events = new Event;
         return $events->filter($args);
     }

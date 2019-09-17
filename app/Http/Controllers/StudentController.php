@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use JSend;
 
 class StudentController extends Controller
-{   
+{
     private $validation_messages = [
             'city_id.exists'    => "Can't find any city with that ID"
         ];
@@ -35,7 +35,7 @@ class StudentController extends Controller
         $student = new Student;
         $exists = $student->fetch($student_id);
 
-        if(!$exists) {
+        if (!$exists) {
             return response(JSend::fail("Can't find any student with the given ID"), 404);
         }
 

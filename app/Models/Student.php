@@ -17,7 +17,7 @@ final class Student extends Common
 
     public function level($project_id = 1)
     {
-        $levels = $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')->where('Level.status','1')->where('Level.year',$this->year)->where("Level.project_id", $project_id);
+        $levels = $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')->where('Level.status', '1')->where('Level.year', $this->year)->where("Level.project_id", $project_id);
         $levels->select('Level.id', 'Level.name', 'Level.grade', 'Level.center_id', 'Level.project_id', app('db')->raw("CONCAT(Level.grade, ' ', Level.name) AS level_name"));
         $levels->orderBy("grade")->orderBy("name");
         return $levels;
@@ -27,22 +27,47 @@ final class Student extends Common
     {
         $q = app('db')->table($this->table);
 
-        $q->select("Student.id","Student.name","Student.added_on","Student.sex", "Student.status", "Student.center_id", "Student.birthday", "Student.description",
-                        app('db')->raw("Center.name AS center_name"));
+        $q->select(
+            "Student.id",
+            "Student.name",
+            "Student.added_on",
+            "Student.sex",
+            "Student.status",
+            "Student.center_id",
+            "Student.birthday",
+            "Student.description",
+            app('db')->raw("Center.name AS center_name")
+        );
         $q->join("Center", "Center.id", '=', 'Student.center_id');
 
-        if(!isset($data['status'])) $data['status'] = 1;
-        if($data['status'] !== false) $q->where('Student.status', $data['status']); // Setting status as '0' gets you even the deleted students
+        if (!isset($data['status'])) {
+            $data['status'] = 1;
+        }
+        if ($data['status'] !== false) {
+            $q->where('Student.status', $data['status']);
+        } // Setting status as '0' gets you even the deleted students
         
-        if(isset($data['center_id']) and $data['center_id'] != 0) $q->where('Student.center_id', $data['center_id']);
+        if (isset($data['center_id']) and $data['center_id'] != 0) {
+            $q->where('Student.center_id', $data['center_id']);
+        }
         
-        if(!empty($data['id'])) $q->where('Student.id', $data['id']);
-        if(!empty($data['student_id'])) $q->where('Student.id', $data['student_id']);
-        if(!empty($data['city_id'])) $q->where('Center.city_id', $data['city_id']);
-        if(!empty($data['name'])) $q->where('Student.name', 'like', '%' . $data['name'] . '%');
-        if(!empty($data['sex'])) $q->where('Student.sex', $data['sex']);
+        if (!empty($data['id'])) {
+            $q->where('Student.id', $data['id']);
+        }
+        if (!empty($data['student_id'])) {
+            $q->where('Student.id', $data['student_id']);
+        }
+        if (!empty($data['city_id'])) {
+            $q->where('Center.city_id', $data['city_id']);
+        }
+        if (!empty($data['name'])) {
+            $q->where('Student.name', 'like', '%' . $data['name'] . '%');
+        }
+        if (!empty($data['sex'])) {
+            $q->where('Student.sex', $data['sex']);
+        }
 
-        if(!empty($data['level_id'])) {
+        if (!empty($data['level_id'])) {
             $q->join('StudentLevel', 'Student.id', '=', 'StudentLevel.student_id');
             $q->where('StudentLevel.level_id', $data['level_id']);
         }
@@ -52,9 +77,12 @@ final class Student extends Common
         return $results;
     }
 
-    public function fetch($student_id) {
-        $data = Student::where('status','1')->find($student_id);
-        if(!$data) return false;
+    public function fetch($student_id)
+    {
+        $data = Student::where('status', '1')->find($student_id);
+        if (!$data) {
+            return false;
+        }
 
         $this->id = $student_id;
         $this->student = $data;
@@ -64,7 +92,8 @@ final class Student extends Common
         return $data;
     }
 
-    public function inCenter($center_id) {
+    public function inCenter($center_id)
+    {
         return $this->search(['center_id' => $center_id]);
     }
 

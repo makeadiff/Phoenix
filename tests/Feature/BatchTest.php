@@ -14,7 +14,9 @@ class BatchTest extends TestCase
     /// Path: GET    /batches/{batch_id}
     public function testGetBatchesSingle()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/batches/1971');
         $data = json_decode($this->response->getContent());
@@ -27,7 +29,9 @@ class BatchTest extends TestCase
     /// Path: GET    /batches/{batch_id}/teachers
     public function testGetBatchesTeachersList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/batches/1973/teachers');
         $data = json_decode($this->response->getContent());
@@ -36,7 +40,7 @@ class BatchTest extends TestCase
         $search_for = 'Data';
         $found = false;
         foreach ($data->data->teachers as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -48,7 +52,9 @@ class BatchTest extends TestCase
     /// Path: GET    /batches/{batch_id}/levels
     public function testGetBatchesLevelsList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/batches/2608/levels');
         $data = json_decode($this->response->getContent());
@@ -57,7 +63,7 @@ class BatchTest extends TestCase
         $search_for = '7 A';
         $found = false;
         foreach ($data->data->levels as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }

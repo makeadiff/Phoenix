@@ -14,7 +14,9 @@ class GroupTest extends TestCase
     /// Path: GET    /groups
     public function testGetGroupsList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/groups');
         $data = json_decode($this->response->getContent());
@@ -23,7 +25,7 @@ class GroupTest extends TestCase
         $search_for = 'ES Mentors';
         $found = false;
         foreach ($data->data->groups as $key => $info) {
-            if($info->name == $search_for and $info->id == 8) {
+            if ($info->name == $search_for and $info->id == 8) {
                 $found = true;
                 break;
             }
@@ -35,7 +37,9 @@ class GroupTest extends TestCase
     /// Path: GET    /groups
     public function testGetGroupsSearchList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/groups?vertical_id=8');
         $data = json_decode($this->response->getContent());
@@ -44,7 +48,7 @@ class GroupTest extends TestCase
         $search_for = 'Human Capital Fellow';
         $found = false;
         foreach ($data->data->groups as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -57,7 +61,9 @@ class GroupTest extends TestCase
     /// Path: GET    /groups/{group_id}
     public function testGetGroupsSingle()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/groups/9');
         $data = json_decode($this->response->getContent());
@@ -66,5 +72,4 @@ class GroupTest extends TestCase
         $this->assertEquals($data->data->groups->name, 'ES Volunteer');
         $this->response->assertStatus(200);
     }
-
 }
