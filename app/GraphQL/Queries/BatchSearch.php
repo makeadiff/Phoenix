@@ -23,7 +23,9 @@ class batchSearch
         $project_model = new Project;
 
         $project_id = 1;
-        if(isset($args['project_id'])) $project_id = $args['project_id'];
+        if (isset($args['project_id'])) {
+            $project_id = $args['project_id'];
+        }
         $batches = $project_model->find($project_id)->batches($args)->get();
 
         return $batches;

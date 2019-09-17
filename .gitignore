@@ -14,3 +14,4 @@ yarn-error.log
 Phoenix.sublime-workspace
 api/swagger/batman-swagger.yaml
 storage/tinx/
+.php_cs.cache

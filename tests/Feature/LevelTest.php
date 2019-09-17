@@ -14,7 +14,9 @@ class LevelTest extends TestCase
     /// Path: GET    /levels/{level_id}
     public function testGetLevelsSingle()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/levels/4852');
         $data = json_decode($this->response->getContent());
@@ -27,7 +29,9 @@ class LevelTest extends TestCase
     /// Path: GET    /levels/{level_id}/students
     public function testGetLevelsStudentsList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/levels/4852/students');
         $data = json_decode($this->response->getContent());
@@ -36,7 +40,7 @@ class LevelTest extends TestCase
         $search_for = 'Jar Jar';
         $found = false;
         foreach ($data->data->students as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -48,7 +52,9 @@ class LevelTest extends TestCase
     /// Path: GET    /levels/{level_id}/batches
     public function testGetLevelsBatchesList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/levels/7355/batches');
         $data = json_decode($this->response->getContent());
@@ -57,7 +63,7 @@ class LevelTest extends TestCase
         $search_for = 'Saturday 04:00 PM';
         $found = false;
         foreach ($data->data->batches as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -65,6 +71,4 @@ class LevelTest extends TestCase
         $this->assertTrue($found);
         $this->response->assertStatus(200);
     }
-
-
 }

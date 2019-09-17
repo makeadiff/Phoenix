@@ -5,12 +5,12 @@ use App\Models\Common;
 use App\Models\Classes;
 use App\Models\Batch;
 
-final class Project extends Common  
+final class Project extends Common
 {
     protected $table = 'Project';
     public $timestamps = false;
 
-	public function classes($search)
+    public function classes($search)
     {
         $q = $this->hasMany('App\Models\Classes', 'project_id');
         $classes = (new Classes)->baseSearch($search, $q);
@@ -24,7 +24,8 @@ final class Project extends Common
         return $batches;
     }
     
-    public function fetch($id) {
+    public function fetch($id)
+    {
         $this->id = $id;
         $this->item = $this->find($id);
 
@@ -36,4 +37,3 @@ final class Project extends Common
         return Project::select('id', 'name')->where('status', '1')->get();
     }
 }
-

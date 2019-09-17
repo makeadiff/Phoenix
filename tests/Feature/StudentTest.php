@@ -14,7 +14,9 @@ class StudentTest extends TestCase
     /// Path: GET    /students
     public function testGetStudentsList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/students?center_id=220');
         $data = json_decode($this->response->getContent());
@@ -23,7 +25,7 @@ class StudentTest extends TestCase
         $search_for = 'Yoda';
         $found = false;
         foreach ($data->data->students as $key => $info) {
-            if($info->name == $search_for) {
+            if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
@@ -35,7 +37,9 @@ class StudentTest extends TestCase
     /// Path: GET    /students/{student_id}
     public function testGetStudentsSingle()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/students/21932');
         $data = json_decode($this->response->getContent());

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use JSend;
 
 class EventController extends Controller
-{   
+{
     private $validation_messages = [
             'city_id.exists'            => "Can't find any city with that ID",
             'created_by_user_id.exists' => "Can't find any user with the given ID",
@@ -40,7 +40,7 @@ class EventController extends Controller
         $event = new Event;
         $exists = $event->fetch($event_id);
 
-        if(!$exists) {
+        if (!$exists) {
             return response(JSend::fail("Can't find any Event with the given ID"), 404);
         }
 

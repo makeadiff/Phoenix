@@ -5,10 +5,10 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-	use CreatesApplication;
+    use CreatesApplication;
     
     protected $baseUrl = 'http://localhost/Experiments/Php/Laravel-latest/';
-	protected $only_priority_tests = false;
+    protected $only_priority_tests = false;
     protected $write_to_db = true;
     protected $url_prefix = '/v1';
     protected $response;
@@ -18,13 +18,12 @@ abstract class TestCase extends BaseTestCase
             "PHP_AUTH_PW"        => "pass"
     ];
 
-    public function load($url, $method = 'GET', $form_data = []) {
+    public function load($url, $method = 'GET', $form_data = [])
+    {
         $this->withoutMiddleware();
-    	$this->response = $this->call($method, $this->url_prefix . $url, $form_data, [], [], $this->call_headers);
+        $this->response = $this->call($method, $this->url_prefix . $url, $form_data, [], [], $this->call_headers);
         $this->response_data = json_decode($this->response->getContent());
 
         return $this->response;
     }
-
-
 }

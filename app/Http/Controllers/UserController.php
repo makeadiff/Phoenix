@@ -45,7 +45,7 @@ class UserController extends Controller
         $user = new User;
         $exists = $user->fetch($user_id, false);
 
-        if(!$exists) {
+        if (!$exists) {
             return JSend::fail("Can't find any user with the given ID", [], 404);
         }
 

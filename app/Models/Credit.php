@@ -2,8 +2,9 @@
 namespace App\Models;
 
 use App\Models\Common;
+
 // NOT USED YET. Sample code
-final class Credit extends Common  
+final class Credit extends Common
 {
     protected $table = 'UserCredit';
     public $timestamps = false;
@@ -42,8 +43,5 @@ final class Credit extends Common
     {
         // $situation - event,class
         // $situation_id - Class.id, Event.id
-
     }
-
 }
-
