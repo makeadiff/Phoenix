@@ -5,8 +5,9 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use App\Models\Batch;
 use App\Models\Classes;
+use App\Models\Center;
 
-class unfilledData
+class classConnection
 {
     /**
      * Return a value for the field.
@@ -22,14 +23,29 @@ class unfilledData
         if(isset($args['mentor_id'])) {
             $batch_model = new Batch;
             $class_model = new Classes;
+            $center_model = new Center;
 
-            $unfilled_batch = $batch_model->search(['mentor_id' => $args['mentor_id'], 'class_status' => 'projected']);
-            foreach ($unfilled_batch as $batch) {
-                $classes = $class_model->search(['batch_id' => $batch->id, 'class_status' => 'projected'])->get();
+            $users_batch = $batch_model->search(['mentor_id' => $args['mentor_id']]);
+            $conected_batches = [];
 
-                // NOW bunch up the classes by date, return only unique classes.  :TODO:
-                dump($classes);
+            foreach ($users_batch as $batch) {
+                $cls = $class_model->search(['batch_id' => $batch->id, 'class_date_to' => date('Y-m-d H:i:s')])->get()->last();
+                
+                if($cls) {
+                    $batch_info = [
+                        'id'            => $batch->id,
+                        'day'           => $batch->day,
+                        'batch_name'    => $batch->name,
+                        'class_time'    => date('H:i:s', strtotime($cls->class_on)),
+                        'class_on'      => $cls->class_on,
+                        'center_id'     => $batch->center_id,
+                        'center_name'   => $center_model->find($batch->center_id)->name,
+                    ];
+                   $conected_batches[] = $batch_info;
+               }
             }
+
+            return $conected_batches;           
         }
 
         return [];
