@@ -7,7 +7,7 @@ use App\Models\Batch;
 use App\Models\Classes;
 use App\Models\Center;
 
-class classConnection
+class mentorClassConnection
 {
     /**
      * Return a value for the field.
