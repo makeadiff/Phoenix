@@ -25,7 +25,8 @@
         "mll-lab/laravel-graphql-playground": "^1.0",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^2.0",
-        "phpunit/phpunit": "^7.5"
+        "phpunit/phpunit": "^7.5",
+        "xethron/migrations-generator": "^2.0"
     },
     "config": {
         "optimize-autoloader": true,
