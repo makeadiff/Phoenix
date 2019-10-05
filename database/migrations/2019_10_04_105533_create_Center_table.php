@@ -18,7 +18,7 @@ class CreateCenterTable extends Migration {
 			$table->string('name', 100);
 			$table->integer('city_id')->unsigned()->index('city_id');
 			$table->integer('center_head_id')->unsigned()->index('center_head_id');
-			$table->date('class_starts_on');
+			$table->date('class_starts_on')->nullable();
 			$table->enum('medium', array('vernacular','english'))->default('english');
 			$table->enum('preferred_gender', array('male','female','any'))->default('any');
 			$table->string('latitude', 20);

@@ -21,7 +21,7 @@ class CreateFAMApplicantFeedbackTable extends Migration {
 			$table->text('feedback', 16777215);
 			$table->text('comment', 16777215)->nullable();
 			$table->dateTime('added_on');
-			$table->enum('confidential', array('1','0','',''))->nullable();
+			$table->enum('confidential', array('1','0'))->nullable();
 			$table->integer('year');
 		});
 	}
