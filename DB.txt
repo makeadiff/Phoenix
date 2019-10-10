@@ -341,20 +341,20 @@ Event_Type.id:
 Event_Type.name: 
 Event_Type.status: 
 
-Exam: 
+Exam: Stores all exams that has been assessed, used for End of Year School Scores. Note: add added_on, added_by_user_id.
 Exam.id: 
 Exam.name: 
 Exam.exam_on: 
-Exam.exam_type_id: 
+Exam.exam_type_id: Exam_Type.id Note: Not used currently.
 Exam.status: 
 Exam.year: 
 
-ExamSubject: 
+ExamSubject: Lookup table for Exam and Subject
 ExamSubject.id: 
 ExamSubject.exam_id: 
 ExamSubject.subject_id: 
 
-Exam_Type: 
+Exam_Type: Not Used
 Exam_Type.id: 
 Exam_Type.name: 
 Exam_Type.ferquency: 
@@ -448,18 +448,18 @@ FAM_UserStage.year:
 FAM_UserStage.status: 
 FAM_UserStage.shelter_id: Center.id
 
-FAM_UserTask: All the tasks the applicants has submitted.
+FAM_UserTask: All the tasks the applicants has submitted. Note: Currently a row based data entry, move to a column based format with task type and taks value. Add updated_on 
 FAM_UserTask.id: 
 FAM_UserTask.user_id: User.id
 FAM_UserTask.common_task_url: 
 FAM_UserTask.common_task_files: 
-FAM_UserTask.preference_1_group_id: 
+FAM_UserTask.preference_1_group_id: Group.id
 FAM_UserTask.preference_1_task_files: 
 FAM_UserTask.preference_1_video_files: 
-FAM_UserTask.preference_2_group_id: 
+FAM_UserTask.preference_2_group_id: Group.id
 FAM_UserTask.preference_2_task_files: 
 FAM_UserTask.preference_2_video_files: 
-FAM_UserTask.preference_3_group_id: 
+FAM_UserTask.preference_3_group_id: Group.id
 FAM_UserTask.preference_3_task_files: 
 FAM_UserTask.preference_3_video_files: 
 FAM_UserTask.year: 
@@ -476,17 +476,17 @@ FR_UserCredit.week_start_on:
 FR_UserCredit.added_on: 
 FR_UserCredit.marked_by_user_id: User.id
 
-Grade_Template: 
+Grade_Template: Stores Template Names for Grading Template, used for End of Year School Score Collection.
 Grade_Template.id: 
 Grade_Template.name: 
 Grade_Template.status: 
 
-Grade_Template_Collection: 
+Grade_Template_Collection: Lookup table for Grade Template and Grades marked. Note: Move Grade Template ID to Grade_Template_Grade table 
 Grade_Template_Collection.id: 
-Grade_Template_Collection.grade_id: 
-Grade_Template_Collection.grade_template_id: 
+Grade_Template_Collection.grade_id: Grade_Template_Grade.id
+Grade_Template_Collection.grade_template_id: Grade_Template.id
 
-Grade_Template_Grade: 
+Grade_Template_Grade: Stores Grade Ranges for Scoring. Note: Move Grade Template ID to Grade_Template_Grade table 
 Grade_Template_Grade.id: 
 Grade_Template_Grade.grade: 
 Grade_Template_Grade.from_mark: 
@@ -559,16 +559,16 @@ Log.user_id: User.id
 Log.added_on: 
 Log.level: 
 
-Mark: 
+Mark: Stores marks for asssessments recorded by MAD, currently used for End of Year School Scores
 Mark.id: 
-Mark.student_id: 
-Mark.subject_id: 
-Mark.exam_id: 
+Mark.student_id: Student.id 
+Mark.subject_id: Subject.id 
+Mark.exam_id: Exam.id 
 Mark.marks: 
 Mark.total: 
 Mark.input_data: 
 Mark.status: 
-Mark.template_id: 
+Mark.template_id: Grade_Template.id 
 
 Medium: Medium of instruction. English/Vernacular/<Specific Language>
 Medium.id: 
@@ -619,26 +619,26 @@ Region.id:
 Region.name: 
 Region.director_id: 
 
-Retention_Referrals: 
+Retention_Referrals: Stores data of volunteer referrals.  
 Retention_Referrals.id: 
 Retention_Referrals.name: 
 Retention_Referrals.email: 
 Retention_Referrals.phone: 
-Retention_Referrals.city_id: 
-Retention_Referrals.referer_user_id: 
+Retention_Referrals.city_id: City.id 
+Retention_Referrals.referer_user_id: User.id 
 Retention_Referrals.year:
 Retention_Referrals.added_on: 
 
-Retention_UserGroupPreference: 
+Retention_UserGroupPreference: Stores retention preference data for Volunteers.
 Retention_UserGroupPreference.id: 
-Retention_UserGroupPreference.user_id: 
-Retention_UserGroupPreference.group_id: 
-Retention_UserGroupPreference.preference: 
-Retention_UserGroupPreference.shelter_id: 
-Retention_UserGroupPreference.city_id: 
-Retention_UserGroupPreference.year: 
+Retention_UserGroupPreference.user_id: User.id 
+Retention_UserGroupPreference.group_id: Group.id
+Retention_UserGroupPreference.preference: Preference of profiles. Ranges from 1-3. 
+Retention_UserGroupPreference.shelter_id: Center.id 
+Retention_UserGroupPreference.city_id: City.id 
+Retention_UserGroupPreference.year: Year of data entry, entered accoriding to MAD Academic year.
 Retention_UserGroupPreference.added_on: 
-Retention_UserGroupPreference.status: 
+Retention_UserGroupPreference.status: '1' for Active Preference and '0' for Obsolete preference. 
 
 SC_student_shelter_mapping: Not Used - Delete them. Was created by Social Cops
 SC_student_shelter_mapping.id: 
