@@ -1,6 +1,6 @@
 # Phoenix
 
-### 2.1.1
+### 2.1.2
 
 ## Project Description/Purpose
 
@@ -9,29 +9,33 @@ Core API will create a centralized API for all operations on MAD Database. We'll
 Formats supported...
 
 * REST API : https://makeadiff.in/api/api/swagger/doc.html
-* GraphQL : https://makeadiff.in/api/public/graphql-playground 
+* GraphQL  
 
 ## Installation
 
 Get the code from github...
 
+```
 git clone git@github.com:makeadiff/Phoenix.git
+```
 
-Copy the .env.example file to .env file. Edit it to fit your system. 
+Copy the `.env.example` file to `.env` file. Edit it to fit your system. 
 
-Install the libraries that are needed...
+Install the libraries that are needed. You'll need `composer` installed in your system.
 
+```
 composer install
+```
 
 Create the database tables by running migrations...
 
+```
 php artisan migrate --seed
+```
 
+## Problem we are trying to solve
 
-
-## Problem
-
-Outsourcing projects to an external company/interns/remote teams requires us to give them database access. This has multiple problems…
+Outsourcing projects to an external company/interns/remote teams requires us to give them database access. This has multiple problems...
 
 * Privacy issue for volunteers(Exposes names, phone numbers, email, etc.)
 * Privacy issue for students(Exposes names, age, shelter, etc. Also legal implications(JJ ACT))
