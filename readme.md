@@ -11,6 +11,24 @@ Formats supported...
 * REST API : https://makeadiff.in/api/api/swagger/doc.html
 * GraphQL : https://makeadiff.in/api/public/graphql-playground 
 
+## Installation
+
+Get the code from github...
+
+git clone git@github.com:makeadiff/Phoenix.git
+
+Copy the .env.example file to .env file. Edit it to fit your system. 
+
+Install the libraries that are needed...
+
+composer install
+
+Create the database tables by running migrations...
+
+php artisan migrate --seed
+
+
+
 ## Problem
 
 Outsourcing projects to an external company/interns/remote teams requires us to give them database access. This has multiple problems…
