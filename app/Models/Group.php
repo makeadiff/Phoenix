@@ -18,6 +18,12 @@ final class Group extends Common
     {
         return $this->belongsTo('App\Models\Vertical', 'vertical_id');
     }
+
+
+    public function permissions()
+    {
+        return $this->belongsToMany('App\Models\Permission', 'GroupPermission');
+    }
     
     public static function search($data)
     {
