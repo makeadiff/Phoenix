@@ -12,9 +12,9 @@ final class Permission extends Common
 
     public static function search($data)
     {
-        $search_fields = ['id', 'name','value'];
+        $search_fields = ['id', 'name'];
         $q = app('db')->table('Permission');
-        $q->select('id', 'name', 'value');
+        $q->select('id', 'name');
 
         foreach ($search_fields as $field) {
             if (empty($data[$field])) {
@@ -35,6 +35,6 @@ final class Permission extends Common
 
     public static function getAll()
     {
-        return Permission::select('id', 'name', 'value')->orderBy('name')->get();
+        return Permission::select('id', 'name')->orderBy('name')->get();
     }
 }
