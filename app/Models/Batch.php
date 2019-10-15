@@ -67,12 +67,16 @@ final class Batch extends Common
                 continue;
             } elseif ($field == 'batch_id') {
                 $q->where("Batch.id", $data[$field]);
+
             } elseif ($field == 'teacher_id') {
                 $q->where("UserBatch.user_id", $data[$field]);
+
             } elseif ($field == 'mentor_id') {
                 $q->where("Batch.batch_head_id", $data[$field]);
+
             } elseif ($field == 'level_id') {
                 $q->where('BatchLevel.level_id', $data['level_id']);
+
             } elseif ($field == 'direction' and isset($data['from_date'])) {
                 $q->join("Class", 'Class.batch_id', '=', 'Batch.id');
                 $q->orderBy("Class.class_on", "ASC");
@@ -84,8 +88,10 @@ final class Batch extends Common
                 }
             } elseif ($field == 'limit') {
                 $q->limit($data['limit']);
+
             } elseif ($field == 'from_date') {
                 continue; // Ignore - only used with 'direction'
+                
             } else {
                 $q->where("Batch." . $field, $data[$field]);
             }
