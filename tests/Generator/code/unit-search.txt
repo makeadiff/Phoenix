@@ -1,0 +1,11 @@
+	public function test%TABLE%%NAME%() 
+	{
+	    // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+
+        $model = new %TABLE%;
+        $data = $model->%FUNCTION%(%PARAMETERS%);
+
+        $result = $data->first();
+
+        $this->assertEquals(%DATA-KEY%, '%DATA-VALUE%');
+    }
