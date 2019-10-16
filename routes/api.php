@@ -19,8 +19,8 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
 // CORS handling. These have to be disabled if UnitTest have to be run. :TODO: 
-// header("Access-Control-Allow-Origin: *");
-// header('Access-Control-Allow-Headers: Authorization,Content-Type,Origin,Accept');
+header("Access-Control-Allow-Origin: *");
+header('Access-Control-Allow-Headers: Authorization,Content-Type,Origin,Accept');
 
 Route::get('/', function () {
     $result = [];
