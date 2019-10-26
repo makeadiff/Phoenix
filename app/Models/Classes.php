@@ -123,7 +123,9 @@ final class Classes extends Common
                 } else {
                     $q->limit($search['limit']);
                 }
-            } elseif ($field == 'direction' and isset($search['from_date'])) {
+            } elseif ($field == 'direction') {
+                if(!isset($search['from_date'])) $search['from_date'] = date('Y-m-d H:i:s'); // If no from date is specified, from date is today.
+
                 if ($search['direction'] == '+') {
                     $q->where("Class.class_on", '>', date('Y-m-d', strtotime($search['from_date'])) . ' 23:59:59');
                 } elseif ($search['direction'] == '-') {
@@ -137,7 +139,11 @@ final class Classes extends Common
         }
 
         $q->where("Class.class_on", '>=', $this->year_start_time);
-        $q->orderBy("Class.class_on", "ASC");
+        if(isset($search['direction']) and $search['direction'] == '-' and isset($search['limit'])) {
+            $q->orderBy("Class.class_on", "DESC"); // If we are trying to find the latest class...
+        } else {
+            $q->orderBy("Class.class_on", "ASC");
+        }
         $q->groupBy("Class.id");
 
         // dd($q->toSql(), $q->getBindings(), $search);
