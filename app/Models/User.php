@@ -30,6 +30,10 @@ final class User extends Common
         return $this->belongsTo(City::class);
     }
 
+    public function permissions() {
+        return $this->hasManyThrough('App\Models\Permission', 'App\Models\Group');
+    }
+
     public function classes($status = '')
     {
         $classes = $this->belongsToMany("App\Models\Classes", 'UserClass', 'user_id', 'class_id')->where('Class.class_on', '>=', $this->year_start_time);

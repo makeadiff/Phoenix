@@ -18,7 +18,7 @@ use App\Models\Contact;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
-// CORS handling.
+// CORS handling. These have to be disabled if UnitTest have to be run. :TODO: 
 header("Access-Control-Allow-Origin: *");
 header('Access-Control-Allow-Headers: Authorization,Content-Type,Origin,Accept');
 
@@ -978,6 +978,14 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
         return JSend::success("Sent the receipt.");
     });
+
+    // Use this to Debug/test things
+    // Route::get('/test', function() {
+    //     $group = new Group;
+    //     $es_trained = $group->find(368)->permissions();
+
+    //     dump($es_trained);
+    // });
 
     require base_path('routes/api-surveys.php');
 });

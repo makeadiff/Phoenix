@@ -27,7 +27,7 @@ App_CSVGo.id:
 App_CSVGo.name: Name of the report. This should be passed as a parameter to CSV:Go.
 App_CSVGo.description: 
 App_CSVGo.query: This holds the actual SQL Query that will make the report.
-App_CSVGo.db: Not Used - Will never be used. Can delete
+App_CSVGo.db: Not Used - Will never be used. :TODO: Delete
 App_CSVGo.added_on: 
 App_CSVGo.last_run_on: The time when this query was last executed
 App_CSVGo.vertical_id: Vertical.id
@@ -45,7 +45,7 @@ App_Director.sort:
 App_Director.user_id: User.id - Not used
 App_Director.status: 
 
-App_Event_Mail_Tracker: Deprecated. This was used in Events app backend - but not used anymore. Can delete.
+App_Event_Mail_Tracker: Deprecated. This was used in Events app backend - but not used anymore. :TODO: Delete.
 App_Event_Mail_Tracker.id: 
 App_Event_Mail_Tracker.receive_id: 
 App_Event_Mail_Tracker.item_id: 
@@ -61,7 +61,7 @@ App_Event_Mail_Tracker.status:
 App_Event_Mail_Tracker.created_at: 
 App_Event_Mail_Tracker.updated_at: 
 
-Archive: Stores the historical credits of all teachers. This is saved at the beginning of every year. Also saved in User_Credit_Archive Table. Need a review. Maybe, drop this table, just have Use_Credit_Archive
+Archive: Stores the historical credits of all teachers. This is saved at the beginning of every year. Also saved in User_Credit_Archive Table. Need a review. Maybe, drop this table, just have Use_Credit_Archive. :TODO: Rename table to Credit_Archive, Import things from User_Credit_Archive to that table. Change references in apps/reports/volunteer_credits.php:54, Madapp/system/application/controllers/cron.php:105, Madapp/system/application/models/users_model.php:598,656 
 Archive.id: 
 Archive.user_id: 
 Archive.name: 
@@ -75,7 +75,7 @@ Batch.day: Batch day - 0 is Sunday
 Batch.class_time: Batch time - expressed in 24 hours time.
 Batch.batch_head_id: The ID of the mentor of this batch. Links to the User table.
 Batch.center_id: Center.id
-Batch.subject_id: Not used. Can be removed - review historic data before removing.
+Batch.subject_id: Not used. Can be removed - review historic data before removing. :TODO: Delete
 Batch.project_id: Project.id
 Batch.year: Holds the year which the batch is a part of.
 Batch.status: 
@@ -86,7 +86,7 @@ BatchLevel.batch_id: Batch.id
 BatchLevel.level_id: Level.id
 BatchLevel.year: 
 
-BatchSubject: Which all subjects are taught in the which all batches. Reference table. Not being used right now - delete after data/code review.
+BatchSubject: Which all subjects are taught in the which all batches. Reference table. Not being used right now :NOTE: TR might need this in the future. Keep it. No code references to it anyway.
 BatchSubject.id: 
 BatchSubject.batch_id: Batch.id
 BatchSubject.subject_id: Subject.id
