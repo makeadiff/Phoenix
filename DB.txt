@@ -96,7 +96,7 @@ Center.id:
 Center.name: Name of the Shelter
 Center.city_id: City.id - The city this shelter belongs to
 Center.center_head_id: The User.id of the volunteer who is the Shelter Operations Fellow of this Shelter
-Center.class_starts_on: Class start date for the current year. Classes will get generated for this shelter only if this field is filled. Review- Consider moving/copying this field to Batch 
+Center.class_starts_on: Class start date for the current year. Classes will get generated for this shelter only if this field is filled.
 Center.medium: Medium of instuction - We might need to go to a reference table for this - shelter might have multiple medium that needs to be supported
 Center.preferred_gender: Ideal gender of the volunteers teaching at this shelter.
 Center.latitude: Location of shelter
@@ -116,7 +116,7 @@ CenterAuthority.phone:
 CenterAuthority.email: 
 CenterAuthority.status: 
 
-CenterData: More shelter information gets stored here. Things like historical sherter class starting days, Center heads, etc. Action- Move this to Data table or implement using Formad/Survey system. Needs review.
+CenterData: More shelter information gets stored here. Things like historical sherter class starting days, Center heads, etc. :TODO: Drop Table. I've moved the data to the Data table.
 CenterData.id: 
 CenterData.center_id: Center.id
 CenterData.name: 
@@ -124,7 +124,7 @@ CenterData.year:
 CenterData.value: 
 CenterData.data: 
 
-CenterProject: Which all projects are active in Shelter. Action - need review. We have this data in Batch/project linking anyway. Does this require to be user inputted.
+CenterProject: Which all projects are active in Shelter.
 CenterProject.id: 
 CenterProject.center_id: Center.id
 CenterProject.project_id: Project.id
@@ -134,9 +134,9 @@ CenterProject.added_on:
 City: All cities that are active in MAD
 City.id: 
 City.name: 
-City.president_id: User.id - City Team Lead of this city. Can be deleted - user group should be used to figure this out.
+City.president_id: User.id - City Team Lead of this city. :TODO: Delete
 City.added_on: 
-City.classes_happening: Delete after review.
+City.classes_happening: Delete after review. :TODO: Delete
 City.region_id: Region.id - not used - delete.
 City.latitude: Geoglaphic location of the city.
 City.longitude: Geoglaphic location of the city.
@@ -148,8 +148,8 @@ Class.batch_id: Batch.id
 Class.level_id: Level.id
 Class.project_id: Project.id - Which project this Class is a part of - ed support/fp/aftercare/tr
 Class.class_on: 
-Class.feedback: Not Used - Remove
-Class.lesson_id: Lesson.id - Deprecated - Remove
+Class.feedback: Not Used - :TODO: Delete
+Class.lesson_id: Lesson.id - Depricated. Kept on because it has historical Data. Code does not call this anymore
 Class.class_type: If its an extra class the value of this will be 'extra'. Those are classes that happens the normal schedule(For eg, if we didn't get enough classes normally).
 Class.class_satisfaction: 
 Class.cancel_option: 
@@ -189,7 +189,7 @@ Contact.added_on:
 Contact.updated_on: 
 Contact.status: 
 
-ContactApplication: Not used.
+ContactApplication: Not used. :TODO: Delete
 ContactApplication.id: 
 ContactApplication.contact_id: Contact.id
 ContactApplication.group_id: Group.id
@@ -471,6 +471,7 @@ FR_UserCredit.user_id: User.id
 FR_UserCredit.credit_parameter_id: Credit_Parameter.id
 FR_UserCredit.change: How much credits did the user gain/lose because of this action.
 FR_UserCredit.current_credit: The resulting credit of the User after the change.
+FR_UserCredit.positive_or_negative: What change happened.
 FR_UserCredit.comment: There can be a duplication of this because each task is a row in the table. This field was added later when the requirement changed. Ideal case scenario would have been separate tables.
 FR_UserCredit.week_start_on: 
 FR_UserCredit.added_on: 
@@ -496,6 +497,7 @@ Group: All the user groups. Note - need to implement inheritance here - add a pa
 Group.id: 
 Group.name: 
 Group.type: What level is this group at - volunteer, fellow, strat, national(director), executive
+Group.parent_group_id: Group.id - Parent group ID. This is used to build permission inheritance.
 Group.group_type: Only valid if this is 'normal'. Not used anymore - remove after code review. But we might need it if we are planning to implement inheritance.
 Group.vertical_id: Vertical.id
 Group.region_id: Deprecated
@@ -533,7 +535,7 @@ IS_Response.student_id: Student.id
 IS_Response.response: 
 IS_Response.added_on: 
 
-Lesson: Deprecated
+Lesson: Depricated. Kept on because it has historical Data. Code does not call this anymore
 Lesson.id: 
 Lesson.name: 
 Lesson.book_id: 
