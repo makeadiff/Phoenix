@@ -183,17 +183,74 @@ final class Classes extends Common
     //     return $this->item;
     // }
 
-    // public function add($data)
-    // {
-    //     $batch = Class::create([
-    //         'day'       => $data['day'],
-    //         'class_time'=> $data['class_time'],
-    //         'center_id' => $data['center_id'],
-    //         'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '',
-    //         'year'      => $this->year,
-    //         'status'    => isset($data['status']) ? $data['status'] : '1'
-    //     ]);
+    // Not tested.
+    public function add($data)
+    {
+        if(!isset($data['project_id'])) {
+            $batch_model = new Batch;
+            $project_id = $batch_model->find($data['batch_id'])->project_id;
+            $data['project_id'] = $project_id;
+        }
+        $data['class_on'] = date('Y-m-d H:i:s', strtotime($data['class_on']));
 
-    //     return $batch;
-    // }
+        if(!in_array($data['class_type'], ['scheduled', 'extra'])) $data['class_type'] = 'scheduled';
+        if(!in_array($data['status'], ['projected', 'happened', 'cancelled'])) $data['status'] = 'projected';
+
+        $class = Class::create($data);
+
+        return $class;
+    }
+
+    // NOT tested
+    public function edit($class_id, $data) {
+        Class::update($data)->where('id', $class_id);
+    }
+
+    // Not tested.
+    public function saveStudentAttendance($class_id, $student_id, $class_details, $teacher_id) {
+        // Clear existing data
+        app('db')->table('StudentClass')->where('class_id', $class_id)->where('student_id', $student_id)->delete();
+
+        // Insert new data...
+        $participation = isset($class_details['participation']) ? $class_details['participation'] : 0;
+        $attendance = ($participation) ? 1 : 0;
+        $check_for_understanding = isset($class_details['check_for_understanding']) ? $class_details['check_for_understanding'] : 0;
+
+        $class_data = app('db')->table('StudentClass')->insert([
+            'class_id'      => $class_id,
+            'student_id'    => $student_id,
+            'participation' => $participation,
+            'attendance'    => $attendance,
+            'check_for_understanding' => $check_for_understanding
+        ]);
+        $this->edit($class_id, ['status' => 'happened', 'updated_by_teacher' => $teacher_id]);
+
+        return $class_data;
+    }
+
+    // Not tested
+    public function saveTeacherAttendance($class_id, $teacher_id, $class_details, $mentor_id = 0) {
+        // :TODO: Revert Credits awarded for this.
+        // Clear existing data
+        app('db')->table('UserClass')->where('class_id', $class_id)->where('user_id', $teacher_id)->delete();
+
+        // Insert new data...
+        $substitute_id = isset($class_details['substitute_id']) ? $class_details['substitute_id'] : 0;
+        $zero_hour_attendance = isset($class_details['zero_hour_attendance']) ? $class_details['zero_hour_attendance'] : 1;
+        $status = isset($class_details['status']) ? $class_details['status'] : 'projected';
+
+        $class_data = app('db')->table('UserClass')->insert([
+            'class_id'      => $class_id,
+            'user_id'       => $user_id,
+            'substitute_id' => $substitute_id,
+            'zero_hour_attendance' => $zero_hour_attendance,
+            'status'        => $status
+        ]);
+
+        if($status == 'attended' or $status == 'absent') $status = 'happened';
+        $this->edit($class_id, ['status' => $status, 'updated_by_mentor' => $mentor_id]);
+
+        // :TODO: Award credits for this class
+        return $class_data;
+    }
 }
