@@ -17,6 +17,8 @@ type Query {
     class(id: ID @eq): 		Class 		@find(model: "App\\Models\\Classes")
     donation(id: ID @eq): 	Donation 	@find(model: "App\\Models\\Donation")
     donor(id: ID @eq): 		Donor 		@find(model: "App\\Models\\Donor")
+    survey(id: ID @eq):		Survey 		@find(model: "App\\Models\\Survey")
+    survey_template(id: ID @eq):	Survey_Template @find(model: "App\\Models\\Survey_Template")
 
     eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php - This is just a sample 
     batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, , class_status: String, direction: String, from_date: Date, limit: String): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
@@ -217,6 +219,65 @@ type Event {
 type Event_Type {
 	id: ID!
 	name: String!
+}
+
+type Survey {
+	id: ID!
+	name: String
+	template: Survey_Template
+	responses: [Survey_Response]
+}
+
+type Survey_Template {
+	id: ID!
+	name: String
+	description: String
+	responder: String
+	options: String
+	status: String
+	vertical: Vertical
+	surveys: [Survey]
+	questions: [Survey_Question]
+}
+
+type Survey_Question {
+	id: ID!
+	question: String
+	description: String
+	response_type: String
+	required: String
+	sort_order: Int
+	options: String
+	category: Survey_Category
+	choices: [Survey_Choice]
+	template: Survey_Template
+	responses: [Survey_Response]
+}
+
+type Survey_Choice {
+	id: ID!
+	name: String
+	description: String
+	value: Int
+	sort_order: Int
+	options: String
+	question: Survey_Question
+}
+
+type Survey_Category {
+	id: ID!
+	name: String
+	questions: [Survey_Question]
+	template: Survey_Template
+}
+
+type Survey_Response {
+	survey: Survey
+	responder_id: Int
+	question: Survey_Question
+	selected_choice: Survey_Choice
+	response: String
+	added_by_user_id: Int
 }
 
 type Donation {
