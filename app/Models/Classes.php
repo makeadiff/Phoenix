@@ -196,34 +196,29 @@ final class Classes extends Common
         if(!in_array($data['class_type'], ['scheduled', 'extra'])) $data['class_type'] = 'scheduled';
         if(!in_array($data['status'], ['projected', 'happened', 'cancelled'])) $data['status'] = 'projected';
 
-        $class = Class::create($data);
+        $class = Classes::create($data);
 
         return $class;
     }
 
-    // NOT tested
-    public function edit($class_id, $data) {
-        Class::update($data)->where('id', $class_id);
-    }
-
     // Not tested.
-    public function saveStudentAttendance($class_id, $student_id, $class_details, $teacher_id) {
+    public function saveStudentAttendance($class_id, $student_id, $class_details, $teacher_id = 0) {
         // Clear existing data
         app('db')->table('StudentClass')->where('class_id', $class_id)->where('student_id', $student_id)->delete();
 
         // Insert new data...
         $participation = isset($class_details['participation']) ? $class_details['participation'] : 0;
-        $attendance = ($participation) ? 1 : 0;
+        $present = ($participation) ? "1" : "0";
         $check_for_understanding = isset($class_details['check_for_understanding']) ? $class_details['check_for_understanding'] : 0;
 
         $class_data = app('db')->table('StudentClass')->insert([
             'class_id'      => $class_id,
             'student_id'    => $student_id,
             'participation' => $participation,
-            'attendance'    => $attendance,
+            'present'       => $present,
             'check_for_understanding' => $check_for_understanding
         ]);
-        $this->edit($class_id, ['status' => 'happened', 'updated_by_teacher' => $teacher_id]);
+        $this->edit(['status' => 'happened', 'updated_by_teacher' => $teacher_id], $class_id);
 
         return $class_data;
     }
@@ -241,14 +236,14 @@ final class Classes extends Common
 
         $class_data = app('db')->table('UserClass')->insert([
             'class_id'      => $class_id,
-            'user_id'       => $user_id,
+            'user_id'       => $teacher_id,
             'substitute_id' => $substitute_id,
             'zero_hour_attendance' => $zero_hour_attendance,
             'status'        => $status
         ]);
 
         if($status == 'attended' or $status == 'absent') $status = 'happened';
-        $this->edit($class_id, ['status' => $status, 'updated_by_mentor' => $mentor_id]);
+        $this->edit(['status' => $status, 'updated_by_mentor' => $mentor_id], $class_id);
 
         // :TODO: Award credits for this class
         return $class_data;
