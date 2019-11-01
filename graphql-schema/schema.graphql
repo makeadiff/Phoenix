@@ -41,8 +41,24 @@ type Query {
 
 type Mutation {
 	createLog(name: String, log: String, user_id: ID, added_on: DateTime): String
+	saveTeacherAttendance(class_id: ID, teachers: [InputTeacherAttendance]): Int
+	saveStudentAttendance(class_id: ID, students: [InputStudentAttendance]): Int
+}
+input InputTeacherAttendance {
+	user_id: Int
+	substitute_id: Int
+	zero_hour_attendance: String
+	status: String
+}
+input InputStudentAttendance {
+	student_id: Int
+	participation: Int
+	check_for_understanding: Int
 }
 
+"""
+Volunteer details.
+"""
 type User {
 	id: ID!
 	name: String!
@@ -69,6 +85,10 @@ type User {
 	donations: [Donation] @hasMany
 	pivot: UserPivot
 }
+
+"""
+This holds reference table/pivot details for both event(UserEvent) and class data(UserClass) details.
+"""
 type UserPivot {
 	# UserClass data - teacher attendance
 	status: String
@@ -93,8 +113,8 @@ type Student {
 	center: Center @belongsTo
 	pivot: StudentAttendance
 }
-
 type StudentAttendance {
+	student_id: Int
 	present: String
 	participation: Int
 	check_for_understanding: Int
