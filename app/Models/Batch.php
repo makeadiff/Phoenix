@@ -43,7 +43,7 @@ final class Batch extends Common
 
     public function baseSearch($data, $q)
     {
-        $search_fields = ['id', 'day', 'center_id', 'level_id', 'batch_id', 'project_id', 'year', 'teacher_id', 'mentor_id', 'direction', 'from_date', 'limit'];
+        $search_fields = ['id', 'day', 'center_id', 'level_id', 'batch_id', 'project_id', 'year', 'teacher_id', 'mentor_id', 'direction', 'from_date', 'limit', 'class_status'];
         $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status', 'Batch.project_id')->distinct();
         if (!isset($data['status'])) {
             $data['status'] = '1';
@@ -88,6 +88,11 @@ final class Batch extends Common
                 }
             } elseif ($field == 'limit') {
                 $q->limit($data['limit']);
+
+            } elseif ($field == 'class_status') { // You can use this to get batches with projected classes in them. 
+                $q->join("Class", 'Class.batch_id', '=', 'Batch.id');
+                $q->where("Class.status", $data[$field]);
+                $q->where("Class.class_on", "<=", date('Y-m-d H:i:s')); // Only search for this in classes that should be over. not future classes
 
             } elseif ($field == 'from_date') {
                 continue; // Ignore - only used with 'direction'

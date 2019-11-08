@@ -84,10 +84,16 @@ final class Classes extends Common
                 $q->whereDate("Class.class_on", '<=', $search[$field]);
             } elseif ($field == 'class_date_from') {
                 $q->whereDate("Class.class_on", '>=', $search[$field]);
-            } elseif ($field == 'class_status') {
-                $q->whereDate("Class.status", $search[$field]);
-            } elseif ($field == 'teacher_id') {
+
+            } elseif($field == 'class_status') {
+                $q->where("Class.status", $search[$field]);
+
+            } elseif($field == 'status') {
+                $q->where("UserClass.status", $search[$field]);
+
+            } elseif($field == 'teacher_id') {
                 $q->where("UserClass.user_id", $search[$field]);
+                
             } elseif ($field == 'center_id') {
                 $q->where("Batch.center_id", $search[$field]);
             } elseif ($field == 'substitute_id') {
@@ -117,7 +123,9 @@ final class Classes extends Common
                 } else {
                     $q->limit($search['limit']);
                 }
-            } elseif ($field == 'direction' and isset($search['from_date'])) {
+            } elseif ($field == 'direction') {
+                if(!isset($search['from_date'])) $search['from_date'] = date('Y-m-d H:i:s'); // If no from date is specified, from date is today.
+
                 if ($search['direction'] == '+') {
                     $q->where("Class.class_on", '>', date('Y-m-d', strtotime($search['from_date'])) . ' 23:59:59');
                 } elseif ($search['direction'] == '-') {
@@ -131,7 +139,11 @@ final class Classes extends Common
         }
 
         $q->where("Class.class_on", '>=', $this->year_start_time);
-        $q->orderBy("Class.class_on", "ASC");
+        if(isset($search['direction']) and $search['direction'] == '-' and isset($search['limit'])) {
+            $q->orderBy("Class.class_on", "DESC"); // If we are trying to find the latest class...
+        } else {
+            $q->orderBy("Class.class_on", "ASC");
+        }
         $q->groupBy("Class.id");
 
         // dd($q->toSql(), $q->getBindings(), $search);
@@ -171,17 +183,69 @@ final class Classes extends Common
     //     return $this->item;
     // }
 
-    // public function add($data)
-    // {
-    //     $batch = Class::create([
-    //         'day'       => $data['day'],
-    //         'class_time'=> $data['class_time'],
-    //         'center_id' => $data['center_id'],
-    //         'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '',
-    //         'year'      => $this->year,
-    //         'status'    => isset($data['status']) ? $data['status'] : '1'
-    //     ]);
+    // Not tested.
+    public function add($data)
+    {
+        if(!isset($data['project_id'])) {
+            $batch_model = new Batch;
+            $project_id = $batch_model->find($data['batch_id'])->project_id;
+            $data['project_id'] = $project_id;
+        }
+        $data['class_on'] = date('Y-m-d H:i:s', strtotime($data['class_on']));
 
-    //     return $batch;
-    // }
+        if(!in_array($data['class_type'], ['scheduled', 'extra'])) $data['class_type'] = 'scheduled';
+        if(!in_array($data['status'], ['projected', 'happened', 'cancelled'])) $data['status'] = 'projected';
+
+        $class = Classes::create($data);
+
+        return $class;
+    }
+
+    // Not tested.
+    public function saveStudentAttendance($class_id, $student_id, $class_details, $teacher_id = 0) {
+        // Clear existing data
+        app('db')->table('StudentClass')->where('class_id', $class_id)->where('student_id', $student_id)->delete();
+
+        // Insert new data...
+        $participation = isset($class_details['participation']) ? $class_details['participation'] : 0;
+        $present = ($participation) ? "1" : "0";
+        $check_for_understanding = isset($class_details['check_for_understanding']) ? $class_details['check_for_understanding'] : 0;
+
+        $class_data = app('db')->table('StudentClass')->insert([
+            'class_id'      => $class_id,
+            'student_id'    => $student_id,
+            'participation' => $participation,
+            'present'       => $present,
+            'check_for_understanding' => $check_for_understanding
+        ]);
+        $this->edit(['status' => 'happened', 'updated_by_teacher' => $teacher_id], $class_id);
+
+        return $class_data;
+    }
+
+    // Not tested
+    public function saveTeacherAttendance($class_id, $teacher_id, $class_details, $mentor_id = 0) {
+        // :TODO: Revert Credits awarded for this.
+        // Clear existing data
+        app('db')->table('UserClass')->where('class_id', $class_id)->where('user_id', $teacher_id)->delete();
+
+        // Insert new data...
+        $substitute_id = isset($class_details['substitute_id']) ? $class_details['substitute_id'] : 0;
+        $zero_hour_attendance = isset($class_details['zero_hour_attendance']) ? $class_details['zero_hour_attendance'] : 1;
+        $status = isset($class_details['status']) ? $class_details['status'] : 'projected';
+
+        $class_data = app('db')->table('UserClass')->insert([
+            'class_id'      => $class_id,
+            'user_id'       => $teacher_id,
+            'substitute_id' => $substitute_id,
+            'zero_hour_attendance' => $zero_hour_attendance,
+            'status'        => $status
+        ]);
+
+        if($status == 'attended' or $status == 'absent') $status = 'happened';
+        $this->edit(['status' => $status, 'updated_by_mentor' => $mentor_id], $class_id);
+
+        // :TODO: Award credits for this class
+        return $class_data;
+    }
 }
