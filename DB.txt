@@ -137,7 +137,7 @@ City.name:
 City.president_id: User.id - City Team Lead of this city. :TODO: Delete
 City.added_on: 
 City.classes_happening: Delete after review. :TODO: Delete
-City.region_id: Region.id - not used - delete.
+City.region_id: Region.id - not used - delete. :TODO: Delete
 City.latitude: Geoglaphic location of the city.
 City.longitude: Geoglaphic location of the city.
 City.type: Two city(leadership, and test) are marked as virtual. No actual operations happen in those two cities. They are for testing/management purposes. Might require a review. Consider moving out the Test city.
@@ -500,10 +500,10 @@ Group.type: What level is this group at - volunteer, fellow, strat, national(dir
 Group.parent_group_id: Group.id - Parent group ID. This is used to build permission inheritance.
 Group.group_type: Only valid if this is 'normal'. Not used anymore - remove after code review. But we might need it if we are planning to implement inheritance.
 Group.vertical_id: Vertical.id
-Group.region_id: Deprecated
+Group.region_id: Deprecated :TODO: Remove
 Group.status: 
 
-GroupHierarchy: Not in use. Can be used to create reporting structures.
+GroupHierarchy: Not in use. Can be used to create reporting structures. :TODO: Remove
 GroupHierarchy.id: 
 GroupHierarchy.group_id: 
 GroupHierarchy.reports_to_group_id: 
@@ -545,11 +545,11 @@ Level.id:
 Level.name: A,B,C, etc - this is how students in the same grade is split up.
 Level.grade: Which class/grade the student is in.
 Level.center_id: Center.id
-Level.medium: Not used. Remove this.
+Level.medium: Langage of insturtion - English or venacular. Used for requirment calculation.
 Level.preferred_gender: 
-Level.medium_id: Medium.id
+Level.medium_id: Medium.id - Not used anymore. Kept on for legacy data. 
 Level.project_id: Project.id - this decides if the row holds Ed data or FP data.
-Level.book_id: Not used - remove.
+Level.book_id: Not used anymore. :TODO: Remove
 Level.year: 
 Level.status: 
 
@@ -616,12 +616,12 @@ Push_Notification.updated_on:
 Push_Notification.platform: 
 Push_Notification.app: 
 
-Region: Deprecated - remove
+Region: Deprecated :TODO: Remove
 Region.id: 
 Region.name: 
 Region.director_id: 
 
-Retention_Referrals: Stores data of volunteer referrals.  
+Retention_Referrals: Stores data of volunteer referrals. This is used at the end of year when people decide to stay or leave. Part of the FAM/Sucession Planning project.
 Retention_Referrals.id: 
 Retention_Referrals.name: 
 Retention_Referrals.email: 
@@ -642,7 +642,7 @@ Retention_UserGroupPreference.year: Year of data entry, entered accoriding to MA
 Retention_UserGroupPreference.added_on: 
 Retention_UserGroupPreference.status: '1' for Active Preference and '0' for Obsolete preference. 
 
-SC_student_shelter_mapping: Not Used - Delete them. Was created by Social Cops
+SC_student_shelter_mapping: Not Used - Delete them. Was created by Social Cops - :TODO: Delete
 SC_student_shelter_mapping.id: 
 SC_student_shelter_mapping.name: 
 SC_student_shelter_mapping.birthday: 
@@ -681,7 +681,7 @@ SC_student_shelter_mapping.city_classes_happening:
 SC_student_shelter_mapping.region_id: 
 SC_student_shelter_mapping.city_type: 
 
-SC_teacher_shelter_mapping: Not Used - Delete them. Was created by Social Cops
+SC_teacher_shelter_mapping: Not Used - Delete them. Was created by Social Cops - :TODO: Delete
 SC_teacher_shelter_mapping.id: 
 SC_teacher_shelter_mapping.name: 
 SC_teacher_shelter_mapping.title: 
@@ -776,7 +776,7 @@ Setting.name:
 Setting.value: 
 Setting.data: 
 
-State: Deprecated - Delete this.
+State: Deprecated - Delete this. :TODO: Delete
 State.id: 
 State.name: 
 
@@ -791,6 +791,7 @@ Student.photo:
 Student.thumbnail: 
 Student.added_on: 
 Student.reason_for_leaving: 
+Student.student_type: Enum - active,alumni :TODO: Add this field to the DB.
 Student.status: 
 
 StudentClass: Student attendance will be stored here.
@@ -798,8 +799,8 @@ StudentClass.id:
 StudentClass.student_id: Student.id
 StudentClass.class_id: Class.id
 StudentClass.present: 
-StudentClass.participation: 
-StudentClass.check_for_understanding: 
+StudentClass.participation: How attendendive/participative was the student in the class - 1-5
+StudentClass.check_for_understanding: How well did the student understand the class - 1-5
 
 StudentLevel: Student Class mapping.
 StudentLevel.id: 
@@ -809,8 +810,8 @@ StudentLevel.level_id: Level.id
 Subject: All subjects that can be taught it our classes. Note - need to have some board/medium connections. Review later.
 Subject.id: 
 Subject.name: 
-Subject.unit_count: Not used
-Subject.city_id: City.id - Not used
+Subject.unit_count: Not used :TODO: Delete
+Subject.city_id: City.id - Not used :TODO: Delete
 Subject.status: 
 
 Survey: Survey Instance. Each Survey template can have multiple survey instances.
@@ -831,10 +832,10 @@ Survey_Choice.sort_order:
 Survey_Choice.options: Use this to store extra data in JSON format.
 Survey_Choice.status: 
 
-Survey_Question: 
+Survey_Question: Each question in a template is a row in this table.
 Survey_Question.id: 
 Survey_Question.name: Smaller name of the question. Will be used as CSV headers when exporting data.
-Survey_Question.question: 
+Survey_Question.question: Full text of the question.
 Survey_Question.description: 
 Survey_Question.survey_question_category_id: Survey_Question_Category.id
 Survey_Question.survey_template_id: Survey_Template.id
@@ -851,7 +852,7 @@ Survey_Question_Category.survey_template_id: Survey_Template.id
 Survey_Question_Category.sort_order: 
 Survey_Question_Category.status: 
 
-Survey_Response: 
+Survey_Response: Each response to each question is a row. If its a multi-choice question, this can have multiple rows. PS: Multi choice response capture is not implemented yet.
 Survey_Response.id: 
 Survey_Response.survey_id: Survey.id
 Survey_Response.responder_id: This will be the ID of the person who the response is attached to. If the Survey_Template for this response has responder=User, this will be User.id
@@ -861,7 +862,7 @@ Survey_Response.response:
 Survey_Response.added_on: 
 Survey_Response.added_by_user_id: User.id
 
-Survey_Template: 
+Survey_Template: A questionire group is a survey template. Survey template can have multiple instances - stored in Survey table. 
 Survey_Template.id: 
 Survey_Template.name: 
 Survey_Template.description: 
@@ -871,7 +872,7 @@ Survey_Template.responder:
 Survey_Template.options: Use this to store extra data in JSON format.
 Survey_Template.status: 
 
-Temp_Alumni: Not Used
+Temp_Alumni: Not Used - :TODO: -Delete
 Temp_Alumni.id: 
 Temp_Alumni.first_name: 
 Temp_Alumni.last_name: 
@@ -882,7 +883,7 @@ Temp_Alumni.year_of_leaving:
 Temp_Alumni.years_in_mad: 
 Temp_Alumni.added_on: 
 
-Temp_Employee_Signup: Not Used
+Temp_Employee_Signup: This is used for employing sorcing project. It was run out of madapp - and there is a lot of good leads in this. 
 Temp_Employee_Signup.id: 
 Temp_Employee_Signup.name: 
 Temp_Employee_Signup.phone: 
@@ -911,8 +912,8 @@ User.joined_on: Date when the volunteer was accepted into MAD. If the person is 
 User.address: 
 User.bio: 
 User.facebook_id: 
-User.verification_status: 
-User.profile_progress: 
+User.verification_status: Used in MAD Cred
+User.profile_progress: Used in apps/profile - MAD Cred
 User.source: 
 User.source_other: 
 User.birthday: 
@@ -926,21 +927,21 @@ User.left_on: The user has left MAD on this date
 User.added_on: 
 User.updated_on: 
 User.reason_for_leaving: 
-User.induction_status: Deprecated
-User.teacher_training_status: Deprecated
-User.center_id: Not used
+User.induction_status: Deprecated :TODO: Delete
+User.teacher_training_status: Deprecated :TODO: Delete
+User.center_id: Not used :TODO: Delete
 User.city_other: 
 User.city_id: City.id
 User.subject_id: 
 User.project_id: Not used
 User.user_type: volunteer - Currently active volunteer. alumni - Was a volunteer in the past, left MAD at the end of the year. let_go - Was a volunteer in the past - left in the middle of the year. applicant - Applied to be a MAD volunteer - but hasn't been accepted yet. well_wisher - Rejected at interview
 User.credit: Stores the Credits of the user.
-User.consecutive_credit: Deprecated
-User.admin_credit: Deprecated
-User.campaign: 
+User.consecutive_credit: Deprecated :TOOD: Delete
+User.admin_credit: Deprecated :TODO: Delete
+User.campaign: Used for Zoho linking.
 User.zoho_user_id: ID of this user in the zoho recruit app
 User.status: Deleted users will have '0'. Active volunteers will have '1'
-User.app_version: Not used.
+User.app_version: Not used. Only used in apps/events-api/
 
 UserBatch: This holds the teacher mapping - which teacher is assigned to which batch/level
 UserBatch.id: 
@@ -955,7 +956,7 @@ UserClass.user_id: User.id
 UserClass.class_id: Class.id
 UserClass.substitute_id: User.id
 UserClass.zero_hour_attendance: 
-UserClass.status: 
+UserClass.status: If this is 1, the teacher was present, if 0 teacher was absent. This goes against convention that is generally followed in the DB where status 0 means soft delete.
 
 UserCredit: This stores a record of all the manual assignment of credits.
 UserCredit.id: 
@@ -969,9 +970,9 @@ UserCredit.year:
 UserData: Key/value store for user related data. Right now, stores things like bank account information, CPP signing, etc. This might move into the Data table.
 UserData.id: 
 UserData.user_id: User.id
-UserData.name: 
-UserData.value: 
-UserData.data: 
+UserData.name: Key part of the key/value pair
+UserData.value: Value part 
+UserData.data: Value part - if the value is bigger
 UserData.added_on: 
 
 UserEvent: User event attendance data.
@@ -983,7 +984,7 @@ UserEvent.late: Was the user late for the event. Right now, we are not capturing
 UserEvent.user_choice: 0-No Data, 1-I'm going, 2-Maybe, 3-Can't go
 UserEvent.reason: If user marks Can't go in RSVP, capture reason
 UserEvent.created_from: 1-Web, 2-App. Not used - can delete after code review.
-UserEvent.type: Not used anymore. Delete after review.
+UserEvent.type: Not used anymore. Can Delete after review - but this has historic data. Might have to migrate.
 UserEvent.created_on: 
 UserEvent.rsvp_auth_key: To make sure that the right user RSVPs. People RSVP using a link sent on email.
 
@@ -993,7 +994,7 @@ UserGroup.user_id: User.id
 UserGroup.group_id: Group.id
 UserGroup.year: This lets us store historical data.
 
-User_Credit_Archive: Historical credit data - this is saved every week. Also saved in Archive Table. Need a review.
+User_Credit_Archive: Historical credit data - this is saved every week. Also saved in Archive Table. Need a review. :TODO: Merge this and Archive table.
 User_Credit_Archive.id: 
 User_Credit_Archive.user_id: User.id
 User_Credit_Archive.credit_on: 
@@ -1001,7 +1002,7 @@ User_Credit_Archive.credit:
 
 Vertical: Stores all the Verticals
 Vertical.id: 
-Vertical.key: Not used.
+Vertical.key: Not used. :TODO: Delete
 Vertical.name: 
 Vertical.status: 
 

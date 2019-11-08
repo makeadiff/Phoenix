@@ -19,7 +19,7 @@ final class Survey_Question extends Common
 
     public function choices()
     {
-        return $this->hasMany('App\Models\Survey_Choice')->where('Survey_Choice.status', '=', '1')->orderBy('sort_order');
+        return $this->hasMany('App\Models\Survey_Choice', 'survey_question_id')->where('Survey_Choice.status', '=', '1')->orderBy('sort_order');
     }
 
     public function template()
