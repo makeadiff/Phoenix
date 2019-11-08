@@ -122,7 +122,7 @@ final class Survey_Response extends Common
         $validator = Validator::make($fields, [
             'survey_id'             => 'required|integer|exists:Survey,id',
             'survey_question_id'    => 'required|integer|exists:Survey_Question,id',
-            'survey_choice_id'      => 'required_without:response|integer|exists:Survey_Question,id',
+            // 'survey_choice_id'      => 'required_without:response|integer|exists:Survey_Question,id',
             'response'              => 'required_without:survey_choice_id',
             'responder_id'          => 'required|integer'
             // :TODO: Additional validation rules - responder_id should map to the valid table, question_id and choice_id should have status=1 in their table
@@ -137,7 +137,7 @@ final class Survey_Response extends Common
         return $response;
     }
 
-    public function addMany($data, $survey_id = 0, $question_id)
+    public function addMany($data, $survey_id = 0, $question_id = 0)
     {
         $responses = [];
         foreach ($data as $row) {

@@ -45,17 +45,23 @@ type Mutation {
 	createLog(name: String, log: String, user_id: ID, added_on: DateTime): String
 	saveTeacherAttendance(class_id: ID, teachers: [InputTeacherAttendance]): Int
 	saveStudentAttendance(class_id: ID, students: [InputStudentAttendance]): Int
+	saveSurveyResponses(responder_id: ID, survey_id: ID, added_by_user_id: ID, responses: [InputSurveyResponse]): Int
 }
 input InputTeacherAttendance {
-	user_id: Int
+	user_id: Int!
 	substitute_id: Int
 	zero_hour_attendance: String
-	status: String
+	status: String!
 }
 input InputStudentAttendance {
-	student_id: Int
-	participation: Int
+	student_id: Int!
+	participation: Int!
 	check_for_understanding: Int
+}
+input InputSurveyResponse {
+	question_id: ID! 
+	choice_id: ID
+	response: String
 }
 
 """
