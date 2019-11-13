@@ -27,7 +27,6 @@ App_CSVGo.id:
 App_CSVGo.name: Name of the report. This should be passed as a parameter to CSV:Go.
 App_CSVGo.description: 
 App_CSVGo.query: This holds the actual SQL Query that will make the report.
-App_CSVGo.db: Not Used - Will never be used. :TODO: Delete
 App_CSVGo.added_on: 
 App_CSVGo.last_run_on: The time when this query was last executed
 App_CSVGo.vertical_id: Vertical.id
@@ -45,22 +44,6 @@ App_Director.sort:
 App_Director.user_id: User.id - Not used
 App_Director.status: 
 
-App_Event_Mail_Tracker: Deprecated. This was used in Events app backend - but not used anymore. :TODO: Delete.
-App_Event_Mail_Tracker.id: 
-App_Event_Mail_Tracker.receive_id: 
-App_Event_Mail_Tracker.item_id: 
-App_Event_Mail_Tracker.type: 
-App_Event_Mail_Tracker.name: 
-App_Event_Mail_Tracker.email_id: 
-App_Event_Mail_Tracker.email_subject: 
-App_Event_Mail_Tracker.email_greating: 
-App_Event_Mail_Tracker.email_content: 
-App_Event_Mail_Tracker.sent_by: 
-App_Event_Mail_Tracker.response_mail: 
-App_Event_Mail_Tracker.status: 
-App_Event_Mail_Tracker.created_at: 
-App_Event_Mail_Tracker.updated_at: 
-
 Archive: Stores the historical credits of all teachers. This is saved at the beginning of every year. Also saved in User_Credit_Archive Table. Need a review. Maybe, drop this table, just have Use_Credit_Archive. :TODO: Rename table to Credit_Archive, Import things from User_Credit_Archive to that table. Change references in apps/reports/volunteer_credits.php:54, Madapp/system/application/controllers/cron.php:105, Madapp/system/application/models/users_model.php:598,656 
 Archive.id: 
 Archive.user_id: 
@@ -75,7 +58,6 @@ Batch.day: Batch day - 0 is Sunday
 Batch.class_time: Batch time - expressed in 24 hours time.
 Batch.batch_head_id: The ID of the mentor of this batch. Links to the User table.
 Batch.center_id: Center.id
-Batch.subject_id: Not used. Can be removed - review historic data before removing. :TODO: Delete
 Batch.project_id: Project.id
 Batch.year: Holds the year which the batch is a part of.
 Batch.status: 
@@ -136,8 +118,6 @@ City.id:
 City.name: 
 City.president_id: User.id - City Team Lead of this city. :TODO: Delete
 City.added_on: 
-City.classes_happening: Delete after review. :TODO: Delete
-City.region_id: Region.id - not used - delete. :TODO: Delete
 City.latitude: Geoglaphic location of the city.
 City.longitude: Geoglaphic location of the city.
 City.type: Two city(leadership, and test) are marked as virtual. No actual operations happen in those two cities. They are for testing/management purposes. Might require a review. Consider moving out the Test city.
@@ -148,7 +128,6 @@ Class.batch_id: Batch.id
 Class.level_id: Level.id
 Class.project_id: Project.id - Which project this Class is a part of - ed support/fp/aftercare/tr
 Class.class_on: 
-Class.feedback: Not Used - :TODO: Delete
 Class.lesson_id: Lesson.id - Depricated. Kept on because it has historical Data. Code does not call this anymore
 Class.class_type: If its an extra class the value of this will be 'extra'. Those are classes that happens the normal schedule(For eg, if we didn't get enough classes normally).
 Class.class_satisfaction: 
@@ -188,13 +167,6 @@ Contact.info:
 Contact.added_on: 
 Contact.updated_on: 
 Contact.status: 
-
-ContactApplication: Not used. :TODO: Delete
-ContactApplication.id: 
-ContactApplication.contact_id: Contact.id
-ContactApplication.group_id: Group.id
-ContactApplication.priority: 
-ContactApplication.status: 
 
 Credit_Parameter: Possible actions that can give user credits. Right now, used for FR tasks/credits.
 Credit_Parameter.id: 
@@ -321,7 +293,7 @@ Event.description:
 Event.starts_on: 
 Event.ends_on: Not captured in UI. Not used thanks to that.
 Event.place: 
-Event.type: Not used anymore - legacy.
+Event.type: Not used anymore - legacy. Might have to do a migration that moves this data to event_type_id.
 Event.city_id: City.id - If this is 0, it means its a multi city event(Users from more than one city participating - eg. National Ed Support Fellows Zoom Call)
 Event.event_type_id: Event_Type.id - What type of an event this is
 Event.vertical_id: Vertical.id - What vertical this event is a part of(eg. Ed Support Training.)
@@ -413,7 +385,7 @@ FAM_Referral.group_id: Group.id - The role the user is refered for.
 FAM_Referral.created_at: 
 FAM_Referral.year: 
 
-FAM_Stage: All the stages in play.
+FAM_Stage: All the stages of the fellowship evaluation.
 FAM_Stage.id: 
 FAM_Stage.name: 
 FAM_Stage.status: 
@@ -493,25 +465,19 @@ Grade_Template_Grade.grade:
 Grade_Template_Grade.from_mark: 
 Grade_Template_Grade.to_mark: 
 
-Group: All the user groups. Note - need to implement inheritance here - add a parent_group_id to this.
+Group: All the user groups/Roles. We use this table to manage permissions.
 Group.id: 
 Group.name: 
 Group.type: What level is this group at - volunteer, fellow, strat, national(director), executive
 Group.parent_group_id: Group.id - Parent group ID. This is used to build permission inheritance.
 Group.group_type: Only valid if this is 'normal'. Not used anymore - remove after code review. But we might need it if we are planning to implement inheritance.
 Group.vertical_id: Vertical.id
-Group.region_id: Deprecated :TODO: Remove
 Group.status: 
-
-GroupHierarchy: Not in use. Can be used to create reporting structures. :TODO: Remove
-GroupHierarchy.id: 
-GroupHierarchy.group_id: 
-GroupHierarchy.reports_to_group_id: 
 
 GroupPermission: Permission settings for group.
 GroupPermission.id: 
-GroupPermission.group_id: 
-GroupPermission.permission_id: 
+GroupPermission.group_id: Group.id
+GroupPermission.permission_id: Permission.id
 
 IS_Event: Impact survey data collection event. Will get merged with the Survey system in a year or two.
 IS_Event.id: 
@@ -547,9 +513,8 @@ Level.grade: Which class/grade the student is in.
 Level.center_id: Center.id
 Level.medium: Langage of insturtion - English or venacular. Used for requirment calculation.
 Level.preferred_gender: 
-Level.medium_id: Medium.id - Not used anymore. Kept on for legacy data. 
+Level.medium_id: Medium.id - Not used anymore. Kept on for legacy data. Consider merging this and medium
 Level.project_id: Project.id - this decides if the row holds Ed data or FP data.
-Level.book_id: Not used anymore. :TODO: Remove
 Level.year: 
 Level.status: 
 
@@ -616,11 +581,6 @@ Push_Notification.updated_on:
 Push_Notification.platform: 
 Push_Notification.app: 
 
-Region: Deprecated :TODO: Remove
-Region.id: 
-Region.name: 
-Region.director_id: 
-
 Retention_Referrals: Stores data of volunteer referrals. This is used at the end of year when people decide to stay or leave. Part of the FAM/Sucession Planning project.
 Retention_Referrals.id: 
 Retention_Referrals.name: 
@@ -641,103 +601,6 @@ Retention_UserGroupPreference.city_id: City.id
 Retention_UserGroupPreference.year: Year of data entry, entered accoriding to MAD Academic year.
 Retention_UserGroupPreference.added_on: 
 Retention_UserGroupPreference.status: '1' for Active Preference and '0' for Obsolete preference. 
-
-SC_student_shelter_mapping: Not Used - Delete them. Was created by Social Cops - :TODO: Delete
-SC_student_shelter_mapping.id: 
-SC_student_shelter_mapping.name: 
-SC_student_shelter_mapping.birthday: 
-SC_student_shelter_mapping.sex: 
-SC_student_shelter_mapping.center_id: 
-SC_student_shelter_mapping.description: 
-SC_student_shelter_mapping.photo: 
-SC_student_shelter_mapping.thumbnail: 
-SC_student_shelter_mapping.added_on: 
-SC_student_shelter_mapping.reason_for_leaving: 
-SC_student_shelter_mapping.status: 
-SC_student_shelter_mapping.level_id: 
-SC_student_shelter_mapping.level_id_dup: 
-SC_student_shelter_mapping.level_name: 
-SC_student_shelter_mapping.level_grade: 
-SC_student_shelter_mapping.level_center_id: 
-SC_student_shelter_mapping.level_preferred_gender: 
-SC_student_shelter_mapping.level_medium_id: 
-SC_student_shelter_mapping.level_project_id: 
-SC_student_shelter_mapping.level_book_id: 
-SC_student_shelter_mapping.level_year: 
-SC_student_shelter_mapping.level_status: 
-SC_student_shelter_mapping.center_center_id: 
-SC_student_shelter_mapping.center_name: 
-SC_student_shelter_mapping.city_id: 
-SC_student_shelter_mapping.center_head_id: 
-SC_student_shelter_mapping.class_starts_on: 
-SC_student_shelter_mapping.medium: 
-SC_student_shelter_mapping.preferred_gender: 
-SC_student_shelter_mapping.center_status: 
-SC_student_shelter_mapping.city_city_id: 
-SC_student_shelter_mapping.city_name: 
-SC_student_shelter_mapping.president_id: 
-SC_student_shelter_mapping.city_added_on: 
-SC_student_shelter_mapping.city_classes_happening: 
-SC_student_shelter_mapping.region_id: 
-SC_student_shelter_mapping.city_type: 
-
-SC_teacher_shelter_mapping: Not Used - Delete them. Was created by Social Cops - :TODO: Delete
-SC_teacher_shelter_mapping.id: 
-SC_teacher_shelter_mapping.name: 
-SC_teacher_shelter_mapping.title: 
-SC_teacher_shelter_mapping.email: 
-SC_teacher_shelter_mapping.mad_email: 
-SC_teacher_shelter_mapping.phone: 
-SC_teacher_shelter_mapping.sex: 
-SC_teacher_shelter_mapping.password: 
-SC_teacher_shelter_mapping.password_hash: 
-SC_teacher_shelter_mapping.auth_token: 
-SC_teacher_shelter_mapping.photo: 
-SC_teacher_shelter_mapping.joined_on: 
-SC_teacher_shelter_mapping.address: 
-SC_teacher_shelter_mapping.bio: 
-SC_teacher_shelter_mapping.facebook_id: 
-SC_teacher_shelter_mapping.verification_status: 
-SC_teacher_shelter_mapping.profile_progress: 
-SC_teacher_shelter_mapping.source: 
-SC_teacher_shelter_mapping.source_other: 
-SC_teacher_shelter_mapping.birthday: 
-SC_teacher_shelter_mapping.job_status: 
-SC_teacher_shelter_mapping.edu_institution: 
-SC_teacher_shelter_mapping.company: 
-SC_teacher_shelter_mapping.preferred_day: 
-SC_teacher_shelter_mapping.why_mad: 
-SC_teacher_shelter_mapping.left_on: 
-SC_teacher_shelter_mapping.reason_for_leaving: 
-SC_teacher_shelter_mapping.induction_status: 
-SC_teacher_shelter_mapping.teacher_training_status: 
-SC_teacher_shelter_mapping.center_id: 
-SC_teacher_shelter_mapping.city_other: 
-SC_teacher_shelter_mapping.city_id: 
-SC_teacher_shelter_mapping.subject_id: 
-SC_teacher_shelter_mapping.project_id: 
-SC_teacher_shelter_mapping.user_type: 
-SC_teacher_shelter_mapping.credit: 
-SC_teacher_shelter_mapping.consecutive_credit: 
-SC_teacher_shelter_mapping.admin_credit: 
-SC_teacher_shelter_mapping.campaign: 
-SC_teacher_shelter_mapping.zoho_user_id: 
-SC_teacher_shelter_mapping.status: 
-SC_teacher_shelter_mapping.app_version: 
-SC_teacher_shelter_mapping.userbatch_id: 
-SC_teacher_shelter_mapping.user_id: 
-SC_teacher_shelter_mapping.batch_id: 
-SC_teacher_shelter_mapping.level_id: 
-SC_teacher_shelter_mapping.requirement: 
-SC_teacher_shelter_mapping.batch_batch_id: 
-SC_teacher_shelter_mapping.batch_day: 
-SC_teacher_shelter_mapping.class_time: 
-SC_teacher_shelter_mapping.batch_head_id: 
-SC_teacher_shelter_mapping.batch_center_id: 
-SC_teacher_shelter_mapping.batch_subject_id: 
-SC_teacher_shelter_mapping.batch_project_id: 
-SC_teacher_shelter_mapping.batch_year: 
-SC_teacher_shelter_mapping.batch_status: 
 
 SS_Answer: Stakeholder Survey. An older survey system. We'll have to merge this with Survey in an year or two.
 SS_Answer.id: 
@@ -776,10 +639,6 @@ Setting.name:
 Setting.value: 
 Setting.data: 
 
-State: Deprecated - Delete this. :TODO: Delete
-State.id: 
-State.name: 
-
 Student: All student information stored in this table. Note - figure out a method to uniquely identify students. Prevent deletes of students - add a method of marking as archived/alumni
 Student.id: 
 Student.name: 
@@ -810,11 +669,9 @@ StudentLevel.level_id: Level.id
 Subject: All subjects that can be taught it our classes. Note - need to have some board/medium connections. Review later.
 Subject.id: 
 Subject.name: 
-Subject.unit_count: Not used :TODO: Delete
-Subject.city_id: City.id - Not used :TODO: Delete
 Subject.status: 
 
-Survey: Survey Instance. Each Survey template can have multiple survey instances.
+Survey: Survey Instance. Each Survey template can have multiple survey instances. Eg. 'DC Survey' template can have 3 instance - 'Baseline', 'At Camp' and 'Post Camp'. Same questions, but 3 different instances.
 Survey.id: 
 Survey.name:
 Survey.survey_template_id: Survey_Template.id
@@ -868,20 +725,9 @@ Survey_Template.name:
 Survey_Template.description: 
 Survey_Template.added_on: 
 Survey_Template.vertical_id: Vertical.id
-Survey_Template.responder: 
+Survey_Template.responder: What type of responder is this for - is it a student, a volunter, a survey about a shelter etc.
 Survey_Template.options: Use this to store extra data in JSON format.
 Survey_Template.status: 
-
-Temp_Alumni: Not Used - :TODO: -Delete
-Temp_Alumni.id: 
-Temp_Alumni.first_name: 
-Temp_Alumni.last_name: 
-Temp_Alumni.phone: 
-Temp_Alumni.email: 
-Temp_Alumni.city_id: City.id
-Temp_Alumni.year_of_leaving: 
-Temp_Alumni.years_in_mad: 
-Temp_Alumni.added_on: 
 
 Temp_Employee_Signup: This is used for employing sorcing project. It was run out of madapp - and there is a lot of good leads in this. 
 Temp_Employee_Signup.id: 
@@ -927,17 +773,12 @@ User.left_on: The user has left MAD on this date
 User.added_on: 
 User.updated_on: 
 User.reason_for_leaving: 
-User.induction_status: Deprecated :TODO: Delete
-User.teacher_training_status: Deprecated :TODO: Delete
-User.center_id: Not used :TODO: Delete
 User.city_other: 
 User.city_id: City.id
 User.subject_id: 
 User.project_id: Not used
 User.user_type: volunteer - Currently active volunteer. alumni - Was a volunteer in the past, left MAD at the end of the year. let_go - Was a volunteer in the past - left in the middle of the year. applicant - Applied to be a MAD volunteer - but hasn't been accepted yet. well_wisher - Rejected at interview
 User.credit: Stores the Credits of the user.
-User.consecutive_credit: Deprecated :TOOD: Delete
-User.admin_credit: Deprecated :TODO: Delete
 User.campaign: Used for Zoho linking.
 User.zoho_user_id: ID of this user in the zoho recruit app
 User.status: Deleted users will have '0'. Active volunteers will have '1'
@@ -1002,7 +843,6 @@ User_Credit_Archive.credit:
 
 Vertical: Stores all the Verticals
 Vertical.id: 
-Vertical.key: Not used. :TODO: Delete
 Vertical.name: 
 Vertical.status: 
 
