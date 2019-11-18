@@ -1,0 +1,6 @@
+Command to generate GraphQL documenation
+	graphdoc -s ../graphql-schema/schema.graphql -o ./graphql
+
+This will statically create the documentation. It will have to be run after every change in the schema.
+This uses https://github.com/2fd/graphdoc - so make sure that is installed frist(npm install -g @2fd/graphdoc)
+
