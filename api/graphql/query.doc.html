@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
+    <title>Query</title>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
+</head>
+<body class="slds-scrollable--y">
+    <nav class="slds-grid slds-grid--vertical slds-col--rule-right">
+        <header class="slds-p-around--medium slds-col slds-shrik slds-grow-none">
+            <button class="slds-button slds-button--icon slds-float--right js-toggle-navigation less-than-medium">
+                <i class="material-icons">close</i>
+            </button>
+                <h3 class="slds-text-heading--medium"><a href="./">GraphQL Schema</a></h3>
+            <div class="slds-p-top--small">
+                <input id="type-search" type="text" placeholder="Search a type" autofocus="" class="slds-input" />
+            </div>
+        </header>
+        <div id="navication-scroll" class="slds-scrollable--y slds-col slds-grow">
+<div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
+    <h4 class="slds-text-title--caps slds-p-around--medium">Schema</h4>
+    <ul>
+        <li class="slds-is-active" title="Query">
+            <a href="query.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Query
+            </a>
+        </li>
+        <li  title="Mutation">
+            <a href="mutation.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Mutation
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
+    <h4 class="slds-text-title--caps slds-p-around--medium">Scalars</h4>
+    <ul>
+        <li  title="Boolean">
+            <a href="boolean.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Boolean
+            </a>
+        </li>
+        <li  title="Date">
+            <a href="date.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Date
+            </a>
+        </li>
+        <li  title="DateTime">
+            <a href="datetime.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                DateTime
+            </a>
+        </li>
+        <li  title="Float">
+            <a href="float.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Float
+            </a>
+        </li>
+        <li  title="ID">
+            <a href="id.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                ID
+            </a>
+        </li>
+        <li  title="Int">
+            <a href="int.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Int
+            </a>
+        </li>
+        <li  title="String">
+            <a href="string.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                String
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
+    <h4 class="slds-text-title--caps slds-p-around--medium">Enums</h4>
+    <ul>
+        <li  title="__DirectiveLocation">
+            <a href="directivelocation.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                __DirectiveLocation
+            </a>
+        </li>
+        <li  title="__TypeKind">
+            <a href="typekind.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                __TypeKind
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
+    <h4 class="slds-text-title--caps slds-p-around--medium">Objects</h4>
+    <ul>
+        <li  title="Batch">
+            <a href="batch.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Batch
+            </a>
+        </li>
+        <li  title="Center">
+            <a href="center.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Center
+            </a>
+        </li>
+        <li  title="City">
+            <a href="city.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                City
+            </a>
+        </li>
+        <li  title="Class">
+            <a href="class.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Class
+            </a>
+        </li>
+        <li  title="Data">
+            <a href="data.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Data
+            </a>
+        </li>
+        <li  title="Deposit">
+            <a href="deposit.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Deposit
+            </a>
+        </li>
+        <li  title="Donation">
+            <a href="donation.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Donation
+            </a>
+        </li>
+        <li  title="Donor">
+            <a href="donor.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Donor
+            </a>
+        </li>
+        <li  title="Event">
+            <a href="event.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Event
+            </a>
+        </li>
+        <li  title="Event_Type">
+            <a href="event_type.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Event_Type
+            </a>
+        </li>
+        <li  title="Group">
+            <a href="group.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Group
+            </a>
+        </li>
+        <li  title="Level">
+            <a href="level.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Level
+            </a>
+        </li>
+        <li  title="Log">
+            <a href="log.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Log
+            </a>
+        </li>
+        <li  title="MentorClassConnection">
+            <a href="mentorclassconnection.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                MentorClassConnection
+            </a>
+        </li>
+        <li  title="Project">
+            <a href="project.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Project
+            </a>
+        </li>
+        <li  title="Student">
+            <a href="student.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Student
+            </a>
+        </li>
+        <li  title="StudentAttendance">
+            <a href="studentattendance.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                StudentAttendance
+            </a>
+        </li>
+        <li  title="Survey">
+            <a href="survey.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Survey
+            </a>
+        </li>
+        <li  title="Survey_Category">
+            <a href="survey_category.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Survey_Category
+            </a>
+        </li>
+        <li  title="Survey_Choice">
+            <a href="survey_choice.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Survey_Choice
+            </a>
+        </li>
+        <li  title="Survey_Question">
+            <a href="survey_question.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Survey_Question
+            </a>
+        </li>
+        <li  title="Survey_Response">
+            <a href="survey_response.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Survey_Response
+            </a>
+        </li>
+        <li  title="Survey_Template">
+            <a href="survey_template.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Survey_Template
+            </a>
+        </li>
+        <li  title="TeacherClassConnection">
+            <a href="teacherclassconnection.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                TeacherClassConnection
+            </a>
+        </li>
+        <li  title="User">
+            <a href="user.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                User
+            </a>
+        </li>
+        <li  title="UserPivot">
+            <a href="userpivot.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                UserPivot
+            </a>
+        </li>
+        <li  title="Vertical">
+            <a href="vertical.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Vertical
+            </a>
+        </li>
+        <li  title="__Directive">
+            <a href="directive.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                __Directive
+            </a>
+        </li>
+        <li  title="__EnumValue">
+            <a href="enumvalue.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                __EnumValue
+            </a>
+        </li>
+        <li  title="__Field">
+            <a href="field.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                __Field
+            </a>
+        </li>
+        <li  title="__InputValue">
+            <a href="inputvalue.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                __InputValue
+            </a>
+        </li>
+        <li  title="__Schema">
+            <a href="schema.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                __Schema
+            </a>
+        </li>
+        <li  title="__Type">
+            <a href="type.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                __Type
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
+    <h4 class="slds-text-title--caps slds-p-around--medium">Input Objects</h4>
+    <ul>
+        <li  title="InputStudentAttendance">
+            <a href="inputstudentattendance.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                InputStudentAttendance
+            </a>
+        </li>
+        <li  title="InputSurveyResponse">
+            <a href="inputsurveyresponse.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                InputSurveyResponse
+            </a>
+        </li>
+        <li  title="InputTeacherAttendance">
+            <a href="inputteacherattendance.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                InputTeacherAttendance
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
+    <h4 class="slds-text-title--caps slds-p-around--medium">Directives</h4>
+    <ul>
+        <li  title="deprecated">
+            <a href="deprecated.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                deprecated
+            </a>
+        </li>
+        <li  title="include">
+            <a href="include.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                include
+            </a>
+        </li>
+        <li  title="skip">
+            <a href="skip.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                skip
+            </a>
+        </li>
+    </ul>
+</div>
+        </div>
+    </nav>
+    <main><section class="title slds-theme--inverse">
+    <div class="container slds-grid">
+        <div>
+        <button class="slds-button js-toggle-navigation less-than-medium">
+            <i class="material-icons slds-button__icon slds-button__icon--left">menu</i>
+            <span class="slds-text-title--caps">Types<span>
+        </button>
+        </div>
+        </div>
+    </div>
+    <div class="container">
+        <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
+        <h1 class="slds-text-heading--large">Query</h1>
+        <div class="slds-text-body--regular"></div>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <h2 id="graphql-schema-definition" class="graphdoc-section__title slds-text-heading--medium slds-m-top--small">
+            <a href="#graphql-schema-definition">
+                <i class="material-icons">link</i>
+            </a>
+            GraphQL Schema definition
+        </h2>
+        <code class="highlight"><ul class="code" style="padding-left:56px"><li><span class="keyword operator ts">type</span> <span class="identifier">Query</span> {</li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">user</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="user.doc.html">User</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">center</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="center.doc.html">Center</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">city</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="city.doc.html">City</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">student</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="student.doc.html">Student</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">group</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="group.doc.html">Group</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">vertical</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="vertical.doc.html">Vertical</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">batch</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="batch.doc.html">Batch</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">level</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="level.doc.html">Level</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">event</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="event.doc.html">Event</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">class</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="class.doc.html">Class</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">donation</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="donation.doc.html">Donation</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">donor</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="donor.doc.html">Donor</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">survey</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="survey.doc.html">Survey</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: </span></span></li><li><span class="tab"><span class="meta">survey_template</span>(<span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>): <a class="support type" href="survey_template.doc.html">Survey_Template</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>city_id</strong>: </span></span></li><li><span class="tab"><span class="meta">eventsInCity</span>(<span class="meta">city_id</span>: <a class="support type" href="id.doc.html">ID</a>): [<a class="support type" href="event.doc.html">Event</a>] </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>teacher_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>level_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>project_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>center_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>mentor_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>class_status</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>direction</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>from_date</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>limit</strong>: </span></span></li><li><span class="tab"><span class="meta">batchSearch</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">teacher_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">level_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">project_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">center_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">mentor_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">class_status</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">direction</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">from_date</span>: <a class="support type" href="date.doc.html">Date</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">limit</span>: <a class="support type" href="string.doc.html">String</a></span></span></li><li><span class="tab">): [<a class="support type" href="batch.doc.html">Batch</a>] </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>teacher_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>level_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>project_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>status</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>batch_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>class_date</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>direction</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>from_date</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>limit</strong>: </span></span></li><li><span class="tab"><span class="meta">classSearch</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">teacher_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">level_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">project_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">batch_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">class_date</span>: <a class="support type" href="date.doc.html">Date</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">direction</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">from_date</span>: <a class="support type" href="date.doc.html">Date</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">limit</span>: <a class="support type" href="string.doc.html">String</a></span></span></li><li><span class="tab">): [<a class="support type" href="class.doc.html">Class</a>] </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>city_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>name</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>phone</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>email</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>mad_email</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>any_email</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>identifier</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>left_on</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>vertical_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>status</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>user_type</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>not_user_type</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>center_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>group_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>group_type</strong>: </span></span></li><li><span class="tab"><span class="meta">userSearch</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">city_id</span>: <a class="support type" href="int.doc.html">Int</a>!,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">phone</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">email</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">mad_email</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">any_email</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">identifier</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">left_on</span>: <a class="support type" href="date.doc.html">Date</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">vertical_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">user_type</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">not_user_type</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">center_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">group_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">group_type</span>: <a class="support type" href="string.doc.html">String</a></span></span></li><li><span class="tab">): [<a class="support type" href="user.doc.html">User</a>] </span></li><li></li><li><span class="tab"><span class="comment line">#   :TODO: Make this teacherClassConneciton and mentorClassConnection. No point </span></span></li><li><span class="tab"><span class="comment line">#   having both in one.</span></span></li><li><span class="tab"><span class="comment line">#   classConnection(teacher_id: Int, mentor_id: Int): [ClassConnection] #Custom </span></span></li><li><span class="tab"><span class="comment line">#   return  + resolver. Used for finding unfilled data in UPMA. Both teacher and </span></span></li><li><span class="tab"><span class="comment line">#   student.</span></span></li><li><span class="tab"><span class="comment line"># </span></span></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>teacher_id</strong>: </span></span></li><li><span class="tab"><span class="meta">teacherClassConnection</span>(<span class="meta">teacher_id</span>: <a class="support type" href="int.doc.html">Int</a>): [<a class="support type" href="teacherclassconnection.doc.html">TeacherClassConnection</a>] </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>mentor_id</strong>: </span></span></li><li><span class="tab"><span class="meta">mentorClassConnection</span>(<span class="meta">mentor_id</span>: <a class="support type" href="int.doc.html">Int</a>): [<a class="support type" href="mentorclassconnection.doc.html">MentorClassConnection</a>] </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>added_on</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>amount</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>status</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>type</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>fundraiser_user_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>updated_by_user_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>donor_id</strong>: </span></span></li><li><span class="tab"><span class="meta">donations</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">added_on</span>: <a class="support type" href="date.doc.html">Date</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">amount</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">type</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">fundraiser_user_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">updated_by_user_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">donor_id</span>: <a class="support type" href="int.doc.html">Int</a></span></span></li><li><span class="tab">): [<a class="support type" href="donation.doc.html">Donation</a>] </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>name</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>starts_on</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>place</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>city_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>event_type_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>vertical_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>status</strong>: </span></span></li><li><span class="tab"><span class="meta">events</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">starts_on</span>: <a class="support type" href="datetime.doc.html">DateTime</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">place</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">city_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">event_type_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">vertical_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a></span></span></li><li><span class="tab">): [<a class="support type" href="event.doc.html">Event</a>!]! </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>name</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>email</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>phone</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>city_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>status</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>user_type</strong>: </span></span></li><li><span class="tab"><span class="meta">users</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">email</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">phone</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">city_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">user_type</span>: <a class="support type" href="string.doc.html">String</a></span></span></li><li><span class="tab">): [<a class="support type" href="user.doc.html">User</a>] </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>city_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>status</strong>: </span></span></li><li><span class="tab"><span class="meta">centers</span>(<span class="meta">city_id</span>: <a class="support type" href="int.doc.html">Int</a>, <span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a>): [<a class="support type" href="center.doc.html">Center</a>!]! </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>type</strong>: </span></span></li><li><span class="tab"><span class="meta">cities</span>(<span class="meta">type</span>: <a class="support type" href="string.doc.html">String</a>): [<a class="support type" href="city.doc.html">City</a>!]! </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>group_type</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>status</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>type</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>vertical_id</strong>: </span></span></li><li><span class="tab"><span class="meta">groups</span>(<span class="meta">group_type</span>: <a class="support type" href="string.doc.html">String</a>, <span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a>, <span class="meta">type</span>: <a class="support type" href="string.doc.html">String</a>, <span class="meta">vertical_id</span>: <a class="support type" href="int.doc.html">Int</a>): [<a class="support type" href="group.doc.html">Group</a>!]! </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>status</strong>: </span></span></li><li><span class="tab"><span class="meta">verticals</span>(<span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a>): [<a class="support type" href="vertical.doc.html">Vertical</a>!]! </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>status</strong>: </span></span></li><li><span class="tab"><span class="meta">projects</span>(<span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a>): [<a class="support type" href="project.doc.html">Project</a>!]! </span></li><li>}</li></ul></code>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <h2 id="require-by" class="graphdoc-section__title slds-text-heading--medium slds-m-top--small">
+            <a href="#require-by">
+                <i class="material-icons">link</i>
+            </a>
+            Require by
+        </h2>
+        <div class="require-by anyone">This element is not required by anyone</div>
+    </div>
+</section>
+<footer>
+<div class="container slds-p-around--large">
+    <p class="slds-text-align--right slds-text-title--caps">
+        Generated with <a href="https://github.com/2fd/graphdoc#readme" target="_blank">graphdoc 2.4.0</a>
+    </p>
+</div>
+</footer>
+</main>
+    <script src="./scripts/focus-active.js"></script>
+    <script src="./scripts/filter-types.js"></script>
+    <script src="./scripts/toggle-navigation.js"></script>
+</body>
