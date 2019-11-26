@@ -65,8 +65,7 @@ final class Donation extends Common
                     $q->where("DP.collected_from_user_id", $data['approver_user_id']);
                 }
 
-                $all_deposit_info = $q->get();
-                $deposit_info = reset($all_deposit_info);
+                $deposit_info = $q->first();
 
                 if (isset($data['include_deposit_info']) and $data['include_deposit_info']) {
                     $donations[$index]->deposit = $all_deposit_info;
@@ -77,14 +76,14 @@ final class Donation extends Common
                     if (!$deposit_info and $data['deposited']) {
                         unset($donations[$index]); // Deposit info not present - undeposited.
                     }
-
                     if ($deposit_info and isset($deposit_info->status) and ($deposit_info->status == 'approved' or $deposit_info->status == 'pending')) {// Approved or pending deposit
-                        if (!$data['deposited']) {
+                        if (!$data['deposited']) { // Find un-deposited donuts - deposited=false
                             unset($donations[$index]);
-                        } // If they want only undeposited donations, unset
-                    } elseif ($data['deposited']) {
+                        }
+
+                    } elseif ($data['deposited']) {  // Only deposited donations go thru.
                         unset($donations[$index]);
-                    } // Only deposited donations go thru.
+                    }
                 }
             }
         }
