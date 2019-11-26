@@ -68,7 +68,7 @@ final class Donation extends Common
                 $deposit_info = $q->first();
 
                 if (isset($data['include_deposit_info']) and $data['include_deposit_info']) {
-                    $donations[$index]->deposit = $all_deposit_info;
+                    $donations[$index]->deposit = $deposit_info;
                 }
 
                 if (isset($data['deposited'])) {
