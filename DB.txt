@@ -187,6 +187,22 @@ Data.year:
 Data.added_on: 
 Data.added_by_user_id: User.id
 
+Online_Donation: This is the table where all Online donations will be captured
+Online_Donation.id: 
+Online_Donation.donor_id: Donut_Donor.id - Donor Details will be in another table.
+Online_Donation.amount: Donation Amount
+Online_Donation.added_on: 
+Online_Donation.payment: When the gateway is called, it becomes started. If gateway confirms that payment was done, I'll mark it success.
+Online_Donation.payment_method: The methord used by the donor - UPI,Card,netbanking, etc. Provided by the gateway(razorpay provides - not sure about others)
+Online_Donation.currency: Defaults to INR. We'll need this when other currencies are supported.
+Online_Donation.gateway: Which gateway was used - right now, one of these tech_process,simply_donor,razorpay,payu,other
+Online_Donation.gateway_transaction_id:  ID provided by the gateway for this payment.
+Online_Donation.info: More info can be stored here. JSON - so it can store structures.
+Online_Donation.fundraiser_id: If its a referral donation, the fund raiser ID can be stored here. This a link to User.id
+Online_Donation.repeat_count: Defaults to 1. If its a recurring donation, this will store how many times the donation needs to be repeated. If a one time donation, it will be 1.
+Online_Donation.unit_amount: If its a recurring donation the amount field will be the total amount. This field will store how much a single donation was.
+Online_Donation.conversion_rate: The conversion rate we got on the day of donation. Only applicable for foreign donations. Defaults to 1(INR)
+
 Donut_Deleted_Donation: This stores a copy of the donation when anyone deletes it. For historical purpose. Consider moving to a Point in Time Architecture for this.
 Donut_Deleted_Donation.id: 
 Donut_Deleted_Donation.type: Type of donation - cash, cheque, online donation, etc.
