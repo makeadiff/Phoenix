@@ -384,8 +384,8 @@ final class Donation extends Common
             $donation_id = $this->id;
         }
         
-        // Don't send recipt for cash donations lesser than 2000 rs
-        // if($this->item->amount < 2000) return false;
+        // Don't send recipt for cash donations Greater than 2000 rs.
+        if($this->item->type == 'cash' and $this->item->amount > 2000) return false; 
 
         $base_path = app()->basePath();
         $base_url = url('/');
