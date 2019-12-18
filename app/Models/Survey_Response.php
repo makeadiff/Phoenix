@@ -61,7 +61,8 @@ final class Survey_Response extends Common
         if (!empty($data['added_by_user_id'])) {
             $q->where('added_by_user_id', $data['added_by_user_id']);
         }
-        
+
+        // dd($q->toSql(), $q->getBindings(), $data);
         $results = $q->get();
 
         $choice_model = new Survey_Choice;

@@ -94,8 +94,11 @@ Route::get('/surveys/{survey_id}/questions/{question_id}/responses/{response_id}
     return JSend::success("Response ID: $response_id", ['responses' => $response]);
 });
 
-Route::get('/surveys/{survey_id}/responses', function ($survey_id) {
-    $responses = Survey_Response::inSurvey($survey_id);
+Route::get('/surveys/{survey_id}/responses', function ($survey_id, Request $request) {
+    $search = array_filter($request->only('survey_question_id', 'responder_id'));
+    $search['survey_id'] = $survey_id;
+    $survey_response = new Survey_Response;
+    $responses = $survey_response->search($search);
 
     return JSend::success("Responses for Survey ID: $survey_id", ['responses' => $responses]);
 });

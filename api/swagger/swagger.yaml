@@ -2608,11 +2608,11 @@ paths:
         - name: survey_question_id
           in: query
           type: string
-          description: Search for this name
+          description: Search for responses for this qusetion.
         - name: responder_id
           in: query
           type: integer
-          description: Returns only surveys for this vertical
+          description: Returns the responses by the responder with this ID
       responses:
         200: 
           description: Ok
