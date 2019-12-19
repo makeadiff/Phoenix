@@ -14,7 +14,7 @@ class AddReceiptNumberToOnlineDonationTable extends Migration
     public function up()
     {
         Schema::table('Online_Donation', function (Blueprint $table) {
-            $table->string('receipt_number');
+            $table->string('receipt_number')->nullable();
         });
     }
 
