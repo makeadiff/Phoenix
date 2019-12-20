@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddDonationFrequencyToOnlineDonationTable extends Migration
+class ChangeAddedOnToDatetimeInOnlineDonation extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,10 @@ class AddDonationFrequencyToOnlineDonationTable extends Migration
      * @return void
      */
     public function up()
-    {        
+    {
+        DB::connection()->getDoctrineSchemaManager()->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
         Schema::table('Online_Donation', function (Blueprint $table) {
-            $table->enum('frequency',['one-time','recurring'])->default('one-time');
+            $table->datetime('added_on')->change();
         });
     }
 
@@ -26,7 +27,7 @@ class AddDonationFrequencyToOnlineDonationTable extends Migration
     public function down()
     {
         Schema::table('Online_Donation', function (Blueprint $table) {
-            $table->dropColumn('frequency');
+            $table->date('added_on')->change();
         });
     }
 }
