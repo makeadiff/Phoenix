@@ -31,6 +31,11 @@ Route::get('/', function () {
     ]]);
 });
 
+Route::get('/debug-sentry', function () {
+    throw new Exception('My first Sentry error!');
+});
+
+
 $url_prefix = 'v1';
 
 Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function () {
