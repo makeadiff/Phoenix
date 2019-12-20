@@ -226,7 +226,6 @@ final class User extends Common
         if (!empty($data['batch_id'])) {
             $q->join('UserBatch', 'User.id', '=', 'UserBatch.user_id');
             $q->addSelect("UserBatch.level_id");
-            // $q->join('Batch', 'UserBatch.batch_id', '=', 'Batch.id');
             $q->where('UserBatch.batch_id', $data['batch_id']);
         }
 

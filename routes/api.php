@@ -627,10 +627,10 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
             } elseif ($key == 'include_deposit_info' or $key == 'deposited') {
                 $input = $request->input($key);
 
-                if (strtolower($input) == 'false') {
+                if (strtolower($input) === 'false' or $input == '0') {
                     $value = false;
                 } else {
-                    $value = (boolean) $value;
+                    $value = true;
                 }
 
                 $search[$key] = $value;

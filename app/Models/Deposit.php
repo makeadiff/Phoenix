@@ -62,8 +62,9 @@ final class Deposit extends Common
             }
 
             $pre_existing_deposit = false;
-            foreach ($existing_donation->deposit as $dep) {
-                if (($dep->status == 'pending' or $dep->status == 'approved') and $dep->collected_from_user_id == $collected_from_user_id) {
+            if($existing_donation->deposit) {
+                if (($existing_donation->deposit->status == 'pending' or $existing_donation->deposit->status == 'approved') 
+                        and $existing_donation->deposit->collected_from_user_id == $collected_from_user_id) {
                     $pre_existing_deposit = true;
                     break;
                 }
