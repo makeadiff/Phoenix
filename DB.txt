@@ -202,6 +202,7 @@ Online_Donation.fundraiser_id: If its a referral donation, the fund raiser ID ca
 Online_Donation.repeat_count: Defaults to 1. If its a recurring donation, this will store how many times the donation needs to be repeated. If a one time donation, it will be 1.
 Online_Donation.unit_amount: If its a recurring donation the amount field will be the total amount. This field will store how much a single donation was.
 Online_Donation.conversion_rate: The conversion rate we got on the day of donation. Only applicable for foreign donations. Defaults to 1(INR)
+Online_Donation.receipt_number: ID of the receipt that should go in the Receipt PDF - and should be unique
 Online_Donation.frequency: Donation frequency for the Donation, monthly or one-time
 
 Donut_Deleted_Donation: This stores a copy of the donation when anyone deletes it. For historical purpose. Consider moving to a Point in Time Architecture for this.
