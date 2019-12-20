@@ -1,28 +1,35 @@
-"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-01-01 13:00:00`."
+# A datetime string with format `Y-m-d H:i:s`, e.g. `2018-01-01 13:00:00`.
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
-"A date string with format `Y-m-d`, e.g. `2011-05-23`."
+# A date string with format `Y-m-d`, e.g. `2011-05-23`.
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
 type Query {
-    user(id: ID @eq): 	User 	@find(model: "App\\Models\\User")
-    center(id: ID @eq): Center 	@find(model: "App\\Models\\Center")
-    city(id: ID @eq): 	City 	@find(model: "App\\Models\\City")
-    student(id: ID @eq):Student @find(model: "App\\Models\\Student")
-    group(id: ID @eq):	Group 	@find(model: "App\\Models\\Group")
+    user(id: ID @eq): 		User 		@find(model: "App\\Models\\User")
+    center(id: ID @eq): 	Center 		@find(model: "App\\Models\\Center")
+    city(id: ID @eq): 		City 		@find(model: "App\\Models\\City")
+    student(id: ID @eq):	Student 	@find(model: "App\\Models\\Student")
+    group(id: ID @eq):		Group 		@find(model: "App\\Models\\Group")
     vertical(id: ID @eq):	Vertical 	@find(model: "App\\Models\\Vertical")
-    batch(id: ID @eq): 	Batch 	@find(model: "App\\Models\\Batch")
-    level(id: ID @eq): 	Level 	@find(model: "App\\Models\\Level")
-    event(id: ID @eq): 	Event 	@find(model: "App\\Models\\Event")
-    class(id: ID @eq): 	Class 	@find(model: "App\\Models\\Classes")
+    batch(id: ID @eq): 		Batch 		@find(model: "App\\Models\\Batch")
+    level(id: ID @eq): 		Level 		@find(model: "App\\Models\\Level")
+    event(id: ID @eq): 		Event 		@find(model: "App\\Models\\Event")
+    class(id: ID @eq): 		Class 		@find(model: "App\\Models\\Classes")
     donation(id: ID @eq): 	Donation 	@find(model: "App\\Models\\Donation")
-    donor(id: ID @eq): 	Donor 	@find(model: "App\\Models\\Donor")
+    donor(id: ID @eq): 		Donor 		@find(model: "App\\Models\\Donor")
+    survey(id: ID @eq):		Survey 		@find(model: "App\\Models\\Survey")
+    survey_template(id: ID @eq):	Survey_Template @find(model: "App\\Models\\Survey_Template")
 
     eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php - This is just a sample 
-    batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, direction: String, from_date: Date, limit: Int): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
+    batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, , class_status: String, direction: String, from_date: Date, limit: String): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
     classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, class_date: Date, direction: String, from_date: Date, limit: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php [ClassSearchResult]
     userSearch(city_id: Int!, name: String, phone: String, email: String, mad_email: String, any_email: String, identifier: String, left_on: Date,
     	vertical_id: Int, status: String, user_type: String, not_user_type: String, center_id: Int, group_id: Int, group_type: String): [User]
+
+    # :TODO: Make this teacherClassConneciton and mentorClassConnection. No point having both in one.
+    # classConnection(teacher_id: Int, mentor_id: Int): [ClassConnection] #Custom return  + resolver. Used for finding unfilled data in UPMA. Both teacher and student.
+    teacherClassConnection(teacher_id: Int): [TeacherClassConnection]
+    mentorClassConnection(mentor_id: Int): [MentorClassConnection]
     
     donations(added_on: Date = "2019-05-01" @where(operator: ">="), amount: Int, status: String, type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): [Donation] @all(model: "App\\Models\\Donation")
     events(name: String @eq, starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, event_type_id: Int @eq, vertical_id: Int @eq, status: String = "1" @eq): [Event!]! @all
@@ -34,13 +41,37 @@ type Query {
     projects(status: String = "1" @eq): [Project!]! @all
 }
 
+type Mutation {
+	createLog(name: String, log: String, user_id: ID, added_on: DateTime): String
+	saveTeacherAttendance(class_id: ID, teachers: [InputTeacherAttendance]): Int
+	saveStudentAttendance(class_id: ID, students: [InputStudentAttendance]): Int
+	saveSurveyResponses(responder_id: ID, survey_id: ID, added_by_user_id: ID, responses: [InputSurveyResponse]): Int
+}
+input InputTeacherAttendance {
+	user_id: Int!
+	substitute_id: Int
+	zero_hour_attendance: String
+	status: String!
+}
+input InputStudentAttendance {
+	student_id: Int!
+	participation: Int!
+	check_for_understanding: Int
+}
+input InputSurveyResponse {
+	question_id: ID! 
+	choice_id: ID
+	response: String
+}
+
+# Volunteer details.
 type User {
 	id: ID!
 	name: String!
 	email: String
 	phone: String
 	mad_email: String
-	credit: Int
+	credit: Float
 	city_id: Int
 	city: String
 	joined_on: String
@@ -60,6 +91,8 @@ type User {
 	donations: [Donation] @hasMany
 	pivot: UserPivot
 }
+
+# This holds reference table/pivot details for both event(UserEvent) and class data(UserClass) details.
 type UserPivot {
 	# UserClass data - teacher attendance
 	status: String
@@ -84,8 +117,8 @@ type Student {
 	center: Center @belongsTo
 	pivot: StudentAttendance
 }
-
 type StudentAttendance {
+	student_id: Int
 	present: String
 	participation: Int
 	check_for_understanding: Int
@@ -190,6 +223,65 @@ type Event_Type {
 	name: String!
 }
 
+type Survey {
+	id: ID!
+	name: String
+	template: Survey_Template
+	responses: [Survey_Response]
+}
+
+type Survey_Template {
+	id: ID!
+	name: String
+	description: String
+	responder: String
+	options: String
+	status: String
+	vertical: Vertical
+	surveys: [Survey]
+	questions: [Survey_Question]
+}
+
+type Survey_Question {
+	id: ID!
+	question: String
+	description: String
+	response_type: String
+	required: String
+	sort_order: Int
+	options: String
+	category: Survey_Category
+	choices: [Survey_Choice]
+	template: Survey_Template
+	responses: [Survey_Response]
+}
+
+type Survey_Choice {
+	id: ID!
+	name: String
+	description: String
+	value: Int
+	sort_order: Int
+	options: String
+	question: Survey_Question
+}
+
+type Survey_Category {
+	id: ID!
+	name: String
+	questions: [Survey_Question]
+	template: Survey_Template
+}
+
+type Survey_Response {
+	survey: Survey
+	responder_id: Int
+	question: Survey_Question
+	selected_choice: Survey_Choice
+	response: String
+	added_by_user_id: Int
+}
+
 type Donation {
 	id: ID!
 	type: String
@@ -234,6 +326,13 @@ type Deposit {
 	given_to: User	
 }
 
+type Log {
+	name: String
+	log: String
+	added_on: DateTime
+	user_id: Int
+}
+
 type Data {
 	name: String!
 	data: String!
@@ -242,3 +341,25 @@ type Data {
 	year: Int
 }
 
+# Custom Returns 
+type MentorClassConnection {
+	id: ID!
+	batch_name: String
+	day: String
+	class_time: String
+	class_on: DateTime
+	center_id: ID
+	center_name: String
+}
+type TeacherClassConnection {
+	level_id: Int
+	level: String
+	batch_id: Int
+	batch_name: String
+	day: String
+	class_time: String
+	class_on: DateTime
+	class_id: Int
+	center_id: ID
+	center_name: String
+}

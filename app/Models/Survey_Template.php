@@ -17,7 +17,7 @@ final class Survey_Template extends Common
     }
     public function questions()
     {
-        return $this->hasMany('App\Models\Survey_Question')->where('Survey_Question.status', '=', '1');
+        return $this->hasMany('App\Models\Survey_Question', 'survey_template_id')->where('Survey_Question.status', '=', '1')->orderBy("sort_order");
     }
 
     public static function search($data)

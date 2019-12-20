@@ -13,7 +13,7 @@ final class Survey_Question_Category extends Common
         return $this->hasMany('App\Models\Survey_Question')->where('Survey_Question.status', '=', '1');
     }
 
-    public function survey_template()
+    public function template()
     {
         return $this->belongsTo('App\Models\Survey_Template', 'survey_template_id');
     }
