@@ -177,7 +177,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         // Sentry
-        Sentry\Laravel\ServiceProvider::class,
+        // Sentry\Laravel\ServiceProvider::class,
 
     ],
 
