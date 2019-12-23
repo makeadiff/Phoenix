@@ -274,14 +274,20 @@ final class Donation extends Common
 
         $nach_start_on = (!empty($data['nach_start_on']) ? $data['nach_start_on'] : null);
         $nach_end_on = (!empty($data['nach_end_on']) ? $data['nach_end_on'] : null);
-        $nach_start_datetime = new DateTime($nach_start_on);
-        $nach_end_datetime = new DateTime($nach_end_on);
-        $diff = $nach_end_datetime->diff($nach_start_datetime);
-        $diff_months = $diff->m;
-        if (!$diff_months) {
-            $diff_months = 1;
+
+        if(!empty($data['donation_repeat_count']) and $data['donation_repeat_count']) {
+            $donation_repeat_count = intval($data['donation_repeat_count']);
+
+        } else {
+            $nach_start_datetime = new DateTime($nach_start_on);
+            $nach_end_datetime = new DateTime($nach_end_on);
+            $diff = $nach_end_datetime->diff($nach_start_datetime);
+            $diff_months = $diff->m + ($diff->y * 12);
+            if (!$diff_months) {
+                $diff_months = 1;
+            }
+            $donation_repeat_count = $diff_months;
         }
-        $donation_repeat_count = (!empty($data['donation_repeat_count']) and $data['donation_repeat_count']) ? $data['donation_repeat_count'] : $diff_months;
         
         $donation = Donation::create([
             'donor_id'          => $donor_id,
