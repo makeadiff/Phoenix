@@ -65,18 +65,20 @@ final class Donation extends Common
                     $q->where("DP.collected_from_user_id", $data['approver_user_id']);
                 }
 
-                $deposit_info = $q->first();
+                $deposit_info = $q->get();
 
                 if (isset($data['include_deposit_info']) and $data['include_deposit_info']) {
                     $donations[$index]->deposit = $deposit_info;
                 }
 
                 if (isset($data['deposited'])) {
+                    $last_deposit = $q->first();
+
                     // Find donations which had are in the deposits table with status of pending or approved
                     if (!$deposit_info and $data['deposited']) {
                         unset($donations[$index]); // Deposit info not present - undeposited.
                     }
-                    if ($deposit_info and isset($deposit_info->status) and ($deposit_info->status == 'approved' or $deposit_info->status == 'pending')) {// Approved or pending deposit
+                    if ($last_deposit and isset($last_deposit->status) and ($last_deposit->status == 'approved' or $last_deposit->status == 'pending')) {// Approved or pending deposit
                         if (!$data['deposited']) { // Find un-deposited donuts - deposited=false
                             unset($donations[$index]);
                         }
