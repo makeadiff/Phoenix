@@ -14,7 +14,7 @@ final class Donation extends Common
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $table = 'Donut_Donation';
-    public $start_date = '2018-05-01 00:00:00';
+    public $start_date = '2019-05-01 00:00:00'; // Year will get re-written in the constructor.
     public $timestamps = true;
     protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'reference_file', 'cheque_no', 'added_on', 'updated_on',
                             'nach_start_on', 'nach_end_on', 'donation_repeat_count', 'updated_by_user_id', 'comment'];
@@ -65,18 +65,20 @@ final class Donation extends Common
                     $q->where("DP.collected_from_user_id", $data['approver_user_id']);
                 }
 
-                $deposit_info = $q->first();
+                $deposit_info = $q->get();
 
                 if (isset($data['include_deposit_info']) and $data['include_deposit_info']) {
                     $donations[$index]->deposit = $deposit_info;
                 }
 
                 if (isset($data['deposited'])) {
+                    $last_deposit = $q->first();
+
                     // Find donations which had are in the deposits table with status of pending or approved
                     if (!$deposit_info and $data['deposited']) {
                         unset($donations[$index]); // Deposit info not present - undeposited.
                     }
-                    if ($deposit_info and isset($deposit_info->status) and ($deposit_info->status == 'approved' or $deposit_info->status == 'pending')) {// Approved or pending deposit
+                    if ($last_deposit and isset($last_deposit->status) and ($last_deposit->status == 'approved' or $last_deposit->status == 'pending')) {// Approved or pending deposit
                         if (!$data['deposited']) { // Find un-deposited donuts - deposited=false
                             unset($donations[$index]);
                         }
