@@ -43,8 +43,8 @@ final class Batch extends Common
 
     public function baseSearch($data, $q)
     {
-        $search_fields = ['id', 'day', 'center_id', 'level_id', 'batch_id', 'project_id', 'year', 'teacher_id', 'mentor_id', 'direction', 'from_date', 'limit', 'class_status'];
-        $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status', 'Batch.project_id')->distinct();
+        $search_fields = ['id', 'day', 'center_id', 'level_id', 'batch_id', 'project_id', 'year', 'teacher_id', 'mentor_id', 'direction', 'from_date', 'limit', 'class_status', 'city_id'];
+        $q->select('Batch.id', 'Batch.day', 'Batch.class_time', 'Batch.batch_head_id', 'Batch.center_id', 'Batch.status', 'Batch.project_id')->distinct();
         if (!isset($data['status'])) {
             $data['status'] = '1';
         }
@@ -62,6 +62,10 @@ final class Batch extends Common
             $q->where("Level.year", $this->year)->where('Level.status', '1');
         }
 
+        if(isset($data['city_id'])) {
+            $q->join("Center", 'Center.id', '=', 'Batch.center_id');
+        }
+
         foreach ($search_fields as $field) {
             if (empty($data[$field])) {
                 continue;
@@ -75,7 +79,10 @@ final class Batch extends Common
                 $q->where("Batch.batch_head_id", $data[$field]);
 
             } elseif ($field == 'level_id') {
-                $q->where('BatchLevel.level_id', $data['level_id']);
+                $q->where('BatchLevel.level_id', $data[$field]);
+
+            } elseif ($field === 'city_id') {
+                $q->where('Center.city_id', $data[$field]);
 
             } elseif ($field == 'direction' and isset($data['from_date'])) {
                 $q->join("Class", 'Class.batch_id', '=', 'Batch.id');
@@ -103,8 +110,7 @@ final class Batch extends Common
         }
 
         $q->orderBy('day')->orderBy('class_time');
-
-        // dd($results);
+        // dd($q->toSql(), $q->getBindings(), $data);
 
         return $q;
     }
@@ -163,7 +169,8 @@ final class Batch extends Common
             1   => 3,
             2   => 19,
             4   => 5,
-            5   => 18
+            5   => 5,
+            6   => 18
         ];
 
         return $project_vertical_mapping[$project_id];

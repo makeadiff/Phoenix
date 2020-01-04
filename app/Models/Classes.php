@@ -39,7 +39,7 @@ final class Classes extends Common
     public function search($data)
     {
         $q = app('db')->table('Class');
-        return $this->baseSearch($data, $q);
+        return $this->baseSearch($data, $q)->get();
     }
 
     /// This is a seperate function because even Project->classes() uses almost the exact same thing.
@@ -50,7 +50,7 @@ final class Classes extends Common
         }
         
         // teacher_id: Int, status: String, batch_id: Int, level_id: Int, project_id: Int, class_date: Date, direction: String)
-        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'center_id', 'project_id', 'status', 'class_date', 'class_date_to','class_date_from', 'class_status', 'direction', 'from_date', 'limit'];
+        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'center_id', 'project_id', 'status', 'class_date', 'class_on', 'class_date_to','class_date_from', 'class_status', 'direction', 'from_date', 'limit'];
         $q->select(
             'Class.id',
             'Class.batch_id',
@@ -145,7 +145,6 @@ final class Classes extends Common
             $q->orderBy("Class.class_on", "ASC");
         }
         $q->groupBy("Class.id");
-
         // dd($q->toSql(), $q->getBindings(), $search);
 
         return $q;
@@ -186,17 +185,32 @@ final class Classes extends Common
     // Not tested.
     public function add($data)
     {
-        if(!isset($data['project_id'])) {
-            $batch_model = new Batch;
-            $project_id = $batch_model->find($data['batch_id'])->project_id;
-            $data['project_id'] = $project_id;
+        if(empty($data['batch_id']) or empty($data['level_id']) or empty($data['teacher_id'])) return false;
+        
+        $class = $this->search(['batch_id' => $data['batch_id'], 'level_id' => $data['level_id'], 'class_on' => $data['class_on']]);
+
+        if(!$class) {
+            if(!isset($data['project_id'])) {
+                $batch_model = new Batch;
+                $project_id = $batch_model->find($data['batch_id'])->project_id;
+                $data['project_id'] = $project_id;
+            }
+            $data['class_on'] = date('Y-m-d H:i:s', strtotime($data['class_on']));
+
+            if(!in_array($data['class_type'], ['scheduled', 'extra'])) $data['class_type'] = 'scheduled';
+            if(!in_array($data['status'], ['projected', 'happened', 'cancelled'])) $data['status'] = 'projected';
+
+            $class = Classes::create($data);
+        } else {
+            $class = $class[0];
         }
-        $data['class_on'] = date('Y-m-d H:i:s', strtotime($data['class_on']));
 
-        if(!in_array($data['class_type'], ['scheduled', 'extra'])) $data['class_type'] = 'scheduled';
-        if(!in_array($data['status'], ['projected', 'happened', 'cancelled'])) $data['status'] = 'projected';
-
-        $class = Classes::create($data);
+        app('db')->table('UserClass')->insert([
+            'class_id'      => $class->id,
+            'user_id'       => $data['teacher_id'],
+            'substitute_id' => 0,
+            'status'        => 'projected'
+        ]);
 
         return $class;
     }

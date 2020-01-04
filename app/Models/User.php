@@ -238,9 +238,9 @@ final class User extends Common
             }
         }
         $q->orderby('User.name');
+        // dd($q->toSql(), $q->getBindings(), $data);
 
         // :TODO: Pagination
-        // dd($q->toSql(), $q->getBindings(), $data);
 
         return $q;
     }
