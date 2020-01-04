@@ -11,7 +11,7 @@ use App\Models\Batch;
  */
 class BatchTest extends TestCase
 {
-	use WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function testBatchSearch()
     {

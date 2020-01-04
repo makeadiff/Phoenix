@@ -11,7 +11,7 @@ use App\Models\Group;
  */
 class PermissionTest extends TestCase
 {
-	use WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function testGroupPermission()
     {

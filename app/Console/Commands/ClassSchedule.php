@@ -44,14 +44,16 @@ class ClassSchedule extends Command
         $arguments = $this->argument();
 
         $all_project_ids = [];
-        if($arguments['project_id']) $all_project_ids = [ $arguments['project_id'] ];
-        else {
+        if ($arguments['project_id']) {
+            $all_project_ids = [ $arguments['project_id'] ];
+        } else {
             $all_project_ids = Project::getAll()->pluck('id')->toArray();
         }
 
         $all_city_ids = [];
-        if($arguments['city_id']) $all_city_ids = [ $arguments['city_id'] ];
-        else {
+        if ($arguments['city_id']) {
+            $all_city_ids = [ $arguments['city_id'] ];
+        } else {
             $all_city_ids = City::getAll()->pluck('id')->toArray();
         }
 
@@ -67,7 +69,7 @@ class ClassSchedule extends Command
                 $all_batches = $batch_model->search(['project_id' => $project_id, 'city_id' => $city_id]);
                 print "Creating class for Project [$project_id] in City [$city_id] : " . count($all_batches) . " batches...\n";
 
-                for($week = 0; $week < 2; $week++) {
+                for ($week = 0; $week < 2; $week++) {
                     foreach ($all_batches as $batch) {
                         $all_teachers = $user_model->search(['batch_id' => $batch->id]);
                         print "  Teachers in batch [{$batch->id}] : " . count($all_teachers) . "\n";
@@ -75,7 +77,9 @@ class ClassSchedule extends Command
 
                         // This is how we find the next sunday, monday(whatever is in the $batch->day).
                         $date_interval = intval($batch->day) - date('w');
-                        if($date_interval <= 0) $date_interval += 7;
+                        if ($date_interval <= 0) {
+                            $date_interval += 7;
+                        }
                         $day = date('d') + $date_interval;
 
                         $day = $day + ($week * 7); // We have to do this for two weeks. So in the first iteration, this will be 0 and in next it will be 7.
@@ -83,14 +87,16 @@ class ClassSchedule extends Command
                         $time = mktime($hour, $min, $secs, date('m'), $day, date("Y"));
                         $date = date("Y-m-d H:i:s", $time);
 
-                        if($date >= $year_end_time) continue; // If the classes fall on the next year, don't make them.
+                        if ($date >= $year_end_time) {
+                            continue;
+                        } // If the classes fall on the next year, don't make them.
 
-                        foreach($all_teachers as $teacher) {
+                        foreach ($all_teachers as $teacher) {
                             // if($teacher->id != 83172) continue; // :DEBUG: Use this to localize the issue. I would recommend keeping this commented. You'll need it a lot.
 
                             // Make sure its not already inserted.
                             $class_exists = $class_model->search(['teacher_id' => $teacher->id, 'class_on' => $date, 'batch_id' => $batch->id]);
-                            if(! count($class_exists) ) {
+                            if (! count($class_exists)) {
                                 print "    Inserting Class by [{$teacher->id}] at $date\n";
 
                                 $userbatch = app('db')->table('UserBatch')->where('batch_id', $batch->id)->where('user_id', $teacher->id)->first(); // Find the level_id using the user_id and batch_id

@@ -62,7 +62,7 @@ final class Batch extends Common
             $q->where("Level.year", $this->year)->where('Level.status', '1');
         }
 
-        if(isset($data['city_id'])) {
+        if (isset($data['city_id'])) {
             $q->join("Center", 'Center.id', '=', 'Batch.center_id');
         }
 
@@ -71,19 +71,14 @@ final class Batch extends Common
                 continue;
             } elseif ($field == 'batch_id') {
                 $q->where("Batch.id", $data[$field]);
-
             } elseif ($field == 'teacher_id') {
                 $q->where("UserBatch.user_id", $data[$field]);
-
             } elseif ($field == 'mentor_id') {
                 $q->where("Batch.batch_head_id", $data[$field]);
-
             } elseif ($field == 'level_id') {
                 $q->where('BatchLevel.level_id', $data[$field]);
-
             } elseif ($field === 'city_id') {
                 $q->where('Center.city_id', $data[$field]);
-
             } elseif ($field == 'direction' and isset($data['from_date'])) {
                 $q->join("Class", 'Class.batch_id', '=', 'Batch.id');
                 $q->orderBy("Class.class_on", "ASC");
@@ -95,15 +90,12 @@ final class Batch extends Common
                 }
             } elseif ($field == 'limit') {
                 $q->limit($data['limit']);
-
-            } elseif ($field == 'class_status') { // You can use this to get batches with projected classes in them. 
+            } elseif ($field == 'class_status') { // You can use this to get batches with projected classes in them.
                 $q->join("Class", 'Class.batch_id', '=', 'Batch.id');
                 $q->where("Class.status", $data[$field]);
                 $q->where("Class.class_on", "<=", date('Y-m-d H:i:s')); // Only search for this in classes that should be over. not future classes
-
             } elseif ($field == 'from_date') {
                 continue; // Ignore - only used with 'direction'
-                
             } else {
                 $q->where("Batch." . $field, $data[$field]);
             }
