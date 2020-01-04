@@ -82,7 +82,6 @@ final class Donation extends Common
                         if (!$data['deposited']) { // Find un-deposited donuts - deposited=false
                             unset($donations[$index]);
                         }
-
                     } elseif ($data['deposited']) {  // Only deposited donations go thru.
                         unset($donations[$index]);
                     }
@@ -277,9 +276,8 @@ final class Donation extends Common
         $nach_start_on = (!empty($data['nach_start_on']) ? $data['nach_start_on'] : null);
         $nach_end_on = (!empty($data['nach_end_on']) ? $data['nach_end_on'] : null);
 
-        if(!empty($data['donation_repeat_count']) and $data['donation_repeat_count']) {
+        if (!empty($data['donation_repeat_count']) and $data['donation_repeat_count']) {
             $donation_repeat_count = intval($data['donation_repeat_count']);
-
         } else {
             $nach_start_datetime = new DateTime($nach_start_on);
             $nach_end_datetime = new DateTime($nach_end_on);
@@ -393,7 +391,9 @@ final class Donation extends Common
         }
         
         // Don't send recipt for cash donations Greater than 2000 rs.
-        if($this->item->type == 'cash' and $this->item->amount > 2000) return false; 
+        if ($this->item->type == 'cash' and $this->item->amount > 2000) {
+            return false;
+        }
 
         $base_path = app()->basePath();
         $base_url = url('/');

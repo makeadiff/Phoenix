@@ -12,7 +12,7 @@ Assign Students to Levels: POST /levels/{level_id}/studens - student_ids:comma s
 Batch/Level Assignment: POST /batches/{batch_id}/levels - level_ids: comma seperated. GraphQL - assignBatchLevel(batch_id: ID, levels: [LevelIDs]): Int
 
 
-Schedule Classes : Cron / Artisan
+Schedule Classes : Cron / Artisan - DONE
 Calculate Credits
 
 

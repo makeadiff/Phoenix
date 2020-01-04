@@ -63,9 +63,9 @@ final class Deposit extends Common
 
             // See if the donation has been deposited already.
             $pre_existing_deposit = false;
-            if(count($existing_donation->deposit)) {
-                foreach($existing_donation->deposit as $dep) {
-                    if (($dep->status == 'pending' or $dep->status == 'approved') 
+            if (count($existing_donation->deposit)) {
+                foreach ($existing_donation->deposit as $dep) {
+                    if (($dep->status == 'pending' or $dep->status == 'approved')
                             and $dep->collected_from_user_id == $collected_from_user_id) {
                         $pre_existing_deposit = true;
                         break;

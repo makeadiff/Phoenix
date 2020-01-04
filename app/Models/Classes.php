@@ -84,16 +84,12 @@ final class Classes extends Common
                 $q->whereDate("Class.class_on", '<=', $search[$field]);
             } elseif ($field == 'class_date_from') {
                 $q->whereDate("Class.class_on", '>=', $search[$field]);
-
-            } elseif($field == 'class_status') {
+            } elseif ($field == 'class_status') {
                 $q->where("Class.status", $search[$field]);
-
-            } elseif($field == 'status') {
+            } elseif ($field == 'status') {
                 $q->where("UserClass.status", $search[$field]);
-
-            } elseif($field == 'teacher_id') {
+            } elseif ($field == 'teacher_id') {
                 $q->where("UserClass.user_id", $search[$field]);
-                
             } elseif ($field == 'center_id') {
                 $q->where("Batch.center_id", $search[$field]);
             } elseif ($field == 'substitute_id') {
@@ -124,7 +120,9 @@ final class Classes extends Common
                     $q->limit($search['limit']);
                 }
             } elseif ($field == 'direction') {
-                if(!isset($search['from_date'])) $search['from_date'] = date('Y-m-d H:i:s'); // If no from date is specified, from date is today.
+                if (!isset($search['from_date'])) {
+                    $search['from_date'] = date('Y-m-d H:i:s');
+                } // If no from date is specified, from date is today.
 
                 if ($search['direction'] == '+') {
                     $q->where("Class.class_on", '>', date('Y-m-d', strtotime($search['from_date'])) . ' 23:59:59');
@@ -139,7 +137,7 @@ final class Classes extends Common
         }
 
         $q->where("Class.class_on", '>=', $this->year_start_time);
-        if(isset($search['direction']) and $search['direction'] == '-' and isset($search['limit'])) {
+        if (isset($search['direction']) and $search['direction'] == '-' and isset($search['limit'])) {
             $q->orderBy("Class.class_on", "DESC"); // If we are trying to find the latest class...
         } else {
             $q->orderBy("Class.class_on", "ASC");
@@ -185,20 +183,26 @@ final class Classes extends Common
     // Not tested.
     public function add($data)
     {
-        if(empty($data['batch_id']) or empty($data['level_id']) or empty($data['teacher_id'])) return false;
+        if (empty($data['batch_id']) or empty($data['level_id']) or empty($data['teacher_id'])) {
+            return false;
+        }
         
         $class = $this->search(['batch_id' => $data['batch_id'], 'level_id' => $data['level_id'], 'class_on' => $data['class_on']]);
 
-        if(!$class) {
-            if(!isset($data['project_id'])) {
+        if (!$class) {
+            if (!isset($data['project_id'])) {
                 $batch_model = new Batch;
                 $project_id = $batch_model->find($data['batch_id'])->project_id;
                 $data['project_id'] = $project_id;
             }
             $data['class_on'] = date('Y-m-d H:i:s', strtotime($data['class_on']));
 
-            if(!in_array($data['class_type'], ['scheduled', 'extra'])) $data['class_type'] = 'scheduled';
-            if(!in_array($data['status'], ['projected', 'happened', 'cancelled'])) $data['status'] = 'projected';
+            if (!in_array($data['class_type'], ['scheduled', 'extra'])) {
+                $data['class_type'] = 'scheduled';
+            }
+            if (!in_array($data['status'], ['projected', 'happened', 'cancelled'])) {
+                $data['status'] = 'projected';
+            }
 
             $class = Classes::create($data);
         } else {
@@ -216,7 +220,8 @@ final class Classes extends Common
     }
 
     // Not tested.
-    public function saveStudentAttendance($class_id, $student_id, $class_details, $teacher_id = 0) {
+    public function saveStudentAttendance($class_id, $student_id, $class_details, $teacher_id = 0)
+    {
         // Clear existing data
         app('db')->table('StudentClass')->where('class_id', $class_id)->where('student_id', $student_id)->delete();
 
@@ -238,7 +243,8 @@ final class Classes extends Common
     }
 
     // Not tested
-    public function saveTeacherAttendance($class_id, $teacher_id, $class_details, $mentor_id = 0) {
+    public function saveTeacherAttendance($class_id, $teacher_id, $class_details, $mentor_id = 0)
+    {
         // :TODO: Revert Credits awarded for this.
         // Clear existing data
         app('db')->table('UserClass')->where('class_id', $class_id)->where('user_id', $teacher_id)->delete();
@@ -256,7 +262,9 @@ final class Classes extends Common
             'status'        => $status
         ]);
 
-        if($status == 'attended' or $status == 'absent') $status = 'happened';
+        if ($status == 'attended' or $status == 'absent') {
+            $status = 'happened';
+        }
         $this->edit(['status' => $status, 'updated_by_mentor' => $mentor_id], $class_id);
 
         // :TODO: Award credits for this class

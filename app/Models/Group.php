@@ -21,7 +21,7 @@ final class Group extends Common
 
     public function parent()
     {
-        return $this->belongsTo('App\Models\Group', 'parent_group_id')->where('parent_group_id',0);
+        return $this->belongsTo('App\Models\Group', 'parent_group_id')->where('parent_group_id', 0);
     }
 
     public function children()
@@ -58,21 +58,21 @@ final class Group extends Common
         // First, get all the permissions that the parent has.
         $parent = $this->parent();
         $parent_permissions = [];
-        if($parent->first()) { // Only supports 1 level nesting for now.
+        if ($parent->first()) { // Only supports 1 level nesting for now.
             $parent_group_id = $parent->first()->id;
             $parent_permissions = $this->find($parent_group_id)->permissions();
         }
 
         // Get all the permissions of the current Group.
-        $permissions = app('db')->table('Permission')->select('Permission.name')->join('GroupPermission','Permission.id','=','GroupPermission.permission_id')->where('GroupPermission.group_id', $this->id)->get()->toArray();
+        $permissions = app('db')->table('Permission')->select('Permission.name')->join('GroupPermission', 'Permission.id', '=', 'GroupPermission.permission_id')->where('GroupPermission.group_id', $this->id)->get()->toArray();
         $permissions_arr = json_decode(json_encode($permissions), true); // Making it an array.
 
         // Merge both permission sets together - all permissions of current group + parent group.
         $all_permissions = [];
-        if($permissions_arr) {
+        if ($permissions_arr) {
             $all_permissions = array_column($permissions_arr, 'name');
         }
-        if($parent_permissions) {
+        if ($parent_permissions) {
             $all_permissions = array_merge($all_permissions, $parent_permissions);
         }
 
