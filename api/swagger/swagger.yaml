@@ -1255,6 +1255,44 @@ paths:
 
 
   ######################## Batches
+  /batches:
+    post:
+      tags:
+        - batch
+      summary: Create Batch
+      description: Create a new batch with the given details
+      parameters:
+        - name: day
+          type: integer
+          in: formData
+          required: true
+          description: Day of the batch - 0 for sunday, 6 for saturday.
+        - name: class_time
+          type: string
+          in: formData
+          required: true
+          description: Time of the class - 'hh:mm:ss' format.
+        - name: center_id
+          type: integer
+          in: formData
+          required: true
+          description: The ID of the shelter that this batch belongs to.
+        - name: project_id
+          type: integer
+          in: formData
+          required: true
+          description: The ID of the project of this batch.
+        - name: year
+          type: integer
+          in: formData
+          required: false
+          description: Year when this batch was active.
+      responses:
+        200:
+          description: Batch created successfully
+        400:
+          description: Error in input - more details will be given in the response.
+
   /batches/{batch_id}:
     get:
       tags:
@@ -1270,6 +1308,67 @@ paths:
       responses:
         200:
           description: Details of the batch will be returned.
+          schema:
+            $ref: "#/definitions/Batch"
+        404:
+          description: Can't find any batch with the given {batch_id}
+    post:
+      tags:
+        - batch
+      summary: Update Batch
+      description: Edits the details of the batch with the given ID
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch that should be found.
+        - name: day
+          type: integer
+          in: formData
+          required: true
+          description: Day of the batch - 0 for sunday, 6 for saturday.
+        - name: class_time
+          type: string
+          in: formData
+          required: true
+          description: Time of the class - 'hh:mm:ss' format.
+        - name: center_id
+          type: integer
+          in: formData
+          required: false
+          description: The ID of the shelter that this batch belongs to.
+        - name: project_id
+          type: integer
+          in: formData
+          required: false
+          description: The ID of the project of this batch.
+        - name: year
+          type: integer
+          in: formData
+          required: false
+          description: Year when this batch was active.
+      responses:
+        200:
+          description: Batch updated successfully
+        400:
+          description: Error in input - more details will be given in the response.
+        404:
+          description: Can't find any batch with the given {batch_id}
+    delete:
+      tags:
+        - batch
+      summary: Delete given batch
+      description: Soft deletes the batch whose ID is given
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch that should be found.
+      responses:
+        200:
+          description: Batch deleted successfully
         404:
           description: Can't find any batch with the given {batch_id}
 
