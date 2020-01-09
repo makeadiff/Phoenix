@@ -255,6 +255,17 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
         return JSend::success("Levels in batch $batch_id", ['levels' => $levels]);
     });
+    Route::delete('/batches/{batch_id}', function ($batch_id) {
+        $batch = new Batch;
+        $info = $batch->fetch($batch_id);
+        if (!$info) {
+            return JSend::fail("Can't find batch with batch id '$batch_id'");
+        }
+
+        $batch->remove($batch_id);
+
+        return ""; // Deletes should return empty data with status 200
+    });
 
     ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
     Route::get('/levels/{level_id}', function ($level_id) {
@@ -1001,9 +1012,16 @@ Route::post("/students", ['middleware' => ['auth.basic', 'json.output'], 'uses' 
 Route::post("/students/{student_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'StudentController@edit', 'prefix' => $url_prefix]);
 Route::post("/events", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@add', 'prefix' => $url_prefix]);
 Route::post("/events/{event_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@edit', 'prefix' => $url_prefix]);
+Route::post("/batches", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@add', 'prefix' => $url_prefix]);
+Route::post("/batches/{batch_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@edit', 'prefix' => $url_prefix]);
 
-Route::post("/survey_templates", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix]);
-Route::post("/survey_templates/{survey_template_id}/questions", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix]);
-Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix]);
-Route::post("/surveys/{survey_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix]);
-Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix]);
+Route::post("/survey_templates", ['middleware' => ['auth.basic', 'json.output'], 
+    'uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix]);
+Route::post("/survey_templates/{survey_template_id}/questions", ['middleware' => ['auth.basic', 'json.output'], 
+    'uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix]);
+Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['middleware' => ['auth.basic', 'json.output'], 
+    'uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix]);
+Route::post("/surveys/{survey_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 
+    'uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix]);
+Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 
+    'uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix]);

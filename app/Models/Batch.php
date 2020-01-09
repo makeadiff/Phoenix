@@ -8,7 +8,7 @@ final class Batch extends Common
 {
     protected $table = 'Batch';
     public $timestamps = false;
-    protected $fillable = ['day','class_time','batch_head_id','center_id','status','year'];
+    protected $fillable = ['day','class_time','batch_head_id','center_id','project_id','status','year'];
 
     public function center()
     {
@@ -132,8 +132,9 @@ final class Batch extends Common
             'day'       => $data['day'],
             'class_time'=> $data['class_time'],
             'center_id' => $data['center_id'],
-            'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '',
-            'year'      => $this->year,
+            'project_id'=> $data['project_id'],
+            'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '0',
+            'year'      => isset($data['year']) ? $data['year'] : $this->year,
             'status'    => isset($data['status']) ? $data['status'] : '1'
         ]);
 
