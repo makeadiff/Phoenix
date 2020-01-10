@@ -8,7 +8,7 @@ final class Level extends Common
 {
     protected $table = 'Level';
     public $timestamps = false;
-    protected $fillable = ['name','grade','center_id','status','year'];
+    protected $fillable = ['name','grade','center_id','status','year','project_id', 'medium', 'preferred_gender'];
 
     public function center()
     {
@@ -97,14 +97,17 @@ final class Level extends Common
 
     public function add($data)
     {
-        $batch = Level::create([
+        $level = Level::create([
             'name'      => $data['name'],
             'grade'     => $data['grade'],
             'center_id' => $data['center_id'],
-            'year'      => $this->year,
+            'project_id'=> $data['project_id'],
+            'year'      => isset($data['year']) ? $data['year'] : $this->year,
+            'medium'    => isset($data['medium']) ? $data['medium'] : 'english',
+            'preferred_gender'      => isset($data['preferred_gender']) ? $data['preferred_gender'] : 'any',
             'status'    => isset($data['status']) ? $data['status'] : '1'
         ]);
 
-        return $batch;
+        return $level;
     }
 }

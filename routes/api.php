@@ -269,7 +269,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
     Route::get('/levels/{level_id}', function ($level_id) {
-        $level = (new Level)->fetch($level_id, false);
+        $level = (new Level)->fetch($level_id); // There was a ',false' parameter here - that will return deleted levels too. Removed it - might cause issues later.
         if (!$level) {
             return JSend::fail("Can't find any level with ID $level_id", []);
         }
@@ -277,7 +277,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Level ID : $level_id", ['levels' => $level]);
     });
     Route::get('/levels/{level_id}/students', function ($level_id) {
-        $level = (new Level)->fetch($level_id, false);
+        $level = (new Level)->fetch($level_id); // There was a ',false' parameter here - that will return deleted levels too. Removed it - might cause issues later.
         if (!$level) {
             return JSend::fail("Can't find any level with ID $level_id", []);
         }
@@ -287,7 +287,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Students in Level $level_id", ['students' => $students]);
     });
     Route::get('/levels/{level_id}/batches', function ($level_id) {
-        $level = (new Level)->fetch($level_id, false);
+        $level = (new Level)->fetch($level_id); // There was a ',false' parameter here - that will return deleted levels too. Removed it - might cause issues later.
         if (!$level) {
             return JSend::fail("Can't find any level with ID $level_id", []);
         }
@@ -295,6 +295,17 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $batches = (new Batch)->search(['level_id' => $level_id]);
 
         return JSend::success("Levels in batch $level_id", ['batches' => $batches]);
+    });
+    Route::delete('/levels/{level_id}', function ($level_id) {
+        $level = new Level;
+        $info = $level->fetch($level_id);
+        if (!$info) {
+            return JSend::fail("Can't find batch with batch id '$level_id'");
+        }
+
+        $level->remove($level_id);
+
+        return ""; // Deletes should return empty data with status 200
     });
 
     ///////////////////////////////////////////////// Classes /////////////////////////////////////
@@ -1014,6 +1025,8 @@ Route::post("/events", ['middleware' => ['auth.basic', 'json.output'], 'uses' =>
 Route::post("/events/{event_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@edit', 'prefix' => $url_prefix]);
 Route::post("/batches", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@add', 'prefix' => $url_prefix]);
 Route::post("/batches/{batch_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@edit', 'prefix' => $url_prefix]);
+Route::post("/levels", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'LevelController@add', 'prefix' => $url_prefix]);
+Route::post("/levels/{level_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'LevelController@edit', 'prefix' => $url_prefix]);
 
 Route::post("/survey_templates", ['middleware' => ['auth.basic', 'json.output'], 
     'uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix]);
