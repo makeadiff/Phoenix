@@ -70,7 +70,7 @@ class BatchTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $this->load('/batches/2608','POST', [
+        $this->load('/batches/' . $created_batch_id,'POST', [
             'day'       => '1',
             'class_time'=> '15:00:13'
         ]);
@@ -102,7 +102,7 @@ class BatchTest extends TestCase
         $batch_model = new Batch;
         $batch_info = $batch_model->find($created_batch_id);
         $this->assertEquals($batch_info->status, '0'); // Its actually deleted.
-    }   
+    }
 
     /// Path: GET    /batches/{batch_id}/teachers
     public function testGetBatchesTeachersList()
@@ -135,7 +135,6 @@ class BatchTest extends TestCase
         }
 
         $this->load('/batches/2608/levels');
-        print $this->response->getContent();
         $data = json_decode($this->response->getContent());
 
         $this->assertEquals($data->status, 'success');
