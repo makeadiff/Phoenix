@@ -61,12 +61,15 @@ final class Deposit extends Common
                 return $this->error("Dontation $donation_id does not exist.");
             }
 
+            // See if the donation has been deposited already.
             $pre_existing_deposit = false;
-            if($existing_donation->deposit) {
-                if (($existing_donation->deposit->status == 'pending' or $existing_donation->deposit->status == 'approved') 
-                        and $existing_donation->deposit->collected_from_user_id == $collected_from_user_id) {
-                    $pre_existing_deposit = true;
-                    break;
+            if(count($existing_donation->deposit)) {
+                foreach($existing_donation->deposit as $dep) {
+                    if (($dep->status == 'pending' or $dep->status == 'approved') 
+                            and $dep->collected_from_user_id == $collected_from_user_id) {
+                        $pre_existing_deposit = true;
+                        break;
+                    }
                 }
             }
 
