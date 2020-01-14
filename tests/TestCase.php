@@ -12,6 +12,7 @@ abstract class TestCase extends BaseTestCase
     protected $write_to_db = true;
     protected $url_prefix = '/v1';
     protected $response;
+    protected $year = 2019; //:TODO: :HARDCODE:
     protected $call_headers = [
             // "HTTP_Authorization" => "Basic " . base64_encode("sulu.simulation@makeadiff.in:pass"), // This should be there - but for some reason php thows up an error.
             "PHP_AUTH_USER"      => "sulu.simulation@makeadiff.in",
