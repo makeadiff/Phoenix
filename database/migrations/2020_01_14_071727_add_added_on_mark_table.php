@@ -14,7 +14,7 @@ class AddAddedOnMarkTable extends Migration
     public function up()
     {
         Schema::table('Mark', function (Blueprint $table) {
-          $table->datetime('added_on')->default(NULL);
+          $table->datetime('added_on')->nullable();
         });
     }
 
