@@ -1025,6 +1025,7 @@ Route::post("/events", ['middleware' => ['auth.basic', 'json.output'], 'uses' =>
 Route::post("/events/{event_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@edit', 'prefix' => $url_prefix]);
 Route::post("/batches", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@add', 'prefix' => $url_prefix]);
 Route::post("/batches/{batch_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@edit', 'prefix' => $url_prefix]);
+Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix]);
 Route::post("/levels", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'LevelController@add', 'prefix' => $url_prefix]);
 Route::post("/levels/{level_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'LevelController@edit', 'prefix' => $url_prefix]);
 
