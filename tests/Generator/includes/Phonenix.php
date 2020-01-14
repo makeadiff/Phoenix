@@ -6,7 +6,7 @@ $app = require_once $phoenix_folder . '/bootstrap/app.php';
 $kernel = $app->make('Illuminate\Contracts\Http\Kernel');
 
 $kernel->handle(
-  $request = Illuminate\Http\Request::capture()
+    $request = Illuminate\Http\Request::capture()
 );
 
 // If you need session

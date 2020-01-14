@@ -12,9 +12,9 @@ class AddDonationFrequencyToOnlineDonationTable extends Migration
      * @return void
      */
     public function up()
-    {        
+    {
         Schema::table('Online_Donation', function (Blueprint $table) {
-            $table->enum('frequency',['one-time','recurring'])->default('one-time');
+            $table->enum('frequency', ['one-time','recurring'])->default('one-time');
         });
     }
 

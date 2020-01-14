@@ -21,7 +21,7 @@ class teacherClassConnection
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        if(isset($args['teacher_id'])) {
+        if (isset($args['teacher_id'])) {
             $class_model = new Classes;
             $level_model = new Level;
             $batch_model = new Batch;
@@ -30,7 +30,7 @@ class teacherClassConnection
             $classes = $class_model->search(['teacher_id' => $args['teacher_id'], 'status' => 'projected'])->get();
             $return = [];
             foreach ($classes as $cls) {
-                if($cls) {
+                if ($cls) {
                     $level = $level_model->find($cls->level_id);
                     $batch = $batch_model->find($cls->batch_id);
                     $class_info = [
@@ -45,8 +45,8 @@ class teacherClassConnection
                         'center_id'     => $batch->center_id,
                         'center_name'   => $center_model->find($batch->center_id)->name,
                     ];
-                   $return[] = $class_info;
-               }
+                    $return[] = $class_info;
+                }
             }
 
             /*
@@ -82,7 +82,7 @@ class teacherClassConnection
               }
              */
 
-            return $return;           
+            return $return;
         }
 
         return [];

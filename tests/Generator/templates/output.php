@@ -5,6 +5,6 @@
 </textarea>
 <br />
 
-<?php if(isset($dump_code)) {
-	print "Extra Details...<pre>$dump_code</pre>";
+<?php if (isset($dump_code)) {
+    print "Extra Details...<pre>$dump_code</pre>";
 }

@@ -11,9 +11,9 @@ use App\Models\Level;
  */
 class LevelTest extends TestCase
 {
-	use WithoutMiddleware;
+    use WithoutMiddleware;
 
-    public function testLevelSearch() 
+    public function testLevelSearch()
     {
         // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
@@ -26,7 +26,7 @@ class LevelTest extends TestCase
         $this->assertEquals($result->name, '7 A');
     }
 
-    public function testLevelSearchBatch() 
+    public function testLevelSearchBatch()
     {
         // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
@@ -38,7 +38,7 @@ class LevelTest extends TestCase
         $this->assertEquals($result->id, '7355');
     }
 
-    public function testLevelinCenter() 
+    public function testLevelinCenter()
     {
         // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
@@ -49,5 +49,4 @@ class LevelTest extends TestCase
 
         $this->assertEquals($result->id, '7903');
     }
-
 }
