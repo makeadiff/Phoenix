@@ -57,7 +57,7 @@ class ClassSchedule extends Command
             $all_city_ids = City::getAll()->pluck('id')->toArray();
         }
 
-        $year = 2019;
+        $year = 2019; // :TODO: :HARDCODE:
         $year_end_time = ($year + 1) . '-03-31 23:59:59';
 
         $batch_model = new Batch;

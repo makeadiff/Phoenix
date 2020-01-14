@@ -1533,6 +1533,65 @@ paths:
         404:
           description: Can't find any batch with the given {batch_id}
 
+  /batches/{batch_id}/levels/{level_id}/teachers:
+    get:
+      tags:
+        - batch
+        - level
+        - teacher
+        - user
+      summary: Teachers in given Batch/Level
+      description: Returns the list of teachers mapped to the given batch/level combo.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+      responses:
+        200:
+          description: List of all the teachers in that batch/Level.
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: Can't find any batch or level with the given ID
+    post:
+      tags:
+        - batch
+        - level
+        - teacher
+        - user
+      summary: Assign Teachers to a Batch/Level
+      description: Assign multiple teachers to a Batch/Level Combo.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+        - name: user_ids
+          type: string
+          in: formData
+          required: true
+          description: A comma seperated list of the user IDs of the teachers to be assigned to this batch/level combo.
+      responses:
+        200:
+          description: Added the teachers to the batch/level combo
+          schema:
+            $ref: "#/definitions/Batch"
+        404:
+          description: Can't find any batch, level, or users with the given ID
+
   /batches/{batch_id}/levels:
     get:
       tags:

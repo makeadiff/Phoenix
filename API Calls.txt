@@ -1,14 +1,20 @@
 Todo
 ----
 Create Batches : POST /batches(Done) - GraphQL: createBatch(day: Int, time: String, project_id: Int, center_id: Int, year: Int)
-Create Levels : POST /levels - GraphQL: createLevel(grade: Int, name: String, medium: , preferred_gender: String, project_id: Int, center_id: Int, year: Int)
+Create Levels : POST /levels(Done) - GraphQL: createLevel(grade: Int, name: String, medium: , preferred_gender: String, project_id: Int, center_id: Int, year: Int)
 Edit Batches : POST /batches/{batch_id} (Done)
-Edit Levels : POST /levels/{level_id}
+Edit Levels : POST /levels/{level_id} (Done)
 Delete Batches : DELETE /batches/{batch_id} (Done)
-Delete Levels : DELETE /levels/{level_id}
-Assign Teachers to Batch : POST /batches/{batch_id}/teachers - user_ids:comma seperated. GraphQL - assignBatchTeachers(batch_id: ID, teachers: [UserIDs]): Int
+Delete Levels : DELETE /levels/{level_id} (Done)
+
+Get Teachers in a Batch/Level: GET /batches/{batch_id}/levels/{level_id}/teachers . GraphQL userSearch(city_id: 28, batch_id: 2609, level_id: 7355) - Done
+Assign Teachers to Batch/Level : POST /batches/{batch_id}/levels/{level_id}/teachers - user_ids:comma seperated - Done. GraphQL - assignBatchTeachers(batch_id: ID, teachers: [UserIDs]): Int
+UnAssign Teachers from Batch/Level : DELETE /batches/{batch_id}/levels/{level_id}/teachers/{user_id}
+
 Assign Mentors to Batch : POST /batches/{batch_id}/mentors - user_ids: comma seperated. GraphQL - assignBatchMentors(batch_id: ID, mentors: [UserIDs]): Int
+
 Assign Students to Levels: POST /levels/{level_id}/studens - student_ids:comma seperated. GraphQL - assignLevelStudents(level_id: ID, students: [StudentIDs]): Int
+
 Batch/Level Assignment: POST /batches/{batch_id}/levels - level_ids: comma seperated. GraphQL - assignBatchLevel(batch_id: ID, levels: [LevelIDs]): Int
 
 
