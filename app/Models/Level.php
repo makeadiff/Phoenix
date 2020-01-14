@@ -25,7 +25,7 @@ final class Level extends Common
 
     public function search($data)
     {
-        $search_fields = ['id', 'name', 'grade', 'center_id', 'project_id', 'year', 'status'];
+        $search_fields = ['id', 'name', 'grade', 'center_id', 'project_id', 'year', 'status', 'batch_id'];
         $q = app('db')->table('Level');
         $q->select('Level.id', 'name', 'grade', 'Level.center_id', 'Level.status');
         if (!isset($data['status'])) {
@@ -53,6 +53,7 @@ final class Level extends Common
 
         $q->orderBy('grade', 'asc')->orderBy('name', 'asc');
         // dd($q->toSql(), $q->getBindings(), $data);
+
         $results = $q->get();
 
         foreach ($results as $key => $row) {

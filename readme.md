@@ -9,7 +9,7 @@ Core API will create a centralized API for all operations on MAD Database. We'll
 Formats supported...
 
 * REST API : https://makeadiff.in/api/api/swagger/doc.html
-* GraphQL  
+* GraphQL  : https://makeadiff.in/api/api/graphql/index.html
 
 ## Installation
 
@@ -31,6 +31,14 @@ Create the database tables by running migrations...
 
 ```
 php artisan migrate --seed
+```
+
+## Clean Up
+
+After you code, make sure you have run the linter to clean up the code base - to ensure we are all using the same coding standards...
+
+```
+php-cs-fixer fix --rules=@PSR2
 ```
 
 ## Problem we are trying to solve
