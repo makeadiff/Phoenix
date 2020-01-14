@@ -13,10 +13,6 @@ class AddValuesToAddedOnMarkTable extends Migration
      */
     public function up()
     {
-        Schema::table('Mark', function (Blueprint $table) {
-            //
-        });
-
         $rows = DB::table('Mark')->get(['id','exam_id']);
         $year_marker = 2012; //Exam ID will be added to year to get to actual year data;
         foreach ($rows as $row) {
