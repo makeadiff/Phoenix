@@ -158,6 +158,19 @@ final class Batch extends Common
         return $row_id;
     }
 
+    public function unassignTeacher($batch_id, $level_id, $teacher_id)
+    {
+        // See if this teacher is in the batch already.
+        $user_batch_connection = app('db')->table('UserBatch')->select('id')
+            ->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->get();
+        if(!count($user_batch_connection)) return false;
+
+        // Delete the assignment.
+        app('db')->table('UserBatch')->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->delete();
+
+        return true;
+    }
+
     public function getName($day, $time)
     {
         $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
