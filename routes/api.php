@@ -267,6 +267,23 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return ""; // Deletes should return empty data with status 200
     });
 
+    Route::get("/batches/{batch_id}/levels/{level_id}/teachers", function($batch_id, $level_id) {
+        $user_model = new User;
+        $teachers = $user_model->search(['batch_id' => $batch_id, 'level_id' => $level_id]);
+
+        return JSend::success("Teachers in level/batch", ['teachers' => $teachers]);
+    });
+
+    Route::delete("/batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}", function($batch_id, $level_id, $teacher_id) {
+        $batch_model = new Batch;
+        $delete_status = $batch_model->unassignTeacher($batch_id, $level_id, $teacher_id);
+
+        if(!$delete_status) {
+            return JSend::fail("Error deleting the assignment");
+        }
+
+        return "";
+    });
     ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
     Route::get('/levels/{level_id}', function ($level_id) {
         $level = (new Level)->fetch($level_id); // There was a ',false' parameter here - that will return deleted levels too. Removed it - might cause issues later.
