@@ -16,7 +16,7 @@ Get Mentors in Batch : GET /batches/{batch_id}/mentors
 UnAssign mentors to Batch : DELETE /batches/{batch_id}/mentors/{mentor_id}
 
 Assign Students to Levels: POST /levels/{level_id}/students - student_ids:comma seperated. GraphQL - assignLevelStudents(level_id: ID, students: [StudentIDs]): Int
-Get Students in level: GET /levels/{level_id}/students
+Get Students in level: GET /levels/{level_id}/students - Done. GraphQL - level(id: ID) { students { id name }} - Done
 Unassign students from given level: DELETE /levels/{level_id}/students/{student_id}
 
 Batch/Level Assignment: POST /batches/{batch_id}/levels - level_ids: comma seperated. GraphQL - assignBatchLevel(batch_id: ID, levels: [LevelIDs]): Int
