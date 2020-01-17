@@ -1193,6 +1193,65 @@ paths:
           description: Given student_id / data point name can't be found in the database.
 
   ############################# Level
+  /levels:
+    post:
+      tags:
+        - level
+      summary: Create Level
+      description: Creates a new level with given data
+      parameters:
+        - name: grade
+          type: integer
+          in: formData
+          required: true
+          description: The grade of the class section/level - 5-10. 13 for Aftercare.
+        - name: name
+          type: string
+          in: formData
+          required: true
+          description: Name associated with the level - used to split up gardes - like 7 A, 7 B, 7 C. Here A/B/C are the names.
+        - name: medium
+          type: string
+          enum:
+            - vernacular
+            - english
+          in: formData
+          required: false
+          description: Which medium is used to teach this class section/level.
+        - name: preferred_gender
+          type: string
+          enum:
+            - male
+            - female
+            - any
+          in: formData
+          required: false
+          description: Is there a gender requirement from the Shelter authority end for volunteers in this level? If so, which gender.
+        - name: center_id
+          type: integer
+          in: formData
+          required: true
+          description: The ID of the shelter that this level belongs to.
+        - name: project_id
+          type: integer
+          in: formData
+          required: true
+          description: The ID of the project of this level.
+        - name: year
+          type: integer
+          in: formData
+          required: false
+          description: Year when this level was active. If not given, defaults to current active year.
+      responses:
+        200:
+          description: Level updated successfully
+          schema:
+            $ref: "#/definitions/Level"
+        400:
+          description: Errors in input - more details in the response body
+        404:
+          description: Can't find any level with the given ID
+
   /levels/{level_id}:
     get:
       tags:
@@ -1208,8 +1267,88 @@ paths:
       responses:
         200:
           description: Details of the level will be returned.
+          schema:
+            $ref: "#/definitions/Level"
         404:
           description: Can't find any level with the given {level_id}
+    post:
+      tags:
+        - level
+      summary: Update Level
+      description: Update details of the level whose ID is given 
+      parameters:
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level that should be edited.
+        - name: grade
+          type: integer
+          in: formData
+          required: true
+          description: The grade of the class section/level - 5-10. 13 for Aftercare.
+        - name: name
+          type: string
+          in: formData
+          required: true
+          description: Name associated with the level - used to split up gardes - like 7 A, 7 B, 7 C. Here A/B/C are the names.
+        - name: medium
+          type: string
+          enum:
+            - vernacular
+            - english
+          in: formData
+          required: false
+          description: Which medium is used to teach this class section/level.
+        - name: preferred_gender
+          type: string
+          enum:
+            - male
+            - female
+            - any
+          in: formData
+          required: false
+          description: Is there a gender requirement from the Shelter authority end for volunteers in this level? If so, which gender.
+        - name: center_id
+          type: integer
+          in: formData
+          required: false
+          description: The ID of the shelter that this level belongs to.
+        - name: project_id
+          type: integer
+          in: formData
+          required: false
+          description: The ID of the project of this level.
+        - name: year
+          type: integer
+          in: formData
+          required: false
+          description: Year when this level was active. If not given, defaults to current active year.
+      responses:
+        200:
+          description: Level updated successfully
+          schema:
+            $ref: "#/definitions/Level"
+        400:
+          description: Errors in input - more details in the response body
+        404:
+          description: Can't find any level with the given ID
+    delete:
+      tags:
+        - level
+      summary: Delete level
+      description: Soft deletes the level whose ID is given
+      parameters:
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level that should be deleted.
+      responses:
+        200:
+          description: Level deleted successfully
+        404:
+          description: Can't find any level with the given {batch_id}
 
   /levels/{level_id}/students:
     get:
@@ -1255,6 +1394,44 @@ paths:
 
 
   ######################## Batches
+  /batches:
+    post:
+      tags:
+        - batch
+      summary: Create Batch
+      description: Create a new batch with the given details
+      parameters:
+        - name: day
+          type: integer
+          in: formData
+          required: true
+          description: Day of the batch - 0 for sunday, 6 for saturday.
+        - name: class_time
+          type: string
+          in: formData
+          required: true
+          description: Time of the class - 'hh:mm:ss' format.
+        - name: center_id
+          type: integer
+          in: formData
+          required: true
+          description: The ID of the shelter that this batch belongs to.
+        - name: project_id
+          type: integer
+          in: formData
+          required: true
+          description: The ID of the project of this batch.
+        - name: year
+          type: integer
+          in: formData
+          required: false
+          description: Year when this batch was active.
+      responses:
+        200:
+          description: Batch created successfully
+        400:
+          description: Error in input - more details will be given in the response.
+
   /batches/{batch_id}:
     get:
       tags:
@@ -1270,6 +1447,67 @@ paths:
       responses:
         200:
           description: Details of the batch will be returned.
+          schema:
+            $ref: "#/definitions/Batch"
+        404:
+          description: Can't find any batch with the given {batch_id}
+    post:
+      tags:
+        - batch
+      summary: Update Batch
+      description: Edits the details of the batch with the given ID
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch that should be found.
+        - name: day
+          type: integer
+          in: formData
+          required: true
+          description: Day of the batch - 0 for sunday, 6 for saturday.
+        - name: class_time
+          type: string
+          in: formData
+          required: true
+          description: Time of the class - 'hh:mm:ss' format.
+        - name: center_id
+          type: integer
+          in: formData
+          required: false
+          description: The ID of the shelter that this batch belongs to.
+        - name: project_id
+          type: integer
+          in: formData
+          required: false
+          description: The ID of the project of this batch.
+        - name: year
+          type: integer
+          in: formData
+          required: false
+          description: Year when this batch was active.
+      responses:
+        200:
+          description: Batch updated successfully
+        400:
+          description: Error in input - more details will be given in the response.
+        404:
+          description: Can't find any batch with the given {batch_id}
+    delete:
+      tags:
+        - batch
+      summary: Delete given batch
+      description: Soft deletes the batch whose ID is given
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch that should be delted.
+      responses:
+        200:
+          description: Batch deleted successfully
         404:
           description: Can't find any batch with the given {batch_id}
 
@@ -1294,6 +1532,65 @@ paths:
             $ref: "#/definitions/User"
         404:
           description: Can't find any batch with the given {batch_id}
+
+  /batches/{batch_id}/levels/{level_id}/teachers:
+    get:
+      tags:
+        - batch
+        - level
+        - teacher
+        - user
+      summary: Teachers in given Batch/Level
+      description: Returns the list of teachers mapped to the given batch/level combo.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+      responses:
+        200:
+          description: List of all the teachers in that batch/Level.
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: Can't find any batch or level with the given ID
+    post:
+      tags:
+        - batch
+        - level
+        - teacher
+        - user
+      summary: Assign Teachers to a Batch/Level
+      description: Assign multiple teachers to a Batch/Level Combo.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+        - name: user_ids
+          type: string
+          in: formData
+          required: true
+          description: A comma seperated list of the user IDs of the teachers to be assigned to this batch/level combo.
+      responses:
+        200:
+          description: Added the teachers to the batch/level combo
+          schema:
+            $ref: "#/definitions/Batch"
+        404:
+          description: Can't find any batch, level, or users with the given ID
 
   /batches/{batch_id}/levels:
     get:
@@ -2951,6 +3248,21 @@ definitions:
       grade:
         type: integer
       center_id:
+        type: integer
+      project_id:
+        type: integer
+      medium:
+        type: string
+        enum:
+          - english
+          - vernacular
+      preferred_gender:
+        type: string
+        enum:
+          - male
+          - female
+          - any
+      year:
         type: integer
       status:
         type: string

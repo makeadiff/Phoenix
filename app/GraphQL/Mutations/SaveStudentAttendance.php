@@ -23,7 +23,9 @@ class saveStudentAttendance
         $class_model = new Classes;
 
         $class = $class_model->find($class_id);
-        if(!$class) return 0; // No class with given id
+        if (!$class) {
+            return 0;
+        } // No class with given id
 
         foreach ($args['students'] as $student) {
             $class_model->saveStudentAttendance($class_id, $student['student_id'], $student);

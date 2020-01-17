@@ -57,7 +57,6 @@ class DbCleanup extends Migration
         Schema::table('Vertical', function (Blueprint $table) {
             $table->dropColumn(['key']);
         });
-
     }
 
     /**

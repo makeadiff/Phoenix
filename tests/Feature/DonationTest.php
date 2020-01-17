@@ -29,7 +29,7 @@ class DonationTest extends TestCase
         $donations_this_year = $q->pluck('id')->toArray();
 
         foreach ($data->data->donations as $key => $info) {
-            if(!in_array($info->id, $donations_this_year)) {
+            if (!in_array($info->id, $donations_this_year)) {
                 $found = false;
                 break;
             }
@@ -62,16 +62,16 @@ class DonationTest extends TestCase
 
         $found = true;
         foreach ($data->data->donations as $key => $info) {
-            if(!in_array($info->id, $donations_this_year)) { // It should be in this list.
+            if (!in_array($info->id, $donations_this_year)) { // It should be in this list.
                 $found = false;
                 break;
             }
 
             // AND should NOT be in this list - this is deposited donations.
-            if(in_array($info->id, $depsoited_donations_this_year)) {
+            if (in_array($info->id, $depsoited_donations_this_year)) {
                 $found = false;
                 break;
-            }            
+            }
         }
 
         $this->assertTrue($found);
@@ -97,5 +97,4 @@ class DonationTest extends TestCase
         $this->assertEquals($data->data->donation->amount, $donation_info->amount);
         $this->assertEquals($data->data->donation->fundraiser_user_id, $donation_info->fundraiser_user_id);
     }
-
 }
