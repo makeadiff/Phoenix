@@ -315,18 +315,19 @@ final class Donation extends Common
         }
 
         if (!isset($data['dont_send_email']) and ($data['type'] == 'cash' or $data['type'] == 'cheque')) { // This is an undocumented way to prevent sending Email when making a donation. Useful for testing, seeding, etc.
-            $base_path = app()->basePath();
-            $base_url = url('/');
 
             $mail = new Email;
             $mail->from     = "noreply <noreply@makeadiff.in>";
             $mail->to       = $data['donor_email'];
             $mail->subject  = "Donation Acknowledgment";
 
+            $base_path = app()->basePath();
+            $base_url = url('/');
+
             $email_html = file_get_contents($base_path . '/resources/email_templates/donation_acknowledgement.html');
             $mail->html = str_replace(
-                array('%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'),
-                array($base_url,$data['amount'],$data['donor_name'], date('d/m/Y')),
+                array('%BASE_FOLDER%','%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'),
+                array($base_path, $base_url,$data['amount'],$data['donor_name'], date('d/m/Y')),
                 $email_html
             );
 
@@ -407,6 +408,7 @@ final class Donation extends Common
 
         $replaces = [
             '%ASSETS_PATH%' => base_path('public/assets'),
+            '%BASE_FOLDER%' => $base_path,
             '%BASE_URL%'    => $base_url,
             '%CREATED_AT%'  => date('dS M, Y h:i A', strtotime($this->item->added_on)),
             '%DATE%'        => date('d/m/Y'),
@@ -420,11 +422,10 @@ final class Donation extends Common
 
         $filename = $this->generateReceipt($donation_id);
 
-        // :TODO: This does'nt work properly. Implement this - https://laravel.com/docs/5.8/mail#inline-attachments properly.
         $mail->images = [
-            'mad-letterhead-left.png'   => $base_path . '/public/assets/mad-letterhead-left.png',
-            'mad-letterhead-logo.png'   => $base_path . '/public/assets/mad-letterhead-logo.png',
-            'mad-letterhead-right.png'  => $base_path . '/public/assets/mad-letterhead-right.png',
+            $base_path . '/public/assets/mad-letterhead-left.png',
+            $base_path . '/public/assets/mad-letterhead-logo.png',
+            $base_path . '/public/assets/mad-letterhead-right.png',
         ];
         $mail->attachments = [$filename];
 

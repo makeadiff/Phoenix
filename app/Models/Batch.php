@@ -8,7 +8,7 @@ final class Batch extends Common
 {
     protected $table = 'Batch';
     public $timestamps = false;
-    protected $fillable = ['day','class_time','batch_head_id','center_id','status','year'];
+    protected $fillable = ['day','class_time','batch_head_id','center_id','project_id','status','year'];
 
     public function center()
     {
@@ -132,12 +132,43 @@ final class Batch extends Common
             'day'       => $data['day'],
             'class_time'=> $data['class_time'],
             'center_id' => $data['center_id'],
-            'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '',
-            'year'      => $this->year,
+            'project_id'=> $data['project_id'],
+            'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '0',
+            'year'      => isset($data['year']) ? $data['year'] : $this->year,
             'status'    => isset($data['status']) ? $data['status'] : '1'
         ]);
 
         return $batch;
+    }
+
+    public function assignTeacher($batch_id, $level_id, $teacher_id)
+    {
+        // See if this teacher is in the batch already.
+        $user_batch_connection = app('db')->table('UserBatch')->select('id')
+            ->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->get();
+        if(count($user_batch_connection)) return false;
+
+        // Add this assignment. :TODO: Create a UserBatch Model, maybe?
+        $row_id = app('db')->table('UserBatch')->insertGetId([
+            'user_id'   => $teacher_id,
+            'batch_id'  => $batch_id,
+            'level_id'  => $level_id
+        ]);
+
+        return $row_id;
+    }
+
+    public function unassignTeacher($batch_id, $level_id, $teacher_id)
+    {
+        // See if this teacher is in the batch already.
+        $user_batch_connection = app('db')->table('UserBatch')->select('id')
+            ->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->get();
+        if(!count($user_batch_connection)) return false;
+
+        // Delete the assignment.
+        app('db')->table('UserBatch')->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->delete();
+
+        return true;
     }
 
     public function getName($day, $time)
