@@ -207,31 +207,36 @@ final class Event extends Common
             $mail->to       = $email;
             $mail->subject  = "RSVP for " . $event_info->name;
 
-            $mail_content = "You have been invited to '" . $event_info->name . "'";
+            $mail_content = "<p>You have been invited to '<strong>" . $event_info->name . "</strong>'";
             if ($event_info->starts_on and $event_info->starts_on > date('Y-m-d H:i:s')) {
                 $mail_content .= " on " . date('j M(D) h:i A', strtotime($event_info->starts_on));
             }
             if ($event_info->place) {
                 $mail_content .= " at " . $event_info->place;
             }
+            $mail_content .= "</p>";
 
-            $base_url = 'http://makeadiff.in/apps/events-api/v1/api/deep_linking_url/';
-            $go_url = $base_url . "?event_id={$event_id}&rsvp={$this->rsvp_number_codes['going']}&rsvp_auth_key=$rsvp_auth_key";
-            $maybe_url = $base_url . "?event_id={$event_id}&rsvp={$this->rsvp_number_codes['maybe']}&rsvp_auth_key=$rsvp_auth_key";
-            $no_go_url = $base_url . "?event_id={$event_id}&rsvp={$this->rsvp_number_codes['cant_go']}&rsvp_auth_key=$rsvp_auth_key";
+            if(trim($event_info->description)) {
+                $mail_content .= "<p>" . nl2br(trim($event_info->description)) . "</p>";
+            }
 
-            $mail_content .= ". Please confirm your presence at the event...
+            $base_url = "http://makeadiff.in/apps/envite/rsvp.php?event_id={$event_id}&action=Save&";
+            $go_url = $base_url . "rsvp={$this->rsvp_number_codes['going']}";
+            $maybe_url = $base_url . "rsvp={$this->rsvp_number_codes['maybe']}";
+            $no_go_url = $base_url . "rsvp={$this->rsvp_number_codes['cant_go']}";
+
+            $mail_content .= "<p>Please confirm your presence at the event...
 <div style=\"text-align:center;padding:15px 0;\">
 <a href='".$go_url."' style='display:inline-block;padding:7px 15px;background-color:#ED1849;color:#fff;border-radius:4px;-webkit-border-radius:4px;margin:0 5px;'>GOING</a>
 <a href='".$maybe_url."' style='display:inline-block;padding:7px 15px;background-color:#ED1849;color:#fff;border-radius:4px;-webkit-border-radius:4px;margin:0 5px;'>MAYBE</a>
 <a href='".$no_go_url."' style='display:inline-block;padding:7px 15px;background-color:#ED1849;color:#fff;border-radius:4px;-webkit-border-radius:4px;margin:0 5px;'>CAN'T GO</a>
-</div>";
+</div></p>";
 
             $base_path = app()->basePath();
             $email_html = file_get_contents($base_path . '/resources/email_templates/template.html');
             $mail->html = str_replace(
-                array('%CONTENT%', '%DATE%', '%FIRST_NAME%', '%NAME%'),
-                array($mail_content, date('d/m/Y'), $info->name, $info->name),
+                array('%BASE_FOLDER%', '%CONTENT%', '%DATE%', '%FIRST_NAME%', '%NAME%'),
+                array($base_path, $mail_content, date('d/m/Y'), $info->name, $info->name),
                 $email_html
             );
 

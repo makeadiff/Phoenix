@@ -1,5 +1,12 @@
 <?php
 return [
+    'project_id_to_key' => [
+        1   => 'ed',
+        2   => 'fp',
+        4   => 'tr_asv',
+        5   => 'tr_wingman',
+        6   => 'ac'
+    ],
     'project' => [
         'ed'	=> [
             'id'	=> 1,

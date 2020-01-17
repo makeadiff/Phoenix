@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddDonationFrequencyToOnlineDonationTable extends Migration
+class AddAddedOnMarkTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddDonationFrequencyToOnlineDonationTable extends Migration
      */
     public function up()
     {
-        Schema::table('Online_Donation', function (Blueprint $table) {
-            $table->enum('frequency', ['one-time','recurring'])->default('one-time');
+        Schema::table('Mark', function (Blueprint $table) {
+          $table->datetime('added_on')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ class AddDonationFrequencyToOnlineDonationTable extends Migration
      */
     public function down()
     {
-        Schema::table('Online_Donation', function (Blueprint $table) {
-            $table->dropColumn('frequency');
+        Schema::table('Mark', function (Blueprint $table) {
+          $table->dropColumn('added_on');
         });
     }
 }

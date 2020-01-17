@@ -12,13 +12,11 @@ class FAMParameterTableSeeder extends Seeder
      */
     public function run()
     {
-        
-
         \DB::table('FAM_Parameter')->delete();
         
-        \DB::table('FAM_Parameter')->insert(array (
-            0 => 
-            array (
+        \DB::table('FAM_Parameter')->insert(array(
+            0 =>
+            array(
                 'id' => 41,
                 'stage_id' => 3,
                 'category_id' => 6,
@@ -28,8 +26,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            1 => 
-            array (
+            1 =>
+            array(
                 'id' => 42,
                 'stage_id' => 3,
                 'category_id' => 6,
@@ -39,8 +37,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 50,
                 'status' => '0',
             ),
-            2 => 
-            array (
+            2 =>
+            array(
                 'id' => 43,
                 'stage_id' => 3,
                 'category_id' => 6,
@@ -50,8 +48,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            3 => 
-            array (
+            3 =>
+            array(
                 'id' => 44,
                 'stage_id' => 3,
                 'category_id' => 6,
@@ -61,8 +59,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '0',
             ),
-            4 => 
-            array (
+            4 =>
+            array(
                 'id' => 45,
                 'stage_id' => 3,
                 'category_id' => 6,
@@ -72,8 +70,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            5 => 
-            array (
+            5 =>
+            array(
                 'id' => 46,
                 'stage_id' => 3,
                 'category_id' => 7,
@@ -83,8 +81,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 0,
                 'status' => '0',
             ),
-            6 => 
-            array (
+            6 =>
+            array(
                 'id' => 47,
                 'stage_id' => 3,
                 'category_id' => 7,
@@ -94,8 +92,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 0,
                 'status' => '0',
             ),
-            7 => 
-            array (
+            7 =>
+            array(
                 'id' => 48,
                 'stage_id' => 3,
                 'category_id' => 7,
@@ -105,8 +103,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 0,
                 'status' => '0',
             ),
-            8 => 
-            array (
+            8 =>
+            array(
                 'id' => 49,
                 'stage_id' => 3,
                 'category_id' => 8,
@@ -116,8 +114,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 0,
                 'status' => '0',
             ),
-            9 => 
-            array (
+            9 =>
+            array(
                 'id' => 50,
                 'stage_id' => 1,
                 'category_id' => 1,
@@ -127,8 +125,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            10 => 
-            array (
+            10 =>
+            array(
                 'id' => 51,
                 'stage_id' => 1,
                 'category_id' => 1,
@@ -138,8 +136,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            11 => 
-            array (
+            11 =>
+            array(
                 'id' => 52,
                 'stage_id' => 1,
                 'category_id' => 1,
@@ -149,8 +147,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            12 => 
-            array (
+            12 =>
+            array(
                 'id' => 53,
                 'stage_id' => 1,
                 'category_id' => 1,
@@ -160,8 +158,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '1',
             ),
-            13 => 
-            array (
+            13 =>
+            array(
                 'id' => 54,
                 'stage_id' => 1,
                 'category_id' => 1,
@@ -171,8 +169,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 50,
                 'status' => '1',
             ),
-            14 => 
-            array (
+            14 =>
+            array(
                 'id' => 55,
                 'stage_id' => 1,
                 'category_id' => 1,
@@ -182,8 +180,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 60,
                 'status' => '1',
             ),
-            15 => 
-            array (
+            15 =>
+            array(
                 'id' => 56,
                 'stage_id' => 1,
                 'category_id' => 1,
@@ -193,8 +191,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 70,
                 'status' => '1',
             ),
-            16 => 
-            array (
+            16 =>
+            array(
                 'id' => 57,
                 'stage_id' => 1,
                 'category_id' => 1,
@@ -204,8 +202,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 80,
                 'status' => '1',
             ),
-            17 => 
-            array (
+            17 =>
+            array(
                 'id' => 58,
                 'stage_id' => 1,
                 'category_id' => 1,
@@ -215,8 +213,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 90,
                 'status' => '1',
             ),
-            18 => 
-            array (
+            18 =>
+            array(
                 'id' => 59,
                 'stage_id' => 1,
                 'category_id' => 2,
@@ -226,8 +224,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            19 => 
-            array (
+            19 =>
+            array(
                 'id' => 60,
                 'stage_id' => 1,
                 'category_id' => 2,
@@ -237,8 +235,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            20 => 
-            array (
+            20 =>
+            array(
                 'id' => 61,
                 'stage_id' => 1,
                 'category_id' => 2,
@@ -248,8 +246,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            21 => 
-            array (
+            21 =>
+            array(
                 'id' => 62,
                 'stage_id' => 1,
                 'category_id' => 2,
@@ -259,8 +257,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '1',
             ),
-            22 => 
-            array (
+            22 =>
+            array(
                 'id' => 63,
                 'stage_id' => 1,
                 'category_id' => 2,
@@ -270,8 +268,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 50,
                 'status' => '1',
             ),
-            23 => 
-            array (
+            23 =>
+            array(
                 'id' => 64,
                 'stage_id' => 1,
                 'category_id' => 2,
@@ -281,8 +279,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 60,
                 'status' => '1',
             ),
-            24 => 
-            array (
+            24 =>
+            array(
                 'id' => 65,
                 'stage_id' => 1,
                 'category_id' => 2,
@@ -292,8 +290,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 70,
                 'status' => '1',
             ),
-            25 => 
-            array (
+            25 =>
+            array(
                 'id' => 66,
                 'stage_id' => 1,
                 'category_id' => 2,
@@ -303,8 +301,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 80,
                 'status' => '1',
             ),
-            26 => 
-            array (
+            26 =>
+            array(
                 'id' => 67,
                 'stage_id' => 1,
                 'category_id' => 2,
@@ -314,8 +312,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 90,
                 'status' => '1',
             ),
-            27 => 
-            array (
+            27 =>
+            array(
                 'id' => 68,
                 'stage_id' => 1,
                 'category_id' => 3,
@@ -325,8 +323,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            28 => 
-            array (
+            28 =>
+            array(
                 'id' => 69,
                 'stage_id' => 1,
                 'category_id' => 3,
@@ -336,8 +334,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            29 => 
-            array (
+            29 =>
+            array(
                 'id' => 70,
                 'stage_id' => 1,
                 'category_id' => 3,
@@ -347,8 +345,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            30 => 
-            array (
+            30 =>
+            array(
                 'id' => 71,
                 'stage_id' => 1,
                 'category_id' => 3,
@@ -358,8 +356,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '1',
             ),
-            31 => 
-            array (
+            31 =>
+            array(
                 'id' => 72,
                 'stage_id' => 1,
                 'category_id' => 3,
@@ -369,8 +367,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 50,
                 'status' => '1',
             ),
-            32 => 
-            array (
+            32 =>
+            array(
                 'id' => 73,
                 'stage_id' => 1,
                 'category_id' => 3,
@@ -380,8 +378,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 60,
                 'status' => '1',
             ),
-            33 => 
-            array (
+            33 =>
+            array(
                 'id' => 74,
                 'stage_id' => 1,
                 'category_id' => 3,
@@ -391,8 +389,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 70,
                 'status' => '1',
             ),
-            34 => 
-            array (
+            34 =>
+            array(
                 'id' => 75,
                 'stage_id' => 1,
                 'category_id' => 3,
@@ -402,8 +400,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 80,
                 'status' => '1',
             ),
-            35 => 
-            array (
+            35 =>
+            array(
                 'id' => 76,
                 'stage_id' => 1,
                 'category_id' => 3,
@@ -413,8 +411,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 90,
                 'status' => '1',
             ),
-            36 => 
-            array (
+            36 =>
+            array(
                 'id' => 77,
                 'stage_id' => 1,
                 'category_id' => 4,
@@ -424,8 +422,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            37 => 
-            array (
+            37 =>
+            array(
                 'id' => 78,
                 'stage_id' => 1,
                 'category_id' => 4,
@@ -435,8 +433,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            38 => 
-            array (
+            38 =>
+            array(
                 'id' => 79,
                 'stage_id' => 1,
                 'category_id' => 4,
@@ -446,8 +444,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            39 => 
-            array (
+            39 =>
+            array(
                 'id' => 80,
                 'stage_id' => 1,
                 'category_id' => 4,
@@ -457,8 +455,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '1',
             ),
-            40 => 
-            array (
+            40 =>
+            array(
                 'id' => 81,
                 'stage_id' => 1,
                 'category_id' => 4,
@@ -468,8 +466,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 50,
                 'status' => '1',
             ),
-            41 => 
-            array (
+            41 =>
+            array(
                 'id' => 82,
                 'stage_id' => 1,
                 'category_id' => 4,
@@ -479,8 +477,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 60,
                 'status' => '1',
             ),
-            42 => 
-            array (
+            42 =>
+            array(
                 'id' => 83,
                 'stage_id' => 1,
                 'category_id' => 4,
@@ -490,8 +488,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 70,
                 'status' => '1',
             ),
-            43 => 
-            array (
+            43 =>
+            array(
                 'id' => 84,
                 'stage_id' => 1,
                 'category_id' => 4,
@@ -501,8 +499,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 80,
                 'status' => '1',
             ),
-            44 => 
-            array (
+            44 =>
+            array(
                 'id' => 85,
                 'stage_id' => 1,
                 'category_id' => 4,
@@ -512,8 +510,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 90,
                 'status' => '1',
             ),
-            45 => 
-            array (
+            45 =>
+            array(
                 'id' => 86,
                 'stage_id' => 1,
                 'category_id' => 5,
@@ -523,8 +521,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            46 => 
-            array (
+            46 =>
+            array(
                 'id' => 87,
                 'stage_id' => 1,
                 'category_id' => 5,
@@ -534,8 +532,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            47 => 
-            array (
+            47 =>
+            array(
                 'id' => 88,
                 'stage_id' => 1,
                 'category_id' => 5,
@@ -545,8 +543,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            48 => 
-            array (
+            48 =>
+            array(
                 'id' => 89,
                 'stage_id' => 1,
                 'category_id' => 5,
@@ -556,8 +554,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '1',
             ),
-            49 => 
-            array (
+            49 =>
+            array(
                 'id' => 90,
                 'stage_id' => 1,
                 'category_id' => 5,
@@ -567,8 +565,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 50,
                 'status' => '1',
             ),
-            50 => 
-            array (
+            50 =>
+            array(
                 'id' => 91,
                 'stage_id' => 1,
                 'category_id' => 5,
@@ -578,8 +576,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 60,
                 'status' => '1',
             ),
-            51 => 
-            array (
+            51 =>
+            array(
                 'id' => 92,
                 'stage_id' => 1,
                 'category_id' => 5,
@@ -589,8 +587,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 70,
                 'status' => '1',
             ),
-            52 => 
-            array (
+            52 =>
+            array(
                 'id' => 93,
                 'stage_id' => 1,
                 'category_id' => 5,
@@ -600,8 +598,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 80,
                 'status' => '1',
             ),
-            53 => 
-            array (
+            53 =>
+            array(
                 'id' => 94,
                 'stage_id' => 1,
                 'category_id' => 5,
@@ -611,8 +609,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 90,
                 'status' => '1',
             ),
-            54 => 
-            array (
+            54 =>
+            array(
                 'id' => 98,
                 'stage_id' => 5,
                 'category_id' => 11,
@@ -622,8 +620,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '0',
             ),
-            55 => 
-            array (
+            55 =>
+            array(
                 'id' => 99,
                 'stage_id' => 5,
                 'category_id' => 11,
@@ -634,8 +632,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            56 => 
-            array (
+            56 =>
+            array(
                 'id' => 100,
                 'stage_id' => 5,
                 'category_id' => 11,
@@ -645,8 +643,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '0',
             ),
-            57 => 
-            array (
+            57 =>
+            array(
                 'id' => 101,
                 'stage_id' => 5,
                 'category_id' => 12,
@@ -656,8 +654,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '0',
             ),
-            58 => 
-            array (
+            58 =>
+            array(
                 'id' => 102,
                 'stage_id' => 5,
                 'category_id' => 12,
@@ -667,8 +665,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '0',
             ),
-            59 => 
-            array (
+            59 =>
+            array(
                 'id' => 103,
                 'stage_id' => 5,
                 'category_id' => 13,
@@ -678,8 +676,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            60 => 
-            array (
+            60 =>
+            array(
                 'id' => 104,
                 'stage_id' => 5,
                 'category_id' => 13,
@@ -689,8 +687,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '0',
             ),
-            61 => 
-            array (
+            61 =>
+            array(
                 'id' => 105,
                 'stage_id' => 5,
                 'category_id' => 13,
@@ -700,8 +698,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            62 => 
-            array (
+            62 =>
+            array(
                 'id' => 106,
                 'stage_id' => 5,
                 'category_id' => 13,
@@ -711,8 +709,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '0',
             ),
-            63 => 
-            array (
+            63 =>
+            array(
                 'id' => 107,
                 'stage_id' => 5,
                 'category_id' => 14,
@@ -722,8 +720,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            64 => 
-            array (
+            64 =>
+            array(
                 'id' => 108,
                 'stage_id' => 5,
                 'category_id' => 14,
@@ -733,8 +731,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            65 => 
-            array (
+            65 =>
+            array(
                 'id' => 109,
                 'stage_id' => 5,
                 'category_id' => 14,
@@ -744,8 +742,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            66 => 
-            array (
+            66 =>
+            array(
                 'id' => 110,
                 'stage_id' => 4,
                 'category_id' => 15,
@@ -755,8 +753,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            67 => 
-            array (
+            67 =>
+            array(
                 'id' => 111,
                 'stage_id' => 4,
                 'category_id' => 15,
@@ -766,8 +764,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            68 => 
-            array (
+            68 =>
+            array(
                 'id' => 113,
                 'stage_id' => 5,
                 'category_id' => 16,
@@ -777,8 +775,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            69 => 
-            array (
+            69 =>
+            array(
                 'id' => 114,
                 'stage_id' => 5,
                 'category_id' => 16,
@@ -788,8 +786,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            70 => 
-            array (
+            70 =>
+            array(
                 'id' => 115,
                 'stage_id' => 5,
                 'category_id' => 16,
@@ -799,8 +797,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            71 => 
-            array (
+            71 =>
+            array(
                 'id' => 116,
                 'stage_id' => 5,
                 'category_id' => 16,
@@ -810,8 +808,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '1',
             ),
-            72 => 
-            array (
+            72 =>
+            array(
                 'id' => 117,
                 'stage_id' => 5,
                 'category_id' => 17,
@@ -821,8 +819,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            73 => 
-            array (
+            73 =>
+            array(
                 'id' => 118,
                 'stage_id' => 5,
                 'category_id' => 28,
@@ -832,8 +830,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            74 => 
-            array (
+            74 =>
+            array(
                 'id' => 119,
                 'stage_id' => 5,
                 'category_id' => 28,
@@ -843,8 +841,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            75 => 
-            array (
+            75 =>
+            array(
                 'id' => 120,
                 'stage_id' => 5,
                 'category_id' => 28,
@@ -854,8 +852,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            76 => 
-            array (
+            76 =>
+            array(
                 'id' => 121,
                 'stage_id' => 5,
                 'category_id' => 18,
@@ -865,8 +863,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '0',
             ),
-            77 => 
-            array (
+            77 =>
+            array(
                 'id' => 122,
                 'stage_id' => 5,
                 'category_id' => 18,
@@ -876,8 +874,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '0',
             ),
-            78 => 
-            array (
+            78 =>
+            array(
                 'id' => 123,
                 'stage_id' => 5,
                 'category_id' => 18,
@@ -887,8 +885,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '0',
             ),
-            79 => 
-            array (
+            79 =>
+            array(
                 'id' => 124,
                 'stage_id' => 5,
                 'category_id' => 19,
@@ -898,8 +896,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            80 => 
-            array (
+            80 =>
+            array(
                 'id' => 125,
                 'stage_id' => 5,
                 'category_id' => 19,
@@ -909,8 +907,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            81 => 
-            array (
+            81 =>
+            array(
                 'id' => 126,
                 'stage_id' => 5,
                 'category_id' => 19,
@@ -920,8 +918,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            82 => 
-            array (
+            82 =>
+            array(
                 'id' => 127,
                 'stage_id' => 5,
                 'category_id' => 19,
@@ -931,8 +929,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '1',
             ),
-            83 => 
-            array (
+            83 =>
+            array(
                 'id' => 128,
                 'stage_id' => 5,
                 'category_id' => 21,
@@ -942,8 +940,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '0',
             ),
-            84 => 
-            array (
+            84 =>
+            array(
                 'id' => 129,
                 'stage_id' => 5,
                 'category_id' => 21,
@@ -953,8 +951,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '0',
             ),
-            85 => 
-            array (
+            85 =>
+            array(
                 'id' => 130,
                 'stage_id' => 5,
                 'category_id' => 21,
@@ -964,8 +962,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            86 => 
-            array (
+            86 =>
+            array(
                 'id' => 131,
                 'stage_id' => 5,
                 'category_id' => 21,
@@ -975,8 +973,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            87 => 
-            array (
+            87 =>
+            array(
                 'id' => 132,
                 'stage_id' => 5,
                 'category_id' => 22,
@@ -986,8 +984,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            88 => 
-            array (
+            88 =>
+            array(
                 'id' => 133,
                 'stage_id' => 5,
                 'category_id' => 23,
@@ -997,8 +995,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '0',
             ),
-            89 => 
-            array (
+            89 =>
+            array(
                 'id' => 134,
                 'stage_id' => 5,
                 'category_id' => 23,
@@ -1008,8 +1006,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '0',
             ),
-            90 => 
-            array (
+            90 =>
+            array(
                 'id' => 135,
                 'stage_id' => 5,
                 'category_id' => 23,
@@ -1019,8 +1017,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            91 => 
-            array (
+            91 =>
+            array(
                 'id' => 136,
                 'stage_id' => 5,
                 'category_id' => 23,
@@ -1030,8 +1028,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            92 => 
-            array (
+            92 =>
+            array(
                 'id' => 137,
                 'stage_id' => 5,
                 'category_id' => 24,
@@ -1041,8 +1039,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            93 => 
-            array (
+            93 =>
+            array(
                 'id' => 138,
                 'stage_id' => 5,
                 'category_id' => 24,
@@ -1052,8 +1050,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            94 => 
-            array (
+            94 =>
+            array(
                 'id' => 139,
                 'stage_id' => 5,
                 'category_id' => 24,
@@ -1063,8 +1061,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            95 => 
-            array (
+            95 =>
+            array(
                 'id' => 140,
                 'stage_id' => 5,
                 'category_id' => 9,
@@ -1074,8 +1072,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            96 => 
-            array (
+            96 =>
+            array(
                 'id' => 141,
                 'stage_id' => 5,
                 'category_id' => 9,
@@ -1085,8 +1083,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            97 => 
-            array (
+            97 =>
+            array(
                 'id' => 142,
                 'stage_id' => 5,
                 'category_id' => 9,
@@ -1096,8 +1094,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '0',
             ),
-            98 => 
-            array (
+            98 =>
+            array(
                 'id' => 143,
                 'stage_id' => 5,
                 'category_id' => 9,
@@ -1107,8 +1105,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '1',
             ),
-            99 => 
-            array (
+            99 =>
+            array(
                 'id' => 144,
                 'stage_id' => 5,
                 'category_id' => 10,
@@ -1118,8 +1116,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            100 => 
-            array (
+            100 =>
+            array(
                 'id' => 145,
                 'stage_id' => 5,
                 'category_id' => 10,
@@ -1129,8 +1127,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            101 => 
-            array (
+            101 =>
+            array(
                 'id' => 146,
                 'stage_id' => 5,
                 'category_id' => 10,
@@ -1140,8 +1138,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            102 => 
-            array (
+            102 =>
+            array(
                 'id' => 147,
                 'stage_id' => 5,
                 'category_id' => 10,
@@ -1151,8 +1149,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '1',
             ),
-            103 => 
-            array (
+            103 =>
+            array(
                 'id' => 148,
                 'stage_id' => 5,
                 'category_id' => 10,
@@ -1162,8 +1160,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 50,
                 'status' => '1',
             ),
-            104 => 
-            array (
+            104 =>
+            array(
                 'id' => 149,
                 'stage_id' => 5,
                 'category_id' => 10,
@@ -1173,8 +1171,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 60,
                 'status' => '1',
             ),
-            105 => 
-            array (
+            105 =>
+            array(
                 'id' => 150,
                 'stage_id' => 5,
                 'category_id' => 26,
@@ -1184,8 +1182,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '0',
             ),
-            106 => 
-            array (
+            106 =>
+            array(
                 'id' => 151,
                 'stage_id' => 5,
                 'category_id' => 26,
@@ -1195,8 +1193,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            107 => 
-            array (
+            107 =>
+            array(
                 'id' => 152,
                 'stage_id' => 5,
                 'category_id' => 26,
@@ -1206,8 +1204,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '0',
             ),
-            108 => 
-            array (
+            108 =>
+            array(
                 'id' => 153,
                 'stage_id' => 5,
                 'category_id' => 26,
@@ -1217,8 +1215,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            109 => 
-            array (
+            109 =>
+            array(
                 'id' => 154,
                 'stage_id' => 5,
                 'category_id' => 26,
@@ -1228,8 +1226,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 50,
                 'status' => '0',
             ),
-            110 => 
-            array (
+            110 =>
+            array(
                 'id' => 155,
                 'stage_id' => 3,
                 'category_id' => 6,
@@ -1239,8 +1237,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 22,
                 'status' => '1',
             ),
-            111 => 
-            array (
+            111 =>
+            array(
                 'id' => 156,
                 'stage_id' => 5,
                 'category_id' => 14,
@@ -1250,8 +1248,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            112 => 
-            array (
+            112 =>
+            array(
                 'id' => 157,
                 'stage_id' => 3,
                 'category_id' => 6,
@@ -1261,8 +1259,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 50,
                 'status' => '1',
             ),
-            113 => 
-            array (
+            113 =>
+            array(
                 'id' => 158,
                 'stage_id' => 3,
                 'category_id' => 6,
@@ -1272,8 +1270,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 60,
                 'status' => '1',
             ),
-            114 => 
-            array (
+            114 =>
+            array(
                 'id' => 159,
                 'stage_id' => 3,
                 'category_id' => 7,
@@ -1283,8 +1281,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 10,
                 'status' => '1',
             ),
-            115 => 
-            array (
+            115 =>
+            array(
                 'id' => 160,
                 'stage_id' => 3,
                 'category_id' => 7,
@@ -1294,8 +1292,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 20,
                 'status' => '1',
             ),
-            116 => 
-            array (
+            116 =>
+            array(
                 'id' => 161,
                 'stage_id' => 3,
                 'category_id' => 7,
@@ -1305,8 +1303,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 30,
                 'status' => '1',
             ),
-            117 => 
-            array (
+            117 =>
+            array(
                 'id' => 162,
                 'stage_id' => 3,
                 'category_id' => 7,
@@ -1316,8 +1314,8 @@ class FAMParameterTableSeeder extends Seeder
                 'sort' => 40,
                 'status' => '1',
             ),
-            118 => 
-            array (
+            118 =>
+            array(
                 'id' => 163,
                 'stage_id' => 5,
                 'category_id' => 13,
@@ -1328,8 +1326,8 @@ non-judgemental',
                 'sort' => 10,
                 'status' => '1',
             ),
-            119 => 
-            array (
+            119 =>
+            array(
                 'id' => 164,
                 'stage_id' => 5,
                 'category_id' => 11,
@@ -1339,8 +1337,8 @@ non-judgemental',
                 'sort' => 10,
                 'status' => '1',
             ),
-            120 => 
-            array (
+            120 =>
+            array(
                 'id' => 166,
                 'stage_id' => 5,
                 'category_id' => 12,
@@ -1350,8 +1348,8 @@ non-judgemental',
                 'sort' => 10,
                 'status' => '1',
             ),
-            121 => 
-            array (
+            121 =>
+            array(
                 'id' => 167,
                 'stage_id' => 5,
                 'category_id' => 9,
@@ -1361,8 +1359,8 @@ non-judgemental',
                 'sort' => 30,
                 'status' => '1',
             ),
-            122 => 
-            array (
+            122 =>
+            array(
                 'id' => 168,
                 'stage_id' => 5,
                 'category_id' => 20,
@@ -1372,8 +1370,8 @@ non-judgemental',
                 'sort' => 10,
                 'status' => '1',
             ),
-            123 => 
-            array (
+            123 =>
+            array(
                 'id' => 169,
                 'stage_id' => 5,
                 'category_id' => 18,
@@ -1383,8 +1381,8 @@ non-judgemental',
                 'sort' => 10,
                 'status' => '1',
             ),
-            124 => 
-            array (
+            124 =>
+            array(
                 'id' => 170,
                 'stage_id' => 5,
                 'category_id' => 18,
@@ -1394,8 +1392,8 @@ non-judgemental',
                 'sort' => 20,
                 'status' => '1',
             ),
-            125 => 
-            array (
+            125 =>
+            array(
                 'id' => 171,
                 'stage_id' => 5,
                 'category_id' => 27,
@@ -1405,8 +1403,8 @@ non-judgemental',
                 'sort' => 10,
                 'status' => '1',
             ),
-            126 => 
-            array (
+            126 =>
+            array(
                 'id' => 172,
                 'stage_id' => 5,
                 'category_id' => 27,
@@ -1416,8 +1414,8 @@ non-judgemental',
                 'sort' => 20,
                 'status' => '1',
             ),
-            127 => 
-            array (
+            127 =>
+            array(
                 'id' => 173,
                 'stage_id' => 5,
                 'category_id' => 17,
@@ -1427,8 +1425,8 @@ non-judgemental',
                 'sort' => 20,
                 'status' => '1',
             ),
-            128 => 
-            array (
+            128 =>
+            array(
                 'id' => 174,
                 'stage_id' => 5,
                 'category_id' => 16,
@@ -1438,8 +1436,8 @@ non-judgemental',
                 'sort' => 50,
                 'status' => '1',
             ),
-            129 => 
-            array (
+            129 =>
+            array(
                 'id' => 175,
                 'stage_id' => 5,
                 'category_id' => 21,
@@ -1449,8 +1447,8 @@ non-judgemental',
                 'sort' => 30,
                 'status' => '1',
             ),
-            130 => 
-            array (
+            130 =>
+            array(
                 'id' => 176,
                 'stage_id' => 5,
                 'category_id' => 22,
@@ -1460,8 +1458,8 @@ non-judgemental',
                 'sort' => 10,
                 'status' => '1',
             ),
-            131 => 
-            array (
+            131 =>
+            array(
                 'id' => 177,
                 'stage_id' => 5,
                 'category_id' => 22,
@@ -1471,8 +1469,8 @@ non-judgemental',
                 'sort' => 30,
                 'status' => '1',
             ),
-            132 => 
-            array (
+            132 =>
+            array(
                 'id' => 178,
                 'stage_id' => 5,
                 'category_id' => 29,
@@ -1482,8 +1480,8 @@ non-judgemental',
                 'sort' => 10,
                 'status' => '1',
             ),
-            133 => 
-            array (
+            133 =>
+            array(
                 'id' => 179,
                 'stage_id' => 5,
                 'category_id' => 29,
@@ -1493,8 +1491,8 @@ non-judgemental',
                 'sort' => 20,
                 'status' => '1',
             ),
-            134 => 
-            array (
+            134 =>
+            array(
                 'id' => 180,
                 'stage_id' => 5,
                 'category_id' => 30,
@@ -1504,8 +1502,8 @@ non-judgemental',
                 'sort' => 10,
                 'status' => '1',
             ),
-            135 => 
-            array (
+            135 =>
+            array(
                 'id' => 181,
                 'stage_id' => 5,
                 'category_id' => 30,
@@ -1515,8 +1513,8 @@ non-judgemental',
                 'sort' => 20,
                 'status' => '1',
             ),
-            136 => 
-            array (
+            136 =>
+            array(
                 'id' => 182,
                 'stage_id' => 5,
                 'category_id' => 30,
@@ -1526,8 +1524,8 @@ non-judgemental',
                 'sort' => 30,
                 'status' => '1',
             ),
-            137 => 
-            array (
+            137 =>
+            array(
                 'id' => 183,
                 'stage_id' => 5,
                 'category_id' => 26,
@@ -1538,7 +1536,5 @@ non-judgemental',
                 'status' => '1',
             ),
         ));
-        
-        
     }
 }

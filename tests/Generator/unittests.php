@@ -4,12 +4,14 @@ $html = new HTML;
 
 $app = require('includes/Phonenix.php');
 
-/// Purpose : 
+/// Purpose :
 
 $tables = ['User', 'Group', 'City', 'Class', 'Batch', 'Level', 'Center', 'Student'];
 $model_index = i($QUERY, 'model');
 $model_name = '';
-if($model_index !== false) $model_name = $tables[$model_index];
+if ($model_index !== false) {
+    $model_name = $tables[$model_index];
+}
 $function = i($QUERY, 'function');
 $parameters = i($PARAM, 'parameters');
 $test_name = i($QUERY, 'test_name');
@@ -29,12 +31,12 @@ $all_test_types = [	'single'=> 'Single',
 $test_type = 'search';
 
 
-if($action == 'Show Step 2') {
+if ($action == 'Show Step 2') {
     eval("use App\Models\{$model_name};
         \$model = new $model_name;
         \$result = \$model->{$function}({$parameters});");//exit;
 
-    if($result) {
+    if ($result) {
         ob_start();
         var_dump($result, 1);
         $dump_code = ob_get_clean();
@@ -61,7 +63,6 @@ if($action == 'Show Step 2') {
 
         render('output.php');
         exit;
-
     }
     exit;
 }
