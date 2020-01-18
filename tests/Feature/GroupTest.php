@@ -54,7 +54,7 @@ class GroupTest extends TestCase
             }
         }
         $this->assertTrue($found, "Couldn't find '$search_for' in the groups.");
-        $this->assertEquals(count($data->data->groups), 5);
+        $this->assertEquals(count($data->data->groups), 4);
         $this->response->assertStatus(200);
     }
 
