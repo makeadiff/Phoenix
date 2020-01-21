@@ -61,8 +61,12 @@ class BatchController extends Controller
     {
         $batch_model = new Batch;
         $batch = false;
-        if(!$batch_id) $batch_id = $request->input('batch_id');
-        if($batch_id) $batch = $batch_model->fetch($batch_id);
+        if (!$batch_id) {
+            $batch_id = $request->input('batch_id');
+        }
+        if ($batch_id) {
+            $batch = $batch_model->fetch($batch_id);
+        }
 
         if (!$batch) {
             return response(JSend::fail("Can't find any batch with the given ID"), 404);
@@ -70,8 +74,12 @@ class BatchController extends Controller
 
         $level_model = new Level;
         $level = false;
-        if(!$level_id) $level_id = $request->input('level_id');
-        if($level_id) $level = $level_model->fetch($level_id);
+        if (!$level_id) {
+            $level_id = $request->input('level_id');
+        }
+        if ($level_id) {
+            $level = $level_model->fetch($level_id);
+        }
 
         if (!$level) {
             return response(JSend::fail("Can't find any class section with the given ID"), 404);
@@ -94,22 +102,22 @@ class BatchController extends Controller
         $user_not_found = [];
         $user_not_teacher=[];
         $user_model = new User;
-        foreach($user_ids as $uid) {
+        foreach ($user_ids as $uid) {
             $teacher = $user_model->fetch($uid);
-            if(!$teacher) {
+            if (!$teacher) {
                 array_push($user_not_found, $uid);
             } else {
                 // Check if the user has the teacher user group.
                 $teacher_group_found = false;
                 $teachers_groups = $teacher->groups()->get();
                 foreach ($teachers_groups as $grp) {
-                    if($grp->id == $teacher_group_id) {
+                    if ($grp->id == $teacher_group_id) {
                         $teacher_group_found = true;
                         break;
                     }
                 }
 
-                if(!$teacher_group_found) {
+                if (!$teacher_group_found) {
                     array_push($user_not_teacher, $uid);
                 }
             }
@@ -119,18 +127,20 @@ class BatchController extends Controller
         // Are the given batch and level in the same shelter.
         // Is the level and batch associated with each other? If not, auto assign. PS: Decide if the LevelBatch linking is needed at all as well.
 
-        if(count($user_not_found)) {
+        if (count($user_not_found)) {
             return response(JSEND::fail("Can't find users with these IDs: " . implode(",", $user_not_found)));
         }
 
         $insert_count = 0;
-        foreach($user_ids as $uid) {
+        foreach ($user_ids as $uid) {
             // If the given user are not teacher, give them the teacher user group
-            if(in_array($uid, $user_not_teacher)) {
+            if (in_array($uid, $user_not_teacher)) {
                 $user_model->fetch($uid)->addGroup($teacher_group_id);
             }
 
-            if($batch_model->assignTeacher($batch_id, $level_id, $uid)) $insert_count++;
+            if ($batch_model->assignTeacher($batch_id, $level_id, $uid)) {
+                $insert_count++;
+            }
         }
 
         return JSend::success("Added $insert_count teacher(s) to the batch " . $batch->name . " in class section " . $level->name, array('batch' => $batch));

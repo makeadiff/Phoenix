@@ -14,7 +14,7 @@ class AddAddedOnMarkTable extends Migration
     public function up()
     {
         Schema::table('Mark', function (Blueprint $table) {
-          $table->datetime('added_on')->nullable();
+            $table->datetime('added_on')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddAddedOnMarkTable extends Migration
     public function down()
     {
         Schema::table('Mark', function (Blueprint $table) {
-          $table->dropColumn('added_on');
+            $table->dropColumn('added_on');
         });
     }
 }

@@ -41,7 +41,7 @@ class BatchTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $this->load('/batches','POST', [
+        $this->load('/batches', 'POST', [
             'day'       => '0',
             'class_time'=> '15:00:13',
             'project_id'=> '1',
@@ -71,7 +71,7 @@ class BatchTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $this->load('/batches/' . $created_batch_id,'POST', [
+        $this->load('/batches/' . $created_batch_id, 'POST', [
             'day'       => '1',
             'class_time'=> '15:00:13'
         ]);
@@ -95,7 +95,9 @@ class BatchTest extends TestCase
         if (!$this->write_to_db) {
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
-        if(!$created_batch_id) $this->markTestSkipped("Can't find ID of batch created as test.");
+        if (!$created_batch_id) {
+            $this->markTestSkipped("Can't find ID of batch created as test.");
+        }
 
         $this->load('/batches/' . $created_batch_id, 'DELETE');
         $this->response->assertStatus(200);
@@ -165,7 +167,7 @@ class BatchTest extends TestCase
         $level_id = 7356;
         $non_teacher_user_id = 136214;
         $teacher_ids = [$non_teacher_user_id,142766];
-        $this->load("/batches/$batch_id/levels/$level_id/teachers",'POST', [
+        $this->load("/batches/$batch_id/levels/$level_id/teachers", 'POST', [
             'user_ids'  => implode(',', $teacher_ids)
         ]);
         $data = json_decode($this->response->getContent());
@@ -175,8 +177,8 @@ class BatchTest extends TestCase
 
         $found_teacher_count = 0;
         $teachers = app('db')->table('UserBatch')->select('user_id')->where('level_id', $level_id)->where('batch_id', $batch_id)->get();
-        foreach($teachers as $teach) {
-            if(in_array($teach->user_id, $teacher_ids)) {
+        foreach ($teachers as $teach) {
+            if (in_array($teach->user_id, $teacher_ids)) {
                 $found_teacher_count++;
             }
         }
@@ -187,8 +189,8 @@ class BatchTest extends TestCase
         $groups = $non_teacher->groups()->get();
         $teacher_group_found = false;
         $teacher_group_id = 9;
-        foreach($groups as $grp) {
-            if($grp->id == $teacher_group_id) {
+        foreach ($groups as $grp) {
+            if ($grp->id == $teacher_group_id) {
                 $teacher_group_found = true;
                 break;
             }
@@ -209,7 +211,7 @@ class BatchTest extends TestCase
         $batch_id = 2610;
         $level_id = 7356;
         $teacher_id = 136214;
-        $this->load("/batches/$batch_id/levels/$level_id/teachers/$teacher_id",'DELETE');
+        $this->load("/batches/$batch_id/levels/$level_id/teachers/$teacher_id", 'DELETE');
         $data = json_decode($this->response->getContent());
         $this->response->assertStatus(200);
 

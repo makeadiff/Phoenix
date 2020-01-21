@@ -65,8 +65,12 @@ class LevelController extends Controller
     {
         $level_model = new Level;
         $level = false;
-        if(!$level_id) $level_id = $request->input('level_id');
-        if($level_id) $level = $level_model->fetch($level_id);
+        if (!$level_id) {
+            $level_id = $request->input('level_id');
+        }
+        if ($level_id) {
+            $level = $level_model->fetch($level_id);
+        }
 
         if (!$level) {
             return response(JSend::fail("Can't find any class section with the given ID"), 404);
@@ -82,22 +86,24 @@ class LevelController extends Controller
         // Validation - make sure all students exists
         $student_not_found = [];
         $student_model = new Student;
-        foreach($student_ids as $student_id) {
+        foreach ($student_ids as $student_id) {
             $student = $student_model->fetch($student_id);
-            if(!$student) {
+            if (!$student) {
                 array_push($student_not_found, $student_id);
             }
         }
         // Validation :TODO:...
         // Are given students part of the same city as the level
 
-        if(count($student_not_found)) {
+        if (count($student_not_found)) {
             return response(JSEND::fail("Can't find students with these IDs: " . implode(",", $student_not_found)));
         }
 
         $insert_count = 0;
-        foreach($student_ids as $student_id) {
-            if($level_model->assignStudent($level_id, $student_id)) $insert_count++;
+        foreach ($student_ids as $student_id) {
+            if ($level_model->assignStudent($level_id, $student_id)) {
+                $insert_count++;
+            }
         }
 
         return JSend::success("Added $insert_count student(s) to class section " . $level->name, array('level' => $level));
