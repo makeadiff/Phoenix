@@ -40,7 +40,7 @@ class LevelTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $this->load('/levels','POST', [
+        $this->load('/levels', 'POST', [
             'grade'     => '7',
             'name'      => 'C',
             'project_id'=> '1',
@@ -99,7 +99,9 @@ class LevelTest extends TestCase
         if (!$this->write_to_db) {
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
-        if(!$created_level_id) $this->markTestSkipped("Can't find ID of level created as test.");
+        if (!$created_level_id) {
+            $this->markTestSkipped("Can't find ID of level created as test.");
+        }
 
         $this->load('/levels/' . $created_level_id, 'DELETE');
         $this->response->assertStatus(200);
@@ -167,7 +169,7 @@ class LevelTest extends TestCase
 
         $level_id = 7356;
         $student_ids = [21930, 21918];
-        $this->load("/levels/$level_id/students",'POST', [
+        $this->load("/levels/$level_id/students", 'POST', [
             'student_ids'  => implode(',', $student_ids)
         ]);
         $data = json_decode($this->response->getContent());
@@ -177,8 +179,8 @@ class LevelTest extends TestCase
 
         $found_student_count = 0;
         $students = app('db')->table('StudentLevel')->select('student_id')->where('level_id', $level_id)->get();
-        foreach($students as $student) {
-            if(in_array($student->student_id, $student_ids)) {
+        foreach ($students as $student) {
+            if (in_array($student->student_id, $student_ids)) {
                 $found_student_count++;
             }
         }
@@ -197,7 +199,7 @@ class LevelTest extends TestCase
 
         $level_id = 7356;
         $student_id = 21930;
-        $this->load("/levels/$level_id/students/$student_id",'DELETE');
+        $this->load("/levels/$level_id/students/$student_id", 'DELETE');
         $data = json_decode($this->response->getContent());
         $this->response->assertStatus(200);
 

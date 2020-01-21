@@ -216,7 +216,7 @@ final class Event extends Common
             }
             $mail_content .= "</p>";
 
-            if(trim($event_info->description)) {
+            if (trim($event_info->description)) {
                 $mail_content .= "<p>" . nl2br(trim($event_info->description)) . "</p>";
             }
 

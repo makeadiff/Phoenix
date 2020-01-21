@@ -229,7 +229,9 @@ final class User extends Common
             $q->addSelect("UserBatch.level_id");
             $q->where('UserBatch.batch_id', $data['batch_id']);
 
-            if (!empty($data['level_id'])) $q->where('UserBatch.level_id', $data['level_id']);
+            if (!empty($data['level_id'])) {
+                $q->where('UserBatch.level_id', $data['level_id']);
+            }
         }
 
         // Sorting

@@ -115,7 +115,9 @@ final class Level extends Common
     {
         // See if this student is in the level already.
         $student_level_connection = app('db')->table('StudentLevel')->select('id')->where('level_id', $level_id)->where('student_id', $student_id)->get();
-        if(count($student_level_connection)) return false;
+        if (count($student_level_connection)) {
+            return false;
+        }
 
         // Add this assignment. :TODO: Create a StudentLevel Model, maybe?
         $row_id = app('db')->table('StudentLevel')->insertGetId([
@@ -130,7 +132,9 @@ final class Level extends Common
     {
         // See if this student is in the level already.
         $student_level_connection = app('db')->table('StudentLevel')->select('id')->where('level_id', $level_id)->where('student_id', $student_id)->get();
-        if(!count($student_level_connection)) return false;
+        if (!count($student_level_connection)) {
+            return false;
+        }
 
         // Delete the assignment.
         app('db')->table('StudentLevel')->where('level_id', $level_id)->where('student_id', $student_id)->delete();
