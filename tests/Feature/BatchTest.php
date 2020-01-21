@@ -151,16 +151,15 @@ class BatchTest extends TestCase
         $this->response->assertStatus(200);
     }
 
-
     /// Path: POST    /batches/{batch_id}/levels/{level_id}/teachers
     public function testTeacherAssignment()
     {
-        // if ($this->only_priority_tests) {
-        //     $this->markTestSkipped("Running only priority tests.");
-        // }
-        // if (!$this->write_to_db) {
-        //     $this->markTestSkipped("Skipping as this test writes to the Database.");
-        // }
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
 
         $batch_id = 2610;
         $level_id = 7356;
@@ -195,6 +194,26 @@ class BatchTest extends TestCase
             }
         }
         $this->assertTrue($teacher_group_found);
+    }
 
+    /// Path: DELETE    /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}
+    public function testStudentDeassignment()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
+
+        $batch_id = 2610;
+        $level_id = 7356;
+        $teacher_id = 136214;
+        $this->load("/batches/$batch_id/levels/$level_id/teachers/$teacher_id",'DELETE');
+        $data = json_decode($this->response->getContent());
+        $this->response->assertStatus(200);
+
+        $teachers = app('db')->table('UserBatch')->select('user_id')->where('user_id', $teacher_id)->where('batch_id', $batch_id)->where('level_id', $level_id)->get();
+        $this->assertEquals(0, count($teachers)); // That teacher shouldn't be found
     }
 }

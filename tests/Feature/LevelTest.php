@@ -12,7 +12,7 @@ class LevelTest extends TestCase
 {
     use WithoutMiddleware;
 
-    protected $only_priority_tests = false;
+    protected $only_priority_tests = true;
     protected $write_to_db = true;
 
     /// Path: GET    /levels/{level_id}
@@ -153,5 +153,55 @@ class LevelTest extends TestCase
         }
         $this->assertTrue($found);
         $this->response->assertStatus(200);
+    }
+
+    /// Path: POST    /levels/{level_id}/students
+    public function testStudentAssignment()
+    {
+        // if ($this->only_priority_tests) {
+        //     $this->markTestSkipped("Running only priority tests.");
+        // }
+        // if (!$this->write_to_db) {
+        //     $this->markTestSkipped("Skipping as this test writes to the Database.");
+        // }
+
+        $level_id = 7356;
+        $student_ids = [21930, 21918];
+        $this->load("/levels/$level_id/students",'POST', [
+            'student_ids'  => implode(',', $student_ids)
+        ]);
+        $data = json_decode($this->response->getContent());
+
+        $this->assertEquals($data->status, 'success');
+        $this->response->assertStatus(200);
+
+        $found_student_count = 0;
+        $students = app('db')->table('StudentLevel')->select('student_id')->where('level_id', $level_id)->get();
+        foreach($students as $student) {
+            if(in_array($student->student_id, $student_ids)) {
+                $found_student_count++;
+            }
+        }
+        $this->assertEquals($found_student_count, count($student_ids)); // Found both students assigned.
+    }
+
+    /// Path: DELETE    /levels/{level_id}/students/{student_id}
+    public function testStudentDeassignment()
+    {
+        // if ($this->only_priority_tests) {
+        //     $this->markTestSkipped("Running only priority tests.");
+        // }
+        // if (!$this->write_to_db) {
+        //     $this->markTestSkipped("Skipping as this test writes to the Database.");
+        // }
+
+        $level_id = 7356;
+        $student_id = 21930;
+        $this->load("/levels/$level_id/students/$student_id",'DELETE');
+        $data = json_decode($this->response->getContent());
+        $this->response->assertStatus(200);
+
+        $students = app('db')->table('StudentLevel')->select('student_id')->where('student_id', $student_id)->where('level_id', $level_id)->get();
+        $this->assertEquals(0, count($students)); // That student shouldn't be found
     }
 }

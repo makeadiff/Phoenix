@@ -1370,6 +1370,54 @@ paths:
             $ref: "#/definitions/Student"
         404:
           description: Can't find any level with the given {level_id}
+    post:
+      tags:
+        - student
+        - level
+      summary: Assign students to level
+      description: Assign multiple students to a given level/class section.
+      parameters:
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+        - name: student_ids
+          type: string
+          in: formData
+          required: true
+          description: Comma seperated list of students that have to be assigned to this class section.
+      responses:
+        200:
+          description: Assigned students to the level successfully
+          schema:
+            $ref: "#/definitions/Level"
+        404:
+          description: Can't find any level with given level_id
+
+  /levels/{level_id}/students/{student_id}:
+    delete:
+      tags:
+        - student
+        - level
+      summary: Unassign Students from Level
+      description: Deletes a student/level mapping. The student will no longer be a part of that level.
+      parameters:
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+        - name: student_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the student
+      responses:
+        200:
+          description: Student unassigned successfully
+        404:
+          description: Can't find any {level_id}/{student_id} assignment
 
   /levels/{level_id}/batches:
     get:

@@ -284,6 +284,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
         return "";
     });
+
     ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
     Route::get('/levels/{level_id}', function ($level_id) {
         $level = (new Level)->fetch($level_id); // There was a ',false' parameter here - that will return deleted levels too. Removed it - might cause issues later.
@@ -323,6 +324,23 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $level->remove($level_id);
 
         return ""; // Deletes should return empty data with status 200
+    });
+    Route::get("/levels/{level_id}/students", function($level_id) {
+        $student_model = new Student;
+        $students = $student_model->search(['level_id' => $level_id]);
+
+        return JSend::success("Students in level", ['students' => $students]);
+    });
+
+    Route::delete("/levels/{level_id}/students/{student_id}", function($level_id, $student_id) {
+        $level_model = new Level;
+        $delete_status = $level_model->unassignStudent($level_id, $student_id);
+
+        if(!$delete_status) {
+            return JSend::fail("Error deleting the assignment");
+        }
+
+        return "";
     });
 
     ///////////////////////////////////////////////// Classes /////////////////////////////////////
@@ -1045,6 +1063,7 @@ Route::post("/batches/{batch_id}", ['middleware' => ['auth.basic', 'json.output'
 Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix]);
 Route::post("/levels", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'LevelController@add', 'prefix' => $url_prefix]);
 Route::post("/levels/{level_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'LevelController@edit', 'prefix' => $url_prefix]);
+Route::post("/levels/{level_id}/students", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'LevelController@assignStudents', 'prefix' => $url_prefix]);
 
 Route::post("/survey_templates", ['middleware' => ['auth.basic', 'json.output'], 
     'uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix]);
