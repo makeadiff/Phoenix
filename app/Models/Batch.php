@@ -8,7 +8,7 @@ final class Batch extends Common
 {
     protected $table = 'Batch';
     public $timestamps = false;
-    protected $fillable = ['day','class_time','batch_head_id','center_id','status','year'];
+    protected $fillable = ['day','class_time','batch_head_id','center_id','project_id','status','year'];
 
     public function center()
     {
@@ -43,8 +43,8 @@ final class Batch extends Common
 
     public function baseSearch($data, $q)
     {
-        $search_fields = ['id', 'day', 'center_id', 'level_id', 'batch_id', 'project_id', 'year', 'teacher_id', 'mentor_id', 'direction', 'from_date', 'limit', 'class_status'];
-        $q->select('Batch.id', 'day', 'class_time', 'batch_head_id', 'Batch.center_id', 'Batch.status', 'Batch.project_id')->distinct();
+        $search_fields = ['id', 'day', 'center_id', 'level_id', 'batch_id', 'project_id', 'year', 'teacher_id', 'mentor_id', 'direction', 'from_date', 'limit', 'class_status', 'city_id'];
+        $q->select('Batch.id', 'Batch.day', 'Batch.class_time', 'Batch.batch_head_id', 'Batch.center_id', 'Batch.status', 'Batch.project_id')->distinct();
         if (!isset($data['status'])) {
             $data['status'] = '1';
         }
@@ -62,21 +62,23 @@ final class Batch extends Common
             $q->where("Level.year", $this->year)->where('Level.status', '1');
         }
 
+        if (isset($data['city_id'])) {
+            $q->join("Center", 'Center.id', '=', 'Batch.center_id');
+        }
+
         foreach ($search_fields as $field) {
             if (empty($data[$field])) {
                 continue;
             } elseif ($field == 'batch_id') {
                 $q->where("Batch.id", $data[$field]);
-
             } elseif ($field == 'teacher_id') {
                 $q->where("UserBatch.user_id", $data[$field]);
-
             } elseif ($field == 'mentor_id') {
                 $q->where("Batch.batch_head_id", $data[$field]);
-
             } elseif ($field == 'level_id') {
-                $q->where('BatchLevel.level_id', $data['level_id']);
-
+                $q->where('BatchLevel.level_id', $data[$field]);
+            } elseif ($field === 'city_id') {
+                $q->where('Center.city_id', $data[$field]);
             } elseif ($field == 'direction' and isset($data['from_date'])) {
                 $q->join("Class", 'Class.batch_id', '=', 'Batch.id');
                 $q->orderBy("Class.class_on", "ASC");
@@ -88,23 +90,19 @@ final class Batch extends Common
                 }
             } elseif ($field == 'limit') {
                 $q->limit($data['limit']);
-
-            } elseif ($field == 'class_status') { // You can use this to get batches with projected classes in them. 
+            } elseif ($field == 'class_status') { // You can use this to get batches with projected classes in them.
                 $q->join("Class", 'Class.batch_id', '=', 'Batch.id');
                 $q->where("Class.status", $data[$field]);
                 $q->where("Class.class_on", "<=", date('Y-m-d H:i:s')); // Only search for this in classes that should be over. not future classes
-
             } elseif ($field == 'from_date') {
                 continue; // Ignore - only used with 'direction'
-                
             } else {
                 $q->where("Batch." . $field, $data[$field]);
             }
         }
 
         $q->orderBy('day')->orderBy('class_time');
-
-        // dd($results);
+        // dd($q->toSql(), $q->getBindings(), $data);
 
         return $q;
     }
@@ -134,12 +132,47 @@ final class Batch extends Common
             'day'       => $data['day'],
             'class_time'=> $data['class_time'],
             'center_id' => $data['center_id'],
-            'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '',
-            'year'      => $this->year,
+            'project_id'=> $data['project_id'],
+            'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '0',
+            'year'      => isset($data['year']) ? $data['year'] : $this->year,
             'status'    => isset($data['status']) ? $data['status'] : '1'
         ]);
 
         return $batch;
+    }
+
+    public function assignTeacher($batch_id, $level_id, $teacher_id)
+    {
+        // See if this teacher is in the batch already.
+        $user_batch_connection = app('db')->table('UserBatch')->select('id')
+            ->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->get();
+        if (count($user_batch_connection)) {
+            return false;
+        }
+
+        // Add this assignment. :TODO: Create a UserBatch Model, maybe?
+        $row_id = app('db')->table('UserBatch')->insertGetId([
+            'user_id'   => $teacher_id,
+            'batch_id'  => $batch_id,
+            'level_id'  => $level_id
+        ]);
+
+        return $row_id;
+    }
+
+    public function unassignTeacher($batch_id, $level_id, $teacher_id)
+    {
+        // See if this teacher is in the batch already.
+        $user_batch_connection = app('db')->table('UserBatch')->select('id')
+            ->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->get();
+        if (!count($user_batch_connection)) {
+            return false;
+        }
+
+        // Delete the assignment.
+        app('db')->table('UserBatch')->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->delete();
+
+        return true;
     }
 
     public function getName($day, $time)
@@ -163,7 +196,8 @@ final class Batch extends Common
             1   => 3,
             2   => 19,
             4   => 5,
-            5   => 18
+            5   => 5,
+            6   => 18
         ];
 
         return $project_vertical_mapping[$project_id];

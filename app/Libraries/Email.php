@@ -30,19 +30,20 @@ class Email
 
         $mime = new \Mail_mime(array('eol' => "\n"));
 
-        $image_index = 0;
-        foreach ($this->images as $key => $image) {
-            $mime->addHTMLImage($image, mime_content_type($image), $key);
-            $cid = $mime->_html_images[$image_index]['cid'];
-            $file = basename($image);
-            $this->html = str_replace("%CID-$file%", $cid, $this->html);
-            $image_index++;
+        foreach ($this->images as $image_file) {
+            $mime->addHTMLImage($image_file, mime_content_type($image_file));
         }
 
         foreach ($this->attachments as $attachment_file) {
             if ($attachment_file and file_exists($attachment_file)) {
                 $mime->addAttachment($attachment_file, mime_content_type($attachment_file));
             }
+        }
+
+        // SMTP Login details based on the $from address
+        if (stripos($this->from, 'donations@makeadiff.in') !== false) {
+            $this->smtp_username = "donations@makeadiff.in";
+            $this->smtp_password = "Fell-chose-5";
         }
 
         $smtp = \Mail::factory('smtp', [

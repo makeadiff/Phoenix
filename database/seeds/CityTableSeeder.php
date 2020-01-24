@@ -12,13 +12,11 @@ class CityTableSeeder extends Seeder
      */
     public function run()
     {
-        
-
         \DB::table('City')->delete();
         
-        \DB::table('City')->insert(array (
-            0 => 
-            array (
+        \DB::table('City')->insert(array(
+            0 =>
+            array(
                 'id' => 1,
                 'name' => 'Bangalore',
                 'president_id' => 5,
@@ -29,8 +27,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '77.594563',
                 'type' => 'actual',
             ),
-            1 => 
-            array (
+            1 =>
+            array(
                 'id' => 2,
                 'name' => 'Mangalore',
                 'president_id' => 12,
@@ -41,8 +39,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '74.855957',
                 'type' => 'actual',
             ),
-            2 => 
-            array (
+            2 =>
+            array(
                 'id' => 3,
                 'name' => 'Trivandrum',
                 'president_id' => 18,
@@ -53,8 +51,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '76.936638',
                 'type' => 'actual',
             ),
-            3 => 
-            array (
+            3 =>
+            array(
                 'id' => 4,
                 'name' => 'Mumbai',
                 'president_id' => 24,
@@ -65,8 +63,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '72.877656',
                 'type' => 'actual',
             ),
-            4 => 
-            array (
+            4 =>
+            array(
                 'id' => 5,
                 'name' => 'Pune',
                 'president_id' => 25,
@@ -77,8 +75,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '73.856744',
                 'type' => 'actual',
             ),
-            5 => 
-            array (
+            5 =>
+            array(
                 'id' => 6,
                 'name' => 'Chennai',
                 'president_id' => 39,
@@ -89,8 +87,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '80.270718',
                 'type' => 'actual',
             ),
-            6 => 
-            array (
+            6 =>
+            array(
                 'id' => 8,
                 'name' => 'Vellore',
                 'president_id' => 50,
@@ -101,8 +99,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '79.132499',
                 'type' => 'actual',
             ),
-            7 => 
-            array (
+            7 =>
+            array(
                 'id' => 10,
                 'name' => 'Cochin',
                 'president_id' => 49,
@@ -113,8 +111,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '76.267304',
                 'type' => 'actual',
             ),
-            8 => 
-            array (
+            8 =>
+            array(
                 'id' => 11,
                 'name' => 'Hyderabad',
                 'president_id' => 51,
@@ -125,8 +123,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '78.486671',
                 'type' => 'actual',
             ),
-            9 => 
-            array (
+            9 =>
+            array(
                 'id' => 12,
                 'name' => 'Delhi',
                 'president_id' => 73,
@@ -137,8 +135,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '77.102490',
                 'type' => 'actual',
             ),
-            10 => 
-            array (
+            10 =>
+            array(
                 'id' => 13,
                 'name' => 'Chandigarh',
                 'president_id' => 75,
@@ -149,8 +147,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '76.779418',
                 'type' => 'actual',
             ),
-            11 => 
-            array (
+            11 =>
+            array(
                 'id' => 14,
                 'name' => 'Kolkata',
                 'president_id' => 76,
@@ -161,8 +159,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '',
                 'type' => 'actual',
             ),
-            12 => 
-            array (
+            12 =>
+            array(
                 'id' => 15,
                 'name' => 'Nagpur',
                 'president_id' => 74,
@@ -173,8 +171,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '79.088155',
                 'type' => 'actual',
             ),
-            13 => 
-            array (
+            13 =>
+            array(
                 'id' => 16,
                 'name' => 'Coimbatore',
                 'president_id' => 1,
@@ -185,8 +183,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '76.955832',
                 'type' => 'actual',
             ),
-            14 => 
-            array (
+            14 =>
+            array(
                 'id' => 17,
                 'name' => 'Vizag',
                 'president_id' => 846,
@@ -197,8 +195,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '83.218482',
                 'type' => 'actual',
             ),
-            15 => 
-            array (
+            15 =>
+            array(
                 'id' => 18,
                 'name' => 'Vijayawada',
                 'president_id' => 845,
@@ -209,8 +207,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '80.648015',
                 'type' => 'actual',
             ),
-            16 => 
-            array (
+            16 =>
+            array(
                 'id' => 19,
                 'name' => 'Gwalior',
                 'president_id' => 1231,
@@ -221,8 +219,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '78.182831',
                 'type' => 'actual',
             ),
-            17 => 
-            array (
+            17 =>
+            array(
                 'id' => 20,
                 'name' => 'Lucknow',
                 'president_id' => 1639,
@@ -233,8 +231,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '80.946166',
                 'type' => 'actual',
             ),
-            18 => 
-            array (
+            18 =>
+            array(
                 'id' => 21,
                 'name' => 'Bhopal',
                 'president_id' => 2984,
@@ -245,8 +243,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '77.412615',
                 'type' => 'actual',
             ),
-            19 => 
-            array (
+            19 =>
+            array(
                 'id' => 22,
                 'name' => 'Mysore',
                 'president_id' => 10256,
@@ -257,8 +255,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '76.639381',
                 'type' => 'actual',
             ),
-            20 => 
-            array (
+            20 =>
+            array(
                 'id' => 23,
                 'name' => 'Guntur',
                 'president_id' => 10257,
@@ -269,8 +267,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '80.436540',
                 'type' => 'actual',
             ),
-            21 => 
-            array (
+            21 =>
+            array(
                 'id' => 24,
                 'name' => 'Ahmedabad',
                 'president_id' => 1,
@@ -281,8 +279,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '72.571362',
                 'type' => 'actual',
             ),
-            22 => 
-            array (
+            22 =>
+            array(
                 'id' => 25,
                 'name' => 'Dehradun',
                 'president_id' => 670,
@@ -293,8 +291,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '78.032192',
                 'type' => 'actual',
             ),
-            23 => 
-            array (
+            23 =>
+            array(
                 'id' => 26,
                 'name' => 'Leadership',
                 'president_id' => 0,
@@ -305,8 +303,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '77.594563',
                 'type' => 'actual',
             ),
-            24 => 
-            array (
+            24 =>
+            array(
                 'id' => 28,
                 'name' => 'Test',
                 'president_id' => 0,
@@ -317,8 +315,8 @@ class CityTableSeeder extends Seeder
                 'longitude' => '',
                 'type' => 'virtual',
             ),
-            25 => 
-            array (
+            25 =>
+            array(
                 'id' => 0,
                 'name' => 'National',
                 'president_id' => 0,
@@ -330,7 +328,5 @@ class CityTableSeeder extends Seeder
                 'type' => 'actual',
             ),
         ));
-        
-        
     }
 }
