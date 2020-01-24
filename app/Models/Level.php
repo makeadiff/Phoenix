@@ -8,7 +8,7 @@ final class Level extends Common
 {
     protected $table = 'Level';
     public $timestamps = false;
-    protected $fillable = ['name','grade','center_id','status','year'];
+    protected $fillable = ['name','grade','center_id','status','year','project_id', 'medium', 'preferred_gender'];
 
     public function center()
     {
@@ -25,7 +25,7 @@ final class Level extends Common
 
     public function search($data)
     {
-        $search_fields = ['id', 'name', 'grade', 'center_id', 'project_id', 'year', 'status'];
+        $search_fields = ['id', 'name', 'grade', 'center_id', 'project_id', 'year', 'status', 'batch_id'];
         $q = app('db')->table('Level');
         $q->select('Level.id', 'name', 'grade', 'Level.center_id', 'Level.status');
         if (!isset($data['status'])) {
@@ -36,7 +36,7 @@ final class Level extends Common
         }
 
         foreach ($search_fields as $field) {
-            if (empty($data[$field])) {
+            if (empty($data[$field]) or $data['batch_id']) {
                 continue;
             } else {
                 $q->where("Level." . $field, $data[$field]);
@@ -53,6 +53,7 @@ final class Level extends Common
 
         $q->orderBy('grade', 'asc')->orderBy('name', 'asc');
         // dd($q->toSql(), $q->getBindings(), $data);
+
         $results = $q->get();
 
         foreach ($results as $key => $row) {
@@ -96,14 +97,48 @@ final class Level extends Common
 
     public function add($data)
     {
-        $batch = Level::create([
+        $level = Level::create([
             'name'      => $data['name'],
             'grade'     => $data['grade'],
             'center_id' => $data['center_id'],
-            'year'      => $this->year,
+            'project_id'=> $data['project_id'],
+            'year'      => isset($data['year']) ? $data['year'] : $this->year,
+            'medium'    => isset($data['medium']) ? $data['medium'] : 'english',
+            'preferred_gender'      => isset($data['preferred_gender']) ? $data['preferred_gender'] : 'any',
             'status'    => isset($data['status']) ? $data['status'] : '1'
         ]);
 
-        return $batch;
+        return $level;
+    }
+
+    public function assignStudent($level_id, $student_id)
+    {
+        // See if this student is in the level already.
+        $student_level_connection = app('db')->table('StudentLevel')->select('id')->where('level_id', $level_id)->where('student_id', $student_id)->get();
+        if (count($student_level_connection)) {
+            return false;
+        }
+
+        // Add this assignment. :TODO: Create a StudentLevel Model, maybe?
+        $row_id = app('db')->table('StudentLevel')->insertGetId([
+            'student_id'   => $student_id,
+            'level_id'  => $level_id
+        ]);
+
+        return $row_id;
+    }
+
+    public function unassignStudent($level_id, $student_id)
+    {
+        // See if this student is in the level already.
+        $student_level_connection = app('db')->table('StudentLevel')->select('id')->where('level_id', $level_id)->where('student_id', $student_id)->get();
+        if (!count($student_level_connection)) {
+            return false;
+        }
+
+        // Delete the assignment.
+        app('db')->table('StudentLevel')->where('level_id', $level_id)->where('student_id', $student_id)->delete();
+
+        return true;
     }
 }

@@ -30,7 +30,8 @@ final class User extends Common
         return $this->belongsTo(City::class);
     }
 
-    public function permissions() {
+    public function permissions()
+    {
         return $this->hasManyThrough('App\Models\Permission', 'App\Models\Group');
     }
 
@@ -226,8 +227,11 @@ final class User extends Common
         if (!empty($data['batch_id'])) {
             $q->join('UserBatch', 'User.id', '=', 'UserBatch.user_id');
             $q->addSelect("UserBatch.level_id");
-            // $q->join('Batch', 'UserBatch.batch_id', '=', 'Batch.id');
             $q->where('UserBatch.batch_id', $data['batch_id']);
+
+            if (!empty($data['level_id'])) {
+                $q->where('UserBatch.level_id', $data['level_id']);
+            }
         }
 
         // Sorting
@@ -239,9 +243,9 @@ final class User extends Common
             }
         }
         $q->orderby('User.name');
+        // dd($q->toSql(), $q->getBindings(), $data);
 
         // :TODO: Pagination
-        // dd($q->toSql(), $q->getBindings(), $data);
 
         return $q;
     }
@@ -306,24 +310,24 @@ final class User extends Common
 
         if (empty($results)) {
             $user = User::create([
-              'email'     => $data['email'],
-              'mad_email' => isset($data['mad_email']) ? $data['mad_email'] : '',
-              'phone'     => User::correctPhoneNumber($data['phone']),
-              'name'      => $data['name'],
-              'sex'       => isset($data['sex']) ? $data['sex'] : 'f',
-              'password_hash' => Hash::make($data['password']),
-              'address'   => isset($data['address']) ? $data['address'] : '',
-              'bio'       => isset($data['bio']) ? $data['bio'] : '',
-              'source'    => isset($data['source']) ? $data['source'] : 'other',
-              'birthday'  => isset($data['birthday']) ? $data['birthday'] : null,
-              'city_id'   => $data['city_id'],
-              'applied_role'=>isset($data['profile']) ? $data['profile'] : '',
-              'credit'    => isset($data['credit']) ? $data['credit'] : '3',
-              'status'    => isset($data['status']) ? $data['status'] : '1',
-              'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
-              'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s'),
-              'zoho_user_id'=>$zoho_user_id
-              ]);
+                'email'     => $data['email'],
+                'mad_email' => isset($data['mad_email']) ? $data['mad_email'] : '',
+                'phone'     => User::correctPhoneNumber($data['phone']),
+                'name'      => $data['name'],
+                'sex'       => isset($data['sex']) ? $data['sex'] : 'f',
+                'password_hash' => Hash::make($data['password']),
+                'address'   => isset($data['address']) ? $data['address'] : '',
+                'bio'       => isset($data['bio']) ? $data['bio'] : '',
+                'source'    => isset($data['source']) ? $data['source'] : 'other',
+                'birthday'  => isset($data['birthday']) ? $data['birthday'] : null,
+                'city_id'   => $data['city_id'],
+                'applied_role'=>isset($data['profile']) ? $data['profile'] : '',
+                'credit'    => isset($data['credit']) ? $data['credit'] : '3',
+                'status'    => isset($data['status']) ? $data['status'] : '1',
+                'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
+                'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s'),
+                'zoho_user_id'=>$zoho_user_id
+            ]);
         } else {
             $user = User::where('id', $results->id)->first();
             $user->email        = $data['email'];

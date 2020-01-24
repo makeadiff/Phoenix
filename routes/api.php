@@ -18,10 +18,6 @@ use App\Models\Contact;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 
-// CORS handling. These have to be disabled if UnitTest have to be run. :TODO: 
-header("Access-Control-Allow-Origin: *");
-header('Access-Control-Allow-Headers: Authorization,Content-Type,Origin,Accept');
-
 Route::get('/', function () {
     $result = [];
 
@@ -32,8 +28,7 @@ Route::get('/', function () {
 });
 
 $url_prefix = 'v1';
-
-Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function () {
+Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], function () {
 
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
     Route::get('/cities', function () {
@@ -250,10 +245,39 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
         return JSend::success("Levels in batch $batch_id", ['levels' => $levels]);
     });
+    Route::delete('/batches/{batch_id}', function ($batch_id) {
+        $batch = new Batch;
+        $info = $batch->fetch($batch_id);
+        if (!$info) {
+            return JSend::fail("Can't find batch with batch id '$batch_id'");
+        }
+
+        $batch->remove($batch_id);
+
+        return ""; // Deletes should return empty data with status 200
+    });
+
+    Route::get("/batches/{batch_id}/levels/{level_id}/teachers", function ($batch_id, $level_id) {
+        $user_model = new User;
+        $teachers = $user_model->search(['batch_id' => $batch_id, 'level_id' => $level_id]);
+
+        return JSend::success("Teachers in level/batch", ['teachers' => $teachers]);
+    });
+
+    Route::delete("/batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}", function ($batch_id, $level_id, $teacher_id) {
+        $batch_model = new Batch;
+        $delete_status = $batch_model->unassignTeacher($batch_id, $level_id, $teacher_id);
+
+        if (!$delete_status) {
+            return JSend::fail("Error deleting the assignment");
+        }
+
+        return "";
+    });
 
     ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
     Route::get('/levels/{level_id}', function ($level_id) {
-        $level = (new Level)->fetch($level_id, false);
+        $level = (new Level)->fetch($level_id); // There was a ',false' parameter here - that will return deleted levels too. Removed it - might cause issues later.
         if (!$level) {
             return JSend::fail("Can't find any level with ID $level_id", []);
         }
@@ -261,7 +285,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Level ID : $level_id", ['levels' => $level]);
     });
     Route::get('/levels/{level_id}/students', function ($level_id) {
-        $level = (new Level)->fetch($level_id, false);
+        $level = (new Level)->fetch($level_id); // There was a ',false' parameter here - that will return deleted levels too. Removed it - might cause issues later.
         if (!$level) {
             return JSend::fail("Can't find any level with ID $level_id", []);
         }
@@ -271,7 +295,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Students in Level $level_id", ['students' => $students]);
     });
     Route::get('/levels/{level_id}/batches', function ($level_id) {
-        $level = (new Level)->fetch($level_id, false);
+        $level = (new Level)->fetch($level_id); // There was a ',false' parameter here - that will return deleted levels too. Removed it - might cause issues later.
         if (!$level) {
             return JSend::fail("Can't find any level with ID $level_id", []);
         }
@@ -279,6 +303,34 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $batches = (new Batch)->search(['level_id' => $level_id]);
 
         return JSend::success("Levels in batch $level_id", ['batches' => $batches]);
+    });
+    Route::delete('/levels/{level_id}', function ($level_id) {
+        $level = new Level;
+        $info = $level->fetch($level_id);
+        if (!$info) {
+            return JSend::fail("Can't find batch with batch id '$level_id'");
+        }
+
+        $level->remove($level_id);
+
+        return ""; // Deletes should return empty data with status 200
+    });
+    Route::get("/levels/{level_id}/students", function ($level_id) {
+        $student_model = new Student;
+        $students = $student_model->search(['level_id' => $level_id]);
+
+        return JSend::success("Students in level", ['students' => $students]);
+    });
+
+    Route::delete("/levels/{level_id}/students/{student_id}", function ($level_id, $student_id) {
+        $level_model = new Level;
+        $delete_status = $level_model->unassignStudent($level_id, $student_id);
+
+        if (!$delete_status) {
+            return JSend::fail("Error deleting the assignment");
+        }
+
+        return "";
     });
 
     ///////////////////////////////////////////////// Classes /////////////////////////////////////
@@ -990,15 +1042,26 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     require base_path('routes/api-surveys.php');
 });
 
-Route::post("/users", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'UserController@add', 'prefix' => $url_prefix]);
-Route::post("/users/{user_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'UserController@edit', 'prefix' => $url_prefix]);
-Route::post("/students", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'StudentController@add', 'prefix' => $url_prefix]);
-Route::post("/students/{student_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'StudentController@edit', 'prefix' => $url_prefix]);
-Route::post("/events", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@add', 'prefix' => $url_prefix]);
-Route::post("/events/{event_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@edit', 'prefix' => $url_prefix]);
+Route::post("/users", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'UserController@add', 'prefix' => $url_prefix]);
+Route::post("/users/{user_id}", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'UserController@edit', 'prefix' => $url_prefix]);
+Route::post("/students", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'StudentController@add', 'prefix' => $url_prefix]);
+Route::post("/students/{student_id}", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'StudentController@edit', 'prefix' => $url_prefix]);
+Route::post("/events", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'EventController@add', 'prefix' => $url_prefix]);
+Route::post("/events/{event_id}", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'EventController@edit', 'prefix' => $url_prefix]);
+Route::post("/batches", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'BatchController@add', 'prefix' => $url_prefix]);
+Route::post("/batches/{batch_id}", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'BatchController@edit', 'prefix' => $url_prefix]);
+Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix]);
+Route::post("/levels", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'LevelController@add', 'prefix' => $url_prefix]);
+Route::post("/levels/{level_id}", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'LevelController@edit', 'prefix' => $url_prefix]);
+Route::post("/levels/{level_id}/students", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'LevelController@assignStudents', 'prefix' => $url_prefix]);
 
-Route::post("/survey_templates", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix]);
-Route::post("/survey_templates/{survey_template_id}/questions", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix]);
-Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix]);
-Route::post("/surveys/{survey_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix]);
-Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix]);
+Route::post("/survey_templates", ['middleware' => ['auth.basic', 'json.output', 'cors'],
+    'uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix]);
+Route::post("/survey_templates/{survey_template_id}/questions", ['middleware' => ['auth.basic', 'json.output', 'cors'],
+    'uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix]);
+Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['middleware' => ['auth.basic', 'json.output', 'cors'],
+    'uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix]);
+Route::post("/surveys/{survey_id}/responses", ['middleware' => ['auth.basic', 'json.output', 'cors'],
+    'uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix]);
+Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['middleware' => ['auth.basic', 'json.output', 'cors'],
+    'uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix]);

@@ -12,13 +12,11 @@ class LevelTableSeeder extends Seeder
      */
     public function run()
     {
-        
-
         \DB::table('Level')->delete();
         
-        \DB::table('Level')->insert(array (
-            0 => 
-            array (
+        \DB::table('Level')->insert(array(
+            0 =>
+            array(
                 'id' => 1,
                 'name' => 'A',
                 'grade' => 5,
@@ -31,8 +29,8 @@ class LevelTableSeeder extends Seeder
                 'year' => 2019,
                 'status' => '1',
             ),
-            1 => 
-            array (
+            1 =>
+            array(
                 'id' => 2,
                 'name' => 'A',
                 'grade' => 6,
@@ -46,7 +44,5 @@ class LevelTableSeeder extends Seeder
                 'status' => '1',
             ),
         ));
-        
-        
     }
 }

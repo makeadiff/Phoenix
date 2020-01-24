@@ -143,7 +143,7 @@ class UserTest extends TestCase
         $this->assertDatabaseHas('User', array('id' => $user_id, 'status' => '0'));
     }
 
-    /// Path: GET  /users/login
+    /// Path: POST  /users/login
     public function testGetUserLogin()
     {
         if ($this->only_priority_tests) {

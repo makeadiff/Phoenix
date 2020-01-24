@@ -20,7 +20,7 @@ class mentorClassConnection
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        if(isset($args['mentor_id'])) {
+        if (isset($args['mentor_id'])) {
             $batch_model = new Batch;
             $class_model = new Classes;
             $center_model = new Center;
@@ -31,7 +31,7 @@ class mentorClassConnection
             foreach ($users_batch as $batch) {
                 $cls = $class_model->search(['batch_id' => $batch->id, 'class_date_to' => date('Y-m-d H:i:s')])->get()->last();
                 
-                if($cls) {
+                if ($cls) {
                     $batch_info = [
                         'id'            => $batch->id,
                         'day'           => $batch->day,
@@ -41,11 +41,11 @@ class mentorClassConnection
                         'center_id'     => $batch->center_id,
                         'center_name'   => $center_model->find($batch->center_id)->name,
                     ];
-                   $conected_batches[] = $batch_info;
-               }
+                    $conected_batches[] = $batch_info;
+                }
             }
 
-            return $conected_batches;           
+            return $conected_batches;
         }
 
         return [];

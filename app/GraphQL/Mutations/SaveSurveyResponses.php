@@ -21,7 +21,9 @@ class saveSurveyResponses
     {
         $survey_model = new Survey;
         $survey = $survey_model->find($args['survey_id']);
-        if(!$survey) return 0; // No survey with given id
+        if (!$survey) {
+            return 0;
+        } // No survey with given id
 
         $survey_response_model = new Survey_Response;
         $insert_count = 0;
@@ -29,15 +31,21 @@ class saveSurveyResponses
         foreach ($args['responses'] as $response) {
             $data = $response;
 
-            if(empty($data['survey_id']) and !empty($args['survey_id'])) $data['survey_id'] = $args['survey_id'];
-            if(empty($data['responder_id']) and !empty($args['responder_id'])) $data['responder_id'] = $args['responder_id'];
-            if(empty($data['added_by_user_id']) and !empty($args['added_by_user_id'])) $data['added_by_user_id'] = $args['added_by_user_id'];
+            if (empty($data['survey_id']) and !empty($args['survey_id'])) {
+                $data['survey_id'] = $args['survey_id'];
+            }
+            if (empty($data['responder_id']) and !empty($args['responder_id'])) {
+                $data['responder_id'] = $args['responder_id'];
+            }
+            if (empty($data['added_by_user_id']) and !empty($args['added_by_user_id'])) {
+                $data['added_by_user_id'] = $args['added_by_user_id'];
+            }
 
             $data['survey_question_id'] = $data['question_id'];
             $data['survey_choice_id'] = $data['choice_id'];
             
             $return = $survey_response_model->add($data, $args['survey_id']);
-            if(!$return) {
+            if (!$return) {
                 dump($survey_response_model->errors);
             } else {
                 $insert_count ++ ;

@@ -14,7 +14,7 @@ final class Donation extends Common
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $table = 'Donut_Donation';
-    public $start_date = '2018-05-01 00:00:00';
+    public $start_date = '2019-05-01 00:00:00'; // Year will get re-written in the constructor.
     public $timestamps = true;
     protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'reference_file', 'cheque_no', 'added_on', 'updated_on',
                             'nach_start_on', 'nach_end_on', 'donation_repeat_count', 'updated_by_user_id', 'comment'];
@@ -65,22 +65,23 @@ final class Donation extends Common
                     $q->where("DP.collected_from_user_id", $data['approver_user_id']);
                 }
 
-                $deposit_info = $q->first();
+                $deposit_info = $q->get();
 
                 if (isset($data['include_deposit_info']) and $data['include_deposit_info']) {
                     $donations[$index]->deposit = $deposit_info;
                 }
 
                 if (isset($data['deposited'])) {
+                    $last_deposit = $q->first();
+
                     // Find donations which had are in the deposits table with status of pending or approved
                     if (!$deposit_info and $data['deposited']) {
                         unset($donations[$index]); // Deposit info not present - undeposited.
                     }
-                    if ($deposit_info and isset($deposit_info->status) and ($deposit_info->status == 'approved' or $deposit_info->status == 'pending')) {// Approved or pending deposit
+                    if ($last_deposit and isset($last_deposit->status) and ($last_deposit->status == 'approved' or $last_deposit->status == 'pending')) {// Approved or pending deposit
                         if (!$data['deposited']) { // Find un-deposited donuts - deposited=false
                             unset($donations[$index]);
                         }
-
                     } elseif ($data['deposited']) {  // Only deposited donations go thru.
                         unset($donations[$index]);
                     }
@@ -274,14 +275,19 @@ final class Donation extends Common
 
         $nach_start_on = (!empty($data['nach_start_on']) ? $data['nach_start_on'] : null);
         $nach_end_on = (!empty($data['nach_end_on']) ? $data['nach_end_on'] : null);
-        $nach_start_datetime = new DateTime($nach_start_on);
-        $nach_end_datetime = new DateTime($nach_end_on);
-        $diff = $nach_end_datetime->diff($nach_start_datetime);
-        $diff_months = $diff->m;
-        if (!$diff_months) {
-            $diff_months = 1;
+
+        if (!empty($data['donation_repeat_count']) and $data['donation_repeat_count']) {
+            $donation_repeat_count = intval($data['donation_repeat_count']);
+        } else {
+            $nach_start_datetime = new DateTime($nach_start_on);
+            $nach_end_datetime = new DateTime($nach_end_on);
+            $diff = $nach_end_datetime->diff($nach_start_datetime);
+            $diff_months = $diff->m + ($diff->y * 12);
+            if (!$diff_months) {
+                $diff_months = 1;
+            }
+            $donation_repeat_count = $diff_months;
         }
-        $donation_repeat_count = (!empty($data['donation_repeat_count']) and $data['donation_repeat_count']) ? $data['donation_repeat_count'] : $diff_months;
         
         $donation = Donation::create([
             'donor_id'          => $donor_id,
@@ -309,18 +315,19 @@ final class Donation extends Common
         }
 
         if (!isset($data['dont_send_email']) and ($data['type'] == 'cash' or $data['type'] == 'cheque')) { // This is an undocumented way to prevent sending Email when making a donation. Useful for testing, seeding, etc.
-            $base_path = app()->basePath();
-            $base_url = url('/');
 
             $mail = new Email;
             $mail->from     = "noreply <noreply@makeadiff.in>";
             $mail->to       = $data['donor_email'];
             $mail->subject  = "Donation Acknowledgment";
 
+            $base_path = app()->basePath();
+            $base_url = url('/');
+
             $email_html = file_get_contents($base_path . '/resources/email_templates/donation_acknowledgement.html');
             $mail->html = str_replace(
-                array('%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'),
-                array($base_url,$data['amount'],$data['donor_name'], date('d/m/Y')),
+                array('%BASE_FOLDER%','%BASE_URL%', '%AMOUNT%', '%DONOR_NAME%', '%DATE%'),
+                array($base_path, $base_url,$data['amount'],$data['donor_name'], date('d/m/Y')),
                 $email_html
             );
 
@@ -385,7 +392,9 @@ final class Donation extends Common
         }
         
         // Don't send recipt for cash donations Greater than 2000 rs.
-        if($this->item->type == 'cash' and $this->item->amount > 2000) return false; 
+        if ($this->item->type == 'cash' and $this->item->amount > 2000) {
+            return false;
+        }
 
         $base_path = app()->basePath();
         $base_url = url('/');
@@ -399,6 +408,7 @@ final class Donation extends Common
 
         $replaces = [
             '%ASSETS_PATH%' => base_path('public/assets'),
+            '%BASE_FOLDER%' => $base_path,
             '%BASE_URL%'    => $base_url,
             '%CREATED_AT%'  => date('dS M, Y h:i A', strtotime($this->item->added_on)),
             '%DATE%'        => date('d/m/Y'),
@@ -412,11 +422,10 @@ final class Donation extends Common
 
         $filename = $this->generateReceipt($donation_id);
 
-        // :TODO: This does'nt work properly. Implement this - https://laravel.com/docs/5.8/mail#inline-attachments properly.
         $mail->images = [
-            'mad-letterhead-left.png'   => $base_path . '/public/assets/mad-letterhead-left.png',
-            'mad-letterhead-logo.png'   => $base_path . '/public/assets/mad-letterhead-logo.png',
-            'mad-letterhead-right.png'  => $base_path . '/public/assets/mad-letterhead-right.png',
+            $base_path . '/public/assets/mad-letterhead-left.png',
+            $base_path . '/public/assets/mad-letterhead-logo.png',
+            $base_path . '/public/assets/mad-letterhead-right.png',
         ];
         $mail->attachments = [$filename];
 

@@ -12,13 +12,11 @@ class BatchTableSeeder extends Seeder
      */
     public function run()
     {
-        
-
         \DB::table('Batch')->delete();
         
-        \DB::table('Batch')->insert(array (
-            0 => 
-            array (
+        \DB::table('Batch')->insert(array(
+            0 =>
+            array(
                 'id' => 1,
                 'day' => '0',
                 'class_time' => '16:00:00',
@@ -29,8 +27,8 @@ class BatchTableSeeder extends Seeder
                 'year' => 2019,
                 'status' => '1',
             ),
-            1 => 
-            array (
+            1 =>
+            array(
                 'id' => 2,
                 'day' => '6',
                 'class_time' => '14:00:00',
@@ -42,7 +40,5 @@ class BatchTableSeeder extends Seeder
                 'status' => '1',
             ),
         ));
-        
-        
     }
 }

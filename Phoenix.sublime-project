@@ -5,7 +5,8 @@
 			"path": "app"
 		},
 		{
-			"path": "api"
+			"path": "api",
+			"folder_exclude_patterns": ["graphql"],
 		},
 		{
 			"path": "tests"
