@@ -8,8 +8,8 @@ use Tests\TestCase;
  */
 class CenterTest extends TestCase
 {
-    // private $only_priority_tests = false;
-    // private $write_to_db = true;
+    // protected $only_priority_tests = true;
+    // protected $write_to_db = true;
 
     /// Path: GET    /centers
     public function testGetCentersList()
