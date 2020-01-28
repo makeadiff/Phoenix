@@ -198,6 +198,49 @@ class BatchTest extends TestCase
         $this->assertTrue($teacher_group_found);
     }
 
+    public function testMentorAssignment()
+    {
+        if ($this->only_priority_tests){
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
+
+        $batch_id = 2610;
+        $non_mentor_user_id = 142776;
+        $mentor_ids = [$non_mentor_user_id,142783];
+        $this->load("/batches/$batch_id/mentors", 'POST', [
+            'mentor_user_ids'  => implode(',', $mentor_ids)
+        ]);
+        $data = json_decode($this->response->getContent());
+
+        $this->assertEquals($data->status, 'success');
+        $this->response->assertStatus(200);
+
+        $found_mentor_count = 0;
+        $mentors = app('db')->table('UserBatch')->select('user_id')->where('batch_id', batch_id)->where('role','mentor')->get();
+        foreach ($mentors as $mentor) {
+            if (in_array($mentor->user_id, $mentor_ids)) {
+                $found_mentor_count++;
+            }
+        }
+        $this->assertEquals($found_mentor_count, count($mentor_ids)); // Found both teachers assigned.
+
+        // This teacher is not a 'ES Mentor' - the call should have made him one.
+        $non_mentor = (new User)->find($non_mentor_user_id);
+        $groups = $non_mentor->groups()->get();
+        $mentor_group_found = false;
+        $mentor_group_id = 8;
+        foreach ($groups as $grp) {
+            if ($grp->id == $mentor_group_id) {
+                $mentor_group_found = true;
+                break;
+            }
+        }
+        $this->assertTrue($mentor_group_found);
+    }
+
     /// Path: DELETE    /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}
     public function testStudentDeassignment()
     {

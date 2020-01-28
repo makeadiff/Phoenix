@@ -8,7 +8,7 @@ use Tests\TestCase;
  */
 class UserTest extends TestCase
 {
-    // private $only_priority_tests = false;
+    protected $only_priority_tests = false;
     // private $write_to_db = false;
 
     /// Path: GET    /users/{user_id}

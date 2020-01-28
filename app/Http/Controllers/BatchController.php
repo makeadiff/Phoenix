@@ -30,6 +30,11 @@ class BatchController extends Controller
         $batch = new Batch;
         $result = $batch->add($request->all());
 
+        if($request->input('mentor_user_ids')){
+          $this->assignMentors($request, $batch_id);
+
+        }
+
         return JSend::success("Created the batch successfully", array('batch' => $result));
     }
 
@@ -51,10 +56,85 @@ class BatchController extends Controller
         if ($validator->fails()) {
             return response(JSend::fail("Unable to create batch - errors in input.", $validator->errors()), 400);
         }
-        
+
         $result = $batch->find($batch_id)->edit($request->all());
 
+        if($request->input('mentor_user_ids')){
+          $this->assignMentors($request, $batch_id);
+        }
+
         return JSend::success("Edited the batch", array('batch' => $result));
+    }
+
+    public function assignMentors(Request $request, $batch_id = false)
+    {
+        $batch_model = new Batch;
+        $batch = false;
+        if (!$batch_id) {
+            $batch_id = $request->input('batch_id');
+        }
+        if ($batch_id) {
+            $batch = $batch_model->fetch($batch_id);
+        }
+
+        if (!$batch) {
+            return response(JSend::fail("Can't find any batch with the given ID"), 404);
+        }
+
+        $user_ids_raw = $request->input('mentor_user_ids');
+        if (!is_array($user_ids_raw)) {
+            $user_ids = explode(",", $user_ids_raw);
+        } else {
+            $user_ids = $user_ids_raw;
+        }
+
+        $project_key_mapping = config('constants.project_id_to_key');
+        $project_key = $project_key_mapping[$batch->project_id];
+
+        $mentor_group_id = config("constants.group.$project_key.mentor.id");
+
+        $user_not_found = [];
+        $user_not_mentor=[];
+        $user_model = new User;
+        foreach ($user_ids as $uid) {
+            $mentor = $user_model->fetch($uid);
+            if (!$mentor) {
+                array_push($user_not_found, $uid);
+            } else {
+                // Check if the user has the teacher user group.
+                $mentor_group_found = false;
+                $mentor_groups = $mentor->groups()->get();
+                foreach ($mentor_groups as $grp) {
+                    if ($grp->id == $mentor_group_id) {
+                        $mentor_group_found = true;
+                        break;
+                    }
+                }
+
+                if (!$mentor_group_found) {
+                    array_push($user_not_mentor, $uid);
+                }
+            }
+        }
+
+        if (count($user_not_found)) {
+            return response(JSEND::fail("Can't find users with these IDs: " . implode(",", $user_not_found)));
+        }
+
+        $insert_count = 0;
+        foreach ($user_ids as $uid) {
+            // If the given user are not mentor, give them the mentor user group
+            if (in_array($uid, $user_not_mentor)) {
+                $user_model->fetch($uid)->addGroup($mentor_group_id);
+            }
+
+            if ($batch_model->assignMentor($batch_id, $uid)) {
+                $insert_count++;
+            }
+        }
+
+        return JSend::success("Added $insert_count mentor(s) to the batch " . $batch->name, array('batch' => $batch));
+
     }
 
     public function assignTeachers(Request $request, $batch_id = false, $level_id = false)
@@ -97,7 +177,7 @@ class BatchController extends Controller
         $project_key = $project_key_mapping[$batch->project_id];
 
         $teacher_group_id = config("constants.group.$project_key.teacher.id");
- 
+
         // Validation - make sure all teachers exists - and are teachers in the project of the batch.
         $user_not_found = [];
         $user_not_teacher=[];

@@ -35,6 +35,9 @@ class BatchTest extends TestCase
         $this->assertSame($result->day, '0');
     }
 
+    
+
+
     public function testBatchSearchWithTeacher()
     {
         $batch = new Batch;
