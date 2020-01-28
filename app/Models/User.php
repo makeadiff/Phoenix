@@ -229,10 +229,14 @@ final class User extends Common
             $q->addSelect("UserBatch.level_id");
             $q->where('UserBatch.batch_id', $data['batch_id']);
 
-            if (!empty($data['level_id'])) {
+            if(!empty($data['level_id'])) {
                 $q->where('UserBatch.level_id', $data['level_id']);
             }
+            if(!empty($data['role'])){
+                $q->where('UserBatch.role', $data['role']);
+            }
         }
+
 
         // Sorting
         if (!empty($data['user_type'])) {
@@ -348,7 +352,7 @@ final class User extends Common
             $user->joined_on    = isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s');
             $user->save();
         }
-        
+
         if ($user and !$zoho_user_id) {
             // Send Data to Zoho
             $all_sexes = [
