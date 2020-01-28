@@ -156,12 +156,12 @@ class BatchTest extends TestCase
     /// Path: POST    /batches/{batch_id}/levels/{level_id}/teachers
     public function testTeacherAssignment()
     {
-        if ($this->only_priority_tests) {
-            $this->markTestSkipped("Running only priority tests.");
-        }
-        if (!$this->write_to_db) {
-            $this->markTestSkipped("Skipping as this test writes to the Database.");
-        }
+        // if ($this->only_priority_tests) {
+        //     $this->markTestSkipped("Running only priority tests.");
+        // }
+        // if (!$this->write_to_db) {
+        //     $this->markTestSkipped("Skipping as this test writes to the Database.");
+        // }
 
         $batch_id = 2610;
         $level_id = 7356;
