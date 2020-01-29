@@ -8,8 +8,8 @@ use Tests\TestCase;
  */
 class StudentTest extends TestCase
 {
-    // private $only_priority_tests = false;
-    // private $write_to_db = true;
+    // protected $only_priority_tests = false;
+    // protected $write_to_db = true;
 
     /// Path: GET    /students
     public function testGetStudentsList()

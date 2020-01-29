@@ -36,7 +36,7 @@ final class Level extends Common
         }
 
         foreach ($search_fields as $field) {
-            if (empty($data[$field]) or $data['batch_id']) {
+            if (empty($data[$field]) or $field == 'batch_id') {
                 continue;
             } else {
                 $q->where("Level." . $field, $data[$field]);
