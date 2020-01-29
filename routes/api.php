@@ -222,6 +222,13 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
         if (!$batch) {
             return JSend::fail("Can't find any batch with ID $batch_id");
         }
+<<<<<<< Updated upstream
+=======
+        $mentors = (new User)->search(['batch_id' => $batch_id, 'batch_role' => 'mentor']);
+        if($mentors) {
+            $batch['mentors'] = $mentors;
+        }
+>>>>>>> Stashed changes
 
         return JSend::success("Batch ID : $batch_id", ['batches' => $batch]);
     });
@@ -235,6 +242,19 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
 
         return JSend::success("Teachers in batch $batch_id", ['teachers' => $teachers]);
     });
+<<<<<<< Updated upstream
+=======
+    Route::get('/batches/{batch_id}/mentors', function ($batch_id) {
+        $batch = (new Batch)->fetch($batch_id, false);
+        if (!$batch) {
+            return JSend::fail("Can't find any batch with ID $batch_id");
+        }
+
+        $mentors = (new User)->search(['batch_id' => $batch_id, 'batch_role' => 'mentor']);
+
+        return JSend::success("Mentors in batch $batch_id", ['mentors' => $mentors]);
+    });
+>>>>>>> Stashed changes
     Route::get('/batches/{batch_id}/levels', function ($batch_id) {
         $batch = (new Batch)->fetch($batch_id, false);
         if (!$batch) {
@@ -997,17 +1017,6 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
 
 
     ////////////////////////////////// Placeholders ///////////////////////////////
-    Route::post('/custom/video_analytics', function (Request $request) {
-        // $file = $request->file("image");
-        // $status = $file->store('uploads');
-  
-        $data = $request->all();
-
-        $status = $data['image']->store('uploads');
-        dd($data['image'], $status);
-
-        return JSend::success("Data catured");
-    });
     Route::get('/custom/care_collective_count', function (Request $request) {
         $contact = new Contact;
         return JSend::success("Care Collective Count", ['count' => $contact->getCount()]);

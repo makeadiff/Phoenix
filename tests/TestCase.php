@@ -6,8 +6,7 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
-    
-    protected $baseUrl = 'http://localhost/MAD/api/';
+    protected $baseUrl = 'http://localhost/MAD/api';
     protected $only_priority_tests = false;
     protected $write_to_db = true;
     protected $url_prefix = '/v1';
@@ -23,12 +22,7 @@ abstract class TestCase extends BaseTestCase
     {
         $this->withoutMiddleware();
         $this->response = $this->call($method, $this->url_prefix . $url, $form_data, [], [], $this->call_headers);
-
-        // print_r($this->response->dump());
-        // dump(url()->current());
-        // dd($response->exception->getStackTrace());
         $this->response_data = json_decode($this->response->getContent());
-
         return $this->response;
     }
 }

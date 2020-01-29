@@ -7,7 +7,9 @@ use App\Models\Center;
 final class Batch extends Common
 {
     protected $table = 'Batch';
-    public $timestamps = false;
+    const CREATED_AT = 'added_on';
+    const UPDATED_AT = false;
+    public $timestamps = true;
     protected $fillable = ['day','class_time','batch_head_id','center_id','project_id','status','year'];
 
     public function center()
@@ -20,9 +22,12 @@ final class Batch extends Common
     }
     public function teachers()
     {
-        return $this->belongsToMany("App\Models\User", 'UserBatch');
+        return $this->belongsToMany("App\Models\User", 'UserBatch')->where('UserBatch.role', 'teacher');
     }
-
+    public function mentors()
+    {
+        return $this->belongsToMany("App\Models\User", "UserBatch")->where("UserBatch.level_id", 0)->where('UserBatch.role', 'mentor');
+    }
     public function classes()
     {
         return $this->hasMany("App\Models\Classes");
@@ -141,6 +146,26 @@ final class Batch extends Common
         return $batch;
     }
 
+    public function assignMentor($batch_id,$mentor_id){
+        $mentor_batch_connection = app('db')->table('UserBatch')
+                                            ->select('id')
+                                            ->where('batch_id', $batch_id)
+                                            ->where('user_id', $mentor_id)
+                                            ->get();
+        if (count($mentor_batch_connection)) {
+            return false;
+        }
+
+        $row_id = app('db')->table('UserBatch')->insertGetId([
+            'user_id'   => $mentor_id,
+            'batch_id'  => $batch_id,
+            'role'      => 'mentor',
+            'level_id'  => '0'
+        ]);
+
+        return $row_id;
+    }
+
     public function assignTeacher($batch_id, $level_id, $teacher_id)
     {
         // See if this teacher is in the batch already.
@@ -160,11 +185,34 @@ final class Batch extends Common
         return $row_id;
     }
 
+    public function unassignMentor($batch_id, $mentor_id)
+    {
+        // See if this mentor is in the batch already.
+        $user_batch_connection = app('db')->table('UserBatch')
+                                            ->select('id')
+                                            ->where('batch_id', $batch_id)
+                                            ->where('user_id', $mentor_id)
+                                            ->where('level_id', 0)
+                                            ->where('role','mentor')->get();
+
+        if (!count($user_batch_connection)) {
+            return false;
+        }
+        // Delete the assignment.
+        app('db')->table('UserBatch')->where('batch_id', $batch_id)->where('user_id', $mentor_id)->where('role','mentor')->delete();
+
+        return true;
+    }
+
     public function unassignTeacher($batch_id, $level_id, $teacher_id)
     {
         // See if this teacher is in the batch already.
-        $user_batch_connection = app('db')->table('UserBatch')->select('id')
-            ->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->get();
+        $user_batch_connection = app('db')->table('UserBatch')
+                                            ->select('id')
+                                            ->where('batch_id', $batch_id)
+                                            ->where('level_id', $level_id)
+                                            ->where('user_id', $teacher_id)
+                                            ->where('role','teacher')->get();
         if (!count($user_batch_connection)) {
             return false;
         }
