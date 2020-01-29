@@ -20,7 +20,9 @@ final class User extends Common
 
     public function groups()
     {
-        $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->where('Group.status', '=', '1')->wherePivot('year', $this->year)->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type');
+        $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
+                            ->where('Group.status', '=', '1')->wherePivot('year', $this->year)
+                            ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type');
         $groups->orderByRaw("FIELD(Group.type, 'executive', 'national', 'strat', 'fellow', 'volunteer')");
         return $groups;
     }
@@ -231,6 +233,9 @@ final class User extends Common
 
             if (!empty($data['level_id'])) {
                 $q->where('UserBatch.level_id', $data['level_id']);
+            }
+            if(!empty($data['batch_role'])){
+                $q->where('UserBatch.role', $data['batch_role']);
             }
         }
 
