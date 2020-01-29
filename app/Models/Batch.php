@@ -7,10 +7,10 @@ use App\Models\Center;
 final class Batch extends Common
 {
     protected $table = 'Batch';
-    const CREATED_AT = 'added_on';
-    const UPDATED_AT = false;
     public $timestamps = true;
-    protected $fillable = ['day','class_time','batch_head_id','center_id','project_id','status','year'];
+    const CREATED_AT = 'added_on';
+    const UPDATED_AT = 'updated_on';
+    protected $fillable = ['day','class_time','center_id','project_id','status','year', 'batch_head_id'];
 
     public function center()
     {
@@ -132,26 +132,32 @@ final class Batch extends Common
     }
 
     public function add($data)
-    {
-        $batch = Batch::create([
+    {    
+        $batch_data = [
             'day'       => $data['day'],
             'class_time'=> $data['class_time'],
             'center_id' => $data['center_id'],
             'project_id'=> $data['project_id'],
-            'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '0',
             'year'      => isset($data['year']) ? $data['year'] : $this->year,
-            'status'    => isset($data['status']) ? $data['status'] : '1'
-        ]);
+            'status'    => isset($data['status']) ? $data['status'] : '1',
+            'batch_head_id' => '0'
+        ];
+        $batch = Batch::create($batch_data); // Should be working - but doesn't - getting a "array_key_exists(): The first argument should be either a string or an integer" error
+        $batch_id = $batch->id;
+
+        if(!empty($data['batch_head_id'])) {
+            $this->assignMentor($batch_id, $data['batch_head_id']);
+        }
 
         return $batch;
     }
 
-    public function assignMentor($batch_id,$mentor_id){
+    public function assignMentor($batch_id, $mentor_id)
+    {
         $mentor_batch_connection = app('db')->table('UserBatch')
                                             ->select('id')
                                             ->where('batch_id', $batch_id)
-                                            ->where('user_id', $mentor_id)
-                                            ->get();
+                                            ->where('user_id', $mentor_id)->get();
         if (count($mentor_batch_connection)) {
             return false;
         }
@@ -160,7 +166,8 @@ final class Batch extends Common
             'user_id'   => $mentor_id,
             'batch_id'  => $batch_id,
             'role'      => 'mentor',
-            'level_id'  => '0'
+            'level_id'  => '0',
+            'added_on'  => NOW()
         ]);
 
         return $row_id;
@@ -170,7 +177,9 @@ final class Batch extends Common
     {
         // See if this teacher is in the batch already.
         $user_batch_connection = app('db')->table('UserBatch')->select('id')
-            ->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->get();
+                                            ->where('batch_id', $batch_id)
+                                            ->where('level_id', $level_id)
+                                            ->where('user_id', $teacher_id)->get();
         if (count($user_batch_connection)) {
             return false;
         }
@@ -179,7 +188,8 @@ final class Batch extends Common
         $row_id = app('db')->table('UserBatch')->insertGetId([
             'user_id'   => $teacher_id,
             'batch_id'  => $batch_id,
-            'level_id'  => $level_id
+            'level_id'  => $level_id,
+            'added_on'  => NOW()
         ]);
 
         return $row_id;

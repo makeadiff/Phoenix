@@ -8,8 +8,8 @@ use Tests\TestCase;
  */
 class UserTest extends TestCase
 {
-    // protected $only_priority_tests = false;
-    // protected $write_to_db = false;
+    // protected $only_priority_tests = true;
+    // protected $write_to_db = true;
 
     /// Path: GET    /users/{user_id}
     public function testGetUserSingle()
@@ -80,15 +80,19 @@ class UserTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $email = 'test.test_dxd3@gmail.com';
+        $number = rand(0,9999);
+        $uniquer = str_pad($number,4,0,STR_PAD_LEFT);
+
+        $email = "test_user_$uniquer@makeadiff.in";
         // This will create a new user.
         $user = array(
-            'name'  => 'Test Dude',
-            'phone' => '10000000014',
-            'email' => $email,
-            'password'  => 'pass',
+            'name'      => 'Test Dude',
+            'phone'     => '1000000' . $uniquer,
+            'email'     => $email,
+            'password'  => 'test-pass',
             'joined_on' => date('Y-m-d H:i:s'),
             'city_id'   => 28,
+            'profile'   => 'teacher',
             'user_type' => 'volunteer'
         );
 
@@ -99,7 +103,8 @@ class UserTest extends TestCase
         $this->response->assertStatus(200);
         $this->assertDatabaseHas('User', array('email' => $email));
 
-        // :TODO: DELETE FROM User WEHRE id=$this->response_data->data->user->id
+        $created_user_id = $this->response_data->data->users->id;
+        return $created_user_id;
     }
 
     /// Path: POST /users
@@ -110,11 +115,11 @@ class UserTest extends TestCase
         }
         // Should attempt create a duplicate
         $user = array(
-            'name'  => 'Binny V A',
-            'phone' => '9746068565',
-            'email' => 'binnyva@gmail.com',
+            'name'      => 'Binny V A',
+            'phone'     => '9746068565',
+            'email'     => 'binnyva@gmail.com',
             'joined_on' => date('Y-m-d H:i:s'),
-            'password'  => 'pass',
+            'password'  => 'test-pass',
             'city_id'   => 28,
             'user_type' => 'volunteer'
         );
@@ -126,8 +131,35 @@ class UserTest extends TestCase
         $this->response->assertStatus(400);
     }
 
+    /// Path: POST /users
+    /**
+     * @depe nds testPostUsers
+     */
+    public function testPostUsersEdit($created_user_id = 198344)
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        $user = [
+            'name'      => 'New Name',
+            'phone'     => '9340567890',
+        ];
+        $this->load('/users/' . $created_user_id, 'POST', $user);
+        // dd($this->response_data);
+
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->response->assertStatus(200);
+        $this->assertDatabaseHas('User', [
+            'id'    => $created_user_id, 
+            'name'  => 'New Name'
+        ]);
+    }
+
     /// Path: DELETE    /users/{user_id}
-    public function testDeleteUser()
+    /**
+     * @depends testPostUsers
+     */
+    public function testDeleteUser($created_user_id)
     {
         if ($this->only_priority_tests) {
             $this->markTestSkipped("Running only priority tests.");
@@ -136,11 +168,9 @@ class UserTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $user_id = 567;
-
-        $this->load('/users/' . $user_id, 'DELETE');
+        $this->load('/users/' . $created_user_id, 'DELETE');
         $this->response->assertStatus(200);
-        $this->assertDatabaseHas('User', array('id' => $user_id, 'status' => '0'));
+        $this->assertDatabaseHas('User', array('id' => $created_user_id, 'status' => '0'));
     }
 
     /// Path: POST  /users/login

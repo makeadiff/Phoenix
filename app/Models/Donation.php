@@ -11,11 +11,11 @@ use \Datetime;
 
 final class Donation extends Common
 {
+    protected $table = 'Donut_Donation';
+    public $timestamps = true;
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
-    protected $table = 'Donut_Donation';
     public $start_date = '2019-05-01 00:00:00'; // Year will get re-written in the constructor.
-    public $timestamps = true;
     protected $fillable = ['type', 'fundraiser_user_id', 'donor_id', 'with_user_id', 'status', 'amount', 'reference_file', 'cheque_no', 'added_on', 'updated_on',
                             'nach_start_on', 'nach_end_on', 'donation_repeat_count', 'updated_by_user_id', 'comment'];
     protected $donation_statuses = ['collected', 'deposited', 'receipted'];

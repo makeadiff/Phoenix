@@ -222,13 +222,10 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
         if (!$batch) {
             return JSend::fail("Can't find any batch with ID $batch_id");
         }
-<<<<<<< Updated upstream
-=======
         $mentors = (new User)->search(['batch_id' => $batch_id, 'batch_role' => 'mentor']);
         if($mentors) {
             $batch['mentors'] = $mentors;
         }
->>>>>>> Stashed changes
 
         return JSend::success("Batch ID : $batch_id", ['batches' => $batch]);
     });
@@ -242,8 +239,6 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
 
         return JSend::success("Teachers in batch $batch_id", ['teachers' => $teachers]);
     });
-<<<<<<< Updated upstream
-=======
     Route::get('/batches/{batch_id}/mentors', function ($batch_id) {
         $batch = (new Batch)->fetch($batch_id, false);
         if (!$batch) {
@@ -254,7 +249,6 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
 
         return JSend::success("Mentors in batch $batch_id", ['mentors' => $mentors]);
     });
->>>>>>> Stashed changes
     Route::get('/batches/{batch_id}/levels', function ($batch_id) {
         $batch = (new Batch)->fetch($batch_id, false);
         if (!$batch) {
@@ -1051,26 +1045,22 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
     require base_path('routes/api-surveys.php');
 });
 
-Route::post("/users", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'UserController@add', 'prefix' => $url_prefix]);
-Route::post("/users/{user_id}", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'UserController@edit', 'prefix' => $url_prefix]);
-Route::post("/students", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'StudentController@add', 'prefix' => $url_prefix]);
-Route::post("/students/{student_id}", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'StudentController@edit', 'prefix' => $url_prefix]);
-Route::post("/events", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'EventController@add', 'prefix' => $url_prefix]);
-Route::post("/events/{event_id}", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'EventController@edit', 'prefix' => $url_prefix]);
-Route::post("/batches", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'BatchController@add', 'prefix' => $url_prefix]);
-Route::post("/batches/{batch_id}", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'BatchController@edit', 'prefix' => $url_prefix]);
-Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix]);
-Route::post("/levels", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'LevelController@add', 'prefix' => $url_prefix]);
-Route::post("/levels/{level_id}", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'LevelController@edit', 'prefix' => $url_prefix]);
-Route::post("/levels/{level_id}/students", ['middleware' => ['auth.basic', 'json.output', 'cors'], 'uses' => 'LevelController@assignStudents', 'prefix' => $url_prefix]);
+Route::post("/users", ['uses' => 'UserController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/users/{user_id}", ['uses' => 'UserController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/students", ['uses' => 'StudentController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/students/{student_id}", ['uses' => 'StudentController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/events", ['uses' => 'EventController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/events/{event_id}", ['uses' => 'EventController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/batches", ['uses' => 'BatchController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/batches/{batch_id}", ['uses' => 'BatchController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/batches/{batch_id}/mentors", ['uses' => 'BatchController@assignMentors', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/levels", ['uses' => 'LevelController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/levels/{level_id}", ['uses' => 'LevelController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/levels/{level_id}/students", ['uses' => 'LevelController@assignStudents', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
 
-Route::post("/survey_templates", ['middleware' => ['auth.basic', 'json.output', 'cors'],
-    'uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix]);
-Route::post("/survey_templates/{survey_template_id}/questions", ['middleware' => ['auth.basic', 'json.output', 'cors'],
-    'uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix]);
-Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['middleware' => ['auth.basic', 'json.output', 'cors'],
-    'uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix]);
-Route::post("/surveys/{survey_id}/responses", ['middleware' => ['auth.basic', 'json.output', 'cors'],
-    'uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix]);
-Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['middleware' => ['auth.basic', 'json.output', 'cors'],
-    'uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix]);
+Route::post("/survey_templates", ['uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/survey_templates/{survey_template_id}/questions", ['uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/surveys/{survey_id}/responses", ['uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
+Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output', 'cors']]);
