@@ -11,16 +11,18 @@ use GuzzleHttp\Client;
 
 final class User extends Common
 {
-    const CREATED_AT = 'added_on';
-    const UPDATED_AT = 'updated_on';
     protected $table = 'User';
     public $timestamps = true;
+    const CREATED_AT = 'added_on';
+    const UPDATED_AT = 'updated_on';
     protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
     public $enable_logging = true; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()
     {
-        $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->where('Group.status', '=', '1')->wherePivot('year', $this->year)->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type');
+        $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
+                            ->where('Group.status', '=', '1')->wherePivot('year', $this->year)
+                            ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type');
         $groups->orderByRaw("FIELD(Group.type, 'executive', 'national', 'strat', 'fellow', 'volunteer')");
         return $groups;
     }
@@ -232,8 +234,9 @@ final class User extends Common
             if(!empty($data['level_id'])) {
                 $q->where('UserBatch.level_id', $data['level_id']);
             }
-            if(!empty($data['role'])){
-                $q->where('UserBatch.role', $data['role']);
+
+            if(!empty($data['batch_role'])){
+                $q->where('UserBatch.role', $data['batch_role']);
             }
         }
 
@@ -411,7 +414,7 @@ final class User extends Common
                         'Address_for_correspondence'    => isset($data['address']) ? $data['address'] : '',
                         'Mobile_Number'     => $data['phone'],
                         'Occupation'        => isset($data['job_status']) ? ucwords($data['job_status']) : '',
-                        'Role_Type'			=> $role_types[$data['profile']],
+                        'Role_Type'			=> isset($role_types[$data['profile']]) ? $role_types[$data['profile']] : 'Other',
                         'Reason_for_choosing_to_volunteer_at_MAD'   => isset($data['why_mad']) ? $data['why_mad'] : '',
                         'MAD_Applicant_Id'  => $user->id,  // 'Unique_Applicant_ID'    => $status['id'],
                     ]

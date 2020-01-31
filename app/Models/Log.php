@@ -5,10 +5,10 @@ use App\Models\Common;
 
 final class Log extends Common
 {
-    const CREATED_AT = 'added_on';
-    const UPDATED_AT = false;
     protected $table = 'Log';
     public $timestamps = true;
+    const CREATED_AT = 'added_on';
+    const UPDATED_AT = null;
     protected $fillable = ['name', 'log', 'user_id','level'];
 
     public function search($data)

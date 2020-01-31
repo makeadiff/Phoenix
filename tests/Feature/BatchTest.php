@@ -13,7 +13,7 @@ class BatchTest extends TestCase
 {
     use WithoutMiddleware;
 
-    protected $only_priority_tests = true;
+    protected $only_priority_tests = false;
     // protected $write_to_db = false;
 
     /// Path: GET    /batches/{batch_id}

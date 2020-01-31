@@ -52,7 +52,7 @@ Archive.value:
 Archive.year: 
 Archive.added_on: 
 
-Batch: Stores all the batch information.
+Batch: Stores all the batch information. This is basically a timeslot unit and can also be seen as a Volunteer group.
 Batch.id: 
 Batch.day: Batch day - 0 is Sunday
 Batch.class_time: Batch time - expressed in 24 hours time.
