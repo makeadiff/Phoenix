@@ -286,7 +286,18 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
             return JSend::fail("Error deleting the assignment");
         }
 
-        return "";
+        return JSend::success("Teacher removed from batch_id:".$batch_id." & level_id:".$level_id);
+    });
+
+    Route::delete("/batches/{batch_id}/mentors/{mentor_user_id}", function ($batch_id, $mentor_id) {
+        $batch_model = new Batch;
+        $delete_status = $batch_model->unassignMentor($batch_id, $mentor_id);
+
+        if (!$delete_status) {
+            return JSend::fail("Error deleting the assignment");
+        }
+
+        return JSend::success("Mentor removed from batch_id:".$batch_id);
     });
 
     ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////

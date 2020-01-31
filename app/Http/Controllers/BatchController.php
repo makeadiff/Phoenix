@@ -30,6 +30,11 @@ class BatchController extends Controller
         $batch = new Batch;
         $result = $batch->add($request->all());
 
+        if($request->input('mentor_user_ids')){
+          $this->assignMentors($request, $batch_id);
+
+        }
+
         return JSend::success("Created the batch successfully", array('batch' => $result));
     }
 
@@ -51,7 +56,7 @@ class BatchController extends Controller
         if ($validator->fails()) {
             return response(JSend::fail("Unable to create batch - errors in input.", $validator->errors()), 400);
         }
-        
+
         $result = $batch->find($batch_id)->edit($request->all());
 
         if($request->input('mentor_user_ids')){
@@ -91,6 +96,7 @@ class BatchController extends Controller
 
         $user_not_found = [];
         $user_not_mentor= [];
+
         $user_model = new User;
         foreach ($user_ids as $uid) {
             $mentor = $user_model->fetch($uid);
@@ -170,7 +176,7 @@ class BatchController extends Controller
         $project_key = $project_key_mapping[$batch->project_id];
 
         $teacher_group_id = config("constants.group.$project_key.teacher.id");
- 
+
         // Validation - make sure all teachers exists - and are teachers in the project of the batch.
         $user_not_found = [];
         $user_not_teacher=[];
