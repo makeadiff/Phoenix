@@ -12,8 +12,8 @@ class LevelTest extends TestCase
 {
     use WithoutMiddleware;
 
-    protected $only_priority_tests = true;
-    protected $write_to_db = true;
+    // protected $only_priority_tests = true;
+    // protected $write_to_db = true;
 
     /// Path: GET    /levels/{level_id}
     public function testGetLevelsSingle()

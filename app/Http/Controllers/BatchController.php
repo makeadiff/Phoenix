@@ -60,7 +60,7 @@ class BatchController extends Controller
         $result = $batch->find($batch_id)->edit($request->all());
 
         if($request->input('mentor_user_ids')){
-          $this->assignMentors($request, $batch_id);
+            $this->assignMentors($request, $batch_id);
         }
 
         return JSend::success("Edited the batch", array('batch' => $result));
@@ -73,11 +73,10 @@ class BatchController extends Controller
         if (!$batch_id) {
             $batch_id = $request->input('batch_id');
         }
+
         if ($batch_id) {
             $batch = $batch_model->fetch($batch_id);
-        }
-
-        if (!$batch) {
+        } else {
             return response(JSend::fail("Can't find any batch with the given ID"), 404);
         }
 
@@ -88,20 +87,23 @@ class BatchController extends Controller
             $user_ids = $user_ids_raw;
         }
 
+        // Find the project of this batch ...
         $project_key_mapping = config('constants.project_id_to_key');
         $project_key = $project_key_mapping[$batch->project_id];
 
+        // ... and find the mentor user group id of that project.
         $mentor_group_id = config("constants.group.$project_key.mentor.id");
 
         $user_not_found = [];
-        $user_not_mentor=[];
+        $user_not_mentor= [];
+
         $user_model = new User;
         foreach ($user_ids as $uid) {
             $mentor = $user_model->fetch($uid);
             if (!$mentor) {
                 array_push($user_not_found, $uid);
             } else {
-                // Check if the user has the teacher user group.
+                // Check if the user has the mentor user group.
                 $mentor_group_found = false;
                 $mentor_groups = $mentor->groups()->get();
                 foreach ($mentor_groups as $grp) {
@@ -134,7 +136,6 @@ class BatchController extends Controller
         }
 
         return JSend::success("Added $insert_count mentor(s) to the batch " . $batch->name, array('batch' => $batch));
-
     }
 
     public function assignTeachers(Request $request, $batch_id = false, $level_id = false)
@@ -159,9 +160,7 @@ class BatchController extends Controller
         }
         if ($level_id) {
             $level = $level_model->fetch($level_id);
-        }
-
-        if (!$level) {
+        } else {
             return response(JSend::fail("Can't find any class section with the given ID"), 404);
         }
 
