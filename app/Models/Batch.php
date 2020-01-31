@@ -28,6 +28,7 @@ final class Batch extends Common
     {
         return $this->belongsToMany("App\Models\User", "UserBatch")->where("UserBatch.level_id", 0)->where('UserBatch.role', 'mentor');
     }
+
     public function classes()
     {
         return $this->hasMany("App\Models\Classes");
@@ -120,6 +121,7 @@ final class Batch extends Common
         } else {
             $this->item = $this->find($id);
         }
+
         $this->item->name = $this->getName($this->item->day, $this->item->class_time);
         $this->item->center = $this->item->center()->first()->name;
         $this->item->vertical_id = $this->getVerticalIdFromProjectId($this->item->project_id);
