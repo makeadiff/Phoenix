@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Batch;
 use App\Models\Level;
 use App\Models\User;
+use App\Models\Allocation;
 use Illuminate\Http\Request;
 use JSend;
 
@@ -124,16 +125,22 @@ class BatchController extends Controller
         }
 
         $insert_count = 0;
+
+        $allocation_model = new Allocation;
         foreach ($user_ids as $uid) {
             // If the given user are not mentor, give them the mentor user group
             if (in_array($uid, $user_not_mentor)) {
                 $user_model->fetch($uid)->addGroup($mentor_group_id);
             }
 
-            if ($batch_model->assignMentor($batch_id, $uid)) {
+            // if ($batch_model->assignMentor($batch_id, $uid)) {
+            //     $insert_count++;
+            // }
+            if ($allocation_model->createAssignment($batch_id, $uid,"mentor")) {
                 $insert_count++;
             }
         }
+        $batch->mentor_user_ids = $user_ids;
 
         return JSend::success("Added $insert_count mentor(s) to the batch " . $batch->name, array('batch' => $batch));
     }
@@ -153,6 +160,7 @@ class BatchController extends Controller
             return response(JSend::fail("Can't find any batch with the given ID"), 404);
         }
 
+
         $level_model = new Level;
         $level = false;
         if (!$level_id) {
@@ -170,6 +178,8 @@ class BatchController extends Controller
         } else {
             $user_ids = $user_ids_raw;
         }
+
+
 
         // The group ID of the teacher group of the project this batch belongs to.
         $project_key_mapping = config('constants.project_id_to_key');
@@ -211,13 +221,14 @@ class BatchController extends Controller
         }
 
         $insert_count = 0;
+        $allocation_model = new Allocation;
         foreach ($user_ids as $uid) {
             // If the given user are not teacher, give them the teacher user group
             if (in_array($uid, $user_not_teacher)) {
                 $user_model->fetch($uid)->addGroup($teacher_group_id);
             }
 
-            if ($batch_model->assignTeacher($batch_id, $level_id, $uid)) {
+            if ($allocation_model->createAssignment($batch_id, $uid, "teacher", $level_id)) {
                 $insert_count++;
             }
         }

@@ -1596,6 +1596,7 @@ paths:
       tags:
         - batch
         - user
+        - mentor
       summary: Mentors in batch
       description: Returns the mentos mapped to the given batch.
       parameters:
@@ -1615,6 +1616,7 @@ paths:
       tags:
         - batch
         - user
+        - mentor
       summary: Add Mentors to given batch
       description: Returns the mentos mapped to the given batch.
       parameters:
@@ -1638,7 +1640,7 @@ paths:
     delete:
       tags:
         - batch
-        - teacher
+        - mentor
         - user
       summary: Delete Mentors from batch
       description: Returns the mentos mapped to the given batch.
@@ -1713,6 +1715,37 @@ paths:
       responses:
         200:
           description: Added the teachers to the batch/level combo
+          schema:
+            $ref: "#/definitions/Batch"
+        404:
+          description: Can't find any batch, level, or users with the given ID
+    delete:
+      tags:
+        - batch
+        - level
+        - teacher
+        - user
+      summary: Delete Teacher from a Batch/Level
+      description: Delete a teacher to a Batch/Level Combo.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+        - name: teacher_id
+          type: integer
+          in: path
+          required: true
+          description: User ID of Teacher that needs to be removed from the Batch/Level
+      responses:
+        200:
+          description: Removed the teacher from the batch/level combo
           schema:
             $ref: "#/definitions/Batch"
         404:
@@ -3365,7 +3398,7 @@ definitions:
           - "1"
           - "0"
       mentors:
-        type: "array"                
+        type: "array"
   Level:
     type: "object"
     properties:
