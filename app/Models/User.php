@@ -458,6 +458,11 @@ final class User extends Common
 
             $this->item->$key = $data[$key];
         }
+        // :TODO: Special cases that should be handled.
+        //  - User moved to Alumnai / Let_go
+        //      - left_on date update
+        //      - delete future class.
+        //      - delete teacher allocations
         $this->item->save();
 
         return $this->item;
