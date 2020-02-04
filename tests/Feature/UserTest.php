@@ -80,8 +80,8 @@ class UserTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $number = rand(0,9999);
-        $uniquer = str_pad($number,4,0,STR_PAD_LEFT);
+        $number = rand(0, 9999);
+        $uniquer = str_pad($number, 4, 0, STR_PAD_LEFT);
 
         $email = "test_user_$uniquer@makeadiff.in";
         // This will create a new user.
@@ -150,7 +150,7 @@ class UserTest extends TestCase
         $this->assertEquals($this->response_data->status, 'success');
         $this->response->assertStatus(200);
         $this->assertDatabaseHas('User', [
-            'id'    => $created_user_id, 
+            'id'    => $created_user_id,
             'name'  => 'New Name'
         ]);
     }

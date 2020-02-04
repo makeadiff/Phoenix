@@ -224,7 +224,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
             return JSend::fail("Can't find any batch with ID $batch_id");
         }
         $mentors = (new User)->search(['batch_id' => $batch_id, 'batch_role' => 'mentor']);
-        if($mentors) {
+        if ($mentors) {
             $batch['mentors'] = $mentors;
         }
 
@@ -280,19 +280,19 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
     });
 
     Route::delete("/batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}", function ($batch_id, $level_id, $teacher_id) {
-        $batch_model = new Allocation;
-        $delete_status = $batch_model->deleteAssignment($batch_id, $teacher_id, "teacher", $level_id);
+        $allocation_model = new Allocation;
+        $delete_status = $allocation_model->deleteTeacherAssignment($batch_id, $level_id, $teacher_id);
 
         if (!$delete_status) {
             return JSend::fail("Error deleting the assignment");
         }
 
-        return JSend::success("Teacher removed from batch_id:".$batch_id." & level_id:".$level_id);
+        return ""; // JSend::success("Teacher removed from batch_id:".$batch_id." & level_id:".$level_id);
     });
 
     Route::delete("/batches/{batch_id}/mentors/{mentor_user_id}", function ($batch_id, $mentor_id) {
         $allocation_model = new Allocation;
-        $delete_status = $allocation_model->deleteAssignment($batch_id, $mentor_id, "mentor");
+        $delete_status = $allocation_model->deleteMentorAssignment($batch_id, $mentor_id);
 
         if (!$delete_status) {
             return JSend::fail("Error deleting the assignment");

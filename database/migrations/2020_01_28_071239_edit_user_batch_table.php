@@ -17,7 +17,7 @@ class EditUserBatchTable extends Migration
             $table->datetime('added_on')->nullable();
             $table->enum('role', ['teacher','mentor','wingman'])->default('teacher');
         });
-        $rows = DB::table('UserBatch')->join('Batch','Batch.id','=','UserBatch.batch_id')->get(['UserBatch.id as id','year']);
+        $rows = DB::table('UserBatch')->join('Batch', 'Batch.id', '=', 'UserBatch.batch_id')->get(['UserBatch.id as id','year']);
         foreach ($rows as $row) {
             $added_on = ($row->year).'-06-01 00:00:00';
             DB::table('UserBatch')

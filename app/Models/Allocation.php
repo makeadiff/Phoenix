@@ -12,37 +12,41 @@ class Allocation extends Common
     const CREATED_AT = 'added_on';
     protected $fillable = ['user_id','batch_id','level_id','role'];
 
-    public function batch(){
-      return $this->beiongsToMany('App\Models\Batch');
+    public function batch()
+    {
+        return $this->beiongsToMany('App\Models\Batch');
+    }
+    public function level()
+    {
+        return $this->belongsToMany('App\Level');
     }
 
-    public function teacher(){
-      return $this->belongsToMany('App\Models\User')->where('UserBatch.role','teacher');
+    public function teacher()
+    {
+        return $this->belongsToMany('App\Models\User')->where('UserBatch.role', 'teacher');
     }
 
-    public function mentor(){
-      return $this->belongsToMany('App\Models\User')->where('UserBatch.role','mentor');
+    public function mentor()
+    {
+        return $this->belongsToMany('App\Models\User')->where('UserBatch.role', 'mentor');
     }
 
-    public function level(){
-      return $this->belongsToMany('App\Level');
-    }
-
-    public function get($batch_id, $user_id,$role="teacher",$level_id=0){
-      $this->item = $this->where('batch_id',$batch_id)
-                         ->where('user_id',$user_id)
-                         ->where('level_id',$level_id)
-                         ->where('role',$role)
+    public function getAllocation($batch_id, $level_id, $user_id, $role)
+    {
+        $this->item = $this->where('batch_id', $batch_id)
+                         ->where('user_id', $user_id)
+                         ->where('level_id', $level_id)
+                         ->where('role', $role)
                          ->get();
 
-      return $this->item;
+        return $this->item;
     }
 
-    public function createAssignment($batch_id, $user_id, $role="teacher", $level_id=0)
+    public function createAllocation($batch_id, $level_id, $user_id, $role)
     {
-        $mentor_batch_connection = $this->get($batch_id, $user_id, $role, $level_id);
+        $existing_allocation = $this->getAllocation($batch_id, $level_id, $user_id, $role);
 
-        if (count($mentor_batch_connection)) {
+        if (count($existing_allocation)) {
             return false;
         }
 
@@ -59,23 +63,36 @@ class Allocation extends Common
 
         return $allocation_id;
     }
-
-    public function deleteAssignment($batch_id, $user_id, $role="teacher", $level_id=0)
+    public function assignMentor($batch_id, $user_id)
     {
-        // See if this mentor is in the batch already.
-        $mentor_batch_connection = $this->get($batch_id, $user_id, $role, $level_id);
+        return $this->createAllocation($batch_id, 0, $user_id, 'mentor');
+    }
+    public function assignTeacher($batch_id, $level_id, $user_id)
+    {
+        return $this->createAllocation($batch_id, $level_id, $user_id, 'teacher');
+    }
 
-        if (!count($mentor_batch_connection)) {
+    public function deleteAssignment($batch_id, $level_id, $user_id, $role)
+    {
+        $existing_connection = $this->getAllocation($batch_id, $level_id, $user_id, $role);
+
+        if (!count($existing_connection)) {
             return false;
-        }
-        else{
-            $this->item = $this->where('batch_id',$batch_id)
-                               ->where('user_id',$user_id)
-                               ->where('role',$role)
-                               ->where('level_id',$level_id)
+        } else {
+            $this->item = $this->where('batch_id', $batch_id)
+                               ->where('level_id', $level_id)
+                               ->where('user_id', $user_id)
+                               ->where('role', $role)
                                ->delete();
         }
         return true;
     }
-
+    public function deleteMentorAssignment($batch_id, $user_id)
+    {
+        return $this->deleteAssignment($batch_id, 0, $user_id, 'mentor');
+    }
+    public function deleteTeacherAssignment($batch_id, $level_id, $user_id)
+    {
+        return $this->deleteAssignment($batch_id, $level_id, $user_id, 'teacher');
+    }
 }
