@@ -7,6 +7,7 @@ use App\Models\Center;
 use App\Models\Classes;
 use App\Models\Student;
 use App\Models\Batch;
+use App\Models\Allocation;
 use App\Models\Level;
 use App\Models\Donation;
 use App\Models\Deposit;
@@ -279,8 +280,8 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
     });
 
     Route::delete("/batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}", function ($batch_id, $level_id, $teacher_id) {
-        $batch_model = new Batch;
-        $delete_status = $batch_model->unassignTeacher($batch_id, $level_id, $teacher_id);
+        $batch_model = new Allocation;
+        $delete_status = $batch_model->deleteAssignment($batch_id, $teacher_id, "teacher", $level_id);
 
         if (!$delete_status) {
             return JSend::fail("Error deleting the assignment");
@@ -290,14 +291,14 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
     });
 
     Route::delete("/batches/{batch_id}/mentors/{mentor_user_id}", function ($batch_id, $mentor_id) {
-        $batch_model = new Batch;
-        $delete_status = $batch_model->unassignMentor($batch_id, $mentor_id);
+        $allocation_model = new Allocation;
+        $delete_status = $allocation_model->deleteAssignment($batch_id, $mentor_id, "mentor");
 
         if (!$delete_status) {
             return JSend::fail("Error deleting the assignment");
         }
 
-        return JSend::success("Mentor removed from batch_id:".$batch_id);
+        return JSend::success("Mentor (user_id: ".$mentor_id.") removed from batch_id:".$batch_id);
     });
 
     ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
