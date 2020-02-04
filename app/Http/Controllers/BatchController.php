@@ -141,7 +141,7 @@ class BatchController extends Controller
         return JSend::success("Added $insert_count mentor(s) to the batch " . $batch->name, array('batch' => $batch));
     }
 
-    public function assignTeachers(Request $request, $batch_id = false, $level_id = false)
+    public function assignTeachers(Request $request, $batch_id = false, $level_id = false, $subject_id = 0)
     {
         $batch_model = new Batch;
         $batch = false;
@@ -161,11 +161,16 @@ class BatchController extends Controller
         if (!$level_id) {
             $level_id = $request->input('level_id');
         }
-        if ($level_id) {
-            $level = $level_model->fetch($level_id);
-        } else {
+        if (!$level_id) {
             return response(JSend::fail("Can't find any class section with the given ID"), 404);
         }
+
+        $subject_model = new Subject;
+        $subject = false;
+        if (!$subject_id) {
+            $subject_id = $request->input('subject_id');
+        }
+        if(!$subject_id) $subject_id = 0;
 
         $user_ids_raw = $request->input('user_ids');
         if (!is_array($user_ids_raw)) {
@@ -221,7 +226,7 @@ class BatchController extends Controller
                 $user_model->fetch($uid)->addGroup($teacher_group_id);
             }
 
-            if ($allocation_model->assignTeacher($batch_id, $level_id, $uid)) {
+            if ($allocation_model->assignTeacher($batch_id, $level_id, $uid, $subject_id)) {
                 $insert_count++;
             }
         }
