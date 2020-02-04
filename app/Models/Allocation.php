@@ -42,9 +42,9 @@ class Allocation extends Common
         return $this->item;
     }
 
-    public function createAllocation($batch_id, $level_id, $user_id, $role)
+    public function createAllocation($batch_id, $level_id, $user_id, $role, $subject_id)
     {
-        $existing_allocation = $this->getAllocation($batch_id, $level_id, $user_id, $role);
+        $existing_allocation = $this->getAllocation($batch_id, $level_id, $user_id, $role, $subject_id);
 
         if (count($existing_allocation)) {
             return false;
@@ -55,6 +55,7 @@ class Allocation extends Common
           'batch_id'  => $batch_id,
           'role'      => $role,
           'level_id'  => $level_id,
+          'subject_id'=> $subject_id,
           'added_on'  => NOW()
         ];
 
@@ -67,9 +68,9 @@ class Allocation extends Common
     {
         return $this->createAllocation($batch_id, 0, $user_id, 'mentor');
     }
-    public function assignTeacher($batch_id, $level_id, $user_id)
+    public function assignTeacher($batch_id, $level_id, $user_id, $subject_id)
     {
-        return $this->createAllocation($batch_id, $level_id, $user_id, 'teacher');
+        return $this->createAllocation($batch_id, $level_id, $user_id, 'teacher', $subject_id);
     }
 
     public function deleteAssignment($batch_id, $level_id, $user_id, $role)
