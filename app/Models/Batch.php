@@ -147,7 +147,7 @@ final class Batch extends Common
         $batch = Batch::create($batch_data); // Should be working - but doesn't - getting a "array_key_exists(): The first argument should be either a string or an integer" error
         $batch_id = $batch->id;
 
-        if(!empty($data['batch_head_id'])) {
+        if (!empty($data['batch_head_id'])) {
             $this->assignMentor($batch_id, $data['batch_head_id']);
         }
 

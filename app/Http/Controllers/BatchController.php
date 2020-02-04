@@ -31,9 +31,8 @@ class BatchController extends Controller
         $batch = new Batch;
         $result = $batch->add($request->all());
 
-        if($request->input('mentor_user_ids')){
-          $this->assignMentors($request, $batch_id);
-
+        if ($request->input('mentor_user_ids')) {
+            $this->assignMentors($request, $batch_id);
         }
 
         return JSend::success("Created the batch successfully", array('batch' => $result));
@@ -60,7 +59,7 @@ class BatchController extends Controller
 
         $result = $batch->find($batch_id)->edit($request->all());
 
-        if($request->input('mentor_user_ids')){
+        if ($request->input('mentor_user_ids')) {
             $this->assignMentors($request, $batch_id);
         }
 
@@ -133,10 +132,7 @@ class BatchController extends Controller
                 $user_model->fetch($uid)->addGroup($mentor_group_id);
             }
 
-            // if ($batch_model->assignMentor($batch_id, $uid)) {
-            //     $insert_count++;
-            // }
-            if ($allocation_model->createAssignment($batch_id, $uid,"mentor")) {
+            if ($allocation_model->assignMentor($batch_id, $uid)) {
                 $insert_count++;
             }
         }
@@ -160,7 +156,6 @@ class BatchController extends Controller
             return response(JSend::fail("Can't find any batch with the given ID"), 404);
         }
 
-
         $level_model = new Level;
         $level = false;
         if (!$level_id) {
@@ -178,8 +173,6 @@ class BatchController extends Controller
         } else {
             $user_ids = $user_ids_raw;
         }
-
-
 
         // The group ID of the teacher group of the project this batch belongs to.
         $project_key_mapping = config('constants.project_id_to_key');
@@ -228,7 +221,7 @@ class BatchController extends Controller
                 $user_model->fetch($uid)->addGroup($teacher_group_id);
             }
 
-            if ($allocation_model->createAssignment($batch_id, $uid, "teacher", $level_id)) {
+            if ($allocation_model->assignTeacher($batch_id, $level_id, $uid)) {
                 $insert_count++;
             }
         }
