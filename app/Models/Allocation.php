@@ -43,11 +43,11 @@ class Allocation extends Common
         return $allocation;
     }
 
-    public function createAllocation($batch_id, $level_id, $user_id, $role, $subject_id)
+    public function createAllocation($batch_id, $level_id, $user_id, $role, $subject_id = 0)
     {
         $existing_allocation = $this->getAllocation($batch_id, $level_id, $user_id, $role);
 
-        if ($existing_allocation->id) {
+        if (isset($existing_allocation->id)) {
             if($existing_allocation->subject_id == $subject_id) { // Exact same row already exist in db.
                 return false;
 
@@ -84,7 +84,7 @@ class Allocation extends Common
     {
         $existing_connection = $this->getAllocation($batch_id, $level_id, $user_id, $role);
 
-        if (!count($existing_connection)) {
+        if (!isset($existing_connection->id)) {
             return false;
         } else {
             $this->item = $this->where('batch_id', $batch_id)

@@ -13,8 +13,8 @@ class BatchTest extends TestCase
 {
     use WithoutMiddleware;
 
-    protected $only_priority_tests = false;
-    // protected $write_to_db = false;
+    // protected $only_priority_tests = true;
+    // protected $write_to_db = true;
 
     /// Path: GET    /batches/{batch_id}
     public function testGetBatchesSingle()
@@ -196,6 +196,66 @@ class BatchTest extends TestCase
             }
         }
         $this->assertTrue($teacher_group_found);
+    }
+
+    /// Path: DELETE    /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}
+    /**
+     * @depends testTeacherAssignment
+     */
+    public function testTeacherDeassignment()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
+
+        $batch_id = 2610;
+        $level_id = 7356;
+        $teacher_id = 136214;
+        $this->load("/batches/$batch_id/levels/$level_id/teachers/$teacher_id", 'DELETE');
+        $data = json_decode($this->response->getContent());
+        $this->response->assertStatus(200);
+
+        $teachers = app('db')->table('UserBatch')->select('id')->where('level_id', $level_id)->where('batch_id', $batch_id)->where('user_id', $teacher_id)->get();
+        $this->assertEquals(count($teachers), 0);
+    }
+
+    /// Path: POST    /batches/{batch_id}/levels/{level_id}/teachers
+    /**
+     * @depends testTeacherDeassignment
+     */
+    public function testTeacherSubjectAssignment()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
+
+        $batch_id = 2610;
+        $level_id = 7356;
+        $teacher_ids = [142766];
+        $subject_id = 8;
+        $this->load("/batches/$batch_id/levels/$level_id/teachers", 'POST', [
+            'user_ids'  => implode(',', $teacher_ids),
+            'subject_id'=> $subject_id
+        ]);
+        $data = json_decode($this->response->getContent());
+
+        $this->assertEquals($data->status, 'success');
+        $this->response->assertStatus(200);
+
+        $found_teacher_count = 0;
+        $teachers = app('db')->table('UserBatch')->select('user_id', 'subject_id')->where('level_id', $level_id)->where('batch_id', $batch_id)->get();
+        foreach ($teachers as $teach) {
+            if($teach->subject_id == $subject_id) {
+                $found_teacher_count++;
+            }
+        }
+        $this->assertEquals($found_teacher_count, count($teacher_ids)); // Found both teachers assigned.
     }
 
     public function testMentorAssignment()
