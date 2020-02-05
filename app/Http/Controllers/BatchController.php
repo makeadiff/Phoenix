@@ -161,12 +161,12 @@ class BatchController extends Controller
         if (!$level_id) {
             $level_id = $request->input('level_id');
         }
-        if (!$level_id) {
+        $level = $level_model->fetch($level_id);
+
+        if (!$level) {
             return response(JSend::fail("Can't find any class section with the given ID"), 404);
         }
 
-        $subject_model = new Subject;
-        $subject = false;
         if (!$subject_id) {
             $subject_id = $request->input('subject_id');
         }
