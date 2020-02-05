@@ -8,9 +8,10 @@ use App\Models\Batch;
 class Allocation extends Common
 {
     protected $table = 'UserBatch';
-    public $timestamps = false;
+    public $timestamps = true;
     const CREATED_AT = 'added_on';
-    protected $fillable = ['user_id','batch_id','level_id','role'];
+    const UPDATED_AT = null;
+    protected $fillable = ['user_id','batch_id','level_id','subject_id', 'role'];
 
     public function batch()
     {
@@ -33,21 +34,29 @@ class Allocation extends Common
 
     public function getAllocation($batch_id, $level_id, $user_id, $role)
     {
-        $this->item = $this->where('batch_id', $batch_id)
+        $allocation = $this->where('batch_id', $batch_id)
                          ->where('user_id', $user_id)
                          ->where('level_id', $level_id)
                          ->where('role', $role)
-                         ->get();
+                         ->first();
 
-        return $this->item;
+        return $allocation;
     }
 
     public function createAllocation($batch_id, $level_id, $user_id, $role, $subject_id)
     {
-        $existing_allocation = $this->getAllocation($batch_id, $level_id, $user_id, $role, $subject_id);
+        $existing_allocation = $this->getAllocation($batch_id, $level_id, $user_id, $role);
 
-        if (count($existing_allocation)) {
-            return false;
+        if ($existing_allocation->id) {
+            if($existing_allocation->subject_id == $subject_id) { // Exact same row already exist in db.
+                return false;
+
+            } else { // Found teacher/batch/level link - but for differnt subject. Updating.
+                $alloc = $this->find($existing_allocation->id);
+                $alloc->subject_id = $subject_id;
+                $alloc->save();
+                return $existing_allocation->id;
+            }
         }
 
         $allocation_data = [
@@ -56,13 +65,11 @@ class Allocation extends Common
           'role'      => $role,
           'level_id'  => $level_id,
           'subject_id'=> $subject_id,
-          'added_on'  => NOW()
+          'added_on'  => date('Y-m-d H:i:s')
         ];
 
         $allocation = Allocation::create($allocation_data);
-        $allocation_id = $allocation->id;
-
-        return $allocation_id;
+        return $allocation->id;
     }
     public function assignMentor($batch_id, $user_id)
     {
