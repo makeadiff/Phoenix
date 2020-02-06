@@ -298,7 +298,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
             return JSend::fail("Error deleting the assignment");
         }
 
-        return JSend::success("Mentor (user_id: ".$mentor_id.") removed from batch_id:".$batch_id);
+        return ""; //JSend::success("Mentor (user_id: ".$mentor_id.") removed from batch_id:".$batch_id);
     });
 
     ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////

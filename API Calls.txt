@@ -12,15 +12,12 @@ Assign Teachers to Batch/Level : POST /batches/{batch_id}/levels/{level_id}/teac
 UnAssign Teachers from Batch/Level : DELETE /batches/{batch_id}/levels/{level_id}/teachers/{user_id} - Done
 
 Assign Mentors to Batch : POST /batches/{batch_id}/mentors - user_ids: comma seperated. GraphQL - assignBatchMentors(batch_id: ID, mentors: [UserIDs]): Int
-Get Mentors in Batch : GET /batches/{batch_id}/mentors
-UnAssign mentors to Batch : DELETE /batches/{batch_id}/mentors/{mentor_id}
+Get Mentors in Batch : GET /batches/{batch_id}/mentors - Done
+UnAssign mentors to Batch : DELETE /batches/{batch_id}/mentors/{mentor_id} - Done
 
 Assign Students to Levels: POST /levels/{level_id}/students - student_ids:comma seperated - Done. GraphQL - assignLevelStudents(level_id: ID, students: [StudentIDs]): Int
 Get Students in level: GET /levels/{level_id}/students - Done. GraphQL - level(id: ID) { students { id name }} - Done
 Unassign students from given level: DELETE /levels/{level_id}/students/{student_id} - Done
-
-Batch/Level Assignment: POST /batches/{batch_id}/levels - level_ids: comma seperated. GraphQL - assignBatchLevel(batch_id: ID, levels: [LevelIDs]): Int
-
 
 Schedule Classes : Cron / Artisan (Done)
 Calculate Credits

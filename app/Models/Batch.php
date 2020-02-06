@@ -121,6 +121,7 @@ final class Batch extends Common
         } else {
             $this->item = $this->find($id);
         }
+        if(!$this->item) return false;
 
         $this->item->name = $this->getName($this->item->day, $this->item->class_time);
         $this->item->center = $this->item->center()->first()->name;
