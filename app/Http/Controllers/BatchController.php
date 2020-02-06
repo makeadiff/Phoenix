@@ -25,7 +25,7 @@ class BatchController extends Controller
         $validator = \Validator::make($request->all(), $this->validation_rules, $this->validation_messages);
 
         if ($validator->fails()) {
-            return response(JSend::fail("Unable to create batch - errors in input", $validator->errors()), 400);
+            return JSend::fail("Unable to create batch - errors in input", $validator->errors(), 400);
         }
 
         $batch = new Batch;
@@ -44,7 +44,7 @@ class BatchController extends Controller
         $exists = $batch->fetch($batch_id);
 
         if (!$exists) {
-            return response(JSend::fail("Can't find any batch with the given ID"), 404);
+            return JSend::fail("Can't find any batch with the given ID");
         }
 
         $validation_rules = $this->validation_rules;
@@ -54,7 +54,7 @@ class BatchController extends Controller
         $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
 
         if ($validator->fails()) {
-            return response(JSend::fail("Unable to create batch - errors in input.", $validator->errors()), 400);
+            return JSend::fail("Unable to create batch - errors in input.", $validator->errors(), 400);
         }
 
         $result = $batch->find($batch_id)->edit($request->all());
@@ -66,7 +66,7 @@ class BatchController extends Controller
         return JSend::success("Edited the batch", array('batch' => $result));
     }
 
-    public function assignMentors(Request $request, $batch_id = false)
+    public function assignMentors(Request $request, $batch_id = false, $user_ids = false)
     {
         $batch_model = new Batch;
         $batch = false;
@@ -77,14 +77,16 @@ class BatchController extends Controller
         if ($batch_id) {
             $batch = $batch_model->fetch($batch_id);
         } else {
-            return response(JSend::fail("Can't find any batch with the given ID"), 404);
+            return JSend::fail("Can't find any batch with the given ID");
         }
 
-        $user_ids_raw = $request->input('mentor_user_ids');
-        if (!is_array($user_ids_raw)) {
-            $user_ids = explode(",", $user_ids_raw);
-        } else {
-            $user_ids = $user_ids_raw;
+        if(!$user_ids) {
+            $user_ids_raw = $request->input('mentor_user_ids');
+            if (!is_array($user_ids_raw)) {
+                $user_ids = explode(",", $user_ids_raw);
+            } else {
+                $user_ids = $user_ids_raw;
+            }
         }
 
         // Find the project of this batch ...
@@ -120,7 +122,7 @@ class BatchController extends Controller
         }
 
         if (count($user_not_found)) {
-            return response(JSEND::fail("Can't find users with these IDs: " . implode(",", $user_not_found)));
+            return JSend::fail("Can't find users with these IDs: " . implode(",", $user_not_found));
         }
 
         $insert_count = 0;
@@ -141,7 +143,7 @@ class BatchController extends Controller
         return JSend::success("Added $insert_count mentor(s) to the batch " . $batch->name, array('batch' => $batch));
     }
 
-    public function assignTeachers(Request $request, $batch_id = false, $level_id = false, $subject_id = 0)
+    public function assignTeachers(Request $request, $batch_id = false, $level_id = false, $subject_id = 0, $user_ids = false)
     {
         $batch_model = new Batch;
         $batch = false;
@@ -153,7 +155,7 @@ class BatchController extends Controller
         }
 
         if (!$batch) {
-            return response(JSend::fail("Can't find any batch with the given ID"), 404);
+            return JSend::fail("Can't find any batch with the given ID");
         }
 
         $level_model = new Level;
@@ -164,7 +166,7 @@ class BatchController extends Controller
         $level = $level_model->fetch($level_id);
 
         if (!$level) {
-            return response(JSend::fail("Can't find any class section with the given ID"), 404);
+            return JSend::fail("Can't find any class section with the given ID");
         }
 
         if (!$subject_id) {
@@ -172,11 +174,13 @@ class BatchController extends Controller
         }
         if(!$subject_id) $subject_id = 0;
 
-        $user_ids_raw = $request->input('user_ids');
-        if (!is_array($user_ids_raw)) {
-            $user_ids = explode(",", $user_ids_raw);
-        } else {
-            $user_ids = $user_ids_raw;
+        if(!$user_ids) {
+            $user_ids_raw = $request->input('user_ids');
+            if (!is_array($user_ids_raw)) {
+                $user_ids = explode(",", $user_ids_raw);
+            } else {
+                $user_ids = $user_ids_raw;
+            }
         }
 
         // The group ID of the teacher group of the project this batch belongs to.
@@ -215,7 +219,7 @@ class BatchController extends Controller
         // Is the level and batch associated with each other? If not, auto assign. PS: Decide if the LevelBatch linking is needed at all as well.
 
         if (count($user_not_found)) {
-            return response(JSEND::fail("Can't find users with these IDs: " . implode(",", $user_not_found)));
+            return JSend::fail("Can't find users with these IDs: " . implode(",", $user_not_found));
         }
 
         $insert_count = 0;
