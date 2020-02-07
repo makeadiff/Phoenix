@@ -277,7 +277,6 @@ final class Event extends Common
         }
 
         // A better way to do this is using the ::save() - but for some season its not working. Hence, this.
-        dump($update);
 
         return $q->update($update);
     }
