@@ -113,6 +113,8 @@ final class Level extends Common
 
     public function assignStudent($level_id, $student_id)
     {
+        // :TODO: Validation - is the student and level in the same center.
+
         // See if this student is in the level already.
         $student_level_connection = app('db')->table('StudentLevel')->select('id')->where('level_id', $level_id)->where('student_id', $student_id)->get();
         if (count($student_level_connection)) {

@@ -8,14 +8,14 @@ Delete Batches : DELETE /batches/{batch_id} (Done)
 Delete Levels : DELETE /levels/{level_id} (Done)
 
 Get Teachers in a Batch/Level: GET /batches/{batch_id}/levels/{level_id}/teachers - Done . GraphQL userSearch(city_id: 28, batch_id: 2609, level_id: 7355) - Done
-Assign Teachers to Batch/Level : POST /batches/{batch_id}/levels/{level_id}/teachers - user_ids:comma seperated - Done. GraphQL - assignBatchTeachers(batch_id: ID, teachers: [UserIDs]): Int
+Assign Teachers to Batch/Level : POST /batches/{batch_id}/levels/{level_id}/teachers - user_ids:comma seperated - Done. GraphQL - assignBatchTeachers(batch_id: ID, teachers: [UserIDs]): Int - Done
 UnAssign Teachers from Batch/Level : DELETE /batches/{batch_id}/levels/{level_id}/teachers/{user_id} - Done
 
-Assign Mentors to Batch : POST /batches/{batch_id}/mentors - user_ids: comma seperated. GraphQL - assignBatchMentors(batch_id: ID, mentors: [UserIDs]): Int
+Assign Mentors to Batch : POST /batches/{batch_id}/mentors - user_ids: comma seperated. GraphQL - assignBatchMentors(batch_id: ID, mentors: [UserIDs]): Int - Done
 Get Mentors in Batch : GET /batches/{batch_id}/mentors - Done
 UnAssign mentors to Batch : DELETE /batches/{batch_id}/mentors/{mentor_id} - Done
 
-Assign Students to Levels: POST /levels/{level_id}/students - student_ids:comma seperated - Done. GraphQL - assignLevelStudents(level_id: ID, students: [StudentIDs]): Int
+Assign Students to Levels: POST /levels/{level_id}/students - student_ids:comma seperated - Done. GraphQL - assignLevelStudents(level_id: ID, students: [StudentIDs]): Int - Done
 Get Students in level: GET /levels/{level_id}/students - Done. GraphQL - level(id: ID) { students { id name }} - Done
 Unassign students from given level: DELETE /levels/{level_id}/students/{student_id} - Done
 

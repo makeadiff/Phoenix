@@ -47,6 +47,8 @@ type Mutation {
 	saveStudentAttendance(class_id: ID, students: [InputStudentAttendance]): Int
 	saveSurveyResponses(responder_id: ID, survey_id: ID, added_by_user_id: ID, responses: [InputSurveyResponse]): Int
 	assignBatchTeachers(batch_id: ID!, level_id: ID!, subject_id: ID, teacher_ids: [ID]): String
+	assignBatchMentors(batch_id: ID!, mentor_ids: [ID]): String
+	assignLevelStudents(level_id: ID!, student_ids: [ID]): String
 }
 input InputTeacherAttendance {
 	user_id: Int!
