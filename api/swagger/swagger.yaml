@@ -2308,6 +2308,10 @@ paths:
             - cant_go
           in: formData
           description: Update the RSVP field when the user indicates a choice of going to the given event.
+        - name: reason 
+          type: string
+          in: formData
+          description: The reason why the user can't make it to the event. Only valid for rsvp:cant_go
       responses:
         200:
           description: Updated the given field for the given user in the given event.

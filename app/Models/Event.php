@@ -19,9 +19,9 @@ final class Event extends Common
             'cant_go',
         ];
     private $rsvp_number_codes = [
-            'going'	=> 1,
-            'maybe'	=> 2,
-            'cant_go'=>3,
+            'going'	=> '1',
+            'maybe'	=> '2',
+            'cant_go'=>'3',
         ];
 
     protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'event_type_id','vertical_id', 'template_event_id', 'user_selection_options', 'created_by_user_id', 'latitude', 'longitude', 'status'];
@@ -110,7 +110,7 @@ final class Event extends Common
     public function users($filter = [])
     {
         $users = $this->belongsToMany('App\Models\User', 'UserEvent', 'event_id', 'user_id');
-        $users->select('User.id', 'User.name', 'UserEvent.present', 'UserEvent.late', 'UserEvent.user_choice', 'UserEvent.rsvp_auth_key');
+        $users->select('User.id', 'User.name', 'UserEvent.present', 'UserEvent.late', 'UserEvent.user_choice', 'UserEvent.rsvp_auth_key', 'UserEvent.reason');
         if (isset($filter['rsvp'])) {
             $key = array_search($filter['rsvp'], $this->rsvp);
             $users->where('UserEvent.user_choice', '=', $key);
@@ -260,7 +260,7 @@ final class Event extends Common
         $q = app('db')->table("UserEvent");
         $q->where('event_id', '=', $this->id)->where('user_id', '=', $user_id);
 
-        $fields = ['present', 'late', 'rsvp'];
+        $fields = ['present', 'late', 'rsvp', 'reason'];
 
         $update = [];
         foreach ($fields as $key) {
@@ -269,13 +269,15 @@ final class Event extends Common
             }
 
             if ($key == 'rsvp') {
-                $data[$key] = array_search($data[$key], $this->rsvp);
+                $data['user_choice'] = $this->rsvp_number_codes[$data[$key]];
+                $key = 'user_choice'; // DB Field is called user_choice. 
             }
 
             $update[$key] = $data[$key];
         }
 
         // A better way to do this is using the ::save() - but for some season its not working. Hence, this.
+        dump($update);
 
         return $q->update($update);
     }
