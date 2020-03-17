@@ -268,24 +268,8 @@ final class User extends Common
             return false;
         }
 
-        $user = User::select(
-            'id',
-            'name',
-            'email',
-            'mad_email',
-            'phone',
-            'sex',
-            'photo',
-            'joined_on',
-            'address',
-            'birthday',
-            'left_on',
-            'reason_for_leaving',
-            'user_type',
-            'status',
-            'credit',
-            'city_id'
-        )->where('status', '1');
+        $user = User::select('id', 'name', 'email', 'mad_email', 'phone', 'sex', 'photo', 'joined_on', 'address', 
+            'birthday', 'left_on', 'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->where('status', '1');
         if ($only_volunteers) {
             $user = $user->where('user_type', 'volunteer');
         }
@@ -294,6 +278,8 @@ final class User extends Common
         if (!$data) {
             return false;
         }
+        $this->item_id = $user_id;
+        $this->item = $data;
 
         $data->groups = $data->groups()->get();
         $data->city = $data->city()->first()->name;

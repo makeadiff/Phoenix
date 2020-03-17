@@ -15,6 +15,7 @@ use App\Models\Event;
 use App\Models\Data;
 use App\Models\Notification;
 use App\Models\Contact;
+use App\Models\Alert;
 
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -613,6 +614,18 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], 
         }
 
         return "";
+    });
+
+    Route::get('/users/{user_id}/alerts', function ($user_id) {
+        $user = new User;
+        $info = $user->fetch($user_id);
+
+        if (!$info) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        $alerts = (new Alert)->generate($user_id);
+        return JSend::success("Alerts for {$info->name}", ['alerts' => $alerts]);
     });
 
     //////////////////////////////////////////////////////// Contacts /////////////////////////////////
