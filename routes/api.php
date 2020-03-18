@@ -888,7 +888,8 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     // Route::post('/events/{event_id}','EventController@edit');
 
     Route::get('/events', function (Request $request) {
-        $search_fields = ['id', 'name', 'description', 'starts_on', 'place', 'city_id', 'event_type_id', 'created_by_user_id', 'status'];
+        $search_fields = ['id', 'name', 'description', 'starts_on', 'date', 'from_date', 'to_date', 'place', 
+                        'city_id', 'event_type_id', 'created_by_user_id', 'status', 'invited_user_id'];
         $search = [];
         foreach ($search_fields as $key) {
             if (!$request->input($key)) {
