@@ -2142,6 +2142,16 @@ paths:
           type: string
           format: "date-time"
           description: Search for event by the date when the event starts
+        - name: from_date
+          in: query
+          type: string
+          format: "date-time"
+          description: Search for event that are after or on  this date.
+        - name: to_date
+          in: query
+          type: string
+          format: "date-time"
+          description: Search for event that are before or on this date.
         - name: latitude
           in: query
           type: string
@@ -2166,6 +2176,10 @@ paths:
           in: query
           type: integer
           description: Search by the user who created the event.
+        - name: invited_user_id
+          in: query
+          typ: integer
+          description: Returns all the events that the given user has been invited to.
       responses:
         200:
           description: Returns a list of all event matching the given parameters
