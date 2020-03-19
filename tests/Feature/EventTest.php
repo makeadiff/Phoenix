@@ -117,4 +117,6 @@ class EventTest extends TestCase
         $this->assertEquals($data->data->user->name, 'Shubhrav Phate');
         $this->response->assertStatus(200);
     }
+
+    // :TODO: Create, Edit events, mark attendance. Basically all POST, DELETE calls have to be tested.
 }
