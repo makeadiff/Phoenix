@@ -317,7 +317,7 @@ final class Donation extends Common
         if (!isset($data['dont_send_email']) and ($data['type'] == 'cash' or $data['type'] == 'cheque')) { // This is an undocumented way to prevent sending Email when making a donation. Useful for testing, seeding, etc.
 
             $mail = new Email;
-            $mail->from     = "noreply <noreply@makeadiff.in>";
+            $mail->from     = "donations <donations@makeadiff.in>";
             $mail->to       = $data['donor_email'];
             $mail->subject  = "Donation Acknowledgment";
 
@@ -402,7 +402,7 @@ final class Donation extends Common
 
         $email_html = file_get_contents(base_path('resources/email_templates/donation_receipt.html'));
         $mail = new Email;
-        $mail->from     = "noreply <noreply@makeadiff.in>";
+        $mail->from     = "donations <donations@makeadiff.in>";
         $mail->to       = $donor->email;
         $mail->subject  = "Donation Receipt";
 
