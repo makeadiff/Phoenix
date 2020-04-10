@@ -480,6 +480,104 @@ paths:
   #      default:
   #        description: User logged out.
 
+  /users/{user_id}/devices:
+    get:
+      tags:
+        - user
+        - device
+      summary: Get all the devices associated with the given user
+      description: Return the active FCM tokens for all the deviced associated with the current user. This is used to send push notifications.
+      parameters:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's FCM token should be returned.
+        - name: status
+          in: query
+          description: Use this with status=0 if you want to get inactive tokens.
+      responses:
+        200:
+          description: List of all devices associated with this user
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Device"
+        404:
+          description: User with given {user_id} not found.
+    post:
+      tags:
+        - user
+        - device
+      summary: Add a new device with the given FCM token to the given user.
+      description: This will take a user_id and FCM token, look up the DB if there is a existing device for it. If so, activate that device. If not, add that device.
+      parameter:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's FCM token was created.
+        - name: token
+          in: formData
+          required: true
+          description: FCM Token that needs to be saved with the device associated to this user.
+        - name: name
+          in: formData
+          descritpion: Name given to this device. Optional. Can be browser name, phone imei, etc.
+      responses:
+        200:
+          description: Assigned the FCM Token to given user device
+          schema:
+            $ref: "#/definitions/Device"
+        400:
+          description: Error in input.
+  /users/{user_id}/devices/{token}:
+    post:
+      tags:
+        - user
+        - device
+      summary: Add a new device with the given FCM token to the given user.
+      description: This will take a user_id and FCM token, look up the DB if there is a existing device for it. If so, activate that device. If not, add that device.
+      parameter:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's FCM token was created.
+        - name: token
+          in: path
+          type: string
+          required: true
+          description: FCM Token that needs to be saved with the device associated to this user.
+      responses:
+        200:
+          description: Assigned the FCM Token to given user device
+          schema:
+            $ref: "#/definitions/Device"
+        400:
+          description: Error in input.
+    delete:
+      tags:
+        - user
+        - device
+      summary: Deactivates a device with the given FCM token of the given user.
+      description: This will deactivate the device(status=0) with the given FCM token and user
+      parameter:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's device is to be deactivated
+        - name: token
+          in: path
+          required: true
+          description: FCM Token of the device that should be deactivated
+      responses:
+        200:
+          description: Device deactivated
+        404:
+          description: Can't find a device of the user with the given FCM token.
+
   /users/{user_id}/data/{data_name}:
     get:
       tags:
@@ -3698,6 +3796,22 @@ definitions:
         format: "date-time"
       added_by_user_id:
         type: integer
+  Device:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: integer
+      name:
+        type: string
+      token:
+        type: string
+      status:
+        type: string
+        enum:
+          - 1
+          - 0
   Notification:
     type: "object"
     properties:

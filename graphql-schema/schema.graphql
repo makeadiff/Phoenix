@@ -92,6 +92,7 @@ type User {
 	classes: [Class] @hasMany(relation: "classes") # :TODO: - Ideally, this should take an argument - (status: String)
 	batches: [Batch] @hasMany
 	donations: [Donation] @hasMany
+	devices: [Device] @hasMany
 	pivot: UserPivot
 }
 
@@ -334,6 +335,14 @@ type Log {
 	log: String
 	added_on: DateTime
 	user_id: Int
+}
+
+type Device {
+	id: ID!
+	name: String
+	token: String
+	status: String
+	user: User
 }
 
 type Data {
