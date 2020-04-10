@@ -16,6 +16,7 @@ use App\Models\Data;
 use App\Models\Notification;
 use App\Models\Contact;
 use App\Models\Alert;
+use App\Models\Device;
 
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -632,6 +633,51 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Alerts for {$info->name}", ['alerts' => $alerts]);
     });
 
+    /// Devices
+    Route::get('/users/{user_id}/devices', function ($user_id, Request $request) {
+        $search_fields = ['user_id', 'name', 'token', 'status'];
+        $search = [];
+        foreach ($search_fields as $key) {
+            if (!$request->input($key)) {
+                continue;
+            }
+            $search[$key] = $request->input($key);
+        }
+
+        $device_model = new Device;
+        $devices = $device_model->search($search);
+
+        return JSend::success("Devices", ['devices' => $devices]);
+    });
+
+    Route::post('/users/{user_id}/devices', function ($user_id, Request $request) {
+        $device_model = new Device;
+        $device = $device_model->addOrActivate(array_merge($request->all(), ['user_id' => $user_id]));
+
+        return JSend::success("Device created", ['device' => $device]);
+    });
+
+    Route::post('/users/{user_id}/devices/{token}', function ($user_id, $token) {
+        $device_model = new Device;
+        $device = $device_model->addOrActivate(['user_id' => $user_id, 'token' => $token]);
+
+        return JSend::success("Device created", ['device' => $device]);
+    });
+
+    Route::delete('/users/{user_id}/devices/{token}', function ($user_id, $token) {
+        $device_model = new Device;
+        $device = $device_model->search(['user_id' => $user_id, 'token' => $token]);
+        if(count($device)) {
+            foreach($device as $d) {
+                $device_model->remove($d->id);
+            }
+            return "";
+        }
+
+        return JSend::fail("Can't find device of user $user_id with given token");
+    });
+    
+
     //////////////////////////////////////////////////////// Contacts /////////////////////////////////
     Route::post('/applicants', function (Request $request) {
         $contact = new Contact;
@@ -1015,7 +1061,8 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return "";
     });
 
-    ////////////////////////////////// Notifications //////////////////////////////
+    // Notifications
+    // :TODO: This might be depricated soon. We are moving to the 'Device' Model.
     Route::post('/notifications', function (Request $request) {
         $notification_model = new Notification;
         $notification = $notification_model->add($request->all());

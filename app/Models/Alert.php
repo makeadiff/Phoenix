@@ -18,17 +18,6 @@ use App\Models\Common;
  */
 class Alert extends Common
 {
-    private $templates = [
-        'cpp_not_signed'    =>             
-            [
-                'name'          => "CPP Not Signed",
-                'description'   => "You have not agreed to the Child Protection Policy yet. Please sign the policy to continue in the organization",
-                'url'           => "http://makeadiff.in/policy/child_protection_policy/",
-                'type'          => "danger",
-                'priority'      => 9
-            ]
-        ];
-
     public function generate($user_id) {
         $alerts = [];
         $user_model = new User;
@@ -39,7 +28,13 @@ class Alert extends Common
         $cpp_signed = $this->cppSigned($user_id);
 
         if(!$cpp_signed) {
-            $alerts[] = $this->templates['cpp_not_signed'];
+            $alerts[] = [
+                'name'          => "CPP Not Signed",
+                'description'   => "You have not agreed to the Child Protection Policy yet. Please sign the policy to continue in the organization",
+                'url'           => "http://makeadiff.in/policy/child_protection_policy/",
+                'type'          => "danger",
+                'priority'      => 9
+            ];
         }
 
         // Data not filled.

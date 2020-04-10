@@ -64,6 +64,13 @@ final class User extends Common
         return $donations;
     }
 
+    public function devices()
+    {
+        $devices = $this->hasMany("App\Models\Device", 'user_id');
+        $devices->where("status", '=', "1");
+        return $devices;
+    }
+
     // public function data()
     // {
     // 	return $this->morphMany(Data::class, 'item', 'item_id');
