@@ -32,11 +32,6 @@ final class User extends Common
         return $this->belongsTo(City::class);
     }
 
-    public function permissions()
-    {
-        return $this->hasManyThrough('App\Models\Permission', 'App\Models\Group');
-    }
-
     public function classes($status = '')
     {
         $classes = $this->belongsToMany("App\Models\Classes", 'UserClass', 'user_id', 'class_id')->where('Class.class_on', '>=', $this->year_start_time);
@@ -563,12 +558,35 @@ final class User extends Common
                     Log::add(['name' => 'user_login', 'user_id' => $user_id, 'data' => ['entry_point' => 'Phoenix', 'login_type' => $login_type]]);
                 }
 
-                return $this->fetch($user_id);
+                $user_data = $this->fetch($user_id);
+                $user_data->permissions = $this->permissions($user_id);
+
+                return $user_data;
             }
         } else {
             $this->errors[] = "Can't find any user with the given email/phone";
         }
         return false;
+    }
+
+    public function permissions($user_id = false)
+    {
+        $user_id = $this->chain($user_id);
+
+        $groups = app('db')->table("UserGroup")->where('user_id', $user_id)->where('year', $this->year)->select('group_id')->get()->pluck('group_id');
+
+        $parent_groups = app('db')->table("Group")->distinct('parent_group_id')
+            ->whereIn('id', $groups)->where('status', '1')->where('parent_group_id', '!=', '0')->get()->pluck('parent_group_id');
+        $groups = $groups->merge($parent_groups);
+
+        if(!$groups->count()) { // If he has no group, he is volunteer group.
+            $groups = collect([9]); //:HARD-CODE: 9 is the teacher group.
+        }
+
+        $permissions = app('db')->table("Permission")->join("GroupPermission", 'GroupPermission.permission_id','=','Permission.id')
+            ->distinct('Permission.name')->select('Permission.name')->whereIn("GroupPermission.group_id", $groups)->get()->pluck('name');
+
+        return $permissions;
     }
 
     /// Changes the phone number format from +91976063565 to 9746063565. Remove the 91 at the starting.

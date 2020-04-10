@@ -3096,7 +3096,7 @@ paths:
       tags:
         - survey
         - response
-      summary: Create a new response for a survey
+      summary: Create a response set for a survey
       description: Create a full response set for a survey. All the parameters can be passed in the raw body of the request.
       parameters:
         - name: survey_id

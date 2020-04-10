@@ -487,6 +487,10 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
             }
 
             return JSend::fail($error, [], 400);
+        } else {
+            // Get permissions for this user.
+            $this_user = $user->find($data['id']);
+            $data['permissions'] = $this_user->permissions();
         }
 
         return JSend::success("Welcome back, $data[name]", ['users' => $data]);
