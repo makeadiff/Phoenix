@@ -25,6 +25,8 @@ type Query {
     classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, class_date: Date, direction: String, from_date: Date, limit: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php [ClassSearchResult]
     userSearch(city_id: Int!, name: String, phone: String, email: String, mad_email: String, any_email: String, identifier: String, left_on: Date,
     	vertical_id: Int, status: String, user_type: String, not_user_type: String, center_id: Int, group_id: Int, group_type: String, batch_id: Int, level_id: Int): [User]
+	sendOtp(email: String, phone: String): User
+	verifyOtp(id: ID, email: String, phone: String, otp: String): Int
 
     # :TODO: Make this teacherClassConneciton and mentorClassConnection. No point having both in one.
     # classConnection(teacher_id: Int, mentor_id: Int): [ClassConnection] #Custom return  + resolver. Used for finding unfilled data in UPMA. Both teacher and student.
