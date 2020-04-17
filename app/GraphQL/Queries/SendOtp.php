@@ -32,7 +32,7 @@ class sendOtp
 
             $html = "<p>To verify your email, please enter this OTP:</p>
                     <p><strong>$md5_otp</strong></p>
-                    <p>This OTP will expire by end of day today. Please enter it befor that time.</p>";
+                    <p>This OTP will expire by end of day today. Please enter it before that time.</p>";
 
             $email_html = file_get_contents($base_path . '/resources/email_templates/template.html');
             $mail->html = str_replace(
