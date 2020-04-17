@@ -59,6 +59,10 @@ paths:
           in: query
           type: string
           description: Search users by just the mad email
+        - name: identifier
+          in: query
+          type: string
+          description: This will try to get a match by searching email, phone number, mad_email and the ID field against the given value. If any of it matches, it returns that row.
         - name: group_id
           in: query
           type: integer
