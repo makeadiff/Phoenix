@@ -23,11 +23,10 @@ class LevelTest extends TestCase
         }
 
         $this->load('/levels/7357');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->levels->name, '9 B');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->levels->name, '9 B');
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: POST    /levels
@@ -46,13 +45,12 @@ class LevelTest extends TestCase
             'project_id'=> '1',
             'center_id' => '244'
         ]);
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $created_level_id = $data->data->level->id;
-        $this->assertEquals($data->data->level->grade, '7');
-        $this->assertEquals($data->data->level->year, $this->year);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $created_level_id = $this->response_data->data->level->id;
+        $this->assertEquals($this->response_data->data->level->grade, '7');
+        $this->assertEquals($this->response_data->data->level->year, $this->year);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         return $created_level_id;
     }
@@ -74,12 +72,11 @@ class LevelTest extends TestCase
             'grade' => '8',
             'name'  => 'F'
         ]);
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->level->grade, '8');
-        $this->assertEquals($data->data->level->year, $this->year);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->level->grade, '8');
+        $this->assertEquals($this->response_data->data->level->year, $this->year);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         // DB  Check
         $level_model = new Level;
@@ -104,7 +101,7 @@ class LevelTest extends TestCase
         }
 
         $this->load('/levels/' . $created_level_id, 'DELETE');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $level_model = new Level;
         $level_info = $level_model->find($created_level_id);
@@ -119,19 +116,18 @@ class LevelTest extends TestCase
         }
 
         $this->load('/levels/7354/students');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
+        $this->assertEquals($this->response_data->status, 'success');
         $search_for = 'Jar Jar';
         $found = false;
-        foreach ($data->data->students as $key => $info) {
+        foreach ($this->response_data->data->students as $key => $info) {
             if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
         }
         $this->assertTrue($found);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: GET    /levels/{level_id}/batches
@@ -142,19 +138,18 @@ class LevelTest extends TestCase
         }
 
         $this->load('/levels/7355/batches');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
+        $this->assertEquals($this->response_data->status, 'success');
         $search_for = 'Saturday 04:00 PM';
         $found = false;
-        foreach ($data->data->batches as $key => $info) {
+        foreach ($this->response_data->data->batches as $key => $info) {
             if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
         }
         $this->assertTrue($found);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: POST    /levels/{level_id}/students
@@ -172,10 +167,9 @@ class LevelTest extends TestCase
         $this->load("/levels/$level_id/students", 'POST', [
             'student_ids'  => implode(',', $student_ids)
         ]);
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $found_student_count = 0;
         $students = app('db')->table('StudentLevel')->select('student_id')->where('level_id', $level_id)->get();
@@ -200,8 +194,7 @@ class LevelTest extends TestCase
         $level_id = 7356;
         $student_id = 21930;
         $this->load("/levels/$level_id/students/$student_id", 'DELETE');
-        $data = json_decode($this->response->getContent());
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $students = app('db')->table('StudentLevel')->select('student_id')->where('student_id', $student_id)->where('level_id', $level_id)->get();
         $this->assertEquals(0, count($students)); // That student shouldn't be found
