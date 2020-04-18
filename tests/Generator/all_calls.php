@@ -1,11 +1,11 @@
 <?php
-require('iframe.php');
+require('iframe2.php');
 require_once "Spyc.php";
 
-$swagger_file = '/mnt/x/Data/www/Projects/Phoenix/api/swagger/swagger.yaml';
+$swagger_file = '/mnt/x/Data/www/MAD/api/api/swagger/swagger.yaml';
 $api = spyc_load_file($swagger_file);
 // $api = yaml_parse(file_get_contents($swagger_file));
-$api_base_path = 'http://localhost/Projects/Phoenix/public';
+$api_base_path = 'http://localhost/MAD/api/public';
 
 $all_paths = array();
 foreach ($api['paths'] as $path => $data) {
@@ -13,10 +13,10 @@ foreach ($api['paths'] as $path => $data) {
 }
 
 $done_paths = array();
-$routes = '/mnt/x/Data/www/Projects/Phoenix/routes/api.php';
+$routes = '/mnt/x/Data/www/MAD/api/routes/api.php';
 $route_lines = explode("\n", file_get_contents($routes));
 
-$routes = '/mnt/x/Data/www/Projects/Phoenix/routes/api-surveys.php';
+$routes = '/mnt/x/Data/www/MAD/api/routes/api-surveys.php';
 $route_lines = array_merge($route_lines, explode("\n", file_get_contents($routes)));
 
 foreach ($route_lines as $l) {
@@ -33,7 +33,7 @@ foreach ($route_lines as $l) {
 }
 
 $tested_paths = [];
-$test_files_location = '/mnt/x/Data/www/Projects/Phoenix/tests/Feature';
+$test_files_location = '/mnt/x/Data/www/MAD/api/tests/Feature';
 $files = ls('*.php', $test_files_location);
 $test_calls = [];
 foreach ($files as $f) {

@@ -1821,6 +1821,7 @@ paths:
             $ref: "#/definitions/Batch"
         404:
           description: Can't find any batch, level, or users with the given ID
+  /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}:
     delete:
       tags:
         - batch

@@ -1,8 +1,7 @@
 <?php
-$config = array(
-    'site_title'	=>	'Test Generator',
-    'site_url'		=>	'http://localhost/iframe/',
-    'site_home'		=>	'http://localhost/Projects/Phoenix/tests/Generator/',
+return array(
+    'app_name'	    =>	'Test Generator',
+    'app_url'		=>	'http://localhost/MAD/api/tests/Generator/',
     'db_host'		=>	'localhost',
     'db_user'		=>	'root',
     'db_password'	=>	'',

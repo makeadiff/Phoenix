@@ -1119,7 +1119,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     //     dump($es_trained);
     // });
 
-    require base_path('routes/api-surveys.php');
+    require_once base_path('routes/api-surveys.php');
 });
 
 Route::post("/users", ['uses' => 'UserController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
