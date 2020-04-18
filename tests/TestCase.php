@@ -27,15 +27,9 @@ abstract class TestCase extends BaseTestCase
     {
         // print $this->baseUrl . $this->url_prefix . $url; exit;
         $this->withoutMiddleware();
-        try {
-            $this->response = $this->call($method, $this->url_prefix . $url, $form_data, [], [], $this->call_headers);
-            print_r($this->response->getContent());
-        } catch (Exception $e) {
-            print "Error: " . $e->getMessage();
-        }
-
+        $this->response = $this->call($method, $this->url_prefix . $url, $form_data, [], [], $this->call_headers);
         
         // $this->response_data = json_decode($this->response->getContent());
-        // return $this->response;
+        return $this->response;
     }
 }
