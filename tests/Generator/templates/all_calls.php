@@ -1,7 +1,7 @@
 <br /><br /><h1>Implementation Status</h1>
 
 <table class="table table-striped">
-	<tr><th>Count</th><th>Verb</th><th>End Point</th><th>Documentation</th><th>Implemented</th><th>Auto Tested</th></tr>
+	<tr><th>Count</th><th>Verb</th><th>End Point</th><th>Documentation</th><th>Implemented</th><th nowrap="nowrap">Auto Tested</th></tr>
 <?php
 $last_path = '';
 $count = 0;
@@ -15,14 +15,14 @@ foreach ($all_paths as $path => $verbs) {
 		<td><?php echo $count ?></td>
 		<td><?php echo strtoupper($verb) ?></td>
 		<td><?php echo $path; ?></td>
-		<td><span class="icon done">Done</span></td>
+		<td><span class="icon icon-done">Done</span></td>
 		<td><?php if (isset($done_paths[$path]) and in_array($verb, $done_paths[$path])) {
             $done['implemented']++;
-            echo '<span class="icon done">Done</span>';
+            echo '<span class="icon icon-done">Done</span>';
         } ?></td>
 		<td><?php if (isset($test_calls[$path]) and in_array($verb, $test_calls[$path])) {
             $done['test']++;
-            echo '<span class="icon done">Done</span>';
+            echo '<span class="icon icon-done">Done</span>';
         } ?></td>
 	</tr>
 <?php

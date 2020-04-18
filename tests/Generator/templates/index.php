@@ -22,11 +22,12 @@ $html->buildInput("show-step-2", "&nbsp;", "button", "Show Step 2", array('class
     $html->buildInput("test_type", "Test Type", "select", $test_type, array('options' => $all_test_types));
     ?>
 	<table>
-		<tr><td width="100">&nbsp;</td><td colspan="2"><textarea name="data-assertion" id="data-assertion" rows="5" cols="80"></textarea></td></tr>
 		<tr><td>&nbsp;</td><td colspan="2">Insert: <br />
 								<input type="button" id="search-array" value="Search Array" class='btn btn-success btn-xs' /> &nbsp;
-								<input type="button" id="single-item" value="Single" class='btn btn-success btn-xs' />
+								<input type="button" id="single-item" value="Single" class='btn btn-success btn-xs' /> &nbsp;
+								<input type="button" id="db-search" value="DB Search" class='btn btn-success btn-xs' />
 							</td></tr>
+		<tr><td width="100">Generated Code</td><td colspan="2"><textarea name="data-assertion" id="data-assertion" rows="5" cols="80"></textarea></td></tr>
 	</table><br /><br />
 
 	<?php

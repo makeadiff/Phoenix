@@ -1,0 +1,7 @@
+.icon-done {
+    font-size:0px;
+	padding:10px 8px;
+	background-repeat:no-repeat !important;
+	background-position:top left;
+    background-image:url(done.png);
+}
