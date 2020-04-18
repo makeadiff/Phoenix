@@ -22,7 +22,7 @@ class UserTest extends TestCase
 
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response_data->data->users->name, 'Binny V A');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: GET    /users/{user_id}   404
@@ -31,12 +31,11 @@ class UserTest extends TestCase
         if ($this->only_priority_tests) {
             $this->markTestSkipped("Running only priority tests.");
         }
-
         $this->load('/users/29');
 
         $this->assertEquals($this->response_data->status, 'fail');
         $this->assertEquals($this->response_data->data[0], "Can't find user with user id '29'");
-        $this->response->assertStatus(404);
+        $this->assertEquals($this->response->getStatusCode(), 404);
     }
 
     /// Path: GET  /users
@@ -50,19 +49,19 @@ class UserTest extends TestCase
 
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $this->load('/users?phone=9746068565');
 
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $this->load('/users?email=binnyva@gmail.com&mad_email=cto@makeadiff.in&city_id=26&user_type=volunteer');
 
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         // :TODO:
         // group_id
@@ -100,7 +99,7 @@ class UserTest extends TestCase
 
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response_data->data->users->email, $email);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
         $this->assertDatabaseHas('User', array('email' => $email));
 
         $created_user_id = $this->response_data->data->users->id;
@@ -128,7 +127,7 @@ class UserTest extends TestCase
 
         $this->assertEquals($this->response_data->status, 'fail');
         $this->assertEquals($this->response_data->data->email[0], "Entered Email ID already exists in the MAD System");
-        $this->response->assertStatus(400);
+        $this->assertEquals($this->response->getStatusCode(), 400);
     }
 
     /// Path: POST /users
@@ -148,7 +147,7 @@ class UserTest extends TestCase
         // dd($this->response_data);
 
         $this->assertEquals($this->response_data->status, 'success');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
         $this->assertDatabaseHas('User', [
             'id'    => $created_user_id,
             'name'  => 'New Name'
@@ -169,7 +168,7 @@ class UserTest extends TestCase
         }
 
         $this->load('/users/' . $created_user_id, 'DELETE');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
         $this->assertDatabaseHas('User', array('id' => $created_user_id, 'status' => '0'));
     }
 
@@ -204,7 +203,7 @@ class UserTest extends TestCase
             }
         }
         $this->assertTrue($found);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: GET   /users/{user_id}/credit
@@ -218,30 +217,71 @@ class UserTest extends TestCase
 
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertTrue(is_numeric($this->response_data->data->credit));
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: GET   /users/{user_id}/devices
-    // public function testGetUsersDevices()
-    // {
-    //     // if ($this->only_priority_tests) {
-    //     //     $this->markTestSkipped("Running only priority tests.");
-    //     // }
+    public function testGetUsersDevices()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
-    //     $this->load('/users/1/devices');
+        $this->load('/users/1/devices');
 
-    //     dump($this->response_data);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
-    //     $this->assertEquals($this->response_data->status, 'success');
-    //     $this->response->assertStatus(200);
+        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status',1)->get()->pluck('token')->toArray();
+        $found = 0;
 
-    //     $tokens = app('db')->table('Devices')->select('token')->where('user_id', 1)->get()->pluck('token');
-    //     $found = 0;
-    //     foreach($this->response_data->data->devices as $device) {
-    //         if(in_array($device->token, $tokens)) {
-    //             $found ++;
-    //         }
-    //     }
-    //     $this->assertEquals($found, count($tokens));
-    // }
+        foreach($this->response_data->data->devices as $device) {
+            if(in_array($device->token, $tokens)) {
+                $found ++;
+            }
+        }
+        $this->assertEquals($found, count($tokens));
+    }
+
+    /// Path: POST   /users/{user_id}/devices/{token}
+    public function testPostUsersDevices()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $this->load('/users/1/devices/test-token-that-should-be-deleted', 'POST');
+
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
+
+        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
+        $found = false;
+
+        foreach($tokens as $tok) {
+            if($tok == "test-token-that-should-be-deleted") {
+                $found = true;
+            }
+        }
+        $this->assertTrue($found);
+
+        return $this->response_data->data->device->id;
+    }
+
+    /// Path: POST   /users/{user_id}/devices/{token}
+    /**
+     * @depends testPostUsersDevices
+     */
+    public function testDeleteUsersDevices($device_id)
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $this->load('/users/1/devices/test-token-that-should-be-deleted', 'DELETE');
+        $this->assertEquals($this->response->getStatusCode(), 200);
+
+        $deleted_device = app('db')->table('Device')->select('status')->where('id', $device_id)->first();
+        $this->assertEquals($deleted_device->status, '0');
+    }
 }
