@@ -24,11 +24,11 @@ class BatchTest extends TestCase
         }
 
         $this->load('/batches/1971');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->batches->name, 'Sunday 12:00 AM');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->batches->name, 'Sunday 12:00 AM');
+        
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: POST    /batches
@@ -47,13 +47,12 @@ class BatchTest extends TestCase
             'project_id'=> '1',
             'center_id' => '244'
         ]);
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $created_batch_id = $data->data->batch->id;
-        $this->assertEquals($data->data->batch->day, '0');
-        $this->assertEquals($data->data->batch->year, $this->year);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $created_batch_id = $this->response_data->data->batch->id;
+        $this->assertEquals($this->response_data->data->batch->day, '0');
+        $this->assertEquals($this->response_data->data->batch->year, $this->year);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         return $created_batch_id;
     }
@@ -75,12 +74,11 @@ class BatchTest extends TestCase
             'day'       => '1',
             'class_time'=> '15:00:13'
         ]);
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->batch->day, '1');
-        $this->assertEquals($data->data->batch->year, $this->year);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->batch->day, '1');
+        $this->assertEquals($this->response_data->data->batch->year, $this->year);
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: DELETE    /batches/{batch_id}
@@ -100,7 +98,7 @@ class BatchTest extends TestCase
         }
 
         $this->load('/batches/' . $created_batch_id, 'DELETE');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $batch_model = new Batch;
         $batch_info = $batch_model->find($created_batch_id);
@@ -115,19 +113,18 @@ class BatchTest extends TestCase
         }
 
         $this->load('/batches/1973/teachers');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
+        $this->assertEquals($this->response_data->status, 'success');
         $search_for = 'Data';
         $found = false;
-        foreach ($data->data->teachers as $key => $info) {
+        foreach ($this->response_data->data->teachers as $key => $info) {
             if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
         }
         $this->assertTrue($found);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: GET    /batches/{batch_id}/levels
@@ -138,19 +135,18 @@ class BatchTest extends TestCase
         }
 
         $this->load('/batches/2608/levels');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
+        $this->assertEquals($this->response_data->status, 'success');
         $search_for = '7 A';
         $found = false;
-        foreach ($data->data->levels as $key => $info) {
+        foreach ($this->response_data->data->levels as $key => $info) {
             if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
         }
         $this->assertTrue($found);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: POST    /batches/{batch_id}/levels/{level_id}/teachers
@@ -170,10 +166,9 @@ class BatchTest extends TestCase
         $this->load("/batches/$batch_id/levels/$level_id/teachers", 'POST', [
             'user_ids'  => implode(',', $teacher_ids)
         ]);
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $found_teacher_count = 0;
         $teachers = app('db')->table('UserBatch')->select('user_id')->where('level_id', $level_id)->where('batch_id', $batch_id)->get();
@@ -215,8 +210,7 @@ class BatchTest extends TestCase
         $level_id = 7356;
         $teacher_id = 136214;
         $this->load("/batches/$batch_id/levels/$level_id/teachers/$teacher_id", 'DELETE');
-        $data = json_decode($this->response->getContent());
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $teachers = app('db')->table('UserBatch')->select('id')->where('level_id', $level_id)->where('batch_id', $batch_id)->where('user_id', $teacher_id)->get();
         $this->assertEquals(count($teachers), 0);
@@ -243,10 +237,9 @@ class BatchTest extends TestCase
             'user_ids'  => implode(',', $teacher_ids),
             'subject_id'=> $subject_id
         ]);
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $found_teacher_count = 0;
         $teachers = app('db')->table('UserBatch')->select('user_id', 'subject_id')->where('level_id', $level_id)->where('batch_id', $batch_id)->get();
@@ -273,10 +266,9 @@ class BatchTest extends TestCase
         $this->load("/batches/$batch_id/mentors", 'POST', [
             'mentor_user_ids'  => implode(',', $mentor_ids)
         ]);
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $found_mentor_count = 0;
         $mentors = app('db')->table('UserBatch')->select('user_id')->where('batch_id', $batch_id)->where('role', 'mentor')->get();
@@ -315,10 +307,10 @@ class BatchTest extends TestCase
         $level_id = 7356;
         $teacher_id = 136214;
         $this->load("/batches/$batch_id/levels/$level_id/teachers/$teacher_id", 'DELETE');
-        $data = json_decode($this->response->getContent());
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
-        $teachers = app('db')->table('UserBatch')->select('user_id')->where('user_id', $teacher_id)->where('batch_id', $batch_id)->where('level_id', $level_id)->get();
+        $teachers = app('db')->table('UserBatch')->select('user_id')
+            ->where('user_id', $teacher_id)->where('batch_id', $batch_id)->where('level_id', $level_id)->get();
         $this->assertEquals(0, count($teachers)); // That teacher shouldn't be found
     }
 }

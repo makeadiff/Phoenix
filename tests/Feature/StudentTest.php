@@ -19,19 +19,18 @@ class StudentTest extends TestCase
         }
 
         $this->load('/students?center_id=220');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
+        $this->assertEquals($this->response_data->status, 'success');
         $search_for = 'Yoda';
         $found = false;
-        foreach ($data->data->students as $key => $info) {
+        foreach ($this->response_data->data->students as $key => $info) {
             if ($info->name == $search_for) {
                 $found = true;
                 break;
             }
         }
         $this->assertTrue($found);
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
     /// Path: GET    /students/{student_id}
@@ -42,10 +41,9 @@ class StudentTest extends TestCase
         }
 
         $this->load('/students/21932');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->assertEquals($data->data->student->name, 'Yoda');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->student->name, 'Yoda');
+        $this->assertEquals($this->response->getStatusCode(), 200);
     }
 }

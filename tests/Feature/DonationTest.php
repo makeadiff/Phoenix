@@ -9,17 +9,17 @@ use Tests\TestCase;
 class DonationTest extends TestCase
 {
     private $user_id = 1;
+    protected $only_priority_tests = true;
 
     /// Path: GET    /donations
     public function testGetDonationsList()
     {
-        // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $this->load('/users/' . $this->user_id . '/donations');
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
 
         $found = true;
 
@@ -28,7 +28,7 @@ class DonationTest extends TestCase
         $q->where('fundraiser_user_id', $this->user_id)->where('added_on', '>=', "{$this->year}-05-01 00:00:00");
         $donations_this_year = $q->pluck('id')->toArray();
 
-        foreach ($data->data->donations as $key => $info) {
+        foreach ($this->response_data->data->donations as $key => $info) {
             if (!in_array($info->id, $donations_this_year)) {
                 $found = false;
                 break;
@@ -41,13 +41,12 @@ class DonationTest extends TestCase
     /// Path: GET    /donations?fundraiser_user_id=1&deposited=false
     public function testGetUndepositedDonations()
     {
-        // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $this->load("/donations?fundraiser_user_id={$this->user_id}&deposited=false");
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
         
         $q = app('db')->table('Donut_Donation AS D');
         $q->where('D.fundraiser_user_id', $this->user_id)->where('D.added_on', '>=', "{$this->year}-05-01 00:00:00");
@@ -61,7 +60,7 @@ class DonationTest extends TestCase
         $depsoited_donations_this_year = $q->pluck('DD.donation_id')->toArray();
 
         $found = true;
-        foreach ($data->data->donations as $key => $info) {
+        foreach ($this->response_data->data->donations as $key => $info) {
             if (!in_array($info->id, $donations_this_year)) { // It should be in this list.
                 $found = false;
                 break;
@@ -84,17 +83,14 @@ class DonationTest extends TestCase
 
         $donation_id = 24722;
         $this->load("/donations/$donation_id");
-        $data = json_decode($this->response->getContent());
 
-        $this->assertEquals($data->status, 'success');
-        $this->response->assertStatus(200);
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
         
-        $q = app('db')->table('Donut_Donation');
-        $q->where('id', $donation_id);
-        $donation_info = $q->first();
+        $donation_info = app('db')->table('Donut_Donation')->where('id', $donation_id)->first();
 
-        $this->assertEquals($data->data->donation->id, $donation_id);
-        $this->assertEquals($data->data->donation->amount, $donation_info->amount);
-        $this->assertEquals($data->data->donation->fundraiser_user_id, $donation_info->fundraiser_user_id);
+        $this->assertEquals($this->response_data->data->donation->id, $donation_id);
+        $this->assertEquals($this->response_data->data->donation->amount, $donation_info->amount);
+        $this->assertEquals($this->response_data->data->donation->fundraiser_user_id, $donation_info->fundraiser_user_id);
     }
 }
