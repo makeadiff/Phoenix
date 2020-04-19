@@ -67,14 +67,24 @@ final class Event extends Common
 
     public function search($data)
     {
-        $search_fields = ['id', 'name', 'description', 'starts_on', 'date', 'from_date', 'to_date', 'place', 'city_id', 'event_type_id', 'template_event_id', 
+        $search_fields = ['id', 'name', 'description', 'starts_on', 'date', 'from_date', 'to_date', 'place', 'city_id', 'event_type_id', 'template_event_id',
             'vertical_id', 'created_by_user_id', 'status', 'invited_user_id'];
 
         $q = app('db')->table('Event');
-        $q->select('Event.id','Event.name','Event.description','Event.starts_on','Event.place','Event.city_id',
-                    'Event.event_type_id','Event.created_by_user_id','Event.status',app('db')->raw('Event_Type.name AS event_type'));
+        $q->select(
+            'Event.id',
+            'Event.name',
+            'Event.description',
+            'Event.starts_on',
+            'Event.place',
+            'Event.city_id',
+            'Event.event_type_id',
+            'Event.created_by_user_id',
+            'Event.status',
+            app('db')->raw('Event_Type.name AS event_type')
+        );
         if (!isset($data['status'])) {
-            $data['status'] = '1'; 
+            $data['status'] = '1';
         }
 
         foreach ($search_fields as $field) {
@@ -84,18 +94,15 @@ final class Event extends Common
 
             if ($field == 'name' or $field == 'description' or $field == 'place') {
                 $q->where("Event." . $field, 'LIKE', "%" . $data[$field] . "%");
-            
-            } elseif($field == 'invited_user_id') {
+            } elseif ($field == 'invited_user_id') {
                 $q->join("UserEvent", 'UserEvent.event_id', '=', 'Event.id');
                 $q->where("UserEvent.user_id", $data[$field]);
-            
-            } elseif($field == 'date') {
+            } elseif ($field == 'date') {
                 $q->whereDate("Event.starts_on", date('Y-m-d', strtotime($data[$field])));
-            } elseif($field == 'from_date') {
+            } elseif ($field == 'from_date') {
                 $q->whereDate("Event.starts_on", '>=', date('Y-m-d', strtotime($data[$field])));
-            } elseif($field == 'to_date') {
+            } elseif ($field == 'to_date') {
                 $q->whereDate("Event.starts_on", '<=', date('Y-m-d', strtotime($data[$field])));
-            
             } else {
                 $q->where("Event." . $field, $data[$field]);
             }
@@ -273,7 +280,7 @@ final class Event extends Common
 
             if ($key == 'rsvp') {
                 $data['user_choice'] = $this->rsvp_number_codes[$data[$key]];
-                $key = 'user_choice'; // DB Field is called user_choice. 
+                $key = 'user_choice'; // DB Field is called user_choice.
             }
 
             $update[$key] = $data[$key];

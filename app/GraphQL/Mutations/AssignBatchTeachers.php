@@ -34,8 +34,9 @@ class assignBatchTeachers
         list($headers, $content) = explode("\r\n\r\n", $response, 2);
         $data = json_decode($content);
 
-        if($data->status == "success") return 1;
-        else {
+        if ($data->status == "success") {
+            return 1;
+        } else {
             // Shows validation error.
             throw new GraphQLException($data->status, $data->{$data->status});
             return 0;

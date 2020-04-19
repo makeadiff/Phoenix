@@ -26,8 +26,11 @@ class UserTest extends TestCase
     }
 
     /// GraphQL user(id:1)
-    public function testGraphQLUserSingle() {
-        if ($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+    public function testGraphQLUserSingle()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->graphql("{user(id:1) { id name }}");
         $this->assertEquals($this->response_data->data->user->name, 'Binny V A');
@@ -286,11 +289,11 @@ class UserTest extends TestCase
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response->getStatusCode(), 200);
 
-        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status',1)->get()->pluck('token')->toArray();
+        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
         $found = 0;
 
-        foreach($this->response_data->data->devices as $device) {
-            if(in_array($device->token, $tokens)) {
+        foreach ($this->response_data->data->devices as $device) {
+            if (in_array($device->token, $tokens)) {
                 $found ++;
             }
         }
@@ -306,11 +309,11 @@ class UserTest extends TestCase
 
         $this->graphql('{ user(id: 1) { devices { token }} }');
 
-        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status',1)->get()->pluck('token')->toArray();
+        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
         $found = 0;
 
-        foreach($this->response_data->data->user->devices as $device) {
-            if(in_array($device->token, $tokens)) {
+        foreach ($this->response_data->data->user->devices as $device) {
+            if (in_array($device->token, $tokens)) {
                 $found ++;
             }
         }
@@ -335,8 +338,8 @@ class UserTest extends TestCase
         $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
         $found = false;
 
-        foreach($tokens as $tok) {
-            if($tok == "test-token-that-should-be-deleted") {
+        foreach ($tokens as $tok) {
+            if ($tok == "test-token-that-should-be-deleted") {
                 $found = true;
             }
         }
@@ -367,12 +370,14 @@ class UserTest extends TestCase
 
     public function testGetUserAlerts()
     {
-        if ($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
         if (!$this->write_to_db) {
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        // Delete Binny's CPP Signing to test this... 
+        // Delete Binny's CPP Signing to test this...
         $user_id = 1;
         app('db')->table("UserData")->where('name', 'child_protection_policy_signed')->where('user_id', $user_id)->delete();
 
@@ -380,8 +385,10 @@ class UserTest extends TestCase
         $this->assertEquals($this->response->getStatusCode(), 200);
         $search_for = "CPP Not Signed";
         $found = false;
-        foreach($this->response_data->data->alerts as $alert) {
-            if($alert->name == $search_for) $found = true;
+        foreach ($this->response_data->data->alerts as $alert) {
+            if ($alert->name == $search_for) {
+                $found = true;
+            }
         }
         $this->assertTrue($found);
 

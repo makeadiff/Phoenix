@@ -20,8 +20,20 @@ final class Device extends Common
     {
         $q = app('db')->table('Device');
 
-        $q->select('Device.id','Device.name AS device_name', 'Device.user_id','Device.token','Device.status','Device.added_on','Device.updated_on',
-                    'User.city_id','User.name','User.phone','User.email','User.mad_email');
+        $q->select(
+            'Device.id',
+            'Device.name AS device_name',
+            'Device.user_id',
+            'Device.token',
+            'Device.status',
+            'Device.added_on',
+            'Device.updated_on',
+            'User.city_id',
+            'User.name',
+            'User.phone',
+            'User.email',
+            'User.mad_email'
+        );
         $q->join("User", "User.id", '=', 'Device.user_id');
         
         if (!isset($data['status'])) {
@@ -57,17 +69,16 @@ final class Device extends Common
         $devices = $this->search(['user_id' => $data['user_id'], 'token' => $data['token'], 'status' => false]); // status=false will return both active and inactive tokens.
 
         // Token not found. Create new device.
-        if(!count($devices)) {
+        if (!count($devices)) {
             $device = Device::create([
                 'user_id'   => $data['user_id'],
                 'name'      => isset($data['name']) ? $data['name'] : '',
                 'token'     => $data['token'],
                 'status'    => '1',
             ]);
-
         } else { // There are existing devices with given user_id/token combo
             // Then just activate those.
-            foreach($devices as $d) {
+            foreach ($devices as $d) {
                 $device = $this->find($d->id);
                 $device->status = "1";
                 $device->save();

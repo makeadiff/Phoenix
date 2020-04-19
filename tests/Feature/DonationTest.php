@@ -14,7 +14,9 @@ class DonationTest extends TestCase
     /// Path: GET    /donations
     public function testGetDonationsList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/users/' . $this->user_id . '/donations');
 
@@ -41,7 +43,9 @@ class DonationTest extends TestCase
     /// Path: GET    /donations?fundraiser_user_id=1&deposited=false
     public function testGetUndepositedDonations()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load("/donations?fundraiser_user_id={$this->user_id}&deposited=false");
 

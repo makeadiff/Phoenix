@@ -271,8 +271,24 @@ final class User extends Common
             return false;
         }
 
-        $user = User::select('id', 'name', 'email', 'mad_email', 'phone', 'sex', 'photo', 'joined_on', 'address', 
-            'birthday', 'left_on', 'reason_for_leaving', 'user_type', 'status', 'credit', 'city_id')->where('status', '1');
+        $user = User::select(
+            'id',
+            'name',
+            'email',
+            'mad_email',
+            'phone',
+            'sex',
+            'photo',
+            'joined_on',
+            'address',
+            'birthday',
+            'left_on',
+            'reason_for_leaving',
+            'user_type',
+            'status',
+            'credit',
+            'city_id'
+        )->where('status', '1');
         if ($only_volunteers) {
             $user = $user->where('user_type', 'volunteer');
         }
@@ -587,11 +603,11 @@ final class User extends Common
             ->whereIn('id', $groups)->where('status', '1')->where('parent_group_id', '!=', '0')->get()->pluck('parent_group_id');
         $groups = $groups->merge($parent_groups);
 
-        if(!$groups->count()) { // If he has no group, he is volunteer group.
+        if (!$groups->count()) { // If he has no group, he is volunteer group.
             $groups = collect([9]); //:HARD-CODE: 9 is the teacher group.
         }
 
-        $permissions = app('db')->table("Permission")->join("GroupPermission", 'GroupPermission.permission_id','=','Permission.id')
+        $permissions = app('db')->table("Permission")->join("GroupPermission", 'GroupPermission.permission_id', '=', 'Permission.id')
             ->distinct('Permission.name')->select('Permission.name')->whereIn("GroupPermission.group_id", $groups)->get()->pluck('name');
 
         return $permissions;

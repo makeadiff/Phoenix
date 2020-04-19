@@ -17,7 +17,7 @@ final class Subject extends Common
     {
         $search_fields = ['id', 'name'];
         $q = app('db')->table('Subject');
-        $q->select('id', 'name',);
+        $q->select('id', 'name');
         $q->where('status', '1');
 
         foreach ($search_fields as $field) {

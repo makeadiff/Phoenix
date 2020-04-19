@@ -24,12 +24,16 @@ class assignLevelStudents
         $student_ids = $args['student_ids'];
         $level = new Level;
 
-        if(!is_array($student_ids)) $student_ids = [$student_ids];
+        if (!is_array($student_ids)) {
+            $student_ids = [$student_ids];
+        }
 
         $insert_count = 0;
-        foreach($student_ids as $student_id) {
+        foreach ($student_ids as $student_id) {
             $response = $level->assignStudent($level_id, $student_id);
-            if($response) $insert_count++; 
+            if ($response) {
+                $insert_count++;
+            }
         }
 
         return "Assigned " . $insert_count . " of " . count($student_ids) . " students to the given class section";
