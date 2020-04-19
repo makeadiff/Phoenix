@@ -3,7 +3,7 @@ info:
   version: "1.0"
   title: "MADApp API"
   description: |
-    Core API will create an __centralized API for all operations on MAD__ Database. We'll hand over the API docs to any external party who will be developing apps for us. 
+    Core API will create an __centralized API for all operations on MAD__ Database. We'll hand over the API docs to any external party who will be developing apps for us.
 
     * Responses will be follow [JSend conventions](http://labs.omniti.com/labs/jsend)
     * [Coversheet](https://docs.google.com/document/d/19OeIL2O_PAaDMjMx_ZdL2eTp2pmtZ1EUDDrWmRfScAE)
@@ -24,11 +24,11 @@ securityDefinitions:
 security:
   - basicAuth: []
 
-# TODO: Break into smaller files - https://azimi.me/2015/07/16/split-swagger-into-smaller-files.html  
+# TODO: Break into smaller files - https://azimi.me/2015/07/16/split-swagger-into-smaller-files.html
 # To create docs, use this command
 # bootprint openapi <swagger.yaml> <output_folder>
 #     bootprint should be installed for this to work - use 'sudo npm install -g spectacle-docs' to install bootprint.
-# OR 
+# OR
 # spectacle -d <swagger.yaml>
 #     spectacle should be installed for this to work - use 'sudo npm install -g spectacle-docs' to install spectacle.
 # OR - and this is my prefered way...
@@ -59,6 +59,10 @@ paths:
           in: query
           type: string
           description: Search users by just the mad email
+        - name: identifier
+          in: query
+          type: string
+          description: This will try to get a match by searching email, phone number, mad_email and the ID field against the given value. If any of it matches, it returns that row.
         - name: group_id
           in: query
           type: integer
@@ -84,12 +88,12 @@ paths:
             - applicant
             - let_go
             - alumnai
-          description: Can be 'volunteer', 'applicant', 'let_go' or 'alumnai'. 
+          description: Can be 'volunteer', 'applicant', 'let_go' or 'alumnai'.
         - name: center_id
           in: query
           type: integer
           required: false
-          description: Returns all the teachers in the given center. 
+          description: Returns all the teachers in the given center.
       responses:
         '200':
           description: Returns the list of users according to the given parameters.
@@ -101,7 +105,7 @@ paths:
       tags:
         - user
       summary: Create new User
-      description: Use this call to create new user. 
+      description: Use this call to create new user.
       parameters:
         - name: name
           in: formData
@@ -134,7 +138,7 @@ paths:
           type: string
           format: "date-time"
           in: formData
-          description: The date they joined 
+          description: The date they joined
           # example: "2009-05-09 00:00:00"
         - name: city_id
           type: integer
@@ -150,20 +154,20 @@ paths:
             - applicant
             - let_go
             - alumnai
-          description: Can be 'volunteer', 'applicant', 'let_go' or 'alumnai'. 
+          description: Can be 'volunteer', 'applicant', 'let_go' or 'alumnai'.
           # example: volunteer
       responses:
         200:
           description: User added successfully.
         400:
           description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
-          
+
   /users/{user_id}:
     get:
       tags:
         - user
       summary: User Information
-      description: Use this to get information of any user in the system. Keep in mind that this will not return details of deleted users. 
+      description: Use this to get information of any user in the system. Keep in mind that this will not return details of deleted users.
       parameters:
         - name: user_id
           in: path
@@ -239,7 +243,7 @@ paths:
           description: User edited with given data
         404:
           description: Can't find any user with the given {user_id}
-          
+
     delete:
       tags:
         - user
@@ -261,7 +265,7 @@ paths:
   /users/{user_id}/groups:
     get:
       tags:
-        - user 
+        - user
         - group
       summary: User Groups of an user
       description: Return all the groups of the given user ID.
@@ -272,7 +276,7 @@ paths:
           required: true
           description: ID of the user
       responses:
-        200: 
+        200:
           description: Ok
         404:
           description: Can't find any user with the given ID.
@@ -299,7 +303,7 @@ paths:
         200:
           description: Ok
         404:
-          description: Can't find any user or group with the given ID. 
+          description: Can't find any user or group with the given ID.
     delete:
       tags:
         - user
@@ -326,7 +330,7 @@ paths:
   /users/{user_id}/donations:
     get:
       tags:
-        - user 
+        - user
         - donation
         - donut
       summary: Donations raised by User
@@ -339,12 +343,12 @@ paths:
           description: ID of the user
         - name: from
           type: string
-          format: date 
+          format: date
           in: query
           description: Date from which the donations should be fetched. All donations made AFTER this date will be returned.
         - name: to
           type: string
-          format: date 
+          format: date
           in: query
           description: All donations made BEFORE this date will be returned.
       responses:
@@ -360,7 +364,7 @@ paths:
   /users/{user_id}/credit:
     get:
       tags:
-        - user 
+        - user
         - credit
       summary: Credit of User
       description: Returns the credit of the user with given ID
@@ -375,10 +379,10 @@ paths:
           description: Returns the credit of the user
         404:
           description: Can't find any user with the id {user_id}
-          
+
     post:
       tags:
-        - user 
+        - user
         - credit
       summary: Edit the credit of User
       description: Edit the credit of the user - make sure you provide a rational along with the new credit.
@@ -410,11 +414,11 @@ paths:
           description: Can't find user with the id {user_id}
         400:
           description: Invalid data - required fields missing or in wrong format.
-          
+
   /users/{user_id}/credit_history:
     get:
       tags:
-        - user 
+        - user
         - credit
       summary: Credit history of given user.
       description: Returns the entire history of credit changes for the given user.
@@ -425,11 +429,11 @@ paths:
           required: true
           type: integer
       responses:
-        200: 
+        200:
           description: Ok
         404:
           description: No user fonud with that User ID.
- 
+
   /users/{user_id}/class_history:
     get:
       tags:
@@ -443,7 +447,7 @@ paths:
           description: ID of the user who's history we want
           type: integer
       responses:
-        200: 
+        200:
           description: Ok
 
   /users/login:
@@ -479,13 +483,111 @@ paths:
   #    responses:
   #      default:
   #        description: User logged out.
-  
+
+  /users/{user_id}/devices:
+    get:
+      tags:
+        - user
+        - device
+      summary: Get all the devices associated with the given user
+      description: Return the active FCM tokens for all the deviced associated with the current user. This is used to send push notifications.
+      parameters:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's FCM token should be returned.
+        - name: status
+          in: query
+          description: Use this with status=0 if you want to get inactive tokens.
+      responses:
+        200:
+          description: List of all devices associated with this user
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Device"
+        404:
+          description: User with given {user_id} not found.
+    post:
+      tags:
+        - user
+        - device
+      summary: Add a new device with the given FCM token to the given user.
+      description: This will take a user_id and FCM token, look up the DB if there is a existing device for it. If so, activate that device. If not, add that device.
+      parameter:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's FCM token was created.
+        - name: token
+          in: formData
+          required: true
+          description: FCM Token that needs to be saved with the device associated to this user.
+        - name: name
+          in: formData
+          descritpion: Name given to this device. Optional. Can be browser name, phone imei, etc.
+      responses:
+        200:
+          description: Assigned the FCM Token to given user device
+          schema:
+            $ref: "#/definitions/Device"
+        400:
+          description: Error in input.
+  /users/{user_id}/devices/{token}:
+    post:
+      tags:
+        - user
+        - device
+      summary: Add a new device with the given FCM token to the given user.
+      description: This will take a user_id and FCM token, look up the DB if there is a existing device for it. If so, activate that device. If not, add that device.
+      parameter:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's FCM token was created.
+        - name: token
+          in: path
+          type: string
+          required: true
+          description: FCM Token that needs to be saved with the device associated to this user.
+      responses:
+        200:
+          description: Assigned the FCM Token to given user device
+          schema:
+            $ref: "#/definitions/Device"
+        400:
+          description: Error in input.
+    delete:
+      tags:
+        - user
+        - device
+      summary: Deactivates a device with the given FCM token of the given user.
+      description: This will deactivate the device(status=0) with the given FCM token and user
+      parameter:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the user who's device is to be deactivated
+        - name: token
+          in: path
+          required: true
+          description: FCM Token of the device that should be deactivated
+      responses:
+        200:
+          description: Device deactivated
+        404:
+          description: Can't find a device of the user with the given FCM token.
+
   /users/{user_id}/data/{data_name}:
     get:
       tags:
         - user
-        - data 
-      summary: Get data point about the user who's ID is given 
+        - data
+      summary: Get data point about the user who's ID is given
       description: Returns the provided data point of the user with the given user_id.
       parameters:
         - name: user_id
@@ -569,7 +671,7 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/City"
-  
+
   /cities/{city_id}:
     get:
       tags:
@@ -585,7 +687,7 @@ paths:
       responses:
         200:
           description: OK
-          
+
   /cities/{city_id}/users:
     get:
       tags:
@@ -604,11 +706,11 @@ paths:
           description: Returns the list of users
         404:
           description: Can't find any city with the given city ID
-          
+
   /cities/{city_id}/teachers:
     get:
       tags:
-        - user 
+        - user
         - city
         - teacher
       summary: Teachers in a city
@@ -632,7 +734,7 @@ paths:
   /cities/{city_id}/fellows:
     get:
       tags:
-        - user 
+        - user
         - city
         - fellow
       summary: Fellows in a city
@@ -648,7 +750,7 @@ paths:
           description: Returns the list of fellows
         404:
           description: Can't find any city with the given city ID
-          
+
   /cities/{city_id}/centers:
     get:
       tags:
@@ -774,7 +876,7 @@ paths:
     #       in: query
     #       type: integer
     #       required: true
-    #       description: The Shelter Operations Fellow's user ID. 
+    #       description: The Shelter Operations Fellow's user ID.
     #   responses:
     #     200:
     #       description: Ok
@@ -814,7 +916,7 @@ paths:
     #       in: query
     #       type: integer
     #       required: true
-    #       description: The Shelter Operations Fellow's user ID. 
+    #       description: The Shelter Operations Fellow's user ID.
     #   responses:
     #     200:
     #       description: Ok
@@ -827,7 +929,7 @@ paths:
     #       description: Ok
     #     404:
     #        description: Can't find any centers with the given ID
-  
+
   /centers/{center_id}/teachers:
     get:
       tags:
@@ -870,7 +972,7 @@ paths:
   /centers/{center_id}/levels:
     get:
       tags:
-        - level 
+        - level
         - center
       summary: Levels in given center.
       description: Returns the levels/class sections. in the given center.
@@ -884,7 +986,7 @@ paths:
           in: query
           type: string
           enum: [1,2]
-          description: ID of the program of which levels should be returned. Value can be 1 or 2 - Ed Support or Foundation. Defaults to 1(Ed Support) 
+          description: ID of the program of which levels should be returned. Value can be 1 or 2 - Ed Support or Foundation. Defaults to 1(Ed Support)
       responses:
         200:
           description: Ok
@@ -908,7 +1010,7 @@ paths:
           in: query
           type: string
           enum: [1,2]
-          description: ID of the program of which batches should be returned. Value can be 1 or 2 - Ed Support or Foundation. Defaults to 1(Ed Support) 
+          description: ID of the program of which batches should be returned. Value can be 1 or 2 - Ed Support or Foundation. Defaults to 1(Ed Support)
       responses:
         200:
           description: Ok
@@ -919,8 +1021,8 @@ paths:
     get:
       tags:
         - center
-        - data 
-      summary: Get data point about the center who's ID is given 
+        - data
+      summary: Get data point about the center who's ID is given
       description: Returns the provided data point of the center with the given center_id.
       parameters:
         - name: center_id
@@ -990,7 +1092,7 @@ paths:
           description: Given center_id / data point name can't be found in the database.
 
   ############################### Students
-  
+
   /students:
     get:
       tags:
@@ -1024,7 +1126,7 @@ paths:
           description: Returns the list of students according to the given parameters.
           schema:
             type: "array"
-            items: 
+            items:
               $ref: "#/definitions/Student"
         '404':
           description: Did not find any students matching the given parameters
@@ -1100,12 +1202,12 @@ paths:
           description: User edited with given data
         404:
           description: Can't find any student with the given {student_id}
-          
+
     delete:
       tags:
         - student
       summary: Delete Student
-      description: Deletes the student with the given ID 
+      description: Deletes the student with the given ID
       parameters:
         - name: student_id
           in: path
@@ -1122,8 +1224,8 @@ paths:
     get:
       tags:
         - student
-        - data 
-      summary: Get data point about the student who's ID is given 
+        - data
+      summary: Get data point about the student who's ID is given
       description: Returns the provided data point of the student with the given student_id.
       parameters:
         - name: student_id
@@ -1275,7 +1377,7 @@ paths:
       tags:
         - level
       summary: Update Level
-      description: Update details of the level whose ID is given 
+      description: Update details of the level whose ID is given
       parameters:
         - name: level_id
           type: integer
@@ -1370,6 +1472,54 @@ paths:
             $ref: "#/definitions/Student"
         404:
           description: Can't find any level with the given {level_id}
+    post:
+      tags:
+        - student
+        - level
+      summary: Assign students to level
+      description: Assign multiple students to a given level/class section.
+      parameters:
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+        - name: student_ids
+          type: string
+          in: formData
+          required: true
+          description: Comma seperated list of students that have to be assigned to this class section.
+      responses:
+        200:
+          description: Assigned students to the level successfully
+          schema:
+            $ref: "#/definitions/Level"
+        404:
+          description: Can't find any level with given level_id
+
+  /levels/{level_id}/students/{student_id}:
+    delete:
+      tags:
+        - student
+        - level
+      summary: Unassign Students from Level
+      description: Deletes a student/level mapping. The student will no longer be a part of that level.
+      parameters:
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+        - name: student_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the student
+      responses:
+        200:
+          description: Student unassigned successfully
+        404:
+          description: Can't find any {level_id}/{student_id} assignment
 
   /levels/{level_id}/batches:
     get:
@@ -1426,6 +1576,11 @@ paths:
           in: formData
           required: false
           description: Year when this batch was active.
+        - name: mentor_user_ids
+          type: integer
+          in: formData
+          required: false
+          description: A comma separated list of User IDs of the mentor of the batch
       responses:
         200:
           description: Batch created successfully
@@ -1487,6 +1642,11 @@ paths:
           in: formData
           required: false
           description: Year when this batch was active.
+        - name: mentor_user_ids
+          type: integer
+          in: formData
+          required: false
+          description: A comma separated list of User IDs of the mentor of the batch
       responses:
         200:
           description: Batch updated successfully
@@ -1530,6 +1690,76 @@ paths:
           description: List of all the teachers in that batch.
           schema:
             $ref: "#/definitions/User"
+        404:
+          description: Can't find any batch with the given {batch_id}
+
+  /batches/{batch_id}/mentors:
+    get:
+      tags:
+        - batch
+        - user
+        - mentor
+      summary: Mentors in batch
+      description: Returns the mentos mapped to the given batch.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+      responses:
+        200:
+          description: List of all the mentors in that batch.
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: Can't find any batch with the given {batch_id}
+    post:
+      tags:
+        - batch
+        - user
+        - mentor
+      summary: Add Mentors to given batch
+      description: Returns the mentos mapped to the given batch.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+        - name: mentor_user_ids
+          type: integer
+          in: formData
+          required: true
+          description: A comma separated list of User IDs of the mentor of the batch
+      responses:
+        200:
+          description: Adds mentors to the Batch.
+        404:
+          description: Can't find any batch with the given {batch_id}
+
+  /batches/{batch_id}/mentors/{mentor_user_id}:
+    delete:
+      tags:
+        - batch
+        - mentor
+        - user
+      summary: Delete Mentors from batch
+      description: Returns the mentos mapped to the given batch.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+        - name: mentor_user_id
+          type: integer
+          in: path
+          required: true
+          description: The ID of the mentor of the batch
+      responses:
+        200:
+          description: Adds mentors to the Batch.
         404:
           description: Can't find any batch with the given {batch_id}
 
@@ -1591,6 +1821,38 @@ paths:
             $ref: "#/definitions/Batch"
         404:
           description: Can't find any batch, level, or users with the given ID
+  /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}:
+    delete:
+      tags:
+        - batch
+        - level
+        - teacher
+        - user
+      summary: Delete Teacher from a Batch/Level
+      description: Delete a teacher to a Batch/Level Combo.
+      parameters:
+        - name: batch_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the batch
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+        - name: teacher_id
+          type: integer
+          in: path
+          required: true
+          description: User ID of Teacher that needs to be removed from the Batch/Level
+      responses:
+        200:
+          description: Removed the teacher from the batch/level combo
+          schema:
+            $ref: "#/definitions/Batch"
+        404:
+          description: Can't find any batch, level, or users with the given ID
 
   /batches/{batch_id}/levels:
     get:
@@ -1618,8 +1880,8 @@ paths:
     get:
       tags:
         - class
-        - data 
-      summary: Get data point about the class who's ID is given 
+        - data
+      summary: Get data point about the class who's ID is given
       description: Returns the provided data point of the class with the given class_id.
       parameters:
         - name: class_id
@@ -1670,8 +1932,8 @@ paths:
   /donations:
     get:
       tags:
-        - donation 
-        - donut 
+        - donation
+        - donut
       summary: Search Donations
       description: Search thru donations of the current year using any of the listed parameters.
       parameters:
@@ -1701,12 +1963,12 @@ paths:
           description: Find donations raised by the given user
         - name: from
           type: string
-          format: date 
+          format: date
           in: query
           description: Date from which the donations should be fetched. All donations made AFTER this date will be returned.
         - name: to
           type: string
-          format: date 
+          format: date
           in: query
           description: All donations made BEFORE this date will be returned.
         - name: type
@@ -1742,7 +2004,7 @@ paths:
         - name: deposit_status_in
           in: query
           type: string
-          description: Comma seperated list of possible deposit statuses. 
+          description: Comma seperated list of possible deposit statuses.
         - name: deposit_status
           in: query
           type: string
@@ -1766,7 +2028,7 @@ paths:
     post:
       tags:
         - donation
-        - donut 
+        - donut
       summary: Add Donation
       description: Add a new donation based on the data provided
       parameters:
@@ -1778,7 +2040,7 @@ paths:
         - name: donor_email
           in: formData
           type: string
-          description: Donor Email Address 
+          description: Donor Email Address
           required: true
         - name: donor_phone
           in: formData
@@ -1851,7 +2113,7 @@ paths:
         - donation
         - donut
       summary: Delete a Donation
-      description: Deletes the donation with the given ID. 
+      description: Deletes the donation with the given ID.
       parameters:
         - name: donation_id
           in: path
@@ -1867,7 +2129,7 @@ paths:
   /deposits:
     get:
       tags:
-        - deposit 
+        - deposit
         - donut
       summary: Deposit Search
       description: Search thru the deposits to get items the current user should review, review status, etc.
@@ -1887,14 +2149,14 @@ paths:
         - name: status_in
           in: query
           type: string
-          description: Search for all deposits that matches any of the given status. 
+          description: Search for all deposits that matches any of the given status.
         - name: reviewer_user_id
           in: query
           type: integer
           description: Returns all the deposits that the given user has to review.
       responses:
         200:
-          description: Ok 
+          description: Ok
           schema:
             type: "array"
             items:
@@ -1903,7 +2165,7 @@ paths:
       tags:
         - deposit
         - donut
-      summary: Add Deposit 
+      summary: Add Deposit
       description: Add new deposit with the given information.
       parameters:
         - name: collected_from_user_id
@@ -1921,7 +2183,7 @@ paths:
           type: array
           items:
             type: integer
-          description: An array of all the IDs of the donations included in this deposit. 
+          description: An array of all the IDs of the donations included in this deposit.
           required: true
       responses:
         200:
@@ -1973,7 +2235,7 @@ paths:
         - name: name
           in: query
           type: string
-          description: Search for the events with the given name 
+          description: Search for the events with the given name
         - name: description
           in: query
           type: string
@@ -1983,6 +2245,16 @@ paths:
           type: string
           format: "date-time"
           description: Search for event by the date when the event starts
+        - name: from_date
+          in: query
+          type: string
+          format: "date-time"
+          description: Search for event that are after or on  this date.
+        - name: to_date
+          in: query
+          type: string
+          format: "date-time"
+          description: Search for event that are before or on this date.
         - name: latitude
           in: query
           type: string
@@ -2007,6 +2279,10 @@ paths:
           in: query
           type: integer
           description: Search by the user who created the event.
+        - name: invited_user_id
+          in: query
+          typ: integer
+          description: Returns all the events that the given user has been invited to.
       responses:
         200:
           description: Returns a list of all event matching the given parameters
@@ -2060,7 +2336,7 @@ paths:
           in: formData
           type: integer
           required: true
-          description: ID of the user who created the event 
+          description: ID of the user who created the event
         - name: latitude
           in: formData
           type: string
@@ -2078,11 +2354,11 @@ paths:
   /events/{event_id}:
     get:
       tags:
-        - event 
+        - event
       summary: Event Information
       description: Get the information of any given event.
       parameters:
-        - name: event_id 
+        - name: event_id
           in: path
           description: The ID of event that you want to get info on.
           required: true
@@ -2094,14 +2370,14 @@ paths:
             $ref: "#/definitions/Event"
         404:
           description: Can't find event with given ID
-          
+
     post:
       tags:
-        - event 
+        - event
       summary: Edit a given event
       description: Update the event with the specified ID
       parameters:
-        - name: event_id 
+        - name: event_id
           in: path
           description: The ID of event that you want to get info on.
           required: true
@@ -2143,7 +2419,7 @@ paths:
           in: formData
           type: integer
           required: true
-          description: ID of the user who created the event 
+          description: ID of the user who created the event
         - name: latitude
           in: formData
           type: string
@@ -2165,7 +2441,7 @@ paths:
       summary: Cancel an event
       description: Soft deletes a given event(sets the status to '0') - means it was cancelled
       parameters:
-        - name: event_id 
+        - name: event_id
           in: path
           description: The ID of event that you want to delete.
           required: true
@@ -2180,7 +2456,7 @@ paths:
     get:
       tags:
         - event
-      summary: Users connected to given event 
+      summary: Users connected to given event
       description: This will give you all the users connected to this event - the invited, attended, rsvped - all together.
       parameters:
         - name: event_id
@@ -2250,7 +2526,7 @@ paths:
     get:
       tags:
         - event
-      summary: Info of users connection with event 
+      summary: Info of users connection with event
       description: Returns the info of any given user who is associated with a given event.
       parameters:
         - name: event_id
@@ -2265,14 +2541,14 @@ paths:
           description: User ID who is associated to the event.
       responses:
         200:
-          description: Given users have been invited 
+          description: Given users have been invited
         400:
           description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
 
     post:
       tags:
         - event
-      summary: Update present, late, rsvp choice of user 
+      summary: Update present, late, rsvp choice of user
       description: Set the present, late, rsvp fields for the given user and event.
       parameters:
         - name: event_id
@@ -2320,7 +2596,7 @@ paths:
 
     delete:
       tags:
-        - event 
+        - event
       summary: Uninvite a user from Event
       description: Remove the invitation of any given user from the given event.
       parameters:
@@ -2336,9 +2612,9 @@ paths:
           description: User ID who is to be removed from the event
       responses:
         200:
-          description: Given users have been un-invited 
+          description: Given users have been un-invited
         404:
-          description: Can't find an event or user with the given ID 
+          description: Can't find an event or user with the given ID
 
   /events/{event_id}/attended:
     get:
@@ -2364,7 +2640,7 @@ paths:
   /survey_templates:
     get:
       tags:
-        - survey 
+        - survey
         - survey_template
         - search
       summary: Search thru survey templates
@@ -2386,14 +2662,14 @@ paths:
           in: query
           type: string
           enum:
-            - User 
+            - User
             - Student
-            - Center 
+            - Center
             - City
           description: Target responder for the survey will be this.
         - name: status
           in: query
-          type: string 
+          type: string
           enum:
             - 0
             - 1
@@ -2407,7 +2683,7 @@ paths:
               $ref: "#/definitions/SurveyTemplate"
     post:
       tags:
-        - survey 
+        - survey
         - survey_template
         - create
       summary: Create new survey template
@@ -2426,9 +2702,9 @@ paths:
           in: query
           type: string
           enum:
-            - User 
+            - User
             - Student
-            - Center 
+            - Center
             - City
           required: true
           description: Target responder for the survey will be this.
@@ -2442,9 +2718,9 @@ paths:
     get:
       tags:
         - survey
-        - survey_template 
+        - survey_template
       summary: Fetch one survey template
-      description: Returns a survey template who's ID is given 
+      description: Returns a survey template who's ID is given
       parameters:
         - name: survey_template_id
           in: path
@@ -2461,7 +2737,7 @@ paths:
         - survey
         - survey_template
       summary: Edit the given survey template
-      description: Edit the given survey template with the provided data 
+      description: Edit the given survey template with the provided data
       parameters:
         - name: survey_template_id
           in: path
@@ -2480,9 +2756,9 @@ paths:
           in: formData
           type: string
           enum:
-            - User 
+            - User
             - Student
-            - Center 
+            - Center
             - City
           description: Target responder for the survey will be this.
       responses:
@@ -2494,12 +2770,12 @@ paths:
   /survey_templates/{survey_template_id}/surveys:
     get:
       tags:
-        - survey 
+        - survey
       summary: Returns all surveys created from the given survey template.
-      description: Returns all the surveys created using the survey template of the given ID 
+      description: Returns all the surveys created using the survey template of the given ID
       parameters:
         - name: survey_template_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the template
@@ -2512,13 +2788,13 @@ paths:
   /survey_templates/{survey_template_id}/questions:
     get:
       tags:
-        - survey 
+        - survey
         - question
       summary: Returns all questions in the given survey template.
-      description: Returns all the questions in the survey template of the given ID 
+      description: Returns all the questions in the survey template of the given ID
       parameters:
         - name: survey_template_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the template
@@ -2529,13 +2805,13 @@ paths:
             $ref: "#/definitions/SurveyQuestion"
     post:
       tags:
-        - survey 
+        - survey
         - question
       summary: Creates a question
       description: Creates one question or a set of questions.
       parameters:
         - name: survey_template_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the template
@@ -2561,7 +2837,7 @@ paths:
             - date
             - datetime
             - file
-          description: 
+          description:
         - name: required
           in: formData
           type: string
@@ -2588,13 +2864,13 @@ paths:
   /survey_templates/{survey_template_id}/categorized_questions:
     get:
       tags:
-        - survey 
+        - survey
         - question
       summary: Returns questions in the given survey template in categorized format.
-      description: This will return questions within their catogries. Very useful if the template have question categories. 
+      description: This will return questions within their catogries. Very useful if the template have question categories.
       parameters:
         - name: survey_template_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the template
@@ -2605,18 +2881,18 @@ paths:
   /survey_templates/{survey_template_id}/questions/{survey_question_id}:
     get:
       tags:
-        - survey 
+        - survey
         - question
       summary: Returns a specific question
-      description: Returns the question with the given ID 
+      description: Returns the question with the given ID
       parameters:
         - name: survey_template_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the template
         - name: survey_question_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the question
@@ -2627,18 +2903,18 @@ paths:
             $ref: "#/definitions/SurveyQuestion"
     post:
       tags:
-        - survey 
+        - survey
         - question
       summary: Edit a specific question
-      description: Edit the question with the given ID 
+      description: Edit the question with the given ID
       parameters:
         - name: survey_template_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the template
         - name: survey_question_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the question
@@ -2664,7 +2940,7 @@ paths:
             - date
             - datetime
             - file
-          description: 
+          description:
         - name: required
           in: formData
           type: string
@@ -2691,18 +2967,18 @@ paths:
   /survey_templates/{survey_template_id}/questions/{survey_question_id}/choices:
     get:
       tags:
-        - survey 
+        - survey
         - choice
       summary: Returns the choices in a given question
       description: Returns the choices in the question whose ID is given.
       parameters:
         - name: survey_template_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the template
         - name: survey_question_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the question
@@ -2713,22 +2989,22 @@ paths:
             $ref: "#/definitions/SurveyChoice"
     post:
       tags:
-        - survey 
-        - choice 
-      summary: Add choices to a given question 
+        - survey
+        - choice
+      summary: Add choices to a given question
       description: Add choices/options to the question who's ID is given. You can supply multiple choices to this path in the post raw body - and all of that can be added at one go.
       parameters:
         - name: survey_template_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the template
         - name: survey_question_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the question
-        - name: name 
+        - name: name
           in: formData
           type: string
           required: true
@@ -2754,23 +3030,23 @@ paths:
   /survey_templates/{survey_template_id}/questions/{survey_question_id}/choices/{survey_choice_id}:
     get:
       tags:
-        - survey 
+        - survey
         - choice
-      summary: Returns one choice 
+      summary: Returns one choice
       description: Returns the choice whose ID is given
       parameters:
         - name: survey_template_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the template
         - name: survey_question_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the question
         - name: survey_choice_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the question
@@ -2781,22 +3057,22 @@ paths:
             $ref: "#/definitions/SurveyChoice"
     post:
       tags:
-        - survey 
-        - choice 
+        - survey
+        - choice
       summary: Edits a choice
       description: Edit the choice who's ID is given
       parameters:
         - name: survey_template_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the template
         - name: survey_question_id
-          in: path 
+          in: path
           type: integer
           required: true
           description: ID of the question
-        - name: name 
+        - name: name
           in: formData
           type: string
           required: true
@@ -2821,14 +3097,14 @@ paths:
   /surveys:
     get:
       tags:
-        - survey 
+        - survey
       summary: Surveys that matches the parameters
       description:  Returns surveys that matches the given parameters.
       parameters:
-        - name: id 
+        - name: id
           in: query
           type: integer
-          description: ID of the survey to be returned 
+          description: ID of the survey to be returned
         - name: name
           in: query
           type: string
@@ -2841,8 +3117,8 @@ paths:
           in: query
           type: string
           enum:
-            - User 
-            - City 
+            - User
+            - City
             - Student
             - Center
           description: Returns only survey for this type of responder.
@@ -2851,12 +3127,12 @@ paths:
           type: integer
           description: Returns the surveys made from this template only.
       responses:
-        200: 
+        200:
           description: Ok
     post:
       tags:
-        - survey 
-      summary: Create a new survey from a template 
+        - survey
+      summary: Create a new survey from a template
       description: Creates a new survey from the given data.
       parameters:
         - name: survey_template_id
@@ -2873,8 +3149,8 @@ paths:
           type: integer
           description: The ID of the user who is creating the instance.
       responses:
-        200: 
-          description: Created the survey 
+        200:
+          description: Created the survey
           schema:
             $ref: "#/definitions/Survey"
   /surveys/{survey_id}:
@@ -2884,10 +3160,10 @@ paths:
       summary: Return one survey instance
       description:  Returns one survey instance
       parameters:
-        - name: survey_id 
+        - name: survey_id
           in: path
           type: integer
-          description: ID of the survey to be returned 
+          description: ID of the survey to be returned
       responses:
         200:
           description: Ok
@@ -2915,15 +3191,15 @@ paths:
           type: integer
           description: Returns the responses by the responder with this ID
       responses:
-        200: 
+        200:
           description: Ok
           schema:
             $ref: "#/definitions/SurveyResponse"
     post:
       tags:
-        - survey 
+        - survey
         - response
-      summary: Create a new response for a survey
+      summary: Create a response set for a survey
       description: Create a full response set for a survey. All the parameters can be passed in the raw body of the request.
       parameters:
         - name: survey_id
@@ -2941,17 +3217,17 @@ paths:
         - name: survey_question_id
           in: formData
           type: integer
-          description: The ID of the question who's answer is given in this set. 
+          description: The ID of the question who's answer is given in this set.
         - name: suvey_choice_id
           in: formData
           type: integer
-          description: The ID of the choice made for this survey 
+          description: The ID of the choice made for this survey
         - name: response
           in: formData
           type: integer
           description: Textual response for the given question.
       responses:
-        200: 
+        200:
           description: Created the survey response
           schema:
             $ref: "#/definitions/SurveyResponse"
@@ -2959,7 +3235,7 @@ paths:
   /surveys/{survey_id}/questions/{survey_question_id}/responses:
     post:
       tags:
-        - survey 
+        - survey
         - response
       summary: Create a new response for a survey question
       description: Create one response for a survey question
@@ -2971,7 +3247,7 @@ paths:
         - name: survey_question_id
           in: path
           type: integer
-          description: The ID of the question who's answer is given in this set. 
+          description: The ID of the question who's answer is given in this set.
         - name: added_by_user_id
           in: formData
           type: integer
@@ -2983,13 +3259,13 @@ paths:
         - name: suvey_choice_id
           in: formData
           type: integer
-          description: The ID of the choice made for this survey 
+          description: The ID of the choice made for this survey
         - name: response
           in: formData
           type: integer
           description: Textual response for the given question.
       responses:
-        200: 
+        200:
           description: Created the survey response
           schema:
             $ref: "#/definitions/SurveyResponse"
@@ -2999,7 +3275,7 @@ paths:
     get:
       tags:
         - notification
-        - search 
+        - search
       summary: Search thru push notification
       description: Return a list of all push notification registerations that matches the given parameters
       parameters:
@@ -3052,7 +3328,7 @@ paths:
         - notification
         - create
       summary: Add a new push notification registeration
-      description: New push notification registeration by app, user and device 
+      description: New push notification registeration by app, user and device
       parameters:
         - name: user_id
           in: formData
@@ -3088,7 +3364,7 @@ paths:
           description: Created the notification registeration
         400:
           description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
-          
+
 # Class
 
 # GET /classes/{class_id}
@@ -3105,7 +3381,7 @@ paths:
 #         batch_id
 #         class_on
 #         user_id
-        
+
 # GET /classes/{class_id}/students : Includes Attendance Data
 # POST /classes/{class_id}/students : Mark attendance
 # POST /classes/{class_id}/students/{student_id}/participation
@@ -3169,17 +3445,17 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Group"
-            
+
   Group:
    type: "object"
    properties:
-     id: 
+     id:
        type: integer
      name:
        type: string
      vertical_id:
        type: integer
-        
+
   Student:
     type: "object"
     properties:
@@ -3242,6 +3518,8 @@ definitions:
         enum:
           - "1"
           - "0"
+      mentors:
+        type: "array"
   Level:
     type: "object"
     properties:
@@ -3373,7 +3651,7 @@ definitions:
         type: string
         format: "date-time"
       location:
-        type: string      
+        type: string
       created_on:
         type: string
         format: "date-time"
@@ -3461,9 +3739,9 @@ definitions:
           - choice
           - 1-5
           - 1-10
-          - number 
+          - number
           - yes-no
-          - date 
+          - date
           - datetime
           - file
           - longtext
@@ -3523,6 +3801,22 @@ definitions:
         format: "date-time"
       added_by_user_id:
         type: integer
+  Device:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: integer
+      name:
+        type: string
+      token:
+        type: string
+      status:
+        type: string
+        enum:
+          - 1
+          - 0
   Notification:
     type: "object"
     properties:

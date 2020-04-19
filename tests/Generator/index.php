@@ -1,14 +1,14 @@
 <?php
-require('iframe.php');
+require('iframe2.php');
 require_once "Spyc.php";
 /// Purpose : Reads Swagger YAML Files and generate PhpUnit Test files for those calls.
 
-$html = new HTML;
+$html = new iframe\HTML\HTML;
 
-$swagger_file = '/mnt/x/Data/www/Projects/Phoenix/api/swagger/swagger.yaml';
+$swagger_file = '/mnt/x/Data/www/MAD/api/api/swagger/swagger.yaml';
 $api = spyc_load_file($swagger_file);
 // $api = yaml_parse(file_get_contents($swagger_file));
-$api_base_path = 'http://localhost/Projects/Phoenix/v1';
+$api_base_path = 'http://localhost/MAD/api/index.php/v1';
 
 $path = i($QUERY, 'path');
 $verb = i($QUERY, 'verb', 'get');

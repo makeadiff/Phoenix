@@ -41,11 +41,10 @@ class Email
         }
 
         // SMTP Login details based on the $from address
-        if(stripos($this->from, 'donations@makeadiff.in') !== false) {
+        if (stripos($this->from, 'donations@makeadiff.in') !== false) {
             $this->smtp_username = "donations@makeadiff.in";
             $this->smtp_password = "Fell-chose-5";
-
-        } elseif(stripos($this->from, 'madapp@makeadiff.in') !== false) {
+        } elseif (stripos($this->from, 'madapp@makeadiff.in') !== false) {
             $this->smtp_username = "madapp@makeadiff.in";
             $this->smtp_password = "madappgonemad";
         }

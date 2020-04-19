@@ -148,38 +148,6 @@ final class Classes extends Common
         return $q;
     }
 
-    // /// Find the next class in the given batch from the given date in either direction.
-    // function get_next_class($batch_id, $level_id, $from_date, $direction) {
-    //     if($direction == "+") {
-    //         $where = '>';
-    //         $order = 'ASC';
-    //         $time  = '23:59:59';
-    //     } else {
-    //         $where = '<';
-    //         $order = 'DESC';
-    //         $time  = '00:00:00';
-    //     }
-
-    //     $level_check = '';
-    //     if($level_id) $level_check = " AND level_id=$level_id";
-
-    //     $next_class = $this->db->query("SELECT * FROM Class WHERE class_on $where '$from_date $time' $level_check AND batch_id=$batch_id ORDER BY class_on $order LIMIT 0,1")->row();
-
-    //     return $next_class;
-    // }
-
-    // public function fetch($id, $is_active = true) {
-    //     $this->id = $id;
-    //     if($is_active)
-    //         $this->item = $this->where('status', '1')->where('year', $this->year)->find($id);
-    //     else
-    //         $this->item = $this->find($id);
-    //     $this->item->name = $this->getName($this->item->day, $this->item->class_time);
-    //     $this->item->center = $this->item->center()->first()->name;
-    //     $this->item->vertical_id = $this->getVerticalIdFromProjectId($this->item->project_id);
-    //     return $this->item;
-    // }
-
     // Not tested.
     public function add($data)
     {

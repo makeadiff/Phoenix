@@ -11,16 +11,18 @@ use GuzzleHttp\Client;
 
 final class User extends Common
 {
-    const CREATED_AT = 'added_on';
-    const UPDATED_AT = 'updated_on';
     protected $table = 'User';
     public $timestamps = true;
+    const CREATED_AT = 'added_on';
+    const UPDATED_AT = 'updated_on';
     protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
     public $enable_logging = true; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()
     {
-        $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')->where('Group.status', '=', '1')->wherePivot('year', $this->year)->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type');
+        $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
+                            ->where('Group.status', '=', '1')->wherePivot('year', $this->year)
+                            ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type');
         $groups->orderByRaw("FIELD(Group.type, 'executive', 'national', 'strat', 'fellow', 'volunteer')");
         return $groups;
     }
@@ -28,11 +30,6 @@ final class User extends Common
     public function city()
     {
         return $this->belongsTo(City::class);
-    }
-
-    public function permissions()
-    {
-        return $this->hasManyThrough('App\Models\Permission', 'App\Models\Group');
     }
 
     public function classes($status = '')
@@ -65,6 +62,13 @@ final class User extends Common
         $donations->where("added_on", '>=', $this->year_start_date);
         $donations->orderBy("added_on", 'desc');
         return $donations;
+    }
+
+    public function devices()
+    {
+        $devices = $this->hasMany("App\Models\Device", 'user_id');
+        $devices->where("status", '=', "1");
+        return $devices;
     }
 
     // public function data()
@@ -153,6 +157,7 @@ final class User extends Common
             $q->where('User.name', 'like', '%' . $data['name'] . '%');
         }
         if (!empty($data['phone'])) {
+            // :TODO: Phone search might need more things - +91 should be not considered, etc.
             $q->where('User.phone', $data['phone']);
         }
 
@@ -229,8 +234,15 @@ final class User extends Common
             $q->addSelect("UserBatch.level_id");
             $q->where('UserBatch.batch_id', $data['batch_id']);
 
-            if (!empty($data['level_id'])) $q->where('UserBatch.level_id', $data['level_id']);
+            if (!empty($data['level_id'])) {
+                $q->where('UserBatch.level_id', $data['level_id']);
+            }
+
+            if (!empty($data['batch_role'])) {
+                $q->where('UserBatch.role', $data['batch_role']);
+            }
         }
+
 
         // Sorting
         if (!empty($data['user_type'])) {
@@ -285,6 +297,8 @@ final class User extends Common
         if (!$data) {
             return false;
         }
+        $this->item_id = $user_id;
+        $this->item = $data;
 
         $data->groups = $data->groups()->get();
         $data->city = $data->city()->first()->name;
@@ -346,7 +360,7 @@ final class User extends Common
             $user->joined_on    = isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s');
             $user->save();
         }
-        
+
         if ($user and !$zoho_user_id) {
             // Send Data to Zoho
             $all_sexes = [
@@ -405,7 +419,7 @@ final class User extends Common
                         'Address_for_correspondence'    => isset($data['address']) ? $data['address'] : '',
                         'Mobile_Number'     => $data['phone'],
                         'Occupation'        => isset($data['job_status']) ? ucwords($data['job_status']) : '',
-                        'Role_Type'			=> $role_types[$data['profile']],
+                        'Role_Type'			=> isset($role_types[$data['profile']]) ? $role_types[$data['profile']] : 'Other',
                         'Reason_for_choosing_to_volunteer_at_MAD'   => isset($data['why_mad']) ? $data['why_mad'] : '',
                         'MAD_Applicant_Id'  => $user->id,  // 'Unique_Applicant_ID'    => $status['id'],
                     ]
@@ -449,6 +463,11 @@ final class User extends Common
 
             $this->item->$key = $data[$key];
         }
+        // :TODO: Special cases that should be handled.
+        //  - User moved to Alumnai / Let_go
+        //      - left_on date update
+        //      - delete future class.
+        //      - delete teacher allocations
         $this->item->save();
 
         return $this->item;
@@ -563,12 +582,35 @@ final class User extends Common
                     Log::add(['name' => 'user_login', 'user_id' => $user_id, 'data' => ['entry_point' => 'Phoenix', 'login_type' => $login_type]]);
                 }
 
-                return $this->fetch($user_id);
+                $user_data = $this->fetch($user_id);
+                $user_data->permissions = $this->permissions($user_id);
+
+                return $user_data;
             }
         } else {
             $this->errors[] = "Can't find any user with the given email/phone";
         }
         return false;
+    }
+
+    public function permissions($user_id = false)
+    {
+        $user_id = $this->chain($user_id);
+
+        $groups = app('db')->table("UserGroup")->where('user_id', $user_id)->where('year', $this->year)->select('group_id')->get()->pluck('group_id');
+
+        $parent_groups = app('db')->table("Group")->distinct('parent_group_id')
+            ->whereIn('id', $groups)->where('status', '1')->where('parent_group_id', '!=', '0')->get()->pluck('parent_group_id');
+        $groups = $groups->merge($parent_groups);
+
+        if (!$groups->count()) { // If he has no group, he is volunteer group.
+            $groups = collect([9]); //:HARD-CODE: 9 is the teacher group.
+        }
+
+        $permissions = app('db')->table("Permission")->join("GroupPermission", 'GroupPermission.permission_id', '=', 'Permission.id')
+            ->distinct('Permission.name')->select('Permission.name')->whereIn("GroupPermission.group_id", $groups)->get()->pluck('name');
+
+        return $permissions;
     }
 
     /// Changes the phone number format from +91976063565 to 9746063565. Remove the 91 at the starting.

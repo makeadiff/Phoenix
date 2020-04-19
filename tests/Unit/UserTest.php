@@ -13,10 +13,15 @@ class UserTest extends TestCase
 {
     use WithoutMiddleware;
     // :TODO: Rewrite these using SQL that live pulls the data instead of hard coding. These will break when year changes(mostly.)
+    
+    protected $only_priority_tests = true;
+    protected $write_to_db = false;
 
     public function testUserSearchId()
     {
-        // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $model = new User;
         $data = $model->search(['id' => 1]);
@@ -28,7 +33,9 @@ class UserTest extends TestCase
 
     public function testUserSearchByIdentifier()
     {
-        // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $model = new User;
         $data = $model->search(['identifier' => 'binnyva@gmail.com']);
@@ -40,7 +47,9 @@ class UserTest extends TestCase
 
     public function testUserSearchByVertical()
     {
-        // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $model = new User;
         $data = $model->search(['vertical_id' => 1]);
@@ -52,7 +61,9 @@ class UserTest extends TestCase
 
     public function testUserSearchByCenterId()
     {
-        // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $model = new User;
         $data = $model->search(['center_id' => 220]);
@@ -64,7 +75,9 @@ class UserTest extends TestCase
 
     public function testUserSearchByGroupType()
     {
-        // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $model = new User;
         $data = $model->search(['user_group_type' => 'national']);
