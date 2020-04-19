@@ -9,7 +9,7 @@ use Tests\TestCase;
 class DonationTest extends TestCase
 {
     private $user_id = 1;
-    protected $only_priority_tests = true;
+    // protected $only_priority_tests = true;
 
     /// Path: GET    /donations
     public function testGetDonationsList()
