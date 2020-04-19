@@ -80,7 +80,7 @@ class BatchController extends Controller
             return JSend::fail("Can't find any batch with the given ID");
         }
 
-        if(!$user_ids) {
+        if (!$user_ids) {
             $user_ids_raw = $request->input('mentor_user_ids');
             if (!is_array($user_ids_raw)) {
                 $user_ids = explode(",", $user_ids_raw);
@@ -172,9 +172,11 @@ class BatchController extends Controller
         if (!$subject_id) {
             $subject_id = $request->input('subject_id');
         }
-        if(!$subject_id) $subject_id = 0;
+        if (!$subject_id) {
+            $subject_id = 0;
+        }
 
-        if(!$user_ids) {
+        if (!$user_ids) {
             $user_ids_raw = $request->input('user_ids');
             if (!is_array($user_ids_raw)) {
                 $user_ids = explode(",", $user_ids_raw);

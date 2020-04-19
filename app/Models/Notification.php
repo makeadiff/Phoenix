@@ -3,7 +3,7 @@ namespace App\Models;
 
 use App\Models\Common;
 
-// :TODO: I'm not sure this is in use anymore. Might have to depricate and delete the table. 
+// :TODO: I'm not sure this is in use anymore. Might have to depricate and delete the table.
 final class Notification extends Common
 {
     const CREATED_AT = 'created_on';

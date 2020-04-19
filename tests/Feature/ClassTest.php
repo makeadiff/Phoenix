@@ -11,7 +11,7 @@ class ClassTest extends TestCase
     // protected $only_priority_tests = true;
     // protected $write_to_db = true;
 
-    // classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, 
+    // classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int,
     //	    class_date: Date, direction: String, from_date: Date, limit: String): [Class]
     public function testGraphQLClassSearch()
     {
@@ -29,8 +29,8 @@ class ClassTest extends TestCase
             ->get()->pluck('id')->toArray();
         $found = 0;
 
-        foreach($this->response_data->data->classSearch as $class) {
-            if(in_array($class->id, $class_ids)) {
+        foreach ($this->response_data->data->classSearch as $class) {
+            if (in_array($class->id, $class_ids)) {
                 $found ++;
             }
         }
@@ -52,8 +52,8 @@ class ClassTest extends TestCase
             ->get()->pluck('id')->toArray();
         $found = 0;
 
-        foreach($this->response_data->data->teacherClassConnection as $class) {
-            if(in_array($class->class_id, $class_ids)) {
+        foreach ($this->response_data->data->teacherClassConnection as $class) {
+            if (in_array($class->class_id, $class_ids)) {
                 $found ++;
             }
         }
@@ -76,8 +76,8 @@ class ClassTest extends TestCase
             ->get()->pluck('batch_id')->toArray());
         $found = 0;
 
-        foreach($this->response_data->data->mentorClassConnection as $batch) {
-            if(in_array($batch->batch_id, $batch_ids)) {
+        foreach ($this->response_data->data->mentorClassConnection as $batch) {
+            if (in_array($batch->batch_id, $batch_ids)) {
                 $found ++;
             }
         }

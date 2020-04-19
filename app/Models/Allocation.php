@@ -48,9 +48,8 @@ class Allocation extends Common
         $existing_allocation = $this->getAllocation($batch_id, $level_id, $user_id, $role);
 
         if (isset($existing_allocation->id)) {
-            if($existing_allocation->subject_id == $subject_id) { // Exact same row already exist in db.
+            if ($existing_allocation->subject_id == $subject_id) { // Exact same row already exist in db.
                 return false;
-
             } else { // Found teacher/batch/level link - but for differnt subject. Updating.
                 $alloc = $this->find($existing_allocation->id);
                 $alloc->subject_id = $subject_id;

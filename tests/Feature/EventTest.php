@@ -14,7 +14,9 @@ class EventTest extends TestCase
     /// Path: GET    /events
     public function testGetEventsList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/events?name=Test');
 
@@ -34,7 +36,9 @@ class EventTest extends TestCase
     /// Path: GET    /events/{event_id}
     public function testGetEventsSingle()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/events/2069');
 
@@ -46,7 +50,9 @@ class EventTest extends TestCase
     /// Path: GET    /events/{event_id}/users
     public function testGetEventsUsersList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/events/2330/users');
 
@@ -66,7 +72,9 @@ class EventTest extends TestCase
     /// Path: GET    /events/{event_id}/users
     public function testGetEventUsersAbsentList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/events/2328/users?present=0');
 
@@ -86,7 +94,9 @@ class EventTest extends TestCase
     /// Path: GET    /events/{event_id}/users
     public function testGetEventsUsersPresentList()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/events/2328/users?present=1');
 
@@ -106,7 +116,9 @@ class EventTest extends TestCase
     /// Path: GET    /events/{event_id}/users/{user_id}
     public function testGetEventUsersSingle()
     {
-        if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->load('/events/2330/users/70351');
 

@@ -37,45 +37,55 @@ abstract class TestCase extends BaseTestCase
         $this->response_data = null;
 
         $full_url = $this->baseUrl . $this->url_prefix . $url;
-        if(!$this->client) $this->client = new \GuzzleHttp\Client();
+        if (!$this->client) {
+            $this->client = new \GuzzleHttp\Client();
+        }
         try {
             $this->response = $this->client->request($method, $full_url, [
                 'auth'          => array_values($this->auth),
                 'form_params'   => $form_data
             ]);
             $contents = $this->response->getBody()->getContents();
-            if($contents) $this->response_data = json_decode($contents);
-
+            if ($contents) {
+                $this->response_data = json_decode($contents);
+            }
         } catch (\GuzzleHttp\Exception\BadResponseException $exception) {
             // If we get a 404, it makes the response null. This fixes it.
             $this->response = $exception->getResponse();
             $contents = $this->response->getBody()->getContents();
-            if($contents) $this->response_data = json_decode($contents);
+            if ($contents) {
+                $this->response_data = json_decode($contents);
+            }
         }
 
         return $this->response;
     }
 
-    public function graphql($query) 
+    public function graphql($query)
     {
         // Initilization
         $this->response = null;
         $this->response_data = null;
 
         $full_url = $this->baseUrl . "/graphql";
-        if(!$this->client) $this->client = new \GuzzleHttp\Client();
+        if (!$this->client) {
+            $this->client = new \GuzzleHttp\Client();
+        }
         try {
             $this->response = $this->client->request("post", $full_url, [
                 'form_params'   => ['query' => $query]
             ]);
             $contents = $this->response->getBody()->getContents();
-            if($contents) $this->response_data = json_decode($contents);
-
+            if ($contents) {
+                $this->response_data = json_decode($contents);
+            }
         } catch (\GuzzleHttp\Exception\BadResponseException $exception) {
             // If we get a 404, it makes the response null. This fixes it.
             $this->response = $exception->getResponse();
             $contents = $this->response->getBody()->getContents();
-            if($contents) $this->response_data = json_decode($contents);
+            if ($contents) {
+                $this->response_data = json_decode($contents);
+            }
         }
 
         return $this->response;

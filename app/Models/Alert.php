@@ -13,21 +13,22 @@ use App\Models\Common;
  *		Low Priority Events
  *			Events
  *		Custom Alerts Pushed from Directors / Strats / Fellows
- *			Launchs, Surveys, 
- *			Backend needs to be built for this - so not going to be done 
+ *			Launchs, Surveys,
+ *			Backend needs to be built for this - so not going to be done
  */
 class Alert extends Common
 {
-    public function generate($user_id) {
+    public function generate($user_id)
+    {
         $alerts = [];
         $user_model = new User;
         $user = $user_model->find($user_id);
 
         // Compliance checks
-        // Check for CPP signing... 
+        // Check for CPP signing...
         $cpp_signed = app('db')->table("UserData")->where('name', 'child_protection_policy_signed')->where('user_id', $user_id)->get();
 
-        if(!count($cpp_signed)) {
+        if (!count($cpp_signed)) {
             $alerts[] = [
                 'name'          => "CPP Not Signed",
                 'description'   => "You have not agreed to the Child Protection Policy yet. Please sign the policy to continue in the organization",
@@ -48,7 +49,7 @@ class Alert extends Common
             ->orderBy('class_on', 'DESC')->groupBy('class_on')
             ->limit(5) // Don't want a lot of results. So.
             ->get(); // Distinct don't works as expected, so using groupby to get the same result.
-        foreach($teacher_data_not_entered as $cls) {
+        foreach ($teacher_data_not_entered as $cls) {
             $alerts[] = [
                 'name'          => 'Teacher Data for ' . date('d M', strtotime($cls->class_on)) . ' not entered',
                 'description'   => "You have not marked the Teacher Attendance for class on " . date('d M, h:i A', strtotime($cls->class_on)),
@@ -61,14 +62,16 @@ class Alert extends Common
         // Teacher hasn't filled student attendance.
         $all_classes = $user->classes()->get(); // All classes this user has taken
         $student_data_not_entered = [];
-        foreach($all_classes as $cls) {
+        foreach ($all_classes as $cls) {
             $student_class = app('db')->table('StudentClass')->where('class_id', $cls->id)->get();
-            if(!count($student_class)) {
+            if (!count($student_class)) {
                 $student_data_not_entered[] = $cls;
             }
-            if(count($student_data_not_entered) >= 5) break; // Result limiting.
+            if (count($student_data_not_entered) >= 5) {
+                break;
+            } // Result limiting.
         }
-        foreach($student_data_not_entered as $cls) {
+        foreach ($student_data_not_entered as $cls) {
             $alerts[] = [
                 'name'          => 'Student Data for ' . date('d M', strtotime($cls->class_on)) . ' not entered',
                 'description'   => "You have not marked the Student Attendance for class on " . date('d M, h:i A', strtotime($cls->class_on)),
@@ -85,7 +88,7 @@ class Alert extends Common
             ->orderBy('Event.starts_on', 'DESC')
             ->limit(5) // Don't want a lot of results. So.
             ->get();
-        foreach($events_user_has_been_invited_for as $event) {
+        foreach ($events_user_has_been_invited_for as $event) {
             $alerts[] = [
                 'name'          => 'You are invited to ' . $event->name . ' on ' . date('d M', strtotime($event->strats_on)),
                 'description'   => 'You have been invited to an event not ' . $event->name . ' : ' . $event->description,
@@ -97,5 +100,4 @@ class Alert extends Common
 
         return $alerts;
     }
-
 }

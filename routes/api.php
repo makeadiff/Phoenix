@@ -667,8 +667,8 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     Route::delete('/users/{user_id}/devices/{token}', function ($user_id, $token) {
         $device_model = new Device;
         $device = $device_model->search(['user_id' => $user_id, 'token' => $token]);
-        if(count($device)) {
-            foreach($device as $d) {
+        if (count($device)) {
+            foreach ($device as $d) {
                 $device_model->remove($d->id);
             }
             return "";
@@ -938,7 +938,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     // Route::post('/events/{event_id}','EventController@edit');
 
     Route::get('/events', function (Request $request) {
-        $search_fields = ['id', 'name', 'description', 'starts_on', 'date', 'from_date', 'to_date', 'place', 
+        $search_fields = ['id', 'name', 'description', 'starts_on', 'date', 'from_date', 'to_date', 'place',
                         'city_id', 'event_type_id', 'created_by_user_id', 'status', 'invited_user_id'];
         $search = [];
         foreach ($search_fields as $key) {

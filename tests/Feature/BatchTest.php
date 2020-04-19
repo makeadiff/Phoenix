@@ -244,7 +244,7 @@ class BatchTest extends TestCase
         $found_teacher_count = 0;
         $teachers = app('db')->table('UserBatch')->select('user_id', 'subject_id')->where('level_id', $level_id)->where('batch_id', $batch_id)->get();
         foreach ($teachers as $teach) {
-            if($teach->subject_id == $subject_id) {
+            if ($teach->subject_id == $subject_id) {
                 $found_teacher_count++;
             }
         }
@@ -329,8 +329,8 @@ class BatchTest extends TestCase
             ->get()->pluck('id')->toArray();
         $found = 0;
 
-        foreach($this->response_data->data->batchSearch as $batches) {
-            if(in_array($batches->id, $db_batch_ids)) {
+        foreach ($this->response_data->data->batchSearch as $batches) {
+            if (in_array($batches->id, $db_batch_ids)) {
                 $found ++;
             }
         }
