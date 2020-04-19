@@ -7,6 +7,7 @@ function init() {
 	$("#show-step-2").click(showStepTwo);
 	$("#search-array").click(function() { codeInsert('search-array'); });
 	$("#single-item").click(function() { codeInsert('single-item'); });
+	$("#db-search").click(function() { codeInsert('db-search'); });
 }
 
 function codeInsert(type) {
@@ -24,6 +25,8 @@ function codeInsert(type) {
         $this->assertTrue($found);`;
 	} else if(type == 'single-item') {
 		code = `$this->assertEquals($data->data->INSERT_OBJECT_NAME->INSERT_KEY, 'INSERT_VALUE_FOR_SEARCH');`;
+	} else if(type == 'db-search') {
+		// code = `$db_data = app('db')->table('TABLE')->select('id')->where('name', ($data->data->INSERT_OBJECT_NAME)->get();`
 	}
 
 	if(data_object_name) code = code.replace('INSERT_OBJECT_NAME', data_object_name);
@@ -70,7 +73,7 @@ function getApiData() {
 		beforeSend: function (xhr) {
 		    xhr.setRequestHeader ("Authorization", "Basic " + btoa("sulu.simulation@makeadiff.in:pass"));
 		},
-	}).done(function(data) {
+	}).then(function(data) {
 		var all_keys = Object.keys(data['data']);
 		data_object_name = all_keys[0];
 
@@ -85,7 +88,7 @@ function getApiData() {
 		console.log(data_object_default_check_attribute_name, data_object_default_check_attribute_value);
 
 		$("#json").val(JSON.stringify(data, null, 4));
-	}).error(function(data) {
+	}).catch(function(data) {
 		try {
 			var response = JSON.parse(data.responseText);
 			$("#json").val(JSON.stringify(response, null, 4));

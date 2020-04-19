@@ -7,8 +7,10 @@ use App\Models\Center;
 final class Batch extends Common
 {
     protected $table = 'Batch';
-    public $timestamps = false;
-    protected $fillable = ['day','class_time','batch_head_id','center_id','project_id','status','year'];
+    public $timestamps = true;
+    const CREATED_AT = 'added_on';
+    const UPDATED_AT = 'updated_on';
+    protected $fillable = ['day','class_time','center_id','project_id','status','year', 'batch_head_id'];
 
     public function center()
     {
@@ -20,7 +22,11 @@ final class Batch extends Common
     }
     public function teachers()
     {
-        return $this->belongsToMany("App\Models\User", 'UserBatch');
+        return $this->belongsToMany("App\Models\User", 'UserBatch')->where('UserBatch.role', 'teacher');
+    }
+    public function mentors()
+    {
+        return $this->belongsToMany("App\Models\User", "UserBatch")->where("UserBatch.level_id", 0)->where('UserBatch.role', 'mentor');
     }
 
     public function classes()
@@ -115,6 +121,10 @@ final class Batch extends Common
         } else {
             $this->item = $this->find($id);
         }
+        if (!$this->item) {
+            return false;
+        }
+
         $this->item->name = $this->getName($this->item->day, $this->item->class_time);
         $this->item->center = $this->item->center()->first()->name;
         $this->item->vertical_id = $this->getVerticalIdFromProjectId($this->item->project_id);
@@ -128,47 +138,23 @@ final class Batch extends Common
 
     public function add($data)
     {
-        $batch = Batch::create([
+        $batch_data = [
             'day'       => $data['day'],
             'class_time'=> $data['class_time'],
             'center_id' => $data['center_id'],
             'project_id'=> $data['project_id'],
-            'batch_head_id' => isset($data['batch_head_id']) ? $data['batch_head_id'] : '0',
             'year'      => isset($data['year']) ? $data['year'] : $this->year,
-            'status'    => isset($data['status']) ? $data['status'] : '1'
-        ]);
+            'status'    => isset($data['status']) ? $data['status'] : '1',
+            'batch_head_id' => '0'
+        ];
+        $batch = Batch::create($batch_data); // Should be working - but doesn't - getting a "array_key_exists(): The first argument should be either a string or an integer" error
+        $batch_id = $batch->id;
+
+        if (!empty($data['batch_head_id'])) {
+            $this->assignMentor($batch_id, $data['batch_head_id']);
+        }
 
         return $batch;
-    }
-
-    public function assignTeacher($batch_id, $level_id, $teacher_id)
-    {
-        // See if this teacher is in the batch already.
-        $user_batch_connection = app('db')->table('UserBatch')->select('id')
-            ->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->get();
-        if(count($user_batch_connection)) return false;
-
-        // Add this assignment. :TODO: Create a UserBatch Model, maybe?
-        $row_id = app('db')->table('UserBatch')->insertGetId([
-            'user_id'   => $teacher_id,
-            'batch_id'  => $batch_id,
-            'level_id'  => $level_id
-        ]);
-
-        return $row_id;
-    }
-
-    public function unassignTeacher($batch_id, $level_id, $teacher_id)
-    {
-        // See if this teacher is in the batch already.
-        $user_batch_connection = app('db')->table('UserBatch')->select('id')
-            ->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->get();
-        if(!count($user_batch_connection)) return false;
-
-        // Delete the assignment.
-        app('db')->table('UserBatch')->where('batch_id', $batch_id)->where('level_id', $level_id)->where('user_id', $teacher_id)->delete();
-
-        return true;
     }
 
     public function getName($day, $time)

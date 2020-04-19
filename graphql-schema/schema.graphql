@@ -20,25 +20,38 @@ type Query {
     survey(id: ID @eq):		Survey 		@find(model: "App\\Models\\Survey")
     survey_template(id: ID @eq):	Survey_Template @find(model: "App\\Models\\Survey_Template")
 
-    eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php - This is just a sample 
-    batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, , class_status: String, direction: String, from_date: Date, limit: String): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
-    classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, class_date: Date, direction: String, from_date: Date, limit: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php [ClassSearchResult]
-    userSearch(city_id: Int!, name: String, phone: String, email: String, mad_email: String, any_email: String, identifier: String, left_on: Date,
-    	vertical_id: Int, status: String, user_type: String, not_user_type: String, center_id: Int, group_id: Int, group_type: String, batch_id: Int, level_id: Int): [User]
+    donations(added_on: Date = "2019-05-01" @where(operator: ">="), amount: Int, status: String, 
+		type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): 
+		[Donation] @all(model: "App\\Models\\Donation")
+    events(name: String @eq, starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, 
+		event_type_id: Int @eq, vertical_id: Int @eq, status: String = "1" @eq): [Event!]! @all
+    users(name: String @where(operator: "like"), email: String @eq, mad_email: String @eq, 
+		phone: String @eq, city_id: Int @eq, status: String = "1" @eq, user_type: String = "volunteer" @eq): 
+		[User] @all # @paginate(type: "paginator" model: "App\\Models\\User")
+    centers(city_id: Int @eq, status: String = "1" @eq ): [Center!]! @all
+    cities(type: String = "actual" @eq): [City!]! @all
+    groups(group_type: String = "normal" @eq, status: String = "1" @eq, type: String @eq, 
+		vertical_id: Int @eq): [Group!]! @all
+    verticals(status: String = "1" @eq): [Vertical!]! @all
+    projects(status: String = "1" @eq): [Project!]! @all
 
-    # :TODO: Make this teacherClassConneciton and mentorClassConnection. No point having both in one.
+	# Custom Resolvers... 
+    eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php - This is just a sample 
+    batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, 
+		class_status: String, direction: String, from_date: Date, limit: String): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
+    classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, 
+		class_date: Date, direction: String, from_date: Date, limit: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php [ClassSearchResult]
+    userSearch(city_id: Int!, name: String, phone: String, email: String, mad_email: String, 
+		any_email: String, identifier: String, left_on: Date, vertical_id: Int, status: String, 
+		user_type: String, not_user_type: String, center_id: Int, group_id: Int, group_type: String, 
+		batch_id: Int, level_id: Int): [User]
+	sendOtp(email: String, phone: String): User
+	verifyOtp(id: ID, email: String, phone: String, otp: String): Int
+
     # classConnection(teacher_id: Int, mentor_id: Int): [ClassConnection] #Custom return  + resolver. Used for finding unfilled data in UPMA. Both teacher and student.
     teacherClassConnection(teacher_id: Int): [TeacherClassConnection]
     mentorClassConnection(mentor_id: Int): [MentorClassConnection]
     
-    donations(added_on: Date = "2019-05-01" @where(operator: ">="), amount: Int, status: String, type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): [Donation] @all(model: "App\\Models\\Donation")
-    events(name: String @eq, starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, event_type_id: Int @eq, vertical_id: Int @eq, status: String = "1" @eq): [Event!]! @all
-    users(name: String @where(operator: "like"), email: String @eq, phone: String @eq, city_id: Int @eq, status: String = "1" @eq, user_type: String = "volunteer" @eq): [User] @paginate(type: "paginator" model: "App\\Models\\User")
-    centers(city_id: Int @eq, status: String = "1" @eq ): [Center!]! @all
-    cities(type: String = "actual" @eq): [City!]! @all
-    groups(group_type: String = "normal" @eq, status: String = "1" @eq, type: String @eq, vertical_id: Int @eq): [Group!]! @all
-    verticals(status: String = "1" @eq): [Vertical!]! @all
-    projects(status: String = "1" @eq): [Project!]! @all
 }
 
 type Mutation {
@@ -46,6 +59,9 @@ type Mutation {
 	saveTeacherAttendance(class_id: ID, teachers: [InputTeacherAttendance]): Int
 	saveStudentAttendance(class_id: ID, students: [InputStudentAttendance]): Int
 	saveSurveyResponses(responder_id: ID, survey_id: ID, added_by_user_id: ID, responses: [InputSurveyResponse]): Int
+	assignBatchTeachers(batch_id: ID!, level_id: ID!, subject_id: ID, teacher_ids: [ID]): String
+	assignBatchMentors(batch_id: ID!, mentor_ids: [ID]): String
+	assignLevelStudents(level_id: ID!, student_ids: [ID]): String
 }
 input InputTeacherAttendance {
 	user_id: Int!
@@ -89,6 +105,7 @@ type User {
 	classes: [Class] @hasMany(relation: "classes") # :TODO: - Ideally, this should take an argument - (status: String)
 	batches: [Batch] @hasMany
 	donations: [Donation] @hasMany
+	devices: [Device] @hasMany
 	pivot: UserPivot
 }
 
@@ -333,6 +350,14 @@ type Log {
 	user_id: Int
 }
 
+type Device {
+	id: ID!
+	name: String
+	token: String
+	status: String
+	user: User
+}
+
 type Data {
 	name: String!
 	data: String!
@@ -343,7 +368,7 @@ type Data {
 
 # Custom Returns 
 type MentorClassConnection {
-	id: ID!
+	batch_id: ID!
 	batch_name: String
 	day: String
 	class_time: String

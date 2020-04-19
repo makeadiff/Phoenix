@@ -29,11 +29,11 @@ class mentorClassConnection
             $conected_batches = [];
 
             foreach ($users_batch as $batch) {
-                $cls = $class_model->search(['batch_id' => $batch->id, 'class_date_to' => date('Y-m-d H:i:s')])->get()->last();
+                $cls = $class_model->search(['batch_id' => $batch->id, 'class_date_to' => date('Y-m-d H:i:s')])->last();
                 
                 if ($cls) {
                     $batch_info = [
-                        'id'            => $batch->id,
+                        'batch_id'      => $batch->id,
                         'day'           => $batch->day,
                         'batch_name'    => $batch->name,
                         'class_time'    => date('H:i:s', strtotime($cls->class_on)),

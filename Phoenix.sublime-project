@@ -2,26 +2,10 @@
 	"folders":
 	[
 		{
-			"path": "app"
-		},
-		{
-			"path": "api",
-			"folder_exclude_patterns": ["graphql"],
-		},
-		{
-			"path": "tests"
-		},
-		{
-			"path": "bootstrap"
-		},
-		{
-			"path": "routes"
-		},
-		{
-			"path": "graphql-schema"
-		},
-		{
-			"path": "config"
+			"path": ".",
+			"folder_exclude_patterns": [
+				"node_modules", ".svn", ".git", ".hg", "CVS", "vendor", "storage"
+			]
 		}
 	]
 }

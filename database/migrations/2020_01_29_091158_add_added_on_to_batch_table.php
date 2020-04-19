@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddAddedOnMarkTable extends Migration
+class AddAddedOnToBatchTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class AddAddedOnMarkTable extends Migration
      */
     public function up()
     {
-        Schema::table('Mark', function (Blueprint $table) {
+        Schema::table('Batch', function (Blueprint $table) {
             $table->datetime('added_on')->nullable();
+            $table->datetime('updated_on')->nullable();
         });
     }
 
@@ -25,8 +26,9 @@ class AddAddedOnMarkTable extends Migration
      */
     public function down()
     {
-        Schema::table('Mark', function (Blueprint $table) {
+        Schema::table('Batch', function (Blueprint $table) {
             $table->dropColumn('added_on');
+            $table->dropColumn('updated_on');
         });
     }
 }

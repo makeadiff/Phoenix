@@ -7,6 +7,7 @@ use App\Models\Center;
 use App\Models\Classes;
 use App\Models\Student;
 use App\Models\Batch;
+use App\Models\Allocation;
 use App\Models\Level;
 use App\Models\Donation;
 use App\Models\Deposit;
@@ -14,13 +15,11 @@ use App\Models\Event;
 use App\Models\Data;
 use App\Models\Notification;
 use App\Models\Contact;
+use App\Models\Alert;
+use App\Models\Device;
 
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
-
-// CORS handling. These have to be disabled if UnitTest have to be run. :TODO:
-header("Access-Control-Allow-Origin: *");
-header('Access-Control-Allow-Headers: Authorization,Content-Type,Origin,Accept');
 
 Route::get('/', function () {
     $result = [];
@@ -31,13 +30,7 @@ Route::get('/', function () {
     ]]);
 });
 
-// Route::get('/debug-sentry', function () {
-//     throw new Exception('My first Sentry error!');
-// });
-
-
 $url_prefix = 'v1';
-
 Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function () {
 
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
@@ -232,6 +225,10 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         if (!$batch) {
             return JSend::fail("Can't find any batch with ID $batch_id");
         }
+        $mentors = (new User)->search(['batch_id' => $batch_id, 'batch_role' => 'mentor']);
+        if ($mentors) {
+            $batch['mentors'] = $mentors;
+        }
 
         return JSend::success("Batch ID : $batch_id", ['batches' => $batch]);
     });
@@ -244,6 +241,16 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $teachers = (new User)->search(['batch_id' => $batch_id]);
 
         return JSend::success("Teachers in batch $batch_id", ['teachers' => $teachers]);
+    });
+    Route::get('/batches/{batch_id}/mentors', function ($batch_id) {
+        $batch = (new Batch)->fetch($batch_id, false);
+        if (!$batch) {
+            return JSend::fail("Can't find any batch with ID $batch_id");
+        }
+
+        $mentors = (new User)->search(['batch_id' => $batch_id, 'batch_role' => 'mentor']);
+
+        return JSend::success("Mentors in batch $batch_id", ['mentors' => $mentors]);
     });
     Route::get('/batches/{batch_id}/levels', function ($batch_id) {
         $batch = (new Batch)->fetch($batch_id, false);
@@ -267,23 +274,35 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return ""; // Deletes should return empty data with status 200
     });
 
-    Route::get("/batches/{batch_id}/levels/{level_id}/teachers", function($batch_id, $level_id) {
+    Route::get("/batches/{batch_id}/levels/{level_id}/teachers", function ($batch_id, $level_id) {
         $user_model = new User;
         $teachers = $user_model->search(['batch_id' => $batch_id, 'level_id' => $level_id]);
 
         return JSend::success("Teachers in level/batch", ['teachers' => $teachers]);
     });
 
-    Route::delete("/batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}", function($batch_id, $level_id, $teacher_id) {
-        $batch_model = new Batch;
-        $delete_status = $batch_model->unassignTeacher($batch_id, $level_id, $teacher_id);
+    Route::delete("/batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}", function ($batch_id, $level_id, $teacher_id) {
+        $allocation_model = new Allocation;
+        $delete_status = $allocation_model->deleteTeacherAssignment($batch_id, $level_id, $teacher_id);
 
-        if(!$delete_status) {
+        if (!$delete_status) {
             return JSend::fail("Error deleting the assignment");
         }
 
-        return "";
+        return ""; // JSend::success("Teacher removed from batch_id:".$batch_id." & level_id:".$level_id);
     });
+
+    Route::delete("/batches/{batch_id}/mentors/{mentor_user_id}", function ($batch_id, $mentor_id) {
+        $allocation_model = new Allocation;
+        $delete_status = $allocation_model->deleteMentorAssignment($batch_id, $mentor_id);
+
+        if (!$delete_status) {
+            return JSend::fail("Error deleting the assignment");
+        }
+
+        return ""; //JSend::success("Mentor (user_id: ".$mentor_id.") removed from batch_id:".$batch_id);
+    });
+
     ////////////////////////////////////////////////////////// Levels ///////////////////////////////////////////
     Route::get('/levels/{level_id}', function ($level_id) {
         $level = (new Level)->fetch($level_id); // There was a ',false' parameter here - that will return deleted levels too. Removed it - might cause issues later.
@@ -323,6 +342,23 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $level->remove($level_id);
 
         return ""; // Deletes should return empty data with status 200
+    });
+    Route::get("/levels/{level_id}/students", function ($level_id) {
+        $student_model = new Student;
+        $students = $student_model->search(['level_id' => $level_id]);
+
+        return JSend::success("Students in level", ['students' => $students]);
+    });
+
+    Route::delete("/levels/{level_id}/students/{student_id}", function ($level_id, $student_id) {
+        $level_model = new Level;
+        $delete_status = $level_model->unassignStudent($level_id, $student_id);
+
+        if (!$delete_status) {
+            return JSend::fail("Error deleting the assignment");
+        }
+
+        return "";
     });
 
     ///////////////////////////////////////////////// Classes /////////////////////////////////////
@@ -452,6 +488,10 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
             }
 
             return JSend::fail($error, [], 400);
+        } else {
+            // Get permissions for this user.
+            $this_user = $user->find($data['id']);
+            $data['permissions'] = $this_user->permissions();
         }
 
         return JSend::success("Welcome back, $data[name]", ['users' => $data]);
@@ -580,6 +620,63 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
         return "";
     });
+
+    Route::get('/users/{user_id}/alerts', function ($user_id) {
+        $user = new User;
+        $info = $user->fetch($user_id);
+
+        if (!$info) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        $alerts = (new Alert)->generate($user_id);
+        return JSend::success("Alerts for {$info->name}", ['alerts' => $alerts]);
+    });
+
+    /// Devices
+    Route::get('/users/{user_id}/devices', function ($user_id, Request $request) {
+        $search_fields = ['user_id', 'name', 'token', 'status'];
+        $search = [];
+        foreach ($search_fields as $key) {
+            if (!$request->input($key)) {
+                continue;
+            }
+            $search[$key] = $request->input($key);
+        }
+
+        $device_model = new Device;
+        $devices = $device_model->search($search);
+
+        return JSend::success("Devices", ['devices' => $devices]);
+    });
+
+    Route::post('/users/{user_id}/devices', function ($user_id, Request $request) {
+        $device_model = new Device;
+        $device = $device_model->addOrActivate(array_merge($request->all(), ['user_id' => $user_id]));
+
+        return JSend::success("Device created", ['device' => $device]);
+    });
+
+    Route::post('/users/{user_id}/devices/{token}', function ($user_id, $token) {
+        $device_model = new Device;
+        $device = $device_model->addOrActivate(['user_id' => $user_id, 'token' => $token]);
+
+        return JSend::success("Device created", ['device' => $device]);
+    });
+
+    Route::delete('/users/{user_id}/devices/{token}', function ($user_id, $token) {
+        $device_model = new Device;
+        $device = $device_model->search(['user_id' => $user_id, 'token' => $token]);
+        if (count($device)) {
+            foreach ($device as $d) {
+                $device_model->remove($d->id);
+            }
+            return "";
+        }
+
+        return JSend::fail("Can't find device of user $user_id with given token");
+    });
+    
 
     //////////////////////////////////////////////////////// Contacts /////////////////////////////////
     Route::post('/applicants', function (Request $request) {
@@ -841,7 +938,8 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     // Route::post('/events/{event_id}','EventController@edit');
 
     Route::get('/events', function (Request $request) {
-        $search_fields = ['id', 'name', 'description', 'starts_on', 'place', 'city_id', 'event_type_id', 'created_by_user_id', 'status'];
+        $search_fields = ['id', 'name', 'description', 'starts_on', 'date', 'from_date', 'to_date', 'place',
+                        'city_id', 'event_type_id', 'created_by_user_id', 'status', 'invited_user_id'];
         $search = [];
         foreach ($search_fields as $key) {
             if (!$request->input($key)) {
@@ -963,7 +1061,8 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return "";
     });
 
-    ////////////////////////////////// Notifications //////////////////////////////
+    // Notifications
+    // :TODO: This might be depricated soon. We are moving to the 'Device' Model.
     Route::post('/notifications', function (Request $request) {
         $notification_model = new Notification;
         $notification = $notification_model->add($request->all());
@@ -989,17 +1088,6 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
 
     ////////////////////////////////// Placeholders ///////////////////////////////
-    Route::post('/custom/video_analytics', function (Request $request) {
-        // $file = $request->file("image");
-        // $status = $file->store('uploads');
-  
-        $data = $request->all();
-
-        $status = $data['image']->store('uploads');
-        dd($data['image'], $status);
-
-        return JSend::success("Data catured");
-    });
     Route::get('/custom/care_collective_count', function (Request $request) {
         $contact = new Contact;
         return JSend::success("Care Collective Count", ['count' => $contact->getCount()]);
@@ -1031,28 +1119,25 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     //     dump($es_trained);
     // });
 
-    require base_path('routes/api-surveys.php');
+    require_once base_path('routes/api-surveys.php');
 });
 
-Route::post("/users", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'UserController@add', 'prefix' => $url_prefix]);
-Route::post("/users/{user_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'UserController@edit', 'prefix' => $url_prefix]);
-Route::post("/students", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'StudentController@add', 'prefix' => $url_prefix]);
-Route::post("/students/{student_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'StudentController@edit', 'prefix' => $url_prefix]);
-Route::post("/events", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@add', 'prefix' => $url_prefix]);
-Route::post("/events/{event_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'EventController@edit', 'prefix' => $url_prefix]);
-Route::post("/batches", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@add', 'prefix' => $url_prefix]);
-Route::post("/batches/{batch_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@edit', 'prefix' => $url_prefix]);
-Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix]);
-Route::post("/levels", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'LevelController@add', 'prefix' => $url_prefix]);
-Route::post("/levels/{level_id}", ['middleware' => ['auth.basic', 'json.output'], 'uses' => 'LevelController@edit', 'prefix' => $url_prefix]);
+Route::post("/users", ['uses' => 'UserController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/users/{user_id}", ['uses' => 'UserController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/students", ['uses' => 'StudentController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/students/{student_id}", ['uses' => 'StudentController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/events", ['uses' => 'EventController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/events/{event_id}", ['uses' => 'EventController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/batches", ['uses' => 'BatchController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/batches/{batch_id}", ['uses' => 'BatchController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/batches/{batch_id}/mentors", ['uses' => 'BatchController@assignMentors', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/levels", ['uses' => 'LevelController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/levels/{level_id}", ['uses' => 'LevelController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/levels/{level_id}/students", ['uses' => 'LevelController@assignStudents', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
 
-Route::post("/survey_templates", ['middleware' => ['auth.basic', 'json.output'], 
-    'uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix]);
-Route::post("/survey_templates/{survey_template_id}/questions", ['middleware' => ['auth.basic', 'json.output'], 
-    'uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix]);
-Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['middleware' => ['auth.basic', 'json.output'], 
-    'uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix]);
-Route::post("/surveys/{survey_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 
-    'uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix]);
-Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['middleware' => ['auth.basic', 'json.output'], 
-    'uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix]);
+Route::post("/survey_templates", ['uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/survey_templates/{survey_template_id}/questions", ['uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/surveys/{survey_id}/responses", ['uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);

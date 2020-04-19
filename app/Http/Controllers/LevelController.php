@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Level;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use JSend;
 
@@ -57,5 +58,54 @@ class LevelController extends Controller
         $result = $level->find($level_id)->edit($request->all());
 
         return JSend::success("Edited the class section", array('level' => $result));
+    }
+
+
+    public function assignStudents(Request $request, $level_id = false)
+    {
+        $level_model = new Level;
+        $level = false;
+        if (!$level_id) {
+            $level_id = $request->input('level_id');
+        }
+        if ($level_id) {
+            $level = $level_model->fetch($level_id);
+        }
+
+        if (!$level) {
+            return response(JSend::fail("Can't find any class section with the given ID"), 404);
+        }
+
+        $student_ids_raw = $request->input('student_ids');
+        if (!is_array($student_ids_raw)) {
+            $student_ids = explode(",", $student_ids_raw);
+        } else {
+            $student_ids = $student_ids_raw;
+        }
+ 
+        // Validation - make sure all students exists
+        $student_not_found = [];
+        $student_model = new Student;
+        foreach ($student_ids as $student_id) {
+            $student = $student_model->fetch($student_id);
+            if (!$student) {
+                array_push($student_not_found, $student_id);
+            }
+        }
+        // Validation :TODO:...
+        // Are given students part of the same city as the level
+
+        if (count($student_not_found)) {
+            return response(JSEND::fail("Can't find students with these IDs: " . implode(",", $student_not_found)));
+        }
+
+        $insert_count = 0;
+        foreach ($student_ids as $student_id) {
+            if ($level_model->assignStudent($level_id, $student_id)) {
+                $insert_count++;
+            }
+        }
+
+        return JSend::success("Added $insert_count student(s) to class section " . $level->name, array('level' => $level));
     }
 }
