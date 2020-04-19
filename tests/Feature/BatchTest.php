@@ -13,7 +13,7 @@ class BatchTest extends TestCase
 {
     use WithoutMiddleware;
 
-    // protected $only_priority_tests = true;
+    protected $only_priority_tests = true;
     // protected $write_to_db = false;
 
     /// Path: GET    /batches/{batch_id}
@@ -312,5 +312,28 @@ class BatchTest extends TestCase
         $teachers = app('db')->table('UserBatch')->select('user_id')
             ->where('user_id', $teacher_id)->where('batch_id', $batch_id)->where('level_id', $level_id)->get();
         $this->assertEquals(0, count($teachers)); // That teacher shouldn't be found
+    }
+
+    // batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, class_status: String, direction: String, from_date: Date, limit: String): [Batch]
+    public function testGraphQLBatchSearch()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $this->graphql('{ batchSearch(teacher_id: 1, level_id: 7794, center_id: 184, project_id: 1) { id batch_name day }}');
+
+        $db_batch_ids = app('db')->table('UserBatch AS UB')->join("Batch AS B", "UB.batch_id", "=", "B.id")
+            ->select('B.id', 'B.day')->where('UB.user_id', 1)->where('B.year', $this->year)
+            ->where("B.center_id", 184)->where("B.project_id", 1)->where("UB.level_id", 7794)
+            ->get()->pluck('id')->toArray();
+        $found = 0;
+
+        foreach($this->response_data->data->batchSearch as $batches) {
+            if(in_array($batches->id, $db_batch_ids)) {
+                $found ++;
+            }
+        }
+        $this->assertEquals($found, count($db_batch_ids));
     }
 }

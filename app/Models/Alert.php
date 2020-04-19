@@ -25,9 +25,9 @@ class Alert extends Common
 
         // Compliance checks
         // Check for CPP signing... 
-        $cpp_signed = $this->cppSigned($user_id);
+        $cpp_signed = app('db')->table("UserData")->where('name', 'child_protection_policy_signed')->where('user_id', $user_id)->get();
 
-        if(!$cpp_signed) {
+        if(!count($cpp_signed)) {
             $alerts[] = [
                 'name'          => "CPP Not Signed",
                 'description'   => "You have not agreed to the Child Protection Policy yet. Please sign the policy to continue in the organization",
@@ -98,9 +98,4 @@ class Alert extends Common
         return $alerts;
     }
 
-    public function cppSigned($user_id) {
-        $signed = app('db')->table("UserData")->where('name', 'child_protection_policy_signed')->where('user_id', $user_id)->get();
-        
-        return $signed;
-    }
 }
