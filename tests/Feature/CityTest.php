@@ -8,7 +8,7 @@ use Tests\TestCase;
  */
 class CityTest extends TestCase
 {
-    protected $only_priority_tests = false;
+    // protected $only_priority_tests = false;
     // protected $write_to_db = true;
 
     /// Path: GET /cities/{city_id}
