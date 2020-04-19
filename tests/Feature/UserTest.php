@@ -25,6 +25,15 @@ class UserTest extends TestCase
         $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
+    /// GraphQL user(id:1)
+    public function testGraphQLUserSingle() {
+        if ($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+
+        $this->graphql("{user(id:1) { id name }}");
+        $this->assertEquals($this->response_data->data->user->name, 'Binny V A');
+        $this->assertEquals($this->response->getStatusCode(), 200);
+    }
+
     /// Path: GET    /users/{user_id}   404
     public function testGetUserSingleNotFound()
     {
@@ -61,6 +70,31 @@ class UserTest extends TestCase
 
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");
+        $this->assertEquals($this->response->getStatusCode(), 200);
+
+        // :TODO:
+        // group_id
+        // group_in
+        // center_id
+    }
+
+    /// GraphQL: users(name:"Binny")
+    public function testGraphQLUsers()
+    {
+        // if ($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+
+        $this->graphql('{users(name:"Binny%") { id name }}');
+        $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");
+        $this->assertEquals($this->response->getStatusCode(), 200);
+
+        $this->graphql('{users(phone:"9746068565") { id name }}');
+
+        $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");
+        $this->assertEquals($this->response->getStatusCode(), 200);
+
+        $this->graphql('{userSearch(email:"binnyva@gmail.com", mad_email:"cto@makeadiff.in", city_id:26, user_type:"volunteer") { id name }}');
+
+        $this->assertEquals($this->response_data->data->userSearch[0]->name, "Binny V A");
         $this->assertEquals($this->response->getStatusCode(), 200);
 
         // :TODO:
@@ -206,6 +240,26 @@ class UserTest extends TestCase
         $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
+    /// GraphQL: user(id: 1) { groups { id name }}
+    public function testGraphQLUserGroupList()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $this->graphql('{ user(id: 1) { groups { id name }} }');
+
+        $search_for = 'ES Volunteer';
+        $found = false;
+        foreach ($this->response_data->data->user->groups as $key => $info) {
+            if ($info->name == $search_for) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+    }
+
     /// Path: GET   /users/{user_id}/credit
     public function testGetUsersCreditSingle()
     {
@@ -243,11 +297,34 @@ class UserTest extends TestCase
         $this->assertEquals($found, count($tokens));
     }
 
+    /// GraphQL: { user(id: 1) { devices { token }}}
+    public function testGraphQLUsersDevices()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $this->graphql('{ user(id: 1) { devices { token }} }');
+
+        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status',1)->get()->pluck('token')->toArray();
+        $found = 0;
+
+        foreach($this->response_data->data->user->devices as $device) {
+            if(in_array($device->token, $tokens)) {
+                $found ++;
+            }
+        }
+        $this->assertEquals($found, count($tokens));
+    }
+
     /// Path: POST   /users/{user_id}/devices/{token}
     public function testPostUsersDevices()
     {
         if ($this->only_priority_tests) {
             $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
         $this->load('/users/1/devices/test-token-that-should-be-deleted', 'POST');
@@ -277,11 +354,37 @@ class UserTest extends TestCase
         if ($this->only_priority_tests) {
             $this->markTestSkipped("Running only priority tests.");
         }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
 
         $this->load('/users/1/devices/test-token-that-should-be-deleted', 'DELETE');
         $this->assertEquals($this->response->getStatusCode(), 200);
 
         $deleted_device = app('db')->table('Device')->select('status')->where('id', $device_id)->first();
         $this->assertEquals($deleted_device->status, '0');
+    }
+
+    public function testGetUserAlerts()
+    {
+        if ($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
+
+        // Delete Binny's CPP Signing to test this... 
+        $user_id = 1;
+        app('db')->table("UserData")->where('name', 'child_protection_policy_signed')->where('user_id', $user_id)->delete();
+
+        $this->load("/users/$user_id/alerts", 'GET');
+        $this->assertEquals($this->response->getStatusCode(), 200);
+        $search_for = "CPP Not Signed";
+        $found = false;
+        foreach($this->response_data->data->alerts as $alert) {
+            if($alert->name == $search_for) $found = true;
+        }
+        $this->assertTrue($found);
+
+        // :TODO: Test Student data not entered, Teacher data not entered.
     }
 }

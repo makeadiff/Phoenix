@@ -21,13 +21,13 @@ class teacherClassConnection
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        if (isset($args['teacher_id'])) {
+        if (!empty($args['teacher_id'])) {
             $class_model = new Classes;
             $level_model = new Level;
             $batch_model = new Batch;
             $center_model = new Center;
 
-            $classes = $class_model->search(['teacher_id' => $args['teacher_id'], 'status' => 'projected'])->get();
+            $classes = $class_model->search(['teacher_id' => $args['teacher_id'], 'status' => 'projected']);
             $return = [];
             foreach ($classes as $cls) {
                 if ($cls) {
