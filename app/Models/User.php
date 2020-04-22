@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 
+// :TODO: Don't return password as plain text. Esp on /users/<ID> GET or /users/<ID> POST
+
 final class User extends Common
 {
     protected $table = 'User';
@@ -459,6 +461,7 @@ final class User extends Common
             }
             if ($key == 'password') {
                 $data['password_hash'] = Hash::make($data[$key]);
+                $key = 'password_hash'; // Otherwise its going to store as cleartext.
             }
 
             $this->item->$key = $data[$key];
