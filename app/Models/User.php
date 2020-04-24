@@ -173,6 +173,16 @@ final class User extends Common
             $q->where('User.email', $data['any_email'])->orWhere("User.mad_email", $data['any_email']);
         }
 
+        if (isset($data['credit'])) {
+            $q->where('User.credit', $data['credit']);
+        }
+        if (isset($data['credit_lesser_than'])) {
+            $q->where('User.credit', '<', $data['credit_lesser_than']);
+        }
+        if (isset($data['credit_greater_than'])) {
+            $q->where('User.credit', '>', $data['credit_greater_than']);
+        }
+
         if (!empty($data['identifier'])) {
             $q->where(function ($query) use ($data) {
                 $query->where('User.email', $data['identifier'])
@@ -244,7 +254,6 @@ final class User extends Common
                 $q->where('UserBatch.role', $data['batch_role']);
             }
         }
-
 
         // Sorting
         if (!empty($data['user_type'])) {
