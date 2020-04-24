@@ -144,7 +144,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $search_fields = ['id', 'name', 'city_id'];
         $search = [];
         foreach ($search_fields as $key) {
-            if (!$request->input($key)) {
+            if (!$request->has($key)) {
                 continue;
             }
 
@@ -366,7 +366,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $search_fields = ['id','teacher_id', 'substitute_id', 'batch_id', 'level_id', 'project_id', 'status', 'class_date', 'direction', 'project_id'];
         $search = [];
         foreach ($search_fields as $key) {
-            if (!$request->input($key)) {
+            if (!$request->has($key)) {
                 continue;
             }
 
@@ -499,10 +499,11 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
     Route::get('/users', function (Request $request) {
-        $search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','group_id','group_in','vertical_id','city_id','user_type','center_id','project_id', 'not_user_type'];
+        $search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','group_id','group_in','vertical_id','city_id',
+                            'user_type','center_id','project_id', 'not_user_type', 'credit', 'credit_lesser_than', 'credit_greater_than'];
         $search = [];
         foreach ($search_fields as $key) {
-            if (!$request->input($key)) {
+            if (!$request->has($key)) {
                 continue;
             }
 
@@ -638,7 +639,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $search_fields = ['user_id', 'name', 'token', 'status'];
         $search = [];
         foreach ($search_fields as $key) {
-            if (!$request->input($key)) {
+            if (!$request->has($key)) {
                 continue;
             }
             $search[$key] = $request->input($key);
@@ -713,7 +714,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $search_fields = ['name','birthday', 'city_id','sex','center_id'];
         $search = [];
         foreach ($search_fields as $key) {
-            if (!$request->input($key)) {
+            if (!$request->has($key)) {
                 continue;
             }
             $search[$key] = $request->input($key);
@@ -752,7 +753,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $search_fields = ['deposit_status_in','deposit_status','approver_user_id','id','city_id','amount','status','fundraiser_user_id','updated_by_user_id', 'include_deposit_info', 'deposited', 'from', 'to'];
         $search = [];
         foreach ($search_fields as $key) {
-            if (!$request->input($key)) {
+            if (!$request->has($key)) {
                 continue;
             }
 
@@ -852,7 +853,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $search = ['fundraiser_user_id' => $fundraiser_user_id];
 
         foreach ($search_fields as $key) {
-            if (!$request->input($key)) {
+            if (!$request->has($key)) {
                 continue;
             }
 
@@ -887,7 +888,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $search_fields = ['id', 'status', 'status_in', 'reviewer_user_id'];
         $search = [];
         foreach ($search_fields as $key) {
-            if (!$request->input($key)) {
+            if (!$request->has($key)) {
                 continue;
             }
 
@@ -942,7 +943,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
                         'city_id', 'event_type_id', 'created_by_user_id', 'status', 'invited_user_id'];
         $search = [];
         foreach ($search_fields as $key) {
-            if (!$request->input($key)) {
+            if (!$request->has($key)) {
                 continue;
             }
 
@@ -1074,7 +1075,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $search_fields = ['id', 'user_id', 'phone', 'imei', 'fcm_regid', 'platform', 'app', 'status'];
         $search = [];
         foreach ($search_fields as $key) {
-            if (!$request->input($key)) {
+            if (!$request->has($key)) {
                 continue;
             }
             $search[$key] = $request->input($key);
