@@ -113,7 +113,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     ///////////////////////////////////////////////////// Groups /////////////////////////////////////////////////
     Route::get('/groups', function (Request $request) {
-        $search = $request->only('id', 'name', 'type', 'vertical_id');
+        $search = $request->only('id', 'name', 'type', 'vertical_id', 'type_in');
         $groups = Group::search($search);
 
         return JSend::success("User Groups", ['groups' => $groups]);
