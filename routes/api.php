@@ -499,7 +499,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
     Route::get('/users', function (Request $request) {
-        $search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','group_id','group_in','vertical_id','city_id',
+        $search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','any_email','group_id','group_in','vertical_id','city_id',
                             'user_type','center_id','project_id', 'not_user_type', 'credit', 'credit_lesser_than', 'credit_greater_than'];
         $search = [];
         foreach ($search_fields as $key) {
@@ -1113,12 +1113,13 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     });
 
     // Use this to Debug/test things
-    // Route::get('/test', function() {
-    //     $group = new Group;
-    //     $es_trained = $group->find(368)->permissions();
+    Route::get('/test', function() {
+        $center = new Center;
+        // $projects = $center->find(184)->center_projects()->get();
+        $projects = $center->find(154)->batches()->teachers()->get();
 
-    //     dump($es_trained);
-    // });
+        dump($projects);
+    });
 
     require_once base_path('routes/api-surveys.php');
 });

@@ -148,7 +148,19 @@ type Center {
 	students: [Student]
 	batches: [Batch]
 	levels: [Level]
+	# projects: [Project]
+	projects: [CenterProject]
 	city: City @belongsTo
+}
+
+type CenterProject {
+	id: ID!
+	name: String @method(name: "name")
+	center_id: Int 
+	project_id: Int
+	year: Int
+	batches: [Batch]
+	levels: [Level]
 }
 
 type City {
