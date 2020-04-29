@@ -6,7 +6,9 @@ use App\Models\Common;
 final class Center extends Common
 {
     protected $table = 'Center';
-    public $timestamps = false;
+    public $timestamps = true;
+    const CREATED_AT = null;
+    const UPDATED_AT = 'updated_on';
 
     public function users()
     {
@@ -16,6 +18,19 @@ final class Center extends Common
     public function city()
     {
         return $this->belongsTo('App\Models\City', 'city_id');
+    }
+    // public function projects()
+    // {
+    //     $projects = $this->belongsToMany('App\Models\Project', 'CenterProject', 'center_id', 'project_id');
+    //     $projects->wherePivot('year', $this->year);
+    //     return $projects;
+    // }
+
+    public function projects()
+    {
+        $projects = $this->hasMany('App\Models\CenterProject');
+        // $projects->wherePivot('year', $this->year);
+        return $projects;
     }
 
     public function batches($project_id = 1)
