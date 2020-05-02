@@ -3,6 +3,7 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Center;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 final class Student extends Common
 {
@@ -17,15 +18,27 @@ final class Student extends Common
 
     public function level($project_id = 1)
     {
-        $levels = $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')->where('Level.status', '1')->where('Level.year', $this->year)->where("Level.project_id", $project_id);
-        $levels->select('Level.id', 'Level.name', 'Level.grade', 'Level.center_id', 'Level.project_id', app('db')->raw("CONCAT(Level.grade, ' ', Level.name) AS level_name"));
+        $levels = $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')
+                    ->where('Level.status', '1')->where('Level.year', $this->year)->where("Level.project_id", $project_id);
+        $levels->select('Level.id', 'Level.name', 'Level.grade', 'Level.center_id', 'Level.project_id', 
+                    app('db')->raw("CONCAT(Level.grade, ' ', Level.name) AS level_name"));
         $levels->orderBy("grade")->orderBy("name");
         return $levels;
     }
 
     public function search($data)
     {
-        $q = app('db')->table($this->table);
+        $q = app('db')->table('Student');
+        $results = $this->baseSearch($data, $q)->get();
+
+        return $results;
+    }
+
+    public function baseSearch($data, $q = false)
+    {
+        if (!$q) {
+            $q = app('db')->table($this->table);
+        }
 
         $q->select(
             "Student.id",
@@ -38,7 +51,25 @@ final class Student extends Common
             "Student.description",
             app('db')->raw("Center.name AS center_name")
         );
-        $q->join("Center", "Center.id", '=', 'Student.center_id');
+
+        // For some reason, when geting students thru city, its showing an error message saying duplicate table join. This avoids it.
+        // Happens because City->students() have a hasManyThrough call, as far as I can tell. :UGLY:
+        $center_joined_already = false;
+        if($q instanceof HasManyThrough) {
+            $joins = $q->getQuery()->getQuery()->joins;
+            if($joins) {
+                foreach($joins as $join) {
+                    if($join->table === "Center") {
+                        $center_joined_already = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if(!$center_joined_already) {
+            $q->join("Center", "Center.id", '=', 'Student.center_id');
+        }
 
         if (!isset($data['status'])) {
             $data['status'] = 1;
@@ -59,6 +90,7 @@ final class Student extends Common
         }
         if (!empty($data['city_id'])) {
             $q->where('Center.city_id', $data['city_id']);
+            $q->where('Center.status', '1');
         }
         if (!empty($data['name'])) {
             $q->where('Student.name', 'like', '%' . $data['name'] . '%');
@@ -71,10 +103,9 @@ final class Student extends Common
             $q->join('StudentLevel', 'Student.id', '=', 'StudentLevel.student_id');
             $q->where('StudentLevel.level_id', $data['level_id']);
         }
+        // dd($q->toSql(), $q->getBindings(), $data);
 
-        $results = $q->get();
-        
-        return $results;
+        return $q;
     }
 
     public function fetch($student_id)

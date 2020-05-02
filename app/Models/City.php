@@ -3,6 +3,7 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\User;
+use App\Models\Student;
 
 final class City extends Common
 {
@@ -15,6 +16,14 @@ final class City extends Common
         $users = (new User)->baseSearch($search, $q);
         return $users;
     }
+
+    public function students($search = false)
+    {
+        $q = $this->hasManyThrough('App\Models\Student', 'App\Models\Center');
+        $students = (new Student)->baseSearch($search, $q);
+        return $students;
+    }
+
     public function centers()
     {
         return $this->hasMany('App\Models\Center')->where('Center.status', '=', '1');

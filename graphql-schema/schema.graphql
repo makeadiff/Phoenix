@@ -18,7 +18,10 @@ type Query {
     donation(id: ID @eq): 	Donation 	@find(model: "App\\Models\\Donation")
     donor(id: ID @eq): 		Donor 		@find(model: "App\\Models\\Donor")
     survey(id: ID @eq):		Survey 		@find(model: "App\\Models\\Survey")
+	project(id: ID @eq):	Project		@find(model: "App\\Models\\Project")
     survey_template(id: ID @eq):	Survey_Template @find(model: "App\\Models\\Survey_Template")
+
+    # :HARDCODE: - Global replace all 2019 to next year. Not sure how to do it any other way yet. Other than custom resolvers for everything.
 
     donations(added_on: Date = "2019-05-01" @where(operator: ">="), amount: Int, status: String, 
 		type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): 
@@ -29,6 +32,8 @@ type Query {
 		phone: String @eq, city_id: Int @eq, status: String = "1" @eq, user_type: String = "volunteer" @eq): 
 		[User] @all # @paginate(type: "paginator" model: "App\\Models\\User")
     centers(city_id: Int @eq, status: String = "1" @eq ): [Center!]! @all
+	levels(center_id: Int @eq, project_id: Int @eq, name: String @where(operator:"like"), grade: Int @eq,
+		status: String = "1" @eq, year: Int = 2019 @eq): [Level!]! @all
     cities(type: String = "actual" @eq): [City!]! @all
     groups(group_type: String = "normal" @eq, status: String = "1" @eq, type: String @eq, 
 		vertical_id: Int @eq): [Group!]! @all
@@ -36,15 +41,17 @@ type Query {
     projects(status: String = "1" @eq): [Project!]! @all
 
 	# Custom Resolvers... 
+	# The files that control these can be found at  app/GraphQL/Queries/<FileName>.php
     eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php - This is just a sample 
     batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, 
-		class_status: String, direction: String, from_date: Date, limit: String): [Batch] #Custom - app/GraphQL/Queries/BatchSearch.php 
+		class_status: String, direction: String, from_date: Date, limit: String): [Batch]
     classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, 
-		class_date: Date, direction: String, from_date: Date, limit: String): [Class] #Custom - app/GraphQL/Queries/ClassSearch.php [ClassSearchResult]
+		class_date: Date, direction: String, from_date: Date, limit: String): [Class]
     userSearch(city_id: Int!, name: String, phone: String, email: String, mad_email: String, 
 		any_email: String, identifier: String, left_on: Date, vertical_id: Int, status: String, 
 		user_type: String, not_user_type: String, center_id: Int, group_id: Int, group_type: String, 
 		batch_id: Int, level_id: Int): [User]
+    studentSearch(city_id: Int, name: String, center_id: Int): [Student]
 	sendOtp(email: String, phone: String): User
 	verifyOtp(id: ID, email: String, phone: String, otp: String): Int
 
@@ -154,7 +161,7 @@ type Center {
 }
 
 type CenterProject {
-	id: ID!
+	id: ID @method(name: "pid")
 	name: String @method(name: "name")
 	center_id: Int 
 	project_id: Int
@@ -193,6 +200,7 @@ type Batch {
 	day: String
 	class_time: String
 	project_id: Int
+	year: Int
 	center: Center @belongsTo
 	levels: [Level]
 	teachers: [User]
@@ -205,6 +213,7 @@ type Level {
 	name: String!
 	grade: String!
 	project_id: Int
+	year: Int
 	center: Center @belongsTo
 	batches: [Batch]
 	students: [Student]
