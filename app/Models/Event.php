@@ -24,7 +24,7 @@ final class Event extends Common
             'cant_go'=>'3',
         ];
 
-    protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'event_type_id','vertical_id', 'template_event_id', 'user_selection_options', 'created_by_user_id', 'latitude', 'longitude', 'status'];
+    protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'event_type_id', 'template_event_id', 'user_selection_options', 'created_by_user_id', 'latitude', 'longitude', 'status'];
 
     public function city()
     {
@@ -67,8 +67,7 @@ final class Event extends Common
 
     public function search($data)
     {
-        $search_fields = ['id', 'name', 'description', 'starts_on', 'date', 'from_date', 'to_date', 'place', 'city_id', 'event_type_id', 'template_event_id',
-            'vertical_id', 'created_by_user_id', 'status', 'invited_user_id'];
+        $search_fields = ['id', 'name', 'description', 'starts_on', 'date', 'from_date', 'to_date', 'place', 'city_id', 'event_type_id', 'template_event_id', 'created_by_user_id', 'status', 'invited_user_id'];
 
         $q = app('db')->table('Event');
         $q->select(
@@ -158,8 +157,7 @@ final class Event extends Common
             'starts_on'     => isset($data['starts_on']) ? $data['starts_on'] : date('Y-m-d H:i:s'),
             'place'         => isset($data['place']) ? $data['place'] : '',
             'city_id'       => $data['city_id'],
-            'event_type_id' => $data['event_type_id'],
-            'vertical_id'   => isset($data['vertical_id']) ? $data['vertical_id'] : 0,
+            'event_type_id' => $data['event_type_id'],            
             'template_event_id' => isset($data['template_event_id']) ? $data['template_event_id'] : 0,
             'created_by_user_id'=> $data['created_by_user_id'],
             'latitude'      => isset($data['latitude']) ? $data['latitude'] : '',
