@@ -24,6 +24,13 @@ final class CenterProject extends Common
         return $name;
     }
 
+    public function pid() // Wiend name because $this->id and $this->project_id already exist.
+    {
+        $id = app('db')->table('Project')->where("id", "=", $this->project_id)->first()->id;
+        return $id;
+    }
+
+    // :TODO: For the love of all thats good and holy, write tests for this. Its messy and likely to break.
     public function batches()
     {
         $q = $this->hasMany('App\Models\Batch', 'center_id', 'center_id');
