@@ -2327,11 +2327,7 @@ paths:
           in: formData
           required: true
           type: integer
-          description: The ID of the event type.
-        - name: vertical_id
-          in: formData
-          type: integer
-          description: The vertical of this event
+          description: The ID of the event type.       
         - name: created_by_user_id
           in: formData
           type: integer
@@ -2410,11 +2406,7 @@ paths:
           in: formData
           required: true
           type: integer
-          description: The ID of the event type.
-        - name: vertical_id
-          in: formData
-          type: integer
-          description: The vertical of this event
+          description: The ID of the event type.        
         - name: created_by_user_id
           in: formData
           type: integer
@@ -2451,6 +2443,26 @@ paths:
           description: Event deleted
         404:
           description: Couldn't find the event with the given event ID.
+
+  /events/types:
+    get:
+      tags: 
+        - event
+      summary: All Event Types
+      description: This will give you a list of all the event types, namely, Volunteer Leadership Cirlce, City Circle etc.
+      # parameters:
+      #   - name: vertical_id
+      #     in: query
+      #     type: integer
+      #     required: false
+      #     description: Vertical ID of the events. Gives you list of Event Types for the selected vertical.
+      responses:
+        200:
+          description: Returns the Event Types details
+          schema:
+            $ref: "#/definitions/Event_Type"      
+        404:
+          description: Can't find Event Type with the given parameter
 
   /events/{event_id}/users:
     get:
@@ -3655,6 +3667,15 @@ definitions:
       created_on:
         type: string
         format: "date-time"
+  Event_Type:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      vertical_id:
+        type: integer      
   UserEvent:
     type: "object"
     properties:
