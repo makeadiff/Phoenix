@@ -687,7 +687,90 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         }
 
         $links = $user->links()->get();
+
         return JSend::success("Links for {$user->name}", ['links' => $links]);
+    });
+
+    Route::get('/users/{user_id}/grouped_links', function ($user_id) {
+        $user_model = new User;
+        $user = $user_model->fetch($user_id);
+
+        if (!$user) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        $all_links = $user->links()->get();
+
+        $grouped_links = [
+            'general'   => [
+                'name'      => 'General',
+                'links'     => []
+            ],
+            'city'  => [
+                'name'      => 'City',
+                'links'     => []
+            ],
+            'center'   => [
+                'name'      => 'Shelter',
+                'centers'   => []
+            ],
+            'vertical'   => [
+                'name'      => 'Vertical',
+                'verticals' => []
+            ],
+            'group'   => [
+                'name'      => 'Role',
+                'groups'    => []
+            ],
+        ];
+
+        foreach($all_links as $l) {
+            $lnk = $l->only('id', 'name', 'url', 'text', 'sort_order');
+            if(!$l->center_id and !$l->vertical_id and !$l->group_id and !$l->city_id) {
+                $grouped_links['general']['links'][] = $lnk;
+                continue;
+            }
+
+            if($l->city_id) {
+                $grouped_links['city']['name'] = (new City)->fetch($l->city_id)->name;
+                $grouped_links['city']['links'][] = $lnk;
+            }
+
+            if($l->center_id) {
+                if(!isset($grouped_links['center']['centers'][$l->center_id])) {
+                    $grouped_links['center']['centers'][$l->center_id] = [
+                        'name'  => (new Center)->fetch($l->center_id)->name, 
+                        'links' => [$lnk]
+                    ];
+                } else {
+                    $grouped_links['center']['centers'][$l->center_id]['links'][] = $lnk;
+                }
+            }
+
+            if($l->vertical_id) {
+                if(!isset($grouped_links['vertical']['verticals'][$l->vertical_id])) {
+                    $grouped_links['vertical']['verticals'][$l->vertical_id] = [
+                        'name'  => (new Vertical)->fetch($l->vertical_id)->name, 
+                        'links' => [$lnk]
+                    ];
+                } else {
+                    $grouped_links['vertical']['verticals'][$l->vertical_id]['links'][] = $lnk;
+                }
+            }
+
+            if($l->group_id) {
+                if(!isset($grouped_links['group']['groups'][$l->group_id])) {
+                    $grouped_links['group']['groups'][$l->group_id] = [
+                        'name'  => (new Group)->fetch($l->group_id)->name, 
+                        'links' => [$lnk]
+                    ];
+                } else {
+                    $grouped_links['group']['groups'][$l->group_id]['links'][] = $lnk;
+                }
+            }
+        }
+        
+        return JSend::success("Links for {$user->name}", ['links' => $grouped_links]);
     });
 
     //////////////////////////////////////////////////////// Contacts /////////////////////////////////
