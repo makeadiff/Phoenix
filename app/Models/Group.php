@@ -31,7 +31,7 @@ final class Group extends Common
 
     public static function search($data)
     {
-        $search_fields = ['id', 'name','type','vertical_id'];
+        $search_fields = ['id', 'name','type','vertical_id', 'type_in'];
         $q = app('db')->table('Group');
         $q->select('id', 'name', 'type', 'vertical_id');
         $q->where('group_type', 'normal')->where('status', '1');
@@ -43,6 +43,10 @@ final class Group extends Common
 
             if ($field === 'name') {
                 $q->where($field, 'like', '%' . $data[$field] . '%');
+
+            } elseif ($field === 'type_in') {
+                $q->whereIn('type', explode(",", $data[$field]));
+                
             } else {
                 $q->where($field, $data[$field]);
             }

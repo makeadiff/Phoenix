@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 
+// :TODO: Don't return password as plain text. Esp on /users/<ID> GET or /users/<ID> POST
+
 final class User extends Common
 {
     protected $table = 'User';
@@ -171,6 +173,16 @@ final class User extends Common
             $q->where('User.email', $data['any_email'])->orWhere("User.mad_email", $data['any_email']);
         }
 
+        if (isset($data['credit'])) {
+            $q->where('User.credit', $data['credit']);
+        }
+        if (isset($data['credit_lesser_than'])) {
+            $q->where('User.credit', '<', $data['credit_lesser_than']);
+        }
+        if (isset($data['credit_greater_than'])) {
+            $q->where('User.credit', '>', $data['credit_greater_than']);
+        }
+
         if (!empty($data['identifier'])) {
             $q->where(function ($query) use ($data) {
                 $query->where('User.email', $data['identifier'])
@@ -242,7 +254,6 @@ final class User extends Common
                 $q->where('UserBatch.role', $data['batch_role']);
             }
         }
-
 
         // Sorting
         if (!empty($data['user_type'])) {
@@ -459,6 +470,7 @@ final class User extends Common
             }
             if ($key == 'password') {
                 $data['password_hash'] = Hash::make($data[$key]);
+                $key = 'password_hash'; // Otherwise its going to store as cleartext.
             }
 
             $this->item->$key = $data[$key];
