@@ -44,13 +44,14 @@ final class User extends Common
         return $classes;
     }
 
-    /// Connects to all the batches the current user mentors
+    /// Connects to all the batches the current user mentors.
     public function mentored_batches($status = false)
     {
-        $batches = $this->hasMany("App\Models\Batch", 'batch_head_id');
+        $batches = $this->belongsToMany("App\Models\Batch", 'UserBatch', 'user_id', 'batch_id');
         $batches->select("Batch.id", "Batch.class_time", "Batch.day", "Batch.batch_head_id");
         $batches->join("Class", "Class.batch_id", '=', 'Batch.id');
-        $batches->where('Batch.year', '=', $this->year)->where("Class.class_on", '>', date('Y-m-d H:i:s'))->where("Batch.status", '=', '1');
+        $batches->where('Batch.year', '=', $this->year)->where("Class.class_on", '>', date('Y-m-d H:i:s'))
+                ->where("Batch.status", '=', '1')->where('UserBatch.role', 'mentor');
         if ($status) {
             $batches->where('Class.status', $status);
         }
@@ -95,13 +96,24 @@ final class User extends Common
         $groups = $this->groups();
         $group_ids = $groups->pluck('id')->unique();
         $vertical_ids = $groups->pluck('vertical_id')->unique();
-        $city_id = $this->city()->first()->id;
+        $city_ids = [0, $this->city()->first()->id];
         $batches = $this->batches()->get();
 
-        dump($batches);
+        // All arrays have 0 value to make sure those match too - if the Link.<field> value is 0
+        $group_ids[] = 0;
+        $vertical_ids[] = 0;
+        $center_ids = [0];
+        foreach($batches as $i => $b) {
+            $center_ids[] = $b->center()->first()->id;
+        }
 
-        // $q = $this->hasMany('App\Models\Links');
+        $links = $this->hasMany('App\Models\Link', 'status', 'status'); // :UGLY: This is a HORRIBLE thing to get tables linked that wouldn't otherwise link easily.
+        $links->whereIn("Link.center_id", $center_ids);
+        $links->whereIn("Link.group_id", $group_ids);
+        $links->whereIn("Link.vertical_id", $vertical_ids);
+        $links->select('id','name','url','text', 'sort_order');
 
+        return $links;
     }
 
     // public function data()

@@ -678,6 +678,17 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::fail("Can't find device of user $user_id with given token");
     });
     
+    Route::get('/users/{user_id}/links', function ($user_id) {
+        $user_model = new User;
+        $user = $user_model->fetch($user_id);
+
+        if (!$user) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        $links = $user->links()->get();
+        return JSend::success("Links for {$user->name}", ['links' => $links]);
+    });
 
     //////////////////////////////////////////////////////// Contacts /////////////////////////////////
     Route::post('/applicants', function (Request $request) {
@@ -1118,9 +1129,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         // $projects = $center->find(184)->center_projects()->get();
         // $projects = $center->find(154)->batches()->teachers()->get();
         $user_model = new User;
-        $user_model->find(1)->links();
+        $links = $user_model->find(1)->links()->get();
 
-        // dump($projects);
+        dump($links->pluck('name'));
     });
 
     require_once base_path('routes/api-surveys.php');

@@ -18,10 +18,10 @@ class CreateLinkTable extends Migration
             $table->string('name',100);
             $table->string('url',200);
             $table->text('text');
-            $table->bigInteger('vertical_id')->unsigned()->index('vertical_id');
-            $table->bigInteger('group_id')->unsigned()->index('group_id');
-            $table->bigInteger('city_id')->unsigned()->index('city_id');
-            $table->bigInteger('center_id')->unsigned()->index('center_id');
+            $table->bigInteger('vertical_id')->unsigned()->default(0)->index('vertical_id');
+            $table->bigInteger('group_id')->unsigned()->default(0)->index('group_id');
+            $table->bigInteger('city_id')->unsigned()->default(0)->index('city_id');
+            $table->bigInteger('center_id')->unsigned()->default(0)->index('center_id');
             $table->smallInteger('sort_order')->nullable();
             $table->dateTime('added_on');
             $table->dateTime('updated_on');
