@@ -15,7 +15,7 @@ class SurveyController extends Controller
 {
     public function addSurveyTemplate(Request $request)
     {
-        $fields = array_filter($request->only('name', 'description', 'vertical_id', 'responder', 'questions'));
+        $fields = array_filter($request->only('name', 'description', 'vertical_id', 'responder', 'questions', 'options'));
 
         // Validation...
         $validator = Validator::make($fields, [
@@ -25,6 +25,7 @@ class SurveyController extends Controller
         if ($validator->fails()) {
             return JSend::fail("Survey Template insert validation failed", $validator->errors());
         }
+
         $survey_template = Survey_Template::add($fields);
         if (!empty($fields['questions'])) {
             $questions = json_decode($fields['questions'], true);
