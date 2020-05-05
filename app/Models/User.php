@@ -111,7 +111,7 @@ final class User extends Common
         $links->whereIn("Link.center_id", $center_ids);
         $links->whereIn("Link.group_id", $group_ids);
         $links->whereIn("Link.vertical_id", $vertical_ids);
-        $links->select('id','name','url','text', 'sort_order');
+        // $links->select('id','name','url','text', 'sort_order');
 
         return $links;
     }
