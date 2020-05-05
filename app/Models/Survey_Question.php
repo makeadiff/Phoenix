@@ -156,8 +156,19 @@ final class Survey_Question extends Common
         $name = preg_replace(['/Make A Difference/i', '/\([^\)]+\)/', '/[\?\'\.\-\,\"\/]/', '/\s*\b$/'], ['MAD', '', ' ',''], $question);
         $name = preg_replace('/\b('.implode('|', $common_words).')\b/', '', strtolower($name));
         
-        $name = trim(format(preg_replace('/\s\s+/', ' ', $name)));
+        $name = trim(self::format(preg_replace('/\s\s+/', ' ', $name)));
         $name = str_replace('Mad', 'MAD', $name);
         return $name;
+    }
+
+    private static function format($value) {
+        $value = preg_replace(
+            array(  "/[_\-]/",          //Changes 'hello_cruel-world' to 'hello cruel world'
+                    "/([a-zA-Z])(\d)/", //Changes 'no1' to 'no 1'
+                    "/([a-z])([A-Z])/"  //Changes 'helloWorld' to 'hello World'
+            ),
+            array(" ","$1 $2","$1 $2"),
+            $value);
+        return ucwords($value);
     }
 }
