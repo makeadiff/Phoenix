@@ -10,6 +10,13 @@ final class Project extends Common
     protected $table = 'Project';
     public $timestamps = false;
 
+    public function centers()
+    {
+        $centers = $this->belongsToMany('App\Models\Center', 'CenterProject', 'project_id', 'center_id');
+        $centers->wherePivot('year', $this->year);
+        return $centers;
+    }
+
     public function classes($search)
     {
         $q = $this->hasMany('App\Models\Classes', 'project_id');
@@ -23,7 +30,7 @@ final class Project extends Common
         $batches = (new Batch)->baseSearch($search, $q);
         return $batches;
     }
-    
+   
     public function fetch($id)
     {
         $this->id = $id;

@@ -1,0 +1,9 @@
+This file is to be used to make Requests using the HTTP Client extension of VS code.
+
+GET http://192.168.1.5/MAD/api/v1/users/1
+Authorization: Basic ZGF0YS5zaW11bGF0aW9uQG1ha2VhZGlmZi5pbjpwYXNz
+
+###
+
+GET http://127.0.0.1/MAD/api/v1/users?city_id=2&credit_lesser_than=0
+Authorization: Basic ZGF0YS5zaW11bGF0aW9uQG1ha2VhZGlmZi5pbjpwYXNz

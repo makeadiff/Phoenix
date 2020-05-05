@@ -9,12 +9,12 @@ use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
     private $validation_messages = [
-            'city_id.exists'    => "Can't find any city with that ID",
-            'mad_email.regex'   => "The 'mad_email' you gave was not a makeadiff.in email. Enter this only if you are a fellow - and have a makeadiff.in email id.",
-            'email.unique'      => 'Entered Email ID already exists in the MAD System',
-            'phone.unique'      => 'Entered Phone already exists in the MAD System',
-            'sex.regex'         => "Sex field should have one of these values - 'm','f' or 'o'"
-        ];
+        'city_id.exists'    => "Can't find any city with that ID",
+        'mad_email.regex'   => "The 'mad_email' you gave was not a makeadiff.in email. Enter this only if you are a fellow - and have a makeadiff.in email id.",
+        'email.unique'      => 'Entered Email ID already exists in the MAD database',
+        'phone.unique'      => 'Entered Phone already exists in the MAD database',
+        'sex.regex'         => "Sex field should have one of these values - 'm','f' or 'o'"
+    ];
 
     public function add(Request $request)
     {

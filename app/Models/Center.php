@@ -6,7 +6,9 @@ use App\Models\Common;
 final class Center extends Common
 {
     protected $table = 'Center';
-    public $timestamps = false;
+    public $timestamps = true;
+    const CREATED_AT = null;
+    const UPDATED_AT = 'updated_on';
 
     public function users()
     {
@@ -17,14 +19,29 @@ final class Center extends Common
     {
         return $this->belongsTo('App\Models\City', 'city_id');
     }
+    // public function projects()
+    // {
+    //     $projects = $this->belongsToMany('App\Models\Project', 'CenterProject', 'center_id', 'project_id');
+    //     $projects->wherePivot('year', $this->year);
+    //     return $projects;
+    // }
+
+    public function projects()
+    {
+        $projects = $this->hasMany('App\Models\CenterProject');
+        // $projects->wherePivot('year', $this->year);
+        return $projects;
+    }
 
     public function batches($project_id = 1)
     {
-        return $this->hasMany('App\Models\Batch')->where('Batch.status', '1')->where('Batch.year', $this->year)->where('Batch.project_id', $project_id)->orderBy("Batch.day");
+        return $this->hasMany('App\Models\Batch')->where('Batch.status', '1')->where('Batch.year', $this->year)
+                    ->where('Batch.project_id', $project_id)->orderBy("Batch.day");
     }
     public function levels($project_id = 1)
     {
-        return $this->hasMany('App\Models\Level')->where('Level.status', '1')->where('Level.year', $this->year)->where('Level.project_id', $project_id)->orderBy("Level.grade")->orderBy("Level.name");
+        return $this->hasMany('App\Models\Level')->where('Level.status', '1')->where('Level.year', $this->year)
+                    ->where('Level.project_id', $project_id)->orderBy("Level.grade")->orderBy("Level.name");
     }
     public function students()
     {
