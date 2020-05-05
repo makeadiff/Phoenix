@@ -44,8 +44,8 @@ final class User extends Common
         return $classes;
     }
 
-    /// Connects to all the batches the current user mentors.
-    public function batches($status = false)
+    /// Connects to all the batches the current user mentors
+    public function mentored_batches($status = false)
     {
         $batches = $this->hasMany("App\Models\Batch", 'batch_head_id');
         $batches->select("Batch.id", "Batch.class_time", "Batch.day", "Batch.batch_head_id");
@@ -57,6 +57,23 @@ final class User extends Common
         $batches->orderBy("Class.class_on");
         return $batches;
     }
+
+    /// All the batches the current user teaches at
+    public function batches()
+    {
+        $batches = $this->belongsToMany("App\Models\Batch", 'UserBatch', 'user_id', 'batch_id');
+        $batches->where('Batch.year', '=', $this->year)->where("Batch.status", '=', '1')->where('UserBatch.role', 'teacher');
+        return $batches;
+    }
+
+    /// All the levels the current user teaches at
+    public function levels()
+    {
+        $levels = $this->belongsToMany("App\Models\Level", 'UserBatch', 'user_id', 'level_id');
+        $levels->where('Level.year', '=', $this->year)->where("Level.status", '=', '1');
+        return $levels;
+    }
+
 
     public function donations()
     {
@@ -71,6 +88,20 @@ final class User extends Common
         $devices = $this->hasMany("App\Models\Device", 'user_id');
         $devices->where("status", '=', "1");
         return $devices;
+    }
+
+    public function links()
+    {
+        $groups = $this->groups();
+        $group_ids = $groups->pluck('id')->unique();
+        $vertical_ids = $groups->pluck('vertical_id')->unique();
+        $city_id = $this->city()->first()->id;
+        $batches = $this->batches()->get();
+
+        dump($batches);
+
+        // $q = $this->hasMany('App\Models\Links');
+
     }
 
     // public function data()
