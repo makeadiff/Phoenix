@@ -41,7 +41,7 @@ class Alert extends Common
         // Data not filled.
 
         // Mentor hasn't filled teacher attendance.
-        $batches_mentored_by_user = $user->batches()->get()->pluck('id');
+        $batches_mentored_by_user = $user->mentored_batches()->get()->pluck('id');
         $teacher_data_not_entered = app('db')->table('Class')->distinct('class_on')
             ->whereIn('batch_id', $batches_mentored_by_user)
             ->where('status', 'projected')
