@@ -582,6 +582,43 @@ paths:
         404:
           description: Can't find a device of the user with the given FCM token.
 
+  /users/{user_id}/alerts:
+    get:
+      tags:
+        - user
+        - alert
+      summary: Alerts for given user
+      description: Return all the alerts associated with the given user.
+      parameters:
+        - name: user_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find any user with the given ID.
+  /users/{user_id}/links:
+    get:
+      tags:
+        - user
+        - link
+      summary: Links for the user
+      description: Return all support links for the given user based on their groups, verticals, shelters and city.
+      parameters:
+        - name: user_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find any user with the given ID.
+
   /users/{user_id}/data/{data_name}:
     get:
       tags:

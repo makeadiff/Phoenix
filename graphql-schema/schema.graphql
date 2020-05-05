@@ -113,6 +113,7 @@ type User {
 	batches: [Batch] @hasMany
 	donations: [Donation] @hasMany
 	devices: [Device] @hasMany
+	links: [Link] @hasMany
 	pivot: UserPivot
 }
 
@@ -377,6 +378,14 @@ type Device {
 	token: String
 	status: String
 	user: User
+}
+
+type Link {
+	id: ID!
+	name: String
+	url: String
+	text: String
+	status: String
 }
 
 type Data {
