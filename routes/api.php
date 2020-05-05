@@ -12,6 +12,7 @@ use App\Models\Level;
 use App\Models\Donation;
 use App\Models\Deposit;
 use App\Models\Event;
+use App\Models\Event_Type;
 use App\Models\Data;
 use App\Models\Notification;
 use App\Models\Contact;
@@ -131,6 +132,11 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     Route::get('/verticals', function () {
         $verticals = Vertical::getAll();
         return JSend::success("Verticals", ['verticals' => $verticals]);
+    });
+
+    Route::get('/events/types', function () {
+        $eventtypes = Event_Type::getAll();
+        return JSend::success("Event_Types", ['event_types' => $eventtypes]);
     });
 
     Route::get('/projects', function () {
