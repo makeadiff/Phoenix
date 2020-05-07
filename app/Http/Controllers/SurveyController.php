@@ -33,8 +33,6 @@ class SurveyController extends Controller
             $question_model->addMany($questions, $survey_template->id);
         }
 
-        // :TODO: - Maybe create an instance along with the template. Because an instance is what people want.
-
         return JSend::success("Added a Survey Template", ['templates' => $survey_template]);
     }
 
