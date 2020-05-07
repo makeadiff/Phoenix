@@ -134,11 +134,6 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Verticals", ['verticals' => $verticals]);
     });
 
-    Route::get('/events/types', function () {
-        $eventtypes = Event_Type::getAll();
-        return JSend::success("Event_Types", ['event_types' => $eventtypes]);
-    });
-
     Route::get('/projects', function () {
         $projects = ['1' => 'Ed Support', '2' => 'Foundation'];
         return JSend::success("Verticals", ['projects' => $projects]);
@@ -1161,6 +1156,12 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $event->find($event_id)->deleteUserConnection($user_id);
         return "";
     });
+
+    Route::get('/events/types', function () {
+        $eventtypes = Event_Type::getAll();
+        return JSend::success("Event_Types", ['event_types' => $eventtypes]);
+    });
+
 
     // Notifications
     // :TODO: This might be depricated soon. We are moving to the 'Device' Model.
