@@ -20,8 +20,14 @@ final class Student extends Common
     {
         $levels = $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')
                     ->where('Level.status', '1')->where('Level.year', $this->year)->where("Level.project_id", $project_id);
-        $levels->select('Level.id', 'Level.name', 'Level.grade', 'Level.center_id', 'Level.project_id', 
-                    app('db')->raw("CONCAT(Level.grade, ' ', Level.name) AS level_name"));
+        $levels->select(
+            'Level.id',
+            'Level.name',
+            'Level.grade',
+            'Level.center_id',
+            'Level.project_id',
+            app('db')->raw("CONCAT(Level.grade, ' ', Level.name) AS level_name")
+        );
         $levels->orderBy("grade")->orderBy("name");
         return $levels;
     }
@@ -55,11 +61,11 @@ final class Student extends Common
         // For some reason, when geting students thru city, its showing an error message saying duplicate table join. This avoids it.
         // Happens because City->students() have a hasManyThrough call, as far as I can tell. :UGLY:
         $center_joined_already = false;
-        if($q instanceof HasManyThrough) {
+        if ($q instanceof HasManyThrough) {
             $joins = $q->getQuery()->getQuery()->joins;
-            if($joins) {
-                foreach($joins as $join) {
-                    if($join->table === "Center") {
+            if ($joins) {
+                foreach ($joins as $join) {
+                    if ($join->table === "Center") {
                         $center_joined_already = true;
                         break;
                     }
@@ -67,7 +73,7 @@ final class Student extends Common
             }
         }
 
-        if(!$center_joined_already) {
+        if (!$center_joined_already) {
             $q->join("Center", "Center.id", '=', 'Student.center_id');
         }
 

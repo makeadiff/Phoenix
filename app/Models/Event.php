@@ -25,7 +25,7 @@ final class Event extends Common
         ];
 
     protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'vertical_id',
-                             'event_type_id', 'template_event_id', 'user_selection_options', 
+                             'event_type_id', 'template_event_id', 'user_selection_options',
                              'created_by_user_id', 'latitude', 'longitude', 'status'];
 
     public function city()
@@ -157,7 +157,7 @@ final class Event extends Common
             'starts_on'     => isset($data['starts_on']) ? $data['starts_on'] : date('Y-m-d H:i:s'),
             'place'         => isset($data['place']) ? $data['place'] : '',
             'city_id'       => $data['city_id'],
-            'event_type_id' => $data['event_type_id'],            
+            'event_type_id' => $data['event_type_id'],
             'template_event_id' => isset($data['template_event_id']) ? $data['template_event_id'] : 0,
             'created_by_user_id'=> $data['created_by_user_id'],
             'latitude'      => isset($data['latitude']) ? $data['latitude'] : '',

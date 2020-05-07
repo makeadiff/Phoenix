@@ -18,10 +18,10 @@ class Event_Type extends Model
 
     public static function getAll()
     {
-        $event_types =  Event_Type::select('id','name','vertical_id')->where('status', '1')->orderBy('name')->get();
-        foreach($event_types as $key => $types){
+        $event_types =  Event_Type::select('id', 'name', 'vertical_id')->where('status', '1')->orderBy('name')->get();
+        foreach ($event_types as $key => $types) {
             $vertical = $types->verticals()->select('name')->first();
-            if($vertical){
+            if ($vertical) {
                 $event_types[$key]->vertical = $vertical->name;
             }
         }
@@ -29,8 +29,8 @@ class Event_Type extends Model
         return $event_types;
     }
 
-    public function events(){
-        return $this->hasMany('App\Models\Event')->where('Event.status','=','1');
+    public function events()
+    {
+        return $this->hasMany('App\Models\Event')->where('Event.status', '=', '1');
     }
-
 }

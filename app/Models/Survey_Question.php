@@ -161,14 +161,16 @@ final class Survey_Question extends Common
         return $name;
     }
 
-    private static function format($value) {
+    private static function format($value)
+    {
         $value = preg_replace(
             array(  "/[_\-]/",          //Changes 'hello_cruel-world' to 'hello cruel world'
                     "/([a-zA-Z])(\d)/", //Changes 'no1' to 'no 1'
                     "/([a-z])([A-Z])/"  //Changes 'helloWorld' to 'hello World'
             ),
             array(" ","$1 $2","$1 $2"),
-            $value);
+            $value
+        );
         return ucwords($value);
     }
 }

@@ -725,22 +725,22 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
             ],
         ];
 
-        foreach($all_links as $l) {
+        foreach ($all_links as $l) {
             $lnk = $l->only('id', 'name', 'url', 'text', 'sort_order');
-            if(!$l->center_id and !$l->vertical_id and !$l->group_id and !$l->city_id) {
+            if (!$l->center_id and !$l->vertical_id and !$l->group_id and !$l->city_id) {
                 $grouped_links['general']['links'][] = $lnk;
                 continue;
             }
 
-            if($l->city_id) {
+            if ($l->city_id) {
                 $grouped_links['city']['name'] = (new City)->fetch($l->city_id)->name;
                 $grouped_links['city']['links'][] = $lnk;
             }
 
-            if($l->center_id) {
-                if(!isset($grouped_links['center']['centers'][$l->center_id])) {
+            if ($l->center_id) {
+                if (!isset($grouped_links['center']['centers'][$l->center_id])) {
                     $grouped_links['center']['centers'][$l->center_id] = [
-                        'name'  => (new Center)->fetch($l->center_id)->name, 
+                        'name'  => (new Center)->fetch($l->center_id)->name,
                         'links' => [$lnk]
                     ];
                 } else {
@@ -748,10 +748,10 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
                 }
             }
 
-            if($l->vertical_id) {
-                if(!isset($grouped_links['vertical']['verticals'][$l->vertical_id])) {
+            if ($l->vertical_id) {
+                if (!isset($grouped_links['vertical']['verticals'][$l->vertical_id])) {
                     $grouped_links['vertical']['verticals'][$l->vertical_id] = [
-                        'name'  => (new Vertical)->fetch($l->vertical_id)->name, 
+                        'name'  => (new Vertical)->fetch($l->vertical_id)->name,
                         'links' => [$lnk]
                     ];
                 } else {
@@ -759,10 +759,10 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
                 }
             }
 
-            if($l->group_id) {
-                if(!isset($grouped_links['group']['groups'][$l->group_id])) {
+            if ($l->group_id) {
+                if (!isset($grouped_links['group']['groups'][$l->group_id])) {
                     $grouped_links['group']['groups'][$l->group_id] = [
-                        'name'  => (new Group)->fetch($l->group_id)->name, 
+                        'name'  => (new Group)->fetch($l->group_id)->name,
                         'links' => [$lnk]
                     ];
                 } else {
@@ -1214,7 +1214,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     });
 
     // Use this to Debug/test things
-    Route::get('/test', function() {
+    Route::get('/test', function () {
         // $center = new Center;
         // $projects = $center->find(184)->center_projects()->get();
         // $projects = $center->find(154)->batches()->teachers()->get();

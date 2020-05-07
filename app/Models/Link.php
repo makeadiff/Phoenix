@@ -28,6 +28,4 @@ final class Link extends Common
 
         return $results;
     }
-
-
 }

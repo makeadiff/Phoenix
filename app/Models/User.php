@@ -103,7 +103,7 @@ final class User extends Common
         $group_ids[] = 0;
         $vertical_ids[] = 0;
         $center_ids = [0];
-        foreach($batches as $i => $b) {
+        foreach ($batches as $i => $b) {
             $center_ids[] = $b->center()->first()->id;
         }
 
