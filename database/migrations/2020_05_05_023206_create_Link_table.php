@@ -15,8 +15,8 @@ class CreateLinkTable extends Migration
     {
         Schema::create('Link', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name',100);
-            $table->string('url',200);
+            $table->string('name', 100);
+            $table->string('url', 200);
             $table->text('text');
             $table->bigInteger('vertical_id')->unsigned()->default(0)->index('vertical_id');
             $table->bigInteger('group_id')->unsigned()->default(0)->index('group_id');
