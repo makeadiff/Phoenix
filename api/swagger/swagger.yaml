@@ -1128,6 +1128,152 @@ paths:
         404:
           description: Given center_id / data point name can't be found in the database.
 
+  /centers/{center_id}/comments:
+    get:
+      tags:
+        - center
+        - comment
+      summery: Center comments
+      description: Returns all the comments made about the center with the given ID.
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the center we should find the comments for.
+      responses:
+        200:
+          description: Comments fetched and provided
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Comment"
+        404:
+          description: Can't find any Center with given ID.
+    post:
+      tags:
+        - center
+        - comment
+      summery: Add a comment to the center
+      description: Adds a new comment made to the center with the given ID.
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the center we should find the comments for.
+        - name: comment
+          in: formData
+          type: string
+          required: true
+          description: The text of the comment
+        - name: added_by_user_id
+          in: formData
+          type: integer
+          required: true
+          description: The ID of the user who is making the comment.
+      responses:
+        200:
+          description: Comment added successfully
+        404:
+          description: Can't find any Center with given ID.
+    /centers/{center_id}/comments/{comment_id}:
+      delete:
+        tags:
+          - center
+          - comment
+        summery: Delete a Center comment
+        description: Deletes a center comment with given ID
+        parameters:
+          - name: center_id
+            in: path
+            type: integer
+            required: true
+            description: ID of the center we should find the comments for.
+          - name: comment_id
+            in: path
+            type: integer
+            required: true
+            description: ID of the comment that should be deleted.
+        responses:
+          200:
+            description: Comment deleted
+          404:
+            description: Can't find any Center or comment with given ID.
+
+  /students/{student_id}/comments:
+    get:
+      tags:
+        - student
+        - comment
+      summery: Student Comments
+      description: Returns all the comments made about the student with the given ID.
+      parameters:
+        - name: student_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the student we should find the comments for.
+      responses:
+        200:
+          description: Comments fetched and provided
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Comment"
+        404:
+          description: Can't find any student with given ID.
+    post:
+      tags:
+        - student
+        - comment
+      summery: Add a comment to the student
+      description: Adds a new comment made to the student with the given ID.
+      parameters:
+        - name: student_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the student we should find the comments for.
+        - name: comment
+          in: formData
+          type: string
+          required: true
+          description: The text of the comment
+        - name: added_by_user_id
+          in: formData
+          type: integer
+          required: true
+          description: The ID of the user who is making the comment.
+      responses:
+        200:
+          description: Comment added successfully
+        404:
+          description: Can't find any student with given ID.
+    /students/{student_id}/comments/{comment_id}:
+      delete:
+        tags:
+          - student
+          - comment
+        summery: Delete a student comment
+        description: Deletes a student comment with given ID
+        parameters:
+          - name: student_id
+            in: path
+            type: integer
+            required: true
+            description: ID of the student we should find the comments for.
+          - name: comment_id
+            in: path
+            type: integer
+            required: true
+            description: ID of the comment that should be deleted.
+        responses:
+          200:
+            description: Comment deleted
+          404:
+            description: Can't find any student or comment with given ID.
+
   ############################### Students
 
   /students:
@@ -3875,6 +4021,23 @@ definitions:
         enum:
           - 1
           - 0
+  Comment:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      item_type:
+        type: string
+      item_id:
+        type: integer
+      comment:
+        type: string
+      added_by_user_id:
+        type: integer
+      added_on:
+        type: string
+        format: "date-time"
+
   Notification:
     type: "object"
     properties:
