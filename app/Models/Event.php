@@ -24,7 +24,9 @@ final class Event extends Common
             'cant_go'=>'3',
         ];
 
-    protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'event_type_id', 'template_event_id', 'user_selection_options', 'created_by_user_id', 'latitude', 'longitude', 'status'];
+    protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'vertical_id',
+                             'event_type_id', 'template_event_id', 'user_selection_options',
+                             'created_by_user_id', 'latitude', 'longitude', 'status'];
 
     public function city()
     {
@@ -43,7 +45,13 @@ final class Event extends Common
 
     public function attendees()
     {
-        return $this->belongsToMany("App\Models\User", 'UserEvent')->where("UserEvent.present", '=', '1')->withPivot('present', 'late', 'user_choice', 'reason');
+        return $this->belongsToMany("App\Models\User", 'UserEvent')->where("UserEvent.present", '=', '1')
+                    ->withPivot('present', 'late', 'user_choice', 'reason');
+    }
+
+    public function eventType()
+    {
+        return $this->belongsTo('App\Models\Vertical');
     }
 
     public function eventsInCity($city_id)
@@ -51,14 +59,6 @@ final class Event extends Common
         return app('db')->table("Event")->where("status", '1')->where("starts_on", '>=', $this->year_start_time)->where("city_id", $city_id)->get();
     }
 
-    public function eventType()
-    {
-        if (!$this->id) {
-            return false;
-        }
-
-        return app('db')->table("Event_Type")->where("id", $this->event_type_id)->pluck('name')->first();
-    }
 
     public function filter($data)
     {
@@ -157,7 +157,7 @@ final class Event extends Common
             'starts_on'     => isset($data['starts_on']) ? $data['starts_on'] : date('Y-m-d H:i:s'),
             'place'         => isset($data['place']) ? $data['place'] : '',
             'city_id'       => $data['city_id'],
-            'event_type_id' => $data['event_type_id'],            
+            'event_type_id' => $data['event_type_id'],
             'template_event_id' => isset($data['template_event_id']) ? $data['template_event_id'] : 0,
             'created_by_user_id'=> $data['created_by_user_id'],
             'latitude'      => isset($data['latitude']) ? $data['latitude'] : '',

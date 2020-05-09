@@ -45,18 +45,36 @@ final class User extends Common
     }
 
     /// Connects to all the batches the current user mentors.
-    public function batches($status = false)
+    public function mentored_batches($status = false)
     {
-        $batches = $this->hasMany("App\Models\Batch", 'batch_head_id');
+        $batches = $this->belongsToMany("App\Models\Batch", 'UserBatch', 'user_id', 'batch_id');
         $batches->select("Batch.id", "Batch.class_time", "Batch.day", "Batch.batch_head_id");
         $batches->join("Class", "Class.batch_id", '=', 'Batch.id');
-        $batches->where('Batch.year', '=', $this->year)->where("Class.class_on", '>', date('Y-m-d H:i:s'))->where("Batch.status", '=', '1');
+        $batches->where('Batch.year', '=', $this->year)->where("Class.class_on", '>', date('Y-m-d H:i:s'))
+                ->where("Batch.status", '=', '1')->where('UserBatch.role', 'mentor');
         if ($status) {
             $batches->where('Class.status', $status);
         }
         $batches->orderBy("Class.class_on");
         return $batches;
     }
+
+    /// All the batches the current user teaches at
+    public function batches()
+    {
+        $batches = $this->belongsToMany("App\Models\Batch", 'UserBatch', 'user_id', 'batch_id');
+        $batches->where('Batch.year', '=', $this->year)->where("Batch.status", '=', '1')->where('UserBatch.role', 'teacher');
+        return $batches;
+    }
+
+    /// All the levels the current user teaches at
+    public function levels()
+    {
+        $levels = $this->belongsToMany("App\Models\Level", 'UserBatch', 'user_id', 'level_id');
+        $levels->where('Level.year', '=', $this->year)->where("Level.status", '=', '1');
+        return $levels;
+    }
+
 
     public function donations()
     {
@@ -71,6 +89,31 @@ final class User extends Common
         $devices = $this->hasMany("App\Models\Device", 'user_id');
         $devices->where("status", '=', "1");
         return $devices;
+    }
+
+    public function links()
+    {
+        $groups = $this->groups();
+        $group_ids = $groups->pluck('id')->unique();
+        $vertical_ids = $groups->pluck('vertical_id')->unique();
+        $city_ids = [0, $this->city()->first()->id];
+        $batches = $this->batches()->get();
+
+        // All arrays have 0 value to make sure those match too - if the Link.<field> value is 0
+        $group_ids[] = 0;
+        $vertical_ids[] = 0;
+        $center_ids = [0];
+        foreach ($batches as $i => $b) {
+            $center_ids[] = $b->center()->first()->id;
+        }
+
+        $links = $this->hasMany('App\Models\Link', 'status', 'status'); // :UGLY: This is a HORRIBLE thing to get tables linked that wouldn't otherwise link easily.
+        $links->whereIn("Link.center_id", $center_ids);
+        $links->whereIn("Link.group_id", $group_ids);
+        $links->whereIn("Link.vertical_id", $vertical_ids);
+        // $links->select('id','name','url','text', 'sort_order');
+
+        return $links;
     }
 
     // public function data()
