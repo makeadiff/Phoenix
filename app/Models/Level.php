@@ -86,8 +86,10 @@ final class Level extends Common
         if (!$this->id) {
             return false;
         }
+        $grade = $this->grade;
+        if($this->grade == 13) $grade = "Aftercare";
 
-        return $this->grade . ' ' . $this->name;
+        return $grade . ' ' . $this->name;
     }
 
     public function inCenter($center_id)

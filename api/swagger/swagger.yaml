@@ -1177,29 +1177,29 @@ paths:
           description: Comment added successfully
         404:
           description: Can't find any Center with given ID.
-    /centers/{center_id}/comments/{comment_id}:
-      delete:
-        tags:
-          - center
-          - comment
-        summery: Delete a Center comment
-        description: Deletes a center comment with given ID
-        parameters:
-          - name: center_id
-            in: path
-            type: integer
-            required: true
-            description: ID of the center we should find the comments for.
-          - name: comment_id
-            in: path
-            type: integer
-            required: true
-            description: ID of the comment that should be deleted.
-        responses:
-          200:
-            description: Comment deleted
-          404:
-            description: Can't find any Center or comment with given ID.
+  /centers/{center_id}/comments/{comment_id}:
+    delete:
+      tags:
+        - center
+        - comment
+      summery: Delete a Center comment
+      description: Deletes a center comment with given ID
+      parameters:
+        - name: center_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the center we should find the comments for.
+        - name: comment_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the comment that should be deleted.
+      responses:
+        200:
+          description: Comment deleted
+        404:
+          description: Can't find any Center or comment with given ID.
 
   /students/{student_id}/comments:
     get:
@@ -1250,29 +1250,29 @@ paths:
           description: Comment added successfully
         404:
           description: Can't find any student with given ID.
-    /students/{student_id}/comments/{comment_id}:
-      delete:
-        tags:
-          - student
-          - comment
-        summery: Delete a student comment
-        description: Deletes a student comment with given ID
-        parameters:
-          - name: student_id
-            in: path
-            type: integer
-            required: true
-            description: ID of the student we should find the comments for.
-          - name: comment_id
-            in: path
-            type: integer
-            required: true
-            description: ID of the comment that should be deleted.
-        responses:
-          200:
-            description: Comment deleted
-          404:
-            description: Can't find any student or comment with given ID.
+  /students/{student_id}/comments/{comment_id}:
+    delete:
+      tags:
+        - student
+        - comment
+      summery: Delete a student comment
+      description: Deletes a student comment with given ID
+      parameters:
+        - name: student_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the student we should find the comments for.
+        - name: comment_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the comment that should be deleted.
+      responses:
+        200:
+          description: Comment deleted
+        404:
+          description: Can't find any student or comment with given ID.
 
   ############################### Students
 
