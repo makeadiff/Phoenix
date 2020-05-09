@@ -3,6 +3,7 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Center;
+use App\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 final class Student extends Common
@@ -31,6 +32,12 @@ final class Student extends Common
         $levels->orderBy("grade")->orderBy("name");
         return $levels;
     }
+
+    public function comments()
+    {
+        return $this->morphMany('App\Models\Comment', 'item');
+    }
+
 
     public function search($data)
     {
