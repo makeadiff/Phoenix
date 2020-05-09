@@ -14,7 +14,7 @@ final class CenterProject extends Common
 
     public function projects()
     {
-        $projects = $this->hasMany('App\Models\Project','project_id')->wherePivot('year', $this->year);
+        $projects = $this->hasMany('App\Models\Project', 'project_id')->wherePivot('year', $this->year);
         return $projects;
     }
 
@@ -60,6 +60,4 @@ final class CenterProject extends Common
         // dump($q->toSql(), $q->getBindings());
         return $q;
     }
-
-
 }

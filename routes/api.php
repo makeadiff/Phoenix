@@ -14,6 +14,7 @@ use App\Models\Deposit;
 use App\Models\Event;
 use App\Models\Event_Type;
 use App\Models\Data;
+use App\Models\Comment;
 use App\Models\Notification;
 use App\Models\Contact;
 use App\Models\Alert;
@@ -132,11 +133,6 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     Route::get('/verticals', function () {
         $verticals = Vertical::getAll();
         return JSend::success("Verticals", ['verticals' => $verticals]);
-    });
-
-    Route::get('/events/types', function () {
-        $eventtypes = Event_Type::getAll();
-        return JSend::success("Event_Types", ['event_types' => $eventtypes]);
     });
 
     Route::get('/projects', function () {
@@ -467,6 +463,71 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return deleteData('Center', $item_id, $data_name);
     });
 
+    ///////////////////////////////////// Comments /////////////////////////////////////
+
+    if (!function_exists('getComments')) { // It was causing some wierd issues in 'php artisan config:cache' command.
+        function getComments($item, $item_id)
+        {
+        	$class_name = "App\Models\\$item";
+            $model = new $class_name;
+        	$item_row = $model->find($item_id);
+            if (!$item_row) {
+                return JSend::fail("Can't find any $item with ID $item_id", []);
+            }
+            $comments = $item_row->comments()->select('id','comment', 'added_on', 'added_by_user_id')->get();
+
+            return JSend::success("Comments for $item ID:$item_id", ['comments' => $comments]);
+        }
+        function addComment($item_type, $item_id, $request)
+        {
+        	$class_name = "App\Models\\$item_type";
+            $item_model = new $class_name;
+        	$item_row = $item_model->find($item_id);
+            if (!$item_row) {
+                return JSend::fail("Can't find any $item_type with ID $item_id", []);
+            }
+
+        	$model = new Comment;
+            if ($item_type and $item_id and $request->input('comment')) {
+                $comment = $model->add([
+                	'item_type'	=> $item_type,
+                	'item_id'	=> $item_id,
+                	'comment'	=> $request->input('comment'),
+                	'added_by_user_id'	=> $request->input('added_by_user_id') ? $request->input('added_by_user_id') : 0
+                ]);
+                return JSend::success("Added a comment for $item_type $item_id", ['comment' => $comment]);
+            }
+
+            return JSend::fail("Error in input.");
+        }
+        function deleteComment($comment_id)
+        {
+            (new Comment)->remove($comment_id);
+
+            return "";
+        }
+    }
+
+    Route::get('/centers/{center_id}/comments', function ($item_id) {
+        return getComments("Center", $item_id);
+    });
+    Route::post('/centers/{center_id}/comments', function (Request $request, $item_id) {
+        return addComment('Center', $item_id, $request);
+    });
+    Route::delete('/centers/{center_id}/comments/{comment_id}', function ($item_id, $comment_id) {
+        return deleteComment($comment_id);
+    });
+
+    Route::get('/students/{student_id}/comments', function ($item_id) {
+        return getComments("Student", $item_id);
+    });
+    Route::post('/students/{student_id}/comments', function (Request $request, $item_id) {
+        return addComment('Student', $item_id, $request);
+    });
+    Route::delete('/students/{student_id}/comments/{comment_id}', function ($item_id, $comment_id) {
+        return deleteComment($comment_id);
+    });
+
     ////////////////////////////////////////////////// Auth //////////////////////////////////////////////////////
     /*
     Route::post('/users/login', function(Request $request) {  // - This line is here to get this call picked up the the all_call.php monitor.
@@ -684,6 +745,100 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::fail("Can't find device of user $user_id with given token");
     });
     
+    Route::get('/users/{user_id}/links', function ($user_id) {
+        $user_model = new User;
+        $user = $user_model->fetch($user_id);
+
+        if (!$user) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        $links = $user->links()->get();
+
+        return JSend::success("Links for {$user->name}", ['links' => $links]);
+    });
+
+    Route::get('/users/{user_id}/grouped_links', function ($user_id) {
+        $user_model = new User;
+        $user = $user_model->fetch($user_id);
+
+        if (!$user) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        $all_links = $user->links()->get();
+
+        $grouped_links = [
+            'general'   => [
+                'name'      => 'General',
+                'links'     => []
+            ],
+            'city'  => [
+                'name'      => 'City',
+                'links'     => []
+            ],
+            'center'   => [
+                'name'      => 'Shelter',
+                'centers'   => []
+            ],
+            'vertical'   => [
+                'name'      => 'Vertical',
+                'verticals' => []
+            ],
+            'group'   => [
+                'name'      => 'Role',
+                'groups'    => []
+            ],
+        ];
+
+        foreach ($all_links as $l) {
+            $lnk = $l->only('id', 'name', 'url', 'text', 'sort_order');
+            if (!$l->center_id and !$l->vertical_id and !$l->group_id and !$l->city_id) {
+                $grouped_links['general']['links'][] = $lnk;
+                continue;
+            }
+
+            if ($l->city_id) {
+                $grouped_links['city']['name'] = (new City)->fetch($l->city_id)->name;
+                $grouped_links['city']['links'][] = $lnk;
+            }
+
+            if ($l->center_id) {
+                if (!isset($grouped_links['center']['centers'][$l->center_id])) {
+                    $grouped_links['center']['centers'][$l->center_id] = [
+                        'name'  => (new Center)->fetch($l->center_id)->name,
+                        'links' => [$lnk]
+                    ];
+                } else {
+                    $grouped_links['center']['centers'][$l->center_id]['links'][] = $lnk;
+                }
+            }
+
+            if ($l->vertical_id) {
+                if (!isset($grouped_links['vertical']['verticals'][$l->vertical_id])) {
+                    $grouped_links['vertical']['verticals'][$l->vertical_id] = [
+                        'name'  => (new Vertical)->fetch($l->vertical_id)->name,
+                        'links' => [$lnk]
+                    ];
+                } else {
+                    $grouped_links['vertical']['verticals'][$l->vertical_id]['links'][] = $lnk;
+                }
+            }
+
+            if ($l->group_id) {
+                if (!isset($grouped_links['group']['groups'][$l->group_id])) {
+                    $grouped_links['group']['groups'][$l->group_id] = [
+                        'name'  => (new Group)->fetch($l->group_id)->name,
+                        'links' => [$lnk]
+                    ];
+                } else {
+                    $grouped_links['group']['groups'][$l->group_id]['links'][] = $lnk;
+                }
+            }
+        }
+        
+        return JSend::success("Links for {$user->name}", ['links' => $grouped_links]);
+    });
 
     //////////////////////////////////////////////////////// Contacts /////////////////////////////////
     Route::post('/applicants', function (Request $request) {
@@ -1068,6 +1223,12 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return "";
     });
 
+    Route::get('/events/types', function () {
+        $eventtypes = Event_Type::getAll();
+        return JSend::success("Event_Types", ['event_types' => $eventtypes]);
+    });
+
+
     // Notifications
     // :TODO: This might be depricated soon. We are moving to the 'Device' Model.
     Route::post('/notifications', function (Request $request) {
@@ -1119,12 +1280,17 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     });
 
     // Use this to Debug/test things
-    Route::get('/test', function() {
-        $center = new Center;
+    Route::get('/test', function () {
+        // $center = new Center;
         // $projects = $center->find(184)->center_projects()->get();
-        $projects = $center->find(154)->batches()->teachers()->get();
+        // $projects = $center->find(154)->batches()->teachers()->get();
 
-        dump($projects);
+        // $user_model = new User;
+        // $links = $user_model->find(1)->links()->get();
+        // dump($links->pluck('name'));
+
+        $center = (new Center)->find(25);
+        dump($center->comments()->first()->added_by_user()->get());
     });
 
     require_once base_path('routes/api-surveys.php');

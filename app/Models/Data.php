@@ -3,6 +3,9 @@ namespace App\Models;
 
 use App\Models\Common;
 
+// :TODO: Might need to rename 'item' field to 'item_type' to make this work with Laravel's polymorphic relation. See 'Comment' model. 
+// Also, that will fix wierd hacky solutions with having the 'type' field in Common model.
+
 final class Data extends Common
 {
     protected $table = 'Data';

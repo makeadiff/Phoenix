@@ -39,6 +39,7 @@ type Query {
 		vertical_id: Int @eq): [Group!]! @all
     verticals(status: String = "1" @eq): [Vertical!]! @all
     projects(status: String = "1" @eq): [Project!]! @all
+    comments(item_type: String @eq, item_id: String @eq): [Comment] @all
 
 	# Custom Resolvers... 
 	# The files that control these can be found at  app/GraphQL/Queries/<FileName>.php
@@ -87,6 +88,9 @@ input InputSurveyResponse {
 	response: String
 }
 
+# For Polymorphic relations - In Comment and Data
+union Item = User | Student | Center | Event | Class | City | Batch | Level
+
 # Volunteer details.
 type User {
 	id: ID!
@@ -113,6 +117,7 @@ type User {
 	batches: [Batch] @hasMany
 	donations: [Donation] @hasMany
 	devices: [Device] @hasMany
+	links: [Link] @hasMany
 	pivot: UserPivot
 }
 
@@ -139,6 +144,7 @@ type Student {
 	center_id: Int
 	sex: String
 	center: Center @belongsTo
+	comments: [Comment] @morphMany
 	pivot: StudentAttendance
 }
 type StudentAttendance {
@@ -158,6 +164,7 @@ type Center {
 	# projects: [Project]
 	projects: [CenterProject]
 	city: City @belongsTo
+	comments: [Comment] @morphMany
 }
 
 type CenterProject {
@@ -379,12 +386,30 @@ type Device {
 	user: User
 }
 
+type Link {
+	id: ID!
+	name: String
+	url: String
+	text: String
+	status: String
+}
+
 type Data {
 	name: String!
 	data: String!
 	item: String
 	item_id: Int
 	year: Int
+}
+
+type Comment {
+	id: ID!
+	item_type: String
+	item_id: Int
+	comment: String
+	added_on: DateTime
+	added_by_user: User
+	item: Item @morphTo
 }
 
 # Custom Returns 

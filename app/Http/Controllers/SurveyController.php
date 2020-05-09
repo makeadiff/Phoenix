@@ -15,7 +15,7 @@ class SurveyController extends Controller
 {
     public function addSurveyTemplate(Request $request)
     {
-        $fields = array_filter($request->only('name', 'description', 'vertical_id', 'responder', 'questions'));
+        $fields = array_filter($request->only('name', 'description', 'vertical_id', 'responder', 'questions', 'options'));
 
         // Validation...
         $validator = Validator::make($fields, [
@@ -25,14 +25,13 @@ class SurveyController extends Controller
         if ($validator->fails()) {
             return JSend::fail("Survey Template insert validation failed", $validator->errors());
         }
+
         $survey_template = Survey_Template::add($fields);
         if (!empty($fields['questions'])) {
             $questions = json_decode($fields['questions'], true);
             $question_model = new Survey_Question;
             $question_model->addMany($questions, $survey_template->id);
         }
-
-        // :TODO: - Maybe create an instance along with the template. Because an instance is what people want.
 
         return JSend::success("Added a Survey Template", ['templates' => $survey_template]);
     }

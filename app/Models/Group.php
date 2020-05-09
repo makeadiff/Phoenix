@@ -43,10 +43,8 @@ final class Group extends Common
 
             if ($field === 'name') {
                 $q->where($field, 'like', '%' . $data[$field] . '%');
-
             } elseif ($field === 'type_in') {
                 $q->whereIn('type', explode(",", $data[$field]));
-                
             } else {
                 $q->where($field, $data[$field]);
             }

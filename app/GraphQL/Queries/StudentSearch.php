@@ -19,8 +19,7 @@ class StudentSearch
         if (isset($args['city_id'])) {
             $city_model = new City;
             $students = $city_model->fetch($args['city_id'])->students($args)->get();
-
-        } else if (isset($args['center_id'])) {
+        } elseif (isset($args['center_id'])) {
             $center_model = new Center;
             $students = $center_model->fetch($args['center_id'])->students($args)->get();
         }

@@ -85,7 +85,7 @@ class DonationTest extends TestCase
     {
         // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
-        $donation_id = 24722;
+        $donation_id = 27319;
         $this->load("/donations/$donation_id");
 
         $this->assertEquals($this->response_data->status, 'success');

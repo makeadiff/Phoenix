@@ -48,6 +48,11 @@ final class Center extends Common
         return $this->hasMany('App\Models\Student')->where('Student.status', '1')->orderBy("Student.name");
     }
 
+    public function comments()
+    {
+        return $this->morphMany('App\Models\Comment', 'item');
+    }
+
     public static function getAll()
     {
         return Center::where('status', '1')->orderBy('name')->get();
