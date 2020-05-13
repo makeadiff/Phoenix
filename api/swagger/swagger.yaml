@@ -2627,7 +2627,7 @@ paths:
         404:
           description: Couldn't find the event with the given event ID.
 
-  /events/types:
+  /event_types:
     get:
       tags: 
         - event

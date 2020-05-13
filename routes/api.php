@@ -1223,7 +1223,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return "";
     });
 
-    Route::get('/events/types', function () {
+    Route::get('/event_types', function () {
         $eventtypes = Event_Type::getAll();
         return JSend::success("Event_Types", ['event_types' => $eventtypes]);
     });
