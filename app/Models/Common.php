@@ -33,7 +33,11 @@ class Common extends Model
     public function fetch($id)
     {
         $this->item_id = $id;
-        $this->item = $this->where('status', '1')->find($id);
+        if(in_array('status', $this->fillable)) {
+            $this->item = $this->where('status', '1')->find($id);
+        } else {
+            $this->item = $this->find($id);
+        }
 
         return $this->item;
     }

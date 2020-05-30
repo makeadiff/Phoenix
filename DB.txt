@@ -44,7 +44,7 @@ App_Director.sort:
 App_Director.user_id: User.id - Not used
 App_Director.status: 
 
-Archive: Stores the historical credits of all teachers. This is saved at the beginning of every year. Also saved in User_Credit_Archive Table. Need a review. Maybe, drop this table, just have Use_Credit_Archive. :TODO: Rename table to Credit_Archive, Import things from User_Credit_Archive to that table. Change references in apps/reports/volunteer_credits.php:54, Madapp/system/application/controllers/cron.php:105, Madapp/system/application/models/users_model.php:598,656 
+Archive: Stores the historical credits of all teachers. This is saved at the beginning of every year. Also saved in User_Credit_Archive Table. Need a review. Maybe, drop this table, just have Use_Credit_Archive. :TODO: Rename table to Credit_Archive, Import things from User_Credit_Archive to that table. Change references in apps/reports/volunteer_credits.php:54, Madapp/system/application/controllers/cron.php:105, Madapp/system/application/models/users_model.php:598,656
 Archive.id: 
 Archive.user_id: 
 Archive.name: 
@@ -61,6 +61,8 @@ Batch.center_id: Center.id
 Batch.project_id: Project.id
 Batch.year: Holds the year which the batch is a part of.
 Batch.status: 
+Batch.added_on:
+Batch.updated_on:
 
 BatchLevel: The batch level linking. Holds information on which all levels are part of which batch.
 BatchLevel.id: 
@@ -139,7 +141,7 @@ Class.status:
 
 Comment: Catch-all comment storing table. This will be storing notes on any of the 'item' - 'User','Student','City','Center','Event'
 Comment.id: 
-Comment.item: Which table this will be associated with. For eg. if this has value 'User' and item_id has value '35443' that means this data point is associated with User with id 35443
+Comment.item_type:
 Comment.item_id: The foreign key of what ever the item is in that row.
 Comment.comment: 
 Comment.added_on: 
@@ -187,23 +189,14 @@ Data.year:
 Data.added_on: 
 Data.added_by_user_id: User.id
 
-Online_Donation: This is the table where all Online donations will be captured
-Online_Donation.id: 
-Online_Donation.donor_id: Donut_Donor.id - Donor Details will be in another table.
-Online_Donation.amount: Donation Amount
-Online_Donation.added_on: 
-Online_Donation.payment: When the gateway is called, it becomes started. If gateway confirms that payment was done, I'll mark it success.
-Online_Donation.payment_method: The methord used by the donor - UPI,Card,netbanking, etc. Provided by the gateway(razorpay provides - not sure about others)
-Online_Donation.currency: Defaults to INR. We'll need this when other currencies are supported.
-Online_Donation.gateway: Which gateway was used - right now, one of these tech_process,simply_donor,razorpay,payu,other
-Online_Donation.gateway_transaction_id:  ID provided by the gateway for this payment.
-Online_Donation.info: More info can be stored here. JSON - so it can store structures.
-Online_Donation.fundraiser_id: If its a referral donation, the fund raiser ID can be stored here. This a link to User.id
-Online_Donation.repeat_count: Defaults to 1. If its a recurring donation, this will store how many times the donation needs to be repeated. If a one time donation, it will be 1.
-Online_Donation.unit_amount: If its a recurring donation the amount field will be the total amount. This field will store how much a single donation was.
-Online_Donation.conversion_rate: The conversion rate we got on the day of donation. Only applicable for foreign donations. Defaults to 1(INR)
-Online_Donation.receipt_number: ID of the receipt that should go in the Receipt PDF - and should be unique
-Online_Donation.frequency: Donation frequency for the Donation, monthly or one-time
+Device: Device used for MADNet login - can be used to sent push notifications.
+Device.id:
+Device.name: Device name/description. Right now not used.
+Device.user_id: User.id
+Device.token: FCM token - Firebase provides this. 
+Device.added_on:
+Device.updated_on:
+Device.status:
 
 Donut_Deleted_Donation: This stores a copy of the donation when anyone deletes it. For historical purpose. Consider moving to a Point in Time Architecture for this.
 Donut_Deleted_Donation.id: 
@@ -212,8 +205,10 @@ Donut_Deleted_Donation.fundraiser_user_id: User.id
 Donut_Deleted_Donation.donor_id: Dount_Donor.id
 Donut_Deleted_Donation.status: 
 Donut_Deleted_Donation.amount: 
+Donut_Deleted_Donation.reference_file:
 Donut_Deleted_Donation.nach_start_on: 
 Donut_Deleted_Donation.nach_end_on: 
+Donut_Deleted_Donation.donation_repeat_count:
 Donut_Deleted_Donation.cheque_no: 
 Donut_Deleted_Donation.added_on: 
 Donut_Deleted_Donation.updated_on: 
@@ -238,7 +233,7 @@ Donut_Donation.fundraiser_user_id: User.id - the person who raised the amount.
 Donut_Donation.donor_id: Dount_Donor.id - The donor who made donation.
 Donut_Donation.status: Handover status. If the value is 'collected', the donation is with the 'with_user_id'. If value is 'deposited', the user 'with_user_id' has handed it over to someone else - but its not approved yet. Note- The field name has a consistency issue. In most other cases where the field name is 'status', its a active/deleted 1/0 field. Might need to rename later. Note - this is slightly complicated for others to understand.
 Donut_Donation.amount: 
-Donut_Donation.reference_file: NACH forms can be scanned/photographed and uploaded. The path of the image will be stored here. 
+Donut_Donation.reference_file: NACH forms can be scanned/photographed and uploaded. The path of the image will be stored here.
 Donut_Donation.nach_start_on: If this is a NACH donation, the start on date for the NACH
 Donut_Donation.nach_end_on: 
 Donut_Donation.donation_repeat_count: Online recurring donation will happen for this many months for this donation.
@@ -314,7 +309,6 @@ Event.place:
 Event.type: Not used anymore - legacy. Might have to do a migration that moves this data to event_type_id.
 Event.city_id: City.id - If this is 0, it means its a multi city event(Users from more than one city participating - eg. National Ed Support Fellows Zoom Call)
 Event.event_type_id: Event_Type.id - What type of an event this is
-Event.vertical_id: Vertical.id - What vertical this event is a part of(eg. Ed Support Training.)
 Event.template_event_id: Event.id - All recurring event are created from a base event - of which the ID is stored in this field.
 Event.user_selection_options: JSON - this field is used to store which all user filtering is used to select the users in the Envite UI. Not used right now.
 Event.created_by_user_id: User.id - Created by the given user
@@ -329,6 +323,7 @@ Event.status:
 Event_Type: All the different event types. Note - add vertical_id, description to this. Consider making this a hirarchy using parent_event_type_id
 Event_Type.id: 
 Event_Type.name: 
+Event_Type.vertical_id: Vertical.id
 Event_Type.status: 
 
 Exam: Stores all exams that has been assessed, used for End of Year School Scores. Note: add added_on, added_by_user_id.
@@ -438,7 +433,7 @@ FAM_UserStage.year:
 FAM_UserStage.status: 
 FAM_UserStage.shelter_id: Center.id
 
-FAM_UserTask: All the tasks the applicants has submitted. Note: Currently a row based data entry, move to a column based format with task type and taks value. Add updated_on 
+FAM_UserTask: All the tasks the applicants has submitted. Note: Currently a row based data entry, move to a column based format with task type and taks value. Add updated_on
 FAM_UserTask.id: 
 FAM_UserTask.user_id: User.id
 FAM_UserTask.common_task_url: 
@@ -455,7 +450,7 @@ FAM_UserTask.preference_3_video_files:
 FAM_UserTask.year: 
 FAM_UserTask.added_on: 
 
-FR_UserCredit: History of FR User credit assignment. 
+FR_UserCredit: History of FR User credit assignment.
 FR_UserCredit.id: 
 FR_UserCredit.user_id: User.id
 FR_UserCredit.credit_parameter_id: Credit_Parameter.id
@@ -472,12 +467,12 @@ Grade_Template.id:
 Grade_Template.name: 
 Grade_Template.status: 
 
-Grade_Template_Collection: Lookup table for Grade Template and Grades marked. Note: Move Grade Template ID to Grade_Template_Grade table 
+Grade_Template_Collection: Lookup table for Grade Template and Grades marked. Note: Move Grade Template ID to Grade_Template_Grade table
 Grade_Template_Collection.id: 
 Grade_Template_Collection.grade_id: Grade_Template_Grade.id
 Grade_Template_Collection.grade_template_id: Grade_Template.id
 
-Grade_Template_Grade: Stores Grade Ranges for Scoring. Note: Move Grade Template ID to Grade_Template_Grade table 
+Grade_Template_Grade: Stores Grade Ranges for Scoring. Note: Move Grade Template ID to Grade_Template_Grade table
 Grade_Template_Grade.id: 
 Grade_Template_Grade.grade: 
 Grade_Template_Grade.from_mark: 
@@ -536,6 +531,20 @@ Level.project_id: Project.id - this decides if the row holds Ed data or FP data.
 Level.year: 
 Level.status: 
 
+Link: Used to provide helpful resouces to users in MADNet. 
+Link.id:
+Link.name: Name of the resource
+Link.url: URL of Resource
+Link.text: Description of the resource
+Link.vertical_id: Vertical.id - If not 0, only this vertical will be shown the resource
+Link.group_id: Group.id - If not 0, only this group will be shown the resource
+Link.city_id: City.id - If not 0, only this city will be shown the resource
+Link.center_id: Center.id - If not 0, only this shelter will be shown the resource
+Link.sort_order:
+Link.added_on:
+Link.updated_on:
+Link.status:
+
 Log: Event logging. Used for debugging more than anything else. And login data.
 Log.id: 
 Log.name: Type of event. Eg. user_login
@@ -546,14 +555,15 @@ Log.level:
 
 Mark: Stores marks for asssessments recorded by MAD, currently used for End of Year School Scores
 Mark.id: 
-Mark.student_id: Student.id 
-Mark.subject_id: Subject.id 
-Mark.exam_id: Exam.id 
+Mark.student_id: Student.id
+Mark.subject_id: Subject.id
+Mark.exam_id: Exam.id
 Mark.marks: 
 Mark.total: 
 Mark.input_data: 
 Mark.status: 
-Mark.template_id: Grade_Template.id 
+Mark.template_id: Grade_Template.id
+Mark.added_on:
 
 Medium: Medium of instruction. English/Vernacular/<Specific Language>
 Medium.id: 
@@ -574,6 +584,29 @@ Message_Queue.added_on:
 Message_Queue.status: Non standard naming - 'sent/pending'
 Message_Queue.sent_on: 
 
+Migration: Managed by Larval to keep track of db changes(migrations.)
+Migration.id:
+Migration.migration:
+Migration.batch:
+
+Online_Donation: This is the table where all Online donations will be captured
+Online_Donation.id: 
+Online_Donation.donor_id: Donut_Donor.id - Donor Details will be in another table.
+Online_Donation.amount: Donation Amount
+Online_Donation.added_on: 
+Online_Donation.payment: When the gateway is called, it becomes started. If gateway confirms that payment was done, I'll mark it success.
+Online_Donation.payment_method: The methord used by the donor - UPI,Card,netbanking, etc. Provided by the gateway(razorpay provides - not sure about others)
+Online_Donation.currency: Defaults to INR. We'll need this when other currencies are supported.
+Online_Donation.gateway: Which gateway was used - right now, one of these tech_process,simply_donor,razorpay,payu,other
+Online_Donation.gateway_transaction_id: ID provided by the gateway for this payment.
+Online_Donation.info: More info can be stored here. JSON - so it can store structures.
+Online_Donation.fundraiser_id: If its a referral donation, the fund raiser ID can be stored here. This a link to User.id
+Online_Donation.repeat_count: Defaults to 1. If its a recurring donation, this will store how many times the donation needs to be repeated. If a one time donation, it will be 1.
+Online_Donation.unit_amount: If its a recurring donation the amount field will be the total amount. This field will store how much a single donation was.
+Online_Donation.conversion_rate: The conversion rate we got on the day of donation. Only applicable for foreign donations. Defaults to 1(INR)
+Online_Donation.receipt_number: ID of the receipt that should go in the Receipt PDF - and should be unique
+Online_Donation.frequency: Donation frequency for the Donation, monthly or one-time
+
 Permission: User group permissions.
 Permission.id: 
 Permission.name: 
@@ -584,9 +617,9 @@ Project.id:
 Project.name: 
 Project.added_on: 
 Project.vertical_id: Vertical.id
-Project.status:
+Project.status: 
 
-Push_Notification: Used in events app. Holds all the push notifications. There is a cron that will send out the notification.
+Push_Notification: Used in events app. Holds all the push notifications. There is a cron that will send out the notification. This will be depricated in favor of the Device table soon.
 Push_Notification.id: 
 Push_Notification.user_id: User.id
 Push_Notification.imei_no: If its a browser notification this is not getting used.
@@ -604,21 +637,21 @@ Retention_Referrals.id:
 Retention_Referrals.name: 
 Retention_Referrals.email: 
 Retention_Referrals.phone: 
-Retention_Referrals.city_id: City.id 
-Retention_Referrals.referer_user_id: User.id 
-Retention_Referrals.year:
+Retention_Referrals.city_id: City.id
+Retention_Referrals.referer_user_id: User.id
+Retention_Referrals.year: 
 Retention_Referrals.added_on: 
 
 Retention_UserGroupPreference: Stores retention preference data for Volunteers.
 Retention_UserGroupPreference.id: 
-Retention_UserGroupPreference.user_id: User.id 
+Retention_UserGroupPreference.user_id: User.id
 Retention_UserGroupPreference.group_id: Group.id
-Retention_UserGroupPreference.preference: Preference of profiles. Ranges from 1-3. 
-Retention_UserGroupPreference.shelter_id: Center.id 
-Retention_UserGroupPreference.city_id: City.id 
+Retention_UserGroupPreference.preference: Preference of profiles. Ranges from 1-3.
+Retention_UserGroupPreference.shelter_id: Center.id
+Retention_UserGroupPreference.city_id: City.id
 Retention_UserGroupPreference.year: Year of data entry, entered accoriding to MAD Academic year.
 Retention_UserGroupPreference.added_on: 
-Retention_UserGroupPreference.status: '1' for Active Preference and '0' for Obsolete preference. 
+Retention_UserGroupPreference.status: '1' for Active Preference and '0' for Obsolete preference.
 
 SS_Answer: Stakeholder Survey. An older survey system. We'll have to merge this with Survey in an year or two.
 SS_Answer.id: 
@@ -642,7 +675,7 @@ SS_Survey_Event.started_by_user_id:
 SS_Survey_Event.added_on: 
 SS_Survey_Event.status: 
 
-SS_UserAnswer: Stakeholder Survey. 
+SS_UserAnswer: Stakeholder Survey.
 SS_UserAnswer.id: 
 SS_UserAnswer.question_id: 
 SS_UserAnswer.user_id: 
@@ -668,7 +701,6 @@ Student.photo:
 Student.thumbnail: 
 Student.added_on: 
 Student.reason_for_leaving: 
-Student.student_type: Enum - active,alumni :TODO: Add this field to the DB.
 Student.status: 
 
 StudentClass: Student attendance will be stored here.
@@ -691,7 +723,7 @@ Subject.status:
 
 Survey: Survey Instance. Each Survey template can have multiple survey instances. Eg. 'DC Survey' template can have 3 instance - 'Baseline', 'At Camp' and 'Post Camp'. Same questions, but 3 different instances.
 Survey.id: 
-Survey.name:
+Survey.name: 
 Survey.survey_template_id: Survey_Template.id
 Survey.added_by_user_id: User.id
 Survey.added_on: 
@@ -737,7 +769,7 @@ Survey_Response.response:
 Survey_Response.added_on: 
 Survey_Response.added_by_user_id: User.id
 
-Survey_Template: A questionire group is a survey template. Survey template can have multiple instances - stored in Survey table. 
+Survey_Template: A questionire group is a survey template. Survey template can have multiple instances - stored in Survey table.
 Survey_Template.id: 
 Survey_Template.name: 
 Survey_Template.description: 
@@ -747,7 +779,7 @@ Survey_Template.responder: What type of responder is this for - is it a student,
 Survey_Template.options: Use this to store extra data in JSON format.
 Survey_Template.status: 
 
-Temp_Employee_Signup: This is used for employing sorcing project. It was run out of madapp - and there is a lot of good leads in this. 
+Temp_Employee_Signup: This is used for employing sorcing project. It was run out of madapp - and there is a lot of good leads in this.
 Temp_Employee_Signup.id: 
 Temp_Employee_Signup.name: 
 Temp_Employee_Signup.phone: 
@@ -759,6 +791,9 @@ Temp_Employee_Signup.applied_verticals:
 Temp_Employee_Signup.cv_file: 
 Temp_Employee_Signup.cover_letter: 
 Temp_Employee_Signup.response: 
+Temp_Employee_Signup.added_on:
+Temp_Employee_Signup.updated_on:
+Temp_Employee_Signup.stage:
 
 User: All volunteer data will be stored here.
 User.id: 
@@ -807,7 +842,9 @@ UserBatch.id:
 UserBatch.user_id: User.id
 UserBatch.batch_id: Batch.id
 UserBatch.level_id: Level.id
-UserBatch.requirement: Not used - used to hold the number of volunteers needed for this Batch.
+UserBatch.subject_id: Subject.id
+UserBatch.added_on:
+UserBatch.role:
 
 UserClass: User attendance is marked in this table
 UserClass.id: 
@@ -830,7 +867,7 @@ UserData: Key/value store for user related data. Right now, stores things like b
 UserData.id: 
 UserData.user_id: User.id
 UserData.name: Key part of the key/value pair
-UserData.value: Value part 
+UserData.value: Value part
 UserData.data: Value part - if the value is bigger
 UserData.added_on: 
 
