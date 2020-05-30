@@ -13,7 +13,8 @@ final class Classes extends Common
 {
     protected $table = 'Class';
     public $timestamps = false;
-    protected $fillable = ['batch_id', 'level_id', 'project_id', 'class_on', 'class_type', 'class_satisfaction','cancel_option','cancel_reason','updated_by_mentor','updated_by_teacher','status'];
+    protected $fillable = ['batch_id', 'level_id', 'project_id', 'class_on', 'class_type', 'class_satisfaction',
+                            'cancel_option','cancel_reason','updated_by_mentor','updated_by_teacher','status'];
 
     public function batch()
     {
@@ -25,15 +26,18 @@ final class Classes extends Common
     }
     public function students()
     {
-        return $this->belongsToMany('App\Models\Student', 'StudentClass', 'class_id', 'student_id')->withPivot('present', 'participation', 'check_for_understanding');
+        return $this->belongsToMany('App\Models\Student', 'StudentClass', 'class_id', 'student_id')
+                ->withPivot('present', 'participation', 'check_for_understanding');
     }
     public function teachers()
     {
-        return $this->belongsToMany('App\Models\User', 'UserClass', 'class_id', 'user_id')->withPivot('substitute_id', 'zero_hour_attendance', 'status');
+        return $this->belongsToMany('App\Models\User', 'UserClass', 'class_id', 'user_id')
+                ->withPivot('substitute_id', 'zero_hour_attendance', 'status');
     }
     public function substitutes()
     {
-        return $this->belongsToMany('App\Models\User', 'UserClass', 'class_id', 'substitute_id')->withPivot('substitute_id', 'user_id', 'zero_hour_attendance', 'status');
+        return $this->belongsToMany('App\Models\User', 'UserClass', 'class_id', 'substitute_id')
+                ->withPivot('substitute_id', 'user_id', 'zero_hour_attendance', 'status');
     }
 
     public function search($data)
@@ -50,7 +54,8 @@ final class Classes extends Common
         }
         
         // teacher_id: Int, status: String, batch_id: Int, level_id: Int, project_id: Int, class_date: Date, direction: String)
-        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'center_id', 'project_id', 'status', 'class_date', 'class_on', 'class_date_to','class_date_from', 'class_status', 'direction', 'from_date', 'limit'];
+        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'center_id', 'project_id', 'status', 
+                        'class_date', 'class_on', 'class_date_to','class_date_from', 'class_status', 'direction', 'from_date', 'limit'];
         $q->select(
             'Class.id',
             'Class.batch_id',
@@ -235,7 +240,56 @@ final class Classes extends Common
         }
         $this->edit(['status' => $status, 'updated_by_mentor' => $mentor_id], $class_id);
 
-        // :TODO: Award credits for this class
+        // Award credits for this class
+        $this->awardCredits($class_id, $teacher_id, $status, $substitute_id, $zero_hour_attendance);
+
         return $class_data;
     }
+
+    // MEGA NOT Tested.
+    public function awardCredits($class_id, $teacher_id, $status, $substitute_id, $zero_hour_attendance, $mentor_id)
+    {
+        $credit = new Credit;
+
+        $class = $this->find($class_id);
+        $project_id = $class->project_id;
+
+        $options = [
+            'item'      => 'Class',
+            'item_id'   => $class_id,
+            'added_by_user_id'  => $mentor_id
+        ];
+
+        if($project_id == 1) {
+            $param_for_substituting = 1; // :TODO: Get correct parameter IDs
+            $param_for_finding_a_substitute = 2;
+            $param_for_missing_class = 3; 
+            $param_for_missing_zero_hour = 4;
+        }
+
+        // MADApp/Class_model.php:367
+        if($status == 'attended') {
+            if($substitute_id) {
+                $credit->assign($substitute_id, $param_for_substituting, $options);
+                $credit->assign($teacher_id, $param_for_finding_a_substitute, $options);
+  
+                if(!$zero_hour_attendance) {
+                    $credit->assign($substitute_id, $param_for_missing_zero_hour, $options);
+                }
+            } else {
+                if(!$zero_hour_attendance) {
+                    $credit->assign($substitute_id, $param_for_missing_zero_hour, $options);
+                }
+            }
+            
+        } elseif($status == 'absent') {
+            if($substitute_id) {
+                $credit->assign($substitute_id, $param_for_missing_class, $options);
+                $credit->assign($teacher_id, $param_for_finding_a_substitute, $options);
+            } else {
+                $credit->assign($teacher_id, $param_for_missing_class, $options);
+            }
+        }
+    }
+
 }
