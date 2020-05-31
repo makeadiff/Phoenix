@@ -4,9 +4,8 @@ namespace App\GraphQL\Mutations;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use App\Models\Classes;
-use App\Models\Student;
 
-class saveStudentAttendance
+class cancelClass
 {
     /**
      * Return a value for the field.
@@ -21,33 +20,24 @@ class saveStudentAttendance
     {
         $class_id = $args['class_id'];
         $class_model = new Classes;
-        $teacher_id = isset($args['teacher_id']) ? $args['teacher_id'] : 0;
-        $class_satisfaction = isset($args['class_satisfaction']) ? $args['class_satisfaction'] : 0;
+        $mentor_id = isset($args['mentor_id']) ? $args['mentor_id'] : 0;
+        $reason = isset($args['reason']) ? $args['reason'] : "";
+        $reason_other = isset($args['reason_other']) ? $args['reason_other'] : "";
 
         $class = $class_model->find($class_id);
         if (!$class) {
             return 0;
         } // No class with given id
 
-        foreach ($args['students'] as $student) {
-            $class_model->saveStudentAttendance($class_id, $student['student_id'], $student, $class_satisfaction, $teacher_id);
-        }
+        $class->cancel($class_id, $reason, $reason_other, $mentor_id);
 
         return 1;
     }
 }
 
-/*
- * Sample call
+/**
+ * Sample call...
 mutation {
-    saveStudentAttendance(class_id:429626, class_satisfaction: 3, teacher_id: 1, students: [{
-      student_id: 11450,
-      participation: 5,
-      check_for_understanding: 4
-    }, {
-      student_id: 16966,
-      participation: 0,
-      check_for_understanding: 0
-    }])
+    cancelClass(class_id: 431153, reason: IN_VOLUNTEER_UNAVAILABLE, mentor_id: 1)
 }
  */

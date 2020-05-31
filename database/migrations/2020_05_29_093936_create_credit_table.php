@@ -25,7 +25,7 @@ class CreateCreditTable extends Migration
             $table->integer('item_id')->unsigned()->nullable();
             $table->string('comment')->nullable();
             $table->dateTime('added_on');
-            $table->integer('marked_by_user_id')->unsigned()->index('marked_by_user_id');
+            $table->integer('added_by_user_id')->unsigned()->nullable();
         });
     }
 

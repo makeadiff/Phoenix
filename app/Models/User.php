@@ -17,7 +17,7 @@ final class User extends Common
     public $timestamps = true;
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
-    protected $fillable = ['email','mad_email','phone','name','sex','password','password_hash','address','bio','source','birthday','city_id','credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
+    protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
     public $enable_logging = true; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()

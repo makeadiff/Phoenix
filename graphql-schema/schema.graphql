@@ -64,8 +64,9 @@ type Query {
 
 type Mutation {
 	createLog(name: String, log: String, user_id: ID, added_on: DateTime): String
-	saveTeacherAttendance(class_id: ID, teachers: [InputTeacherAttendance]): Int
-	saveStudentAttendance(class_id: ID, students: [InputStudentAttendance]): Int
+	cancelClass(class_id: ID, mentor_id: ID, reason: ClassCancelReason!, reason_other: String): Int
+	saveTeacherAttendance(class_id: ID, mentor_id: Int, teachers: [InputTeacherAttendance]): Int
+	saveStudentAttendance(class_id: ID, teacher_id: Int, class_satisfaction: Int, students: [InputStudentAttendance]): Int
 	saveSurveyResponses(responder_id: ID, survey_id: ID, added_by_user_id: ID, responses: [InputSurveyResponse]): Int
 	assignBatchTeachers(batch_id: ID!, level_id: ID!, subject_id: ID, teacher_ids: [ID]): String
 	assignBatchMentors(batch_id: ID!, mentor_ids: [ID]): String
@@ -74,8 +75,8 @@ type Mutation {
 input InputTeacherAttendance {
 	user_id: Int!
 	substitute_id: Int
-	zero_hour_attendance: String
-	status: String!
+	zero_hour_attendance: String # Enum 1,0
+	status: String! # :TODO: This should be ENUM - 'attended', 'absent'
 }
 input InputStudentAttendance {
 	student_id: Int!
@@ -433,4 +434,25 @@ type TeacherClassConnection {
 	class_id: Int
 	center_id: ID
 	center_name: String
+}
+
+enum Status {
+	ACTIVE @enum(value: 1)
+	INACTIVE @enum(value: 0)
+}
+
+enum ClassCancelReason {
+	IN_VOLUNTEER_UNAVAILABLE @enum(value: "in-volunteer-unavailable")
+	IN_VOLUNTEER_ENGAGED @enum(value: "in-volunteer-engaged")
+	IN_VOLUNTEER_UNASSIGNED @enum(value: "in-volunteer-unassigned")
+	IN_OTHER @enum(value: "in-other")
+	EXT_CHILDREN_OUT @enum(value: "ext-children-out")
+	EXT_CHILDREN_DOING_CHORES @enum(value: "ext-children-doing-chores")
+	EXT_CHILDREN_HAVE_EVENTS @enum(value: "ext-children-have-events")
+	EXT_CHILDREN_UNWELL @enum(value: "ext-children-unwell")
+	EXT_OTHER @enum(value: "ext-other")
+	EXT_PARENT_VISITING_SHELTER @enum(value: "ext-parent-visiting-shelter")
+	EXT_HOLIDAY @enum(value: "ext-holiday")
+	EXT_OUT_SCHOOL @enum(value: "ext-out-school")
+	EXT_DISTURBANCES_CITY @enum(value: "ext-disturbances-city")
 }
