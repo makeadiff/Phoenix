@@ -193,7 +193,7 @@ final class Classes extends Common
     }
 
     // Not tested.
-    public function saveStudentAttendance($class_id, $student_id, $class_details, $teacher_id = 0)
+    public function saveStudentAttendance($class_id, $student_id, $class_details, $class_satisfaction, $teacher_id = 0)
     {
         // Clear existing data
         app('db')->table('StudentClass')->where('class_id', $class_id)->where('student_id', $student_id)->delete();
@@ -210,15 +210,34 @@ final class Classes extends Common
             'present'       => $present,
             'check_for_understanding' => $check_for_understanding
         ]);
-        $this->edit(['status' => 'happened', 'updated_by_teacher' => $teacher_id], $class_id);
+        $this->edit([
+            'status' => 'happened', 
+            'updated_by_teacher' => $teacher_id,
+            'class_satisfaction' => $class_satisfaction
+        ], $class_id);
 
         return $class_data;
+    }
+
+    public function cancel($class_id, $reason, $reason_other = "", $mentor_id = 0)
+    {
+        $cls = $this->find($class_id);
+        $cls->status = 'cancelled';
+        $cls->cancel_option = $reason;
+        $cls->cancel_reason = $reason_other;
+        $cls->updated_by_mentor = $mentor_id;
+        $cls->save();
+
+        app('db')->table('UserClass')->where('class_id', $class_id)->update(['status'    => 'cancelled']);
+
+        return $cls;
     }
 
     // Not tested
     public function saveTeacherAttendance($class_id, $teacher_id, $class_details, $mentor_id = 0)
     {
-        // :TODO: Revert Credits awarded for this.
+        $this->revertCredits($class_id, $teacher_id); // If this call is an edit of existing class data, revert Credits awarded earlier
+
         // Clear existing data
         app('db')->table('UserClass')->where('class_id', $class_id)->where('user_id', $teacher_id)->delete();
 
@@ -231,65 +250,100 @@ final class Classes extends Common
             'class_id'      => $class_id,
             'user_id'       => $teacher_id,
             'substitute_id' => $substitute_id,
-            'zero_hour_attendance' => $zero_hour_attendance,
+            'zero_hour_attendance' => (string)$zero_hour_attendance,
             'status'        => $status
         ]);
 
+        $cls_status = $status;
         if ($status == 'attended' or $status == 'absent') {
-            $status = 'happened';
+            $cls_status = 'happened';
         }
-        $this->edit(['status' => $status, 'updated_by_mentor' => $mentor_id], $class_id);
+        $this->edit(['status' => $cls_status, 'updated_by_mentor' => $mentor_id], $class_id);
 
         // Award credits for this class
-        $this->awardCredits($class_id, $teacher_id, $status, $substitute_id, $zero_hour_attendance);
+        $this->awardCredits($class_id, $teacher_id, $status, $substitute_id, $zero_hour_attendance, ['mentor_id' => $mentor_id]);
 
         return $class_data;
     }
 
     // MEGA NOT Tested.
-    public function awardCredits($class_id, $teacher_id, $status, $substitute_id, $zero_hour_attendance, $mentor_id)
+    public function awardCredits($class_id, $teacher_id, $status, $substitute_id, $zero_hour_attendance, $options = [])
     {
-        $credit = new Credit;
+         $options_template = [
+            'mentor_id' => 0, 
+            'revert'    => false,
+            'class'     => false
+        ];
+        $options = array_merge($options_template, $options);
+        extract($options);
 
-        $class = $this->find($class_id);
+        if(!$class) $class = $this->find($class_id);
+        if(!$class) return false;
         $project_id = $class->project_id;
 
-        $options = [
+        $credit_options = [
             'item'      => 'Class',
             'item_id'   => $class_id,
-            'added_by_user_id'  => $mentor_id
+            'added_by_user_id'  => $mentor_id,
+            'revert'    => $revert // This will reset credits that used to exist.
         ];
 
         if($project_id == 1) {
-            $param_for_substituting = 1; // :TODO: Get correct parameter IDs
+            $param_for_substituting = 1;
             $param_for_finding_a_substitute = 2;
-            $param_for_missing_class = 3; 
-            $param_for_missing_zero_hour = 4;
+            $param_for_missing_class = 4; 
+            $param_for_missing_zero_hour = 3;
+        
+        } elseif($project_id == 2) {
+            $param_for_substituting = 5;
+            $param_for_finding_a_substitute = 6;
+            $param_for_missing_class = 8; 
+            $param_for_missing_zero_hour = 7;
         }
+
+        // :TODO: TR and Aftercare
+
+        $credit = new Credit;
 
         // MADApp/Class_model.php:367
         if($status == 'attended') {
             if($substitute_id) {
-                $credit->assign($substitute_id, $param_for_substituting, $options);
-                $credit->assign($teacher_id, $param_for_finding_a_substitute, $options);
+                $credit->assign($substitute_id, $param_for_substituting, $credit_options);
+                $credit->assign($teacher_id, $param_for_finding_a_substitute, $credit_options);
   
                 if(!$zero_hour_attendance) {
-                    $credit->assign($substitute_id, $param_for_missing_zero_hour, $options);
+                    $credit->assign($substitute_id, $param_for_missing_zero_hour, $credit_options);
                 }
             } else {
                 if(!$zero_hour_attendance) {
-                    $credit->assign($substitute_id, $param_for_missing_zero_hour, $options);
+                    $credit->assign($substitute_id, $param_for_missing_zero_hour, $credit_options);
                 }
             }
             
         } elseif($status == 'absent') {
             if($substitute_id) {
-                $credit->assign($substitute_id, $param_for_missing_class, $options);
-                $credit->assign($teacher_id, $param_for_finding_a_substitute, $options);
+                $credit->assign($substitute_id, $param_for_missing_class, $credit_options);
+                $credit->assign($teacher_id, $param_for_finding_a_substitute, $credit_options);
             } else {
-                $credit->assign($teacher_id, $param_for_missing_class, $options);
+                $credit->assign($teacher_id, $param_for_missing_class, $credit_options);
             }
         }
+
+        return 1;
+    }
+
+    public function revertCredits($class_id, $teacher_id)
+    {
+        $user_class = app('db')->table('UserClass')
+            ->where('class_id', $class_id)->where('user_id', $teacher_id)
+            ->get();
+
+        // No pre-existing class data. No need to revert credits.
+        if(!count($user_class)) return false;
+        elseif($user_class[0]->status === "projected") return false;
+
+        $this->awardCredits($class_id, $teacher_id, $user_class[0]->status, $user_class[0]->substitute_id, 
+                        $user_class[0]->zero_hour_attendance, ['revert' => true]);
     }
 
 }

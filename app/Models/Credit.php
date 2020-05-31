@@ -11,25 +11,25 @@ final class Credit extends Common
     public $timestamps = true;
     const CREATED_AT = 'added_on';
     const UPDATED_AT = null;
-    protected $fillable = ['user_id', 'parameter_id', 'change', 'current_credit', 'item', 'item_id', 'comment', 'marked_by_user_id'];
+    protected $fillable = ['user_id', 'parameter_id', 'change', 'current_credit', 'item', 'item_id', 'comment', 'added_by_user_id'];
 
     public function user()
     {
         return $this->belongsTo('App\Models\User', 'user_id');
     }
 
-    public function user()
+    public function parameter()
     {
         return $this->belongsTo('App\Models\Parameter', 'parameter_id');
     }
 
     public static function search($data)
     {
-        $q = app('db')->table('Credit C');
+        $q = app('db')->table('Credit AS C');
 
-        $q->select('C.user_id', 'C.parameter_id', 'C.change', 'C.current_credit', 'C.item', 'C.item_id', 
-                    'C.comment', 'C.marked_by_user_id', 'C.added_on', 'P.name', 'P.vertical_id');
-        $q->join('Parameter P', 'C.parameter_id', '=', 'P.id');
+        $q->select('C.id', 'C.user_id', 'C.parameter_id', 'C.change', 'C.current_credit', 'C.item', 'C.item_id', 
+                    'C.comment', 'C.added_by_user_id', 'C.added_on', 'P.name', 'P.vertical_id');
+        $q->join('Parameter AS P', 'C.parameter_id', '=', 'P.id');
         
         if (!empty($data['user_id'])) {
             $q->where('C.user_id', $data['user_id']);
@@ -64,13 +64,14 @@ final class Credit extends Common
         return self::search($options);
     }
 
-    public assign($user_id, $parameter_id, $options = [])
+    public function assign($user_id, $parameter_id, $options = [])
     {
         $options_template = [
-            'added_on' => date('Y-m-d H:i:s'), 
+            'added_on'  => date('Y-m-d H:i:s'), 
             'added_by_user_id' => 0, 
-            'item' => null, 
-            'item_id' => null,
+            'item'      => null, 
+            'item_id'   => null,
+            'revert'    => false
         ];
         $options = array_merge($options_template, $options);
 
@@ -88,6 +89,10 @@ final class Credit extends Common
             return false;
         }
 
+        if($options['revert']) {
+            return $this->unassign($user_id, $parameter_id, $options['item'], $options['item_id']);
+        }
+
         $current_credit = floatval($user->credit) + floatval($para->credit);
         $data = array_merge($options, [
             'user_id'        => $user_id,
@@ -97,8 +102,7 @@ final class Credit extends Common
         ]);
 
         // Update User's credit as well.
-        $user->credit = $current_credit;
-        $user->save();
+        $user->edit(['credit' => $current_credit], $user_id);
 
         return $this->create($data);
     }
@@ -116,10 +120,11 @@ final class Credit extends Common
             return 0;
         } elseif(count($credit) > 1) {
             $this->errors[] = "Multiple credit rows are matching your search query";
-            return false;
+            // return false; 
         }
+        $cre = $credit->last();
 
-        $this->unassignCreditById($credit[0]->id);
+        return $this->unassignById($cre->id);
     }
 
     public function unassignById($credit_id)
@@ -128,12 +133,13 @@ final class Credit extends Common
         if(!$credit) return false;
 
         $user_model = new User;
-        $user = $user_model->fetch($credit->user_id);
+        $user = $user_model->find($credit->user_id);
         $user->credit = floatval($user->credit) - floatval($credit->change); // Revert credit change.
         $user->save();
 
-        $this->destroy($credit_id);
+        return $this->find($credit_id)->delete();
     }
 
 // recalculateHistory($user_id)
+    // Do this in a more optimized way. Don't use awardCredit function.
 }

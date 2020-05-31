@@ -21,6 +21,7 @@ class saveTeacherAttendance
     {
         $class_id = $args['class_id'];
         $class_model = new Classes;
+        $mentor_id = isset($args['mentor_id']) ? $args['mentor_id'] : 0;
 
         $class = $class_model->find($class_id);
         if (!$class) {
@@ -28,7 +29,7 @@ class saveTeacherAttendance
         } // No class with given id
 
         foreach ($args['teachers'] as $teacher) {
-            $class_model->saveTeacherAttendance($class_id, $teacher['user_id'], $teacher);
+            $class_model->saveTeacherAttendance($class_id, $teacher['user_id'], $teacher, $mentor_id);
         }
 
         return 1;

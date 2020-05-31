@@ -1289,8 +1289,12 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         // $links = $user_model->find(1)->links()->get();
         // dump($links->pluck('name'));
 
-        $center = (new Center)->find(25);
-        dump($center->comments()->first()->added_by_user()->get());
+        // $center = (new Center)->find(25);
+        // dump($center->comments()->first()->added_by_user()->get());
+
+        $credit = new App\Models\Credit;
+        $return = $credit->assign(1, 1);
+        dump($return);
     });
 
     require_once base_path('routes/api-surveys.php');
