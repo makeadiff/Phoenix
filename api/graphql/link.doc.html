@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>Center</title>
+    <title>Link</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -120,7 +120,7 @@
                 Batch
             </a>
         </li>
-        <li class="slds-is-active" title="Center">
+        <li  title="Center">
             <a href="center.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Center
             </a>
@@ -190,7 +190,7 @@
                 Level
             </a>
         </li>
-        <li  title="Link">
+        <li class="slds-is-active" title="Link">
             <a href="link.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Link
             </a>
@@ -356,7 +356,7 @@
     </div>
     <div class="container">
         <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
-        <h1 class="slds-text-heading--large">Center</h1>
+        <h1 class="slds-text-heading--large">Link</h1>
         <div class="slds-text-body--regular"></div>
     </div>
 </section>
@@ -368,7 +368,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Center</span> {</li><li></li><li><span class="tab"><span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">teachers</span>: [<a class="support type" href="user.doc.html">User</a>] </span></li><li></li><li><span class="tab"><span class="meta">students</span>: [<a class="support type" href="student.doc.html">Student</a>] </span></li><li></li><li><span class="tab"><span class="meta">batches</span>: [<a class="support type" href="batch.doc.html">Batch</a>] </span></li><li></li><li><span class="tab"><span class="meta">levels</span>: [<a class="support type" href="level.doc.html">Level</a>] </span></li><li></li><li><span class="tab"><span class="comment line">#   projects: [Project]</span></span></li><li><span class="tab"><span class="meta">projects</span>: [<a class="support type" href="centerproject.doc.html">CenterProject</a>] </span></li><li></li><li><span class="tab"><span class="meta">city</span>: <a class="support type" href="city.doc.html">City</a> </span></li><li></li><li><span class="tab"><span class="meta">comments</span>: [<a class="support type" href="comment.doc.html">Comment</a>] </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Link</span> {</li><li></li><li><span class="tab"><span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">url</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">text</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -379,7 +379,7 @@
             </a>
             Require by
         </h2>
-        <ul class="require-by"><li><a href="batch.doc.html" title="Batch - ">Batch<em></em></a><li><li><a href="city.doc.html" title="City - ">City<em></em></a><li><li><a href="item.doc.html" title="Item - For Polymorphic relations - In Comment and Data">Item<em>For Polymorphic relations - In Comment and Data</em></a><li><li><a href="level.doc.html" title="Level - ">Level<em></em></a><li><li><a href="query.doc.html" title="Query - ">Query<em></em></a><li><li><a href="student.doc.html" title="Student - ">Student<em></em></a><li></ul>
+        <ul class="require-by"><li><a href="user.doc.html" title="User - Volunteer details.">User<em>Volunteer details.</em></a><li></ul>
     </div>
 </section>
 <footer>

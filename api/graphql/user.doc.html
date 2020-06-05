@@ -80,6 +80,16 @@
 <div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
     <h4 class="slds-text-title--caps slds-p-around--medium">Enums</h4>
     <ul>
+        <li  title="ClassCancelReason">
+            <a href="classcancelreason.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                ClassCancelReason
+            </a>
+        </li>
+        <li  title="Status">
+            <a href="status.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Status
+            </a>
+        </li>
         <li  title="__DirectiveLocation">
             <a href="directivelocation.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 __DirectiveLocation
@@ -88,6 +98,16 @@
         <li  title="__TypeKind">
             <a href="typekind.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 __TypeKind
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
+    <h4 class="slds-text-title--caps slds-p-around--medium">Unions</h4>
+    <ul>
+        <li  title="Item">
+            <a href="item.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Item
             </a>
         </li>
     </ul>
@@ -105,6 +125,11 @@
                 Center
             </a>
         </li>
+        <li  title="CenterProject">
+            <a href="centerproject.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                CenterProject
+            </a>
+        </li>
         <li  title="City">
             <a href="city.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 City
@@ -115,6 +140,11 @@
                 Class
             </a>
         </li>
+        <li  title="Comment">
+            <a href="comment.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Comment
+            </a>
+        </li>
         <li  title="Data">
             <a href="data.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Data
@@ -123,6 +153,11 @@
         <li  title="Deposit">
             <a href="deposit.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Deposit
+            </a>
+        </li>
+        <li  title="Device">
+            <a href="device.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Device
             </a>
         </li>
         <li  title="Donation">
@@ -153,6 +188,11 @@
         <li  title="Level">
             <a href="level.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Level
+            </a>
+        </li>
+        <li  title="Link">
+            <a href="link.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Link
             </a>
         </li>
         <li  title="Log">
@@ -329,7 +369,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">User</span> {</li><li></li><li><span class="tab"><span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">email</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">phone</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">mad_email</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">credit</span>: <a class="support type" href="float.doc.html">Float</a> </span></li><li></li><li><span class="tab"><span class="meta">city_id</span>: <a class="support type" href="int.doc.html">Int</a> </span></li><li></li><li><span class="tab"><span class="meta">city</span>: <a class="support type" href="city.doc.html">City</a> </span></li><li></li><li><span class="tab"><span class="meta">joined_on</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">left_on</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">reason_for_leaving</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">user_type</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">address</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">birthday</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">photo</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">sex</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">groups</span>: [<a class="support type" href="group.doc.html">Group</a>] </span></li><li></li><li><span class="tab"><span class="meta">data</span>: [<a class="support type" href="data.doc.html">Data</a>] </span></li><li></li><li><span class="tab"><span class="meta">classes</span>: [<a class="support type" href="class.doc.html">Class</a>] </span></li><li></li><li><span class="tab"><span class="meta">batches</span>: [<a class="support type" href="batch.doc.html">Batch</a>] </span></li><li></li><li><span class="tab"><span class="meta">donations</span>: [<a class="support type" href="donation.doc.html">Donation</a>] </span></li><li></li><li><span class="tab"><span class="meta">pivot</span>: <a class="support type" href="userpivot.doc.html">UserPivot</a> </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">User</span> {</li><li></li><li><span class="tab"><span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">email</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">phone</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">mad_email</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">credit</span>: <a class="support type" href="float.doc.html">Float</a> </span></li><li></li><li><span class="tab"><span class="meta">city_id</span>: <a class="support type" href="int.doc.html">Int</a> </span></li><li></li><li><span class="tab"><span class="meta">city</span>: <a class="support type" href="city.doc.html">City</a> </span></li><li></li><li><span class="tab"><span class="meta">joined_on</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">left_on</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">reason_for_leaving</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">user_type</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">address</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">birthday</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">photo</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">sex</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">status</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">groups</span>: [<a class="support type" href="group.doc.html">Group</a>] </span></li><li></li><li><span class="tab"><span class="meta">data</span>: [<a class="support type" href="data.doc.html">Data</a>] </span></li><li></li><li><span class="tab"><span class="meta">classes</span>: [<a class="support type" href="class.doc.html">Class</a>] </span></li><li></li><li><span class="tab"><span class="meta">batches</span>: [<a class="support type" href="batch.doc.html">Batch</a>] </span></li><li></li><li><span class="tab"><span class="meta">donations</span>: [<a class="support type" href="donation.doc.html">Donation</a>] </span></li><li></li><li><span class="tab"><span class="meta">devices</span>: [<a class="support type" href="device.doc.html">Device</a>] </span></li><li></li><li><span class="tab"><span class="meta">links</span>: [<a class="support type" href="link.doc.html">Link</a>] </span></li><li></li><li><span class="tab"><span class="meta">pivot</span>: <a class="support type" href="userpivot.doc.html">UserPivot</a> </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -340,7 +380,7 @@
             </a>
             Require by
         </h2>
-        <ul class="require-by"><li><a href="batch.doc.html" title="Batch - ">Batch<em></em></a><li><li><a href="center.doc.html" title="Center - ">Center<em></em></a><li><li><a href="city.doc.html" title="City - ">City<em></em></a><li><li><a href="class.doc.html" title="Class - ">Class<em></em></a><li><li><a href="deposit.doc.html" title="Deposit - ">Deposit<em></em></a><li><li><a href="donation.doc.html" title="Donation - ">Donation<em></em></a><li><li><a href="event.doc.html" title="Event - ">Event<em></em></a><li><li><a href="group.doc.html" title="Group - ">Group<em></em></a><li><li><a href="query.doc.html" title="Query - ">Query<em></em></a><li></ul>
+        <ul class="require-by"><li><a href="batch.doc.html" title="Batch - ">Batch<em></em></a><li><li><a href="center.doc.html" title="Center - ">Center<em></em></a><li><li><a href="city.doc.html" title="City - ">City<em></em></a><li><li><a href="class.doc.html" title="Class - ">Class<em></em></a><li><li><a href="comment.doc.html" title="Comment - ">Comment<em></em></a><li><li><a href="deposit.doc.html" title="Deposit - ">Deposit<em></em></a><li><li><a href="device.doc.html" title="Device - ">Device<em></em></a><li><li><a href="donation.doc.html" title="Donation - ">Donation<em></em></a><li><li><a href="event.doc.html" title="Event - ">Event<em></em></a><li><li><a href="group.doc.html" title="Group - ">Group<em></em></a><li><li><a href="item.doc.html" title="Item - For Polymorphic relations - In Comment and Data">Item<em>For Polymorphic relations - In Comment and Data</em></a><li><li><a href="query.doc.html" title="Query - ">Query<em></em></a><li></ul>
     </div>
 </section>
 <footer>
