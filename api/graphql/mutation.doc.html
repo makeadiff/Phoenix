@@ -80,6 +80,16 @@
 <div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
     <h4 class="slds-text-title--caps slds-p-around--medium">Enums</h4>
     <ul>
+        <li  title="ClassCancelReason">
+            <a href="classcancelreason.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                ClassCancelReason
+            </a>
+        </li>
+        <li  title="Status">
+            <a href="status.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Status
+            </a>
+        </li>
         <li  title="__DirectiveLocation">
             <a href="directivelocation.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 __DirectiveLocation
@@ -88,6 +98,16 @@
         <li  title="__TypeKind">
             <a href="typekind.spec.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 __TypeKind
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
+    <h4 class="slds-text-title--caps slds-p-around--medium">Unions</h4>
+    <ul>
+        <li  title="Item">
+            <a href="item.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Item
             </a>
         </li>
     </ul>
@@ -105,6 +125,11 @@
                 Center
             </a>
         </li>
+        <li  title="CenterProject">
+            <a href="centerproject.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                CenterProject
+            </a>
+        </li>
         <li  title="City">
             <a href="city.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 City
@@ -115,6 +140,11 @@
                 Class
             </a>
         </li>
+        <li  title="Comment">
+            <a href="comment.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Comment
+            </a>
+        </li>
         <li  title="Data">
             <a href="data.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Data
@@ -123,6 +153,11 @@
         <li  title="Deposit">
             <a href="deposit.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Deposit
+            </a>
+        </li>
+        <li  title="Device">
+            <a href="device.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Device
             </a>
         </li>
         <li  title="Donation">
@@ -153,6 +188,11 @@
         <li  title="Level">
             <a href="level.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Level
+            </a>
+        </li>
+        <li  title="Link">
+            <a href="link.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Link
             </a>
         </li>
         <li  title="Log">
@@ -328,7 +368,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Mutation</span> {</li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>name</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>log</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>user_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>added_on</strong>: </span></span></li><li><span class="tab"><span class="meta">createLog</span>(<span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a>, <span class="meta">log</span>: <a class="support type" href="string.doc.html">String</a>, <span class="meta">user_id</span>: <a class="support type" href="id.doc.html">ID</a>, <span class="meta">added_on</span>: <a class="support type" href="datetime.doc.html">DateTime</a>): <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>class_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>teachers</strong>: </span></span></li><li><span class="tab"><span class="meta">saveTeacherAttendance</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">class_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">teachers</span>: [<a class="support type" href="inputteacherattendance.doc.html">InputTeacherAttendance</a>]</span></span></li><li><span class="tab">): <a class="support type" href="int.doc.html">Int</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>class_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>students</strong>: </span></span></li><li><span class="tab"><span class="meta">saveStudentAttendance</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">class_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">students</span>: [<a class="support type" href="inputstudentattendance.doc.html">InputStudentAttendance</a>]</span></span></li><li><span class="tab">): <a class="support type" href="int.doc.html">Int</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>responder_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>survey_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>added_by_user_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>responses</strong>: </span></span></li><li><span class="tab"><span class="meta">saveSurveyResponses</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">responder_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">survey_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">added_by_user_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">responses</span>: [<a class="support type" href="inputsurveyresponse.doc.html">InputSurveyResponse</a>]</span></span></li><li><span class="tab">): <a class="support type" href="int.doc.html">Int</a> </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Mutation</span> {</li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>name</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>log</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>user_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>added_on</strong>: </span></span></li><li><span class="tab"><span class="meta">createLog</span>(<span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a>, <span class="meta">log</span>: <a class="support type" href="string.doc.html">String</a>, <span class="meta">user_id</span>: <a class="support type" href="id.doc.html">ID</a>, <span class="meta">added_on</span>: <a class="support type" href="datetime.doc.html">DateTime</a>): <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>class_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>mentor_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>reason</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>reason_other</strong>: </span></span></li><li><span class="tab"><span class="meta">cancelClass</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">class_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">mentor_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">reason</span>: <a class="support type" href="classcancelreason.doc.html">ClassCancelReason</a>!,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">reason_other</span>: <a class="support type" href="string.doc.html">String</a></span></span></li><li><span class="tab">): <a class="support type" href="int.doc.html">Int</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>class_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>mentor_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>teachers</strong>: </span></span></li><li><span class="tab"><span class="meta">saveTeacherAttendance</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">class_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">mentor_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">teachers</span>: [<a class="support type" href="inputteacherattendance.doc.html">InputTeacherAttendance</a>]</span></span></li><li><span class="tab">): <a class="support type" href="int.doc.html">Int</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>class_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>teacher_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>class_satisfaction</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>students</strong>: </span></span></li><li><span class="tab"><span class="meta">saveStudentAttendance</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">class_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">teacher_id</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">class_satisfaction</span>: <a class="support type" href="int.doc.html">Int</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">students</span>: [<a class="support type" href="inputstudentattendance.doc.html">InputStudentAttendance</a>]</span></span></li><li><span class="tab">): <a class="support type" href="int.doc.html">Int</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>responder_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>survey_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>added_by_user_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>responses</strong>: </span></span></li><li><span class="tab"><span class="meta">saveSurveyResponses</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">responder_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">survey_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">added_by_user_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">responses</span>: [<a class="support type" href="inputsurveyresponse.doc.html">InputSurveyResponse</a>]</span></span></li><li><span class="tab">): <a class="support type" href="int.doc.html">Int</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>batch_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>level_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>subject_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>teacher_ids</strong>: </span></span></li><li><span class="tab"><span class="meta">assignBatchTeachers</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">batch_id</span>: <a class="support type" href="id.doc.html">ID</a>!,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">level_id</span>: <a class="support type" href="id.doc.html">ID</a>!,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">subject_id</span>: <a class="support type" href="id.doc.html">ID</a>,</span></span></li><li><span class="tab"><span class="tab"><span class="meta">teacher_ids</span>: [<a class="support type" href="id.doc.html">ID</a>]</span></span></li><li><span class="tab">): <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>batch_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>mentor_ids</strong>: </span></span></li><li><span class="tab"><span class="meta">assignBatchMentors</span>(<span class="meta">batch_id</span>: <a class="support type" href="id.doc.html">ID</a>!, <span class="meta">mentor_ids</span>: [<a class="support type" href="id.doc.html">ID</a>]): <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>level_id</strong>: </span></span></li><li><span class="tab"><span class="comment line">#   <strong>student_ids</strong>: </span></span></li><li><span class="tab"><span class="meta">assignLevelStudents</span>(<span class="meta">level_id</span>: <a class="support type" href="id.doc.html">ID</a>!, <span class="meta">student_ids</span>: [<a class="support type" href="id.doc.html">ID</a>]): <a class="support type" href="string.doc.html">String</a> </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
