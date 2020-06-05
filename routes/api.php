@@ -121,6 +121,11 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("User Groups", ['groups' => $groups]);
     });
 
+    Route::get('/group_types', function( Request $request){
+        $types = Group::getTypes();
+        return JSend::success('Group Types',['types' => $types]);
+    });
+
     Route::get('/groups/{group_id}', function ($group_id) {
         $group = (new Group)->fetch($group_id);
         if (!$group) {
