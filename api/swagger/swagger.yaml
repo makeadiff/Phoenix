@@ -834,7 +834,43 @@ paths:
         - group
       summary: All Groups.
       description: Returns all the groups currently active.
+      parameters:
+        - name: id 
+          in: query
+          required: false
+          type: integer
+          description: Group ID
+        - name: name 
+          in: query
+          required: false
+          type: string
+          description: Group Name
+        - name: type
+          in: query
+          required: false
+          type: string
+          description: Group Type, will be either national, fellow, volunteer, executive, strat
+        - name: vertical_id
+          in: query
+          required: false
+          type: integer
+          description: Vertical ID the group belongs to
+        - name: type_in
+          in: query
+          required: false
+          type: string
+          description: Comma Separated group types.
       responses:
+        200:
+          description: Ok
+
+  /group_types:
+    get:
+      tags:
+        - group
+      summary: All Group Types
+      description: Returns all the groups types currently active.
+      responses: 
         200:
           description: Ok
 
@@ -2627,7 +2663,7 @@ paths:
         404:
           description: Couldn't find the event with the given event ID.
 
-  /events/types:
+  /event_types:
     get:
       tags: 
         - event
