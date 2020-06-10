@@ -149,6 +149,37 @@ class BatchTest extends TestCase
         $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
+    /// Path: POST    /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}
+    public function testSingleTeacherAssignment()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
+
+        $batch_id = 3020;
+        $level_id = 8765;
+        $teacher_id = 136213;
+        $subject_id = 9;
+        $this->load("/batches/$batch_id/levels/$level_id/teachers/$teacher_id", 'POST', [
+            'subject_id'  => $subject_id
+        ]);
+
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
+
+        $found_teacher = 0;
+        $teachers = app('db')->table('UserBatch')->select('user_id', 'subject_id')->where('level_id', $level_id)->where('batch_id', $batch_id)->get();
+        foreach ($teachers as $teach) {
+            if ($teach->user_id == $teacher_id and $teach->subject_id == $subject_id) {
+                $found_teacher = 1;
+            }
+        }
+        $this->assertEquals($found_teacher, 1); // Found teacher assigned.
+    }
+
     /// Path: POST    /batches/{batch_id}/levels/{level_id}/teachers
     public function testTeacherAssignment()
     {
@@ -159,8 +190,8 @@ class BatchTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $batch_id = 2610;
-        $level_id = 7356;
+        $batch_id = 3020;
+        $level_id = 8765;
         $non_teacher_user_id = 136214;
         $teacher_ids = [$non_teacher_user_id,142766];
         $this->load("/batches/$batch_id/levels/$level_id/teachers", 'POST', [
@@ -206,8 +237,8 @@ class BatchTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $batch_id = 2610;
-        $level_id = 7356;
+        $batch_id = 3020;
+        $level_id = 8765;
         $teacher_id = 136214;
         $this->load("/batches/$batch_id/levels/$level_id/teachers/$teacher_id", 'DELETE');
         $this->assertEquals($this->response->getStatusCode(), 200);
@@ -229,8 +260,8 @@ class BatchTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $batch_id = 2610;
-        $level_id = 7356;
+        $batch_id = 3020;
+        $level_id = 8765;
         $teacher_ids = [142766];
         $subject_id = 8;
         $this->load("/batches/$batch_id/levels/$level_id/teachers", 'POST', [
@@ -260,7 +291,7 @@ class BatchTest extends TestCase
             $this->markTestSkipped("Skipping as this test writes to the Database.");
         }
 
-        $batch_id = 2610;
+        $batch_id = 3020;
         $non_mentor_user_id = 142776;
         $mentor_ids = [$non_mentor_user_id,142783];
         $this->load("/batches/$batch_id/mentors", 'POST', [

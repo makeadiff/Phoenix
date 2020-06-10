@@ -1952,7 +1952,7 @@ paths:
         - batch
         - level
         - teacher
-        - user
+        - allocation
       summary: Teachers in given Batch/Level
       description: Returns the list of teachers mapped to the given batch/level combo.
       parameters:
@@ -1978,7 +1978,7 @@ paths:
         - batch
         - level
         - teacher
-        - user
+        - allocation
       summary: Assign Teachers to a Batch/Level
       description: Assign multiple teachers to a Batch/Level Combo.
       parameters:
@@ -2005,12 +2005,46 @@ paths:
         404:
           description: Can't find any batch, level, or users with the given ID
   /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}:
+    post:
+      tags:
+        - batch
+        - level
+        - teacher
+        - allocation
+      summary: Assign a single teacher to a Batch/Level
+      description: Assigns a teacher to a Batch/Level combo - with the subject they are taking.
+      parameters:
+        - name: batch_id
+        type: integer
+          in: path
+          required: true
+          description: ID of the batch
+        - name: level_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the level
+        - name: teacher_id
+          type: integer
+          in: path
+          required: true
+          description: User ID of Teacher that needs to be added to the Batch/Level
+        - name: subject_id
+          type: integer
+          in: formData
+          required: false
+          description: The subject ID that the teacher will be handling in this batch/level
+      responses:
+        200:
+          description: Assigned the teacher to the batch/level combo
+        400:
+          description: Failed creating teh assignment. 
     delete:
       tags:
         - batch
         - level
         - teacher
-        - user
+        - allocation
       summary: Delete Teacher from a Batch/Level
       description: Delete a teacher to a Batch/Level Combo.
       parameters:
