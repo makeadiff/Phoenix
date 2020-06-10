@@ -283,6 +283,20 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Teachers in level/batch", ['teachers' => $teachers]);
     });
 
+    Route::post("/batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}", function ($batch_id, $level_id, $teacher_id, Request $request) {
+        $allocation_model = new Allocation;
+        $subject_id = $request->input('subject_id', 0);
+        $allocation_status = $allocation_model->assignTeacher($batch_id, $level_id, $teacher_id, $subject_id);
+
+        if (!$allocation_status) {
+            return JSend::fail("Error creating the assignment");
+        }
+        $user_model = new User;
+        $teachers = $user_model->search(['batch_id' => $batch_id, 'level_id' => $level_id]);
+
+        return JSend::success("Teacher added successfully", ['teachers' => $teachers]);
+    });
+
     Route::delete("/batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}", function ($batch_id, $level_id, $teacher_id) {
         $allocation_model = new Allocation;
         $delete_status = $allocation_model->deleteTeacherAssignment($batch_id, $level_id, $teacher_id);
