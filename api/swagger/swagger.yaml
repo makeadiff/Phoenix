@@ -2051,7 +2051,7 @@ paths:
       description: Assigns a teacher to a Batch/Level combo - with the subject they are taking.
       parameters:
         - name: batch_id
-        type: integer
+          type: integer
           in: path
           required: true
           description: ID of the batch
