@@ -19,11 +19,12 @@ type Query {
     donor(id: ID @eq): 		Donor 		@find(model: "App\\Models\\Donor")
     survey(id: ID @eq):		Survey 		@find(model: "App\\Models\\Survey")
 	project(id: ID @eq):	Project		@find(model: "App\\Models\\Project")
+	subject(id: ID @eq):	Subject		@find(model: "App\\Models\\Subject")
     survey_template(id: ID @eq):	Survey_Template @find(model: "App\\Models\\Survey_Template")
 
-    # :HARDCODE: - Global replace all 2019 to next year. Not sure how to do it any other way yet. Other than custom resolvers for everything.
+    # :HARDCODE: - Global replace all 2020 to next year. Not sure how to do it any other way yet. Other than custom resolvers for everything.
 
-    donations(added_on: Date = "2019-05-01" @where(operator: ">="), amount: Int, status: String, 
+    donations(added_on: Date = "2020-05-01" @where(operator: ">="), amount: Int, status: String, 
 		type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): 
 		[Donation] @all(model: "App\\Models\\Donation")
     events(name: String @eq, starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, 
@@ -33,12 +34,14 @@ type Query {
 		[User] @all # @paginate(type: "paginator" model: "App\\Models\\User")
     centers(city_id: Int @eq, status: String = "1" @eq ): [Center!]! @all
 	levels(center_id: Int @eq, project_id: Int @eq, name: String @where(operator:"like"), grade: Int @eq,
-		status: String = "1" @eq, year: Int = 2019 @eq): [Level!]! @all
+		status: String = "1" @eq, year: Int = 2020 @eq): [Level!]! @all
+	allocations(batch_id: Int @eq, level_id: Int @eq, user_id: Int @eq, subject_id: Int @eq, role: String = "teacher" @eq): [Allocation] @all
     cities(type: String = "actual" @eq): [City!]! @all
     groups(group_type: String = "normal" @eq, status: String = "1" @eq, type: String @eq, 
 		vertical_id: Int @eq): [Group!]! @all
     verticals(status: String = "1" @eq): [Vertical!]! @all
     projects(status: String = "1" @eq): [Project!]! @all
+    subjects(status: String = "1" @eq): [Subject!]! @all
     comments(item_type: String @eq, item_id: String @eq): [Comment] @all
 
 	# Custom Resolvers... 
@@ -242,10 +245,29 @@ type Class {
 	substitutes: [User]
 }
 
+type Allocation {
+	id: ID!
+	role: String
+	batch: Batch 
+	level: Level
+	subject: Subject
+	user: User
+}
+
 type Project {
 	id: ID!
 	name: String
 	vertical_id: Int
+}
+
+type Subject {
+	id: ID!
+	name: String
+}
+
+type Medium {
+	id: ID!
+	name: String
 }
 
 type Event {

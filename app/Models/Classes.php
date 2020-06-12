@@ -40,6 +40,21 @@ final class Classes extends Common
                 ->withPivot('substitute_id', 'user_id', 'zero_hour_attendance', 'status');
     }
 
+    // public function subject()
+    // {
+    //     return $this->hasOne('App\Models\Subject')
+    //                 ->join("UserBatch", "UserBatch.batch_id", "=", "Class.batch_id")
+    //                 ->where("UserBatch.level_id", "=", "Class.level_id");
+    // }
+
+    // public function allocation()
+    // {
+    //     return $this->hasMany('App\Models\Allocation')
+    //             ->where('UserBatch.batch_id', '=', 'Class.batch_id')
+    //             ->where('UserBatch.level_id', '=', 'Class.level_id');
+    //     // return $this->hasManyThrough('App\Models\Allocation')
+    // }
+
     public function search($data)
     {
         $q = app('db')->table('Class');
