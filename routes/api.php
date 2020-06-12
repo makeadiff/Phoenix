@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\Batch;
 use App\Models\Allocation;
 use App\Models\Level;
+use App\Models\Subject;
 use App\Models\Donation;
 use App\Models\Deposit;
 use App\Models\Event;
@@ -380,6 +381,13 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         }
 
         return "";
+    });
+
+    Route::get("/subjects", function () {
+        $subjects_model = new Subject;
+        $subjects = $subjects_model->getAll();
+
+        return JSend::success("All Subjects", ['subjects' => $subjects]);
     });
 
     ///////////////////////////////////////////////// Classes /////////////////////////////////////
@@ -1311,9 +1319,17 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         // $center = (new Center)->find(25);
         // dump($center->comments()->first()->added_by_user()->get());
 
-        $credit = new App\Models\Credit;
-        $return = $credit->assign(1, 1);
+        // $credit = new App\Models\Credit;
+        // $return = $credit->assign(1, 1);
+        // dump($return);
+
+        $cls = (new Classes)->find(466879);
+        $return = $cls->subject()->get();
         dump($return);
+
+        // $allc = (new Allocation)->find(331307);
+        // $return = $allc->batch()->get()[0]->name();
+        // dump($return);
     });
 
     require_once base_path('routes/api-surveys.php');

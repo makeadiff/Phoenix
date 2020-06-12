@@ -15,30 +15,40 @@ class Allocation extends Common
 
     public function batch()
     {
-        return $this->beiongsToMany('App\Models\Batch');
+        return $this->belongsTo('App\Models\Batch');
     }
+
     public function level()
     {
-        return $this->belongsToMany('App\Level');
+        return $this->belongsTo('App\Models\Level');
     }
 
     public function teacher()
     {
-        return $this->belongsToMany('App\Models\User')->where('UserBatch.role', 'teacher');
+        return $this->belongsTo('App\Models\User')->where('UserBatch.role', 'teacher');
     }
 
     public function mentor()
     {
-        return $this->belongsToMany('App\Models\User')->where('UserBatch.role', 'mentor');
+        return $this->belongsTo('App\Models\User')->where('UserBatch.role', 'mentor');
+    }
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
+
+    public function subject()
+    {
+        return $this->belongsTo('App\Models\Subject');
     }
 
     public function getAllocation($batch_id, $level_id, $user_id, $role)
     {
         $allocation = $this->where('batch_id', $batch_id)
-                         ->where('user_id', $user_id)
-                         ->where('level_id', $level_id)
-                         ->where('role', $role)
-                         ->first();
+                            ->where('user_id', $user_id)
+                            ->where('level_id', $level_id)
+                            ->where('role', $role)
+                            ->first();
 
         return $allocation;
     }

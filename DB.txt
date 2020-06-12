@@ -20,8 +20,6 @@
 # Reference table must be named in the format <First table><Second table> - Eg. PageTag
 # Foreign key must be in the format '<table>_<primary key>' - all lower case - Eg. user_id
 
-# http://www.bin-co.com/database/db_naming_conventions.php
-
 App_CSVGo: Used in the app 'CSV:Go'. Stores queries as text that is used to generate CSV's of needed data that can be imported into other tools like Google Spreadsheet
 App_CSVGo.id: 
 App_CSVGo.name: Name of the report. This should be passed as a parameter to CSV:Go.
@@ -61,8 +59,8 @@ Batch.center_id: Center.id
 Batch.project_id: Project.id
 Batch.year: Holds the year which the batch is a part of.
 Batch.status: 
-Batch.added_on:
-Batch.updated_on:
+Batch.added_on: 
+Batch.updated_on: 
 
 BatchLevel: The batch level linking. Holds information on which all levels are part of which batch.
 BatchLevel.id: 
@@ -141,7 +139,7 @@ Class.status:
 
 Comment: Catch-all comment storing table. This will be storing notes on any of the 'item' - 'User','Student','City','Center','Event'
 Comment.id: 
-Comment.item_type:
+Comment.item_type: 
 Comment.item_id: The foreign key of what ever the item is in that row.
 Comment.comment: 
 Comment.added_on: 
@@ -170,7 +168,19 @@ Contact.added_on:
 Contact.updated_on: 
 Contact.status: 
 
-Credit_Parameter: Possible actions that can give user credits. Right now, used for FR tasks/credits.
+Credit: This holds all the credit changes for all users. 
+Credit.id:
+Credit.user_id: User.id
+Credit.parameter_id: Parameter.id - This will be 0 if its a manually added credit.
+Credit.change: The credit change that was applied. 
+Credit.current_credit: The credit of the user after the change has been applied.
+Credit.item: Which table has the related row. If the user got this credit by substituting, this will have the value 'Class'
+Credit.item_id: The row ID of the related event/class. If user got this credit by substituting, this will have the id of the class that they substituted for.
+Credit.comment: If its a manually added credit, this will have some info on why it was added.
+Credit.added_on:
+Credit.added_by_user_id: User.id
+
+Credit_Parameter: Possible actions that can give user credits. Right now, used for FR tasks/credits. Depricated in favor of Parameter table.
 Credit_Parameter.id: 
 Credit_Parameter.name: Name of the task.
 Credit_Parameter.description: 
@@ -190,13 +200,13 @@ Data.added_on:
 Data.added_by_user_id: User.id
 
 Device: Device used for MADNet login - can be used to sent push notifications.
-Device.id:
+Device.id: 
 Device.name: Device name/description. Right now not used.
 Device.user_id: User.id
-Device.token: FCM token - Firebase provides this. 
-Device.added_on:
-Device.updated_on:
-Device.status:
+Device.token: FCM token - Firebase provides this.
+Device.added_on: 
+Device.updated_on: 
+Device.status: 
 
 Donut_Deleted_Donation: This stores a copy of the donation when anyone deletes it. For historical purpose. Consider moving to a Point in Time Architecture for this.
 Donut_Deleted_Donation.id: 
@@ -205,10 +215,10 @@ Donut_Deleted_Donation.fundraiser_user_id: User.id
 Donut_Deleted_Donation.donor_id: Dount_Donor.id
 Donut_Deleted_Donation.status: 
 Donut_Deleted_Donation.amount: 
-Donut_Deleted_Donation.reference_file:
+Donut_Deleted_Donation.reference_file: 
 Donut_Deleted_Donation.nach_start_on: 
 Donut_Deleted_Donation.nach_end_on: 
-Donut_Deleted_Donation.donation_repeat_count:
+Donut_Deleted_Donation.donation_repeat_count: 
 Donut_Deleted_Donation.cheque_no: 
 Donut_Deleted_Donation.added_on: 
 Donut_Deleted_Donation.updated_on: 
@@ -303,9 +313,9 @@ Event: Event information.
 Event.id: 
 Event.name: 
 Event.description: 
-Event.starts_on: 
-Event.ends_on: Not captured in UI. Not used thanks to that.
-Event.place: 
+Event.starts_on: Event time
+Event.ends_on: Not captured in UI. Not used thanks to that. 
+Event.place: Location where the event is happening.
 Event.type: Not used anymore - legacy. Might have to do a migration that moves this data to event_type_id.
 Event.city_id: City.id - If this is 0, it means its a multi city event(Users from more than one city participating - eg. National Ed Support Fellows Zoom Call)
 Event.event_type_id: Event_Type.id - What type of an event this is
@@ -450,7 +460,7 @@ FAM_UserTask.preference_3_video_files:
 FAM_UserTask.year: 
 FAM_UserTask.added_on: 
 
-FR_UserCredit: History of FR User credit assignment.
+FR_UserCredit: History of FR User credit assignment. This might get Depricated in favor of the Credit table.
 FR_UserCredit.id: 
 FR_UserCredit.user_id: User.id
 FR_UserCredit.credit_parameter_id: Credit_Parameter.id
@@ -531,8 +541,8 @@ Level.project_id: Project.id - this decides if the row holds Ed data or FP data.
 Level.year: 
 Level.status: 
 
-Link: Used to provide helpful resouces to users in MADNet. 
-Link.id:
+Link: Used to provide helpful resouces to users in MADNet.
+Link.id: 
 Link.name: Name of the resource
 Link.url: URL of Resource
 Link.text: Description of the resource
@@ -540,10 +550,10 @@ Link.vertical_id: Vertical.id - If not 0, only this vertical will be shown the r
 Link.group_id: Group.id - If not 0, only this group will be shown the resource
 Link.city_id: City.id - If not 0, only this city will be shown the resource
 Link.center_id: Center.id - If not 0, only this shelter will be shown the resource
-Link.sort_order:
-Link.added_on:
-Link.updated_on:
-Link.status:
+Link.sort_order: 
+Link.added_on: 
+Link.updated_on: 
+Link.status: 
 
 Log: Event logging. Used for debugging more than anything else. And login data.
 Log.id: 
@@ -563,7 +573,7 @@ Mark.total:
 Mark.input_data: 
 Mark.status: 
 Mark.template_id: Grade_Template.id
-Mark.added_on:
+Mark.added_on: 
 
 Medium: Medium of instruction. English/Vernacular/<Specific Language>
 Medium.id: 
@@ -585,9 +595,9 @@ Message_Queue.status: Non standard naming - 'sent/pending'
 Message_Queue.sent_on: 
 
 Migration: Managed by Larval to keep track of db changes(migrations.)
-Migration.id:
-Migration.migration:
-Migration.batch:
+Migration.id: 
+Migration.migration: 
+Migration.batch: 
 
 Online_Donation: This is the table where all Online donations will be captured
 Online_Donation.id: 
@@ -606,6 +616,16 @@ Online_Donation.unit_amount: If its a recurring donation the amount field will b
 Online_Donation.conversion_rate: The conversion rate we got on the day of donation. Only applicable for foreign donations. Defaults to 1(INR)
 Online_Donation.receipt_number: ID of the receipt that should go in the Receipt PDF - and should be unique
 Online_Donation.frequency: Donation frequency for the Donation, monthly or one-time
+
+Parameter: All the parameters that can effect User's credits. 
+Parameter.id:
+Parameter.name: A short name of the parameter.
+Parameter.description:
+Parameter.credit: The positive/negative credit that will be applied to User's credit if this parameter happens.
+Parameter.vertical_id: Vertical.id
+Parameter.added_on:
+Parameter.updated_on:
+Parameter.status:
 
 Permission: User group permissions.
 Permission.id: 
@@ -791,9 +811,9 @@ Temp_Employee_Signup.applied_verticals:
 Temp_Employee_Signup.cv_file: 
 Temp_Employee_Signup.cover_letter: 
 Temp_Employee_Signup.response: 
-Temp_Employee_Signup.added_on:
-Temp_Employee_Signup.updated_on:
-Temp_Employee_Signup.stage:
+Temp_Employee_Signup.added_on: 
+Temp_Employee_Signup.updated_on: 
+Temp_Employee_Signup.stage: 
 
 User: All volunteer data will be stored here.
 User.id: 
@@ -843,8 +863,8 @@ UserBatch.user_id: User.id
 UserBatch.batch_id: Batch.id
 UserBatch.level_id: Level.id
 UserBatch.subject_id: Subject.id
-UserBatch.added_on:
-UserBatch.role:
+UserBatch.added_on: 
+UserBatch.role: 
 
 UserClass: User attendance is marked in this table
 UserClass.id: 
@@ -927,3 +947,8 @@ mailchimp_emaillist.status:
 mailchimp_volunteers: Not used
 mailchimp_volunteers.id: 
 mailchimp_volunteers.user_id: 
+
+migrations:
+migrations.id:
+migrations.migration:
+migrations.batch:
