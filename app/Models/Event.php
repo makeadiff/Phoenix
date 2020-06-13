@@ -51,7 +51,7 @@ final class Event extends Common
 
     public function eventType()
     {
-        return $this->belongsTo('App\Models\Vertical');
+        return $this->belongsTo('App\Models\Event_Type','event_type_id');
     }
 
     public function eventsInCity($city_id)

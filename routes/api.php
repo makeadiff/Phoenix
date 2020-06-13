@@ -1146,8 +1146,12 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     Route::get('/events/{event_id}', function ($event_id) {
         $event = new Event;
-
+        
         $data = $event->fetch($event_id);
+        $event_type = $data->eventType()->get();
+        if(!empty($event_type)){
+            $data->event_type = $event_type[0]->name;
+        }
         if (!$data) {
             return JSend::fail("Can't find event with ID $event_id", $event->errors);
         }
