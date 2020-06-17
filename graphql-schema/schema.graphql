@@ -216,6 +216,7 @@ type Batch {
 	levels: [Level]
 	teachers: [User]
 	classes: [Class]
+	allocations: [Allocation]
 }
 
 type Level {
