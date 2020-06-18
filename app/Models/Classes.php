@@ -248,7 +248,6 @@ final class Classes extends Common
         return $cls;
     }
 
-    // Not tested
     public function saveTeacherAttendance($class_id, $teacher_id, $class_details, $mentor_id = 0)
     {
         $this->revertCredits($class_id, $teacher_id); // If this call is an edit of existing class data, revert Credits awarded earlier
@@ -281,10 +280,9 @@ final class Classes extends Common
         return $class_data;
     }
 
-    // MEGA NOT Tested.
     public function awardCredits($class_id, $teacher_id, $status, $substitute_id, $zero_hour_attendance, $options = [])
     {
-         $options_template = [
+        $options_template = [
             'mentor_id' => 0, 
             'revert'    => false,
             'class'     => false

@@ -19,9 +19,10 @@ final class Event extends Common
             'cant_go',
         ];
     private $rsvp_number_codes = [
-            'going'	=> '1',
-            'maybe'	=> '2',
-            'cant_go'=>'3',
+            'no_data'   => '0',
+            'going'	    => '1',
+            'maybe'	    => '2',
+            'cant_go'   => '3',
         ];
 
     protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'vertical_id',
@@ -263,10 +264,11 @@ final class Event extends Common
 
     public function updateUserConnection($user_id, $data, $event_id = false)
     {
-        $this->chain($event_id);
+        $event_id = $this->chain($event_id);
+        $this->revertCredits($event_id, $user_id);
 
         $q = app('db')->table("UserEvent");
-        $q->where('event_id', '=', $this->id)->where('user_id', '=', $user_id);
+        $q->where('event_id', '=', $event_id)->where('user_id', '=', $user_id);
 
         $fields = ['present', 'late', 'rsvp', 'reason'];
 
@@ -285,8 +287,12 @@ final class Event extends Common
         }
 
         // A better way to do this is using the ::save() - but for some season its not working. Hence, this.
+        $user_connection = $q->update($update);
 
-        return $q->update($update);
+        // Credit assignment if any.
+        $this->awardCredits($event_id, $user_id);
+
+        return $user_connection;
     }
 
     public function deleteUserConnection($user_id, $event_id = false)
@@ -296,5 +302,46 @@ final class Event extends Common
         $q = app('db')->table("UserEvent");
         $q->where('event_id', '=', $this->id)->where('user_id', '=', $user_id);
         $q->delete();
+    }
+
+    // :TODO: Test this, write tests.
+    public function awardCredits($event_id, $user_id, $revert = false)
+    {
+        $user_event = app('db')->table("UserEvent")
+                        ->join("Event", "UserEvent.event_id", "=", "Event.id")
+                        ->where('event_id', $event_id)->where('user_id', $user_id)->first();
+        if(!$user_event) return false;
+
+        $credit_options = [
+            'item'      => 'Event',
+            'item_id'   => $event_id,
+            'revert'    => $revert // This will reset credits that used to exist.
+        ];
+
+        $param_for_missing_aftercare_circle_after_informing = 17;
+        $param_for_missing_aftercare_circle_without_informing = 18;
+        $aftercare_circle_event_type = 32;
+        if($user_event->event_type_id === $aftercare_circle_event_type) {
+            $credit = new Credit;
+
+            if($user_event->present == 3) {
+                if($user_event->user_choice == 3) {
+                    $credit->assign($user_event->user_id, $param_for_missing_aftercare_circle_after_informing, $credit_options);
+                } else {
+                    $credit->assign($user_event->user_id, $param_for_missing_aftercare_circle_without_informing, $credit_options);
+                }
+            }
+        }
+    }
+
+    public function revertCredits($event_id, $user_id)
+    {
+        $user_event = app('db')->table("UserEvent")->where('event_id', $event_id)->where('user_id', $user_id)->first();
+
+        // No pre-existing class data. No need to revert credits.
+        if(!$user_event) return false;
+        elseif($user_event->present != 3) return false;
+
+        $this->awardCredits($event_id, $user_id, true);
     }
 }
