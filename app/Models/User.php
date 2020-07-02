@@ -638,6 +638,7 @@ final class User extends Common
                 }
 
                 $user_data = $this->fetch($user_id);
+                $user_data->auth_token = $data->auth_token;
                 $user_data->permissions = $this->permissions($user_id);
 
                 return $user_data;
