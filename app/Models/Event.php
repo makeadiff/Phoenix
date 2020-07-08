@@ -304,7 +304,6 @@ final class Event extends Common
         $q->delete();
     }
 
-    // :TODO: Test this, write tests.
     public function awardCredits($event_id, $user_id, $revert = false)
     {
         $user_event = app('db')->table("UserEvent")
@@ -318,8 +317,8 @@ final class Event extends Common
             'revert'    => $revert // This will reset credits that used to exist.
         ];
 
-        $param_for_missing_aftercare_circle_after_informing = 17;
-        $param_for_missing_aftercare_circle_without_informing = 18;
+        $param_for_missing_aftercare_circle_after_informing = 10;
+        $param_for_missing_aftercare_circle_without_informing = 11;
         $aftercare_circle_event_type = 32;
         if($user_event->event_type_id === $aftercare_circle_event_type) {
             $credit = new Credit;
@@ -338,7 +337,7 @@ final class Event extends Common
     {
         $user_event = app('db')->table("UserEvent")->where('event_id', $event_id)->where('user_id', $user_id)->first();
 
-        // No pre-existing class data. No need to revert credits.
+        // No pre-existing event data. No need to revert credits.
         if(!$user_event) return false;
         elseif($user_event->present != 3) return false;
 
