@@ -84,6 +84,7 @@ final class Credit extends Common
 
         $paramater_model = new Parameter;
         $para = $paramater_model->fetch($parameter_id);
+        
         if(!$para) {
             $this->error("Given Paramater ID($parameter_id) is not valid.");
             return false;

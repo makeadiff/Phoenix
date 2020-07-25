@@ -22,6 +22,10 @@ final class Level extends Common
     {
         return $this->belongsToMany('App\Models\Batch', 'BatchLevel', 'level_id', 'batch_id')->where('BatchLevel.year', $this->year);
     }
+    public function allocations()
+    {
+        return $this->hasMany("App\Models\Allocation");
+    }
 
     public function search($data)
     {
