@@ -139,9 +139,12 @@ final class Deposit extends Common
         if (!empty($data['status_in'])) {
             $q->whereIn('Donut_Deposit.status', $data['status_in']);
         }
-
         $donation = new Donation;
-        $q->where('Donut_Deposit.added_on', '>', $donation->start_date);
+        if (!empty($data['added_on_after'])) {
+            $q->where('Donut_Deposit.added_on', '>', $data['added_on_after'] . ' 00:00:00');
+        } else {
+            $q->where('Donut_Deposit.added_on', '>', $donation->start_date);
+        }
 
         $q->orderBy('Donut_Deposit.added_on', 'desc');
         $deposits = $q->get();

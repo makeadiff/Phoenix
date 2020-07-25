@@ -2128,6 +2128,19 @@ paths:
         404:
           description: Can't find any batch with the given {batch_id}
 
+  /subjects:
+    get:
+      tags:
+        - subject
+        - allocation
+      summary: Gets all the active subjects
+      description: Returns all the subject that can be assigned to at an allocation.
+      responses:
+        200:
+          description: List of all active subjects
+          schema:
+            $ref: "#/definitions/Subject"
+
   ############################ Classes
   /classes/{class_id}/data/{data_name}:
     get:
@@ -3816,6 +3829,19 @@ definitions:
         enum:
           - "1"
           - "0"
+  Subject:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      status:
+        type: string
+        enum:
+          - "1"
+          - "0"
+            
   Donation:
     type: "object"
     properties:

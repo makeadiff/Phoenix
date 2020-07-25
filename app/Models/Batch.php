@@ -33,6 +33,10 @@ final class Batch extends Common
     {
         return $this->hasMany("App\Models\Classes");
     }
+    public function allocations()
+    {
+        return $this->hasMany("App\Models\Allocation");
+    }
 
     public function search($data)
     {

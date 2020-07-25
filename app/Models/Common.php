@@ -83,10 +83,10 @@ class Common extends Model
         if ($id) {
             $this->item_id = $id;
         }
-        if (!$this->item_id and $this->attributes['id']) {
+        if (!$this->item_id and !empty($this->attributes['id'])) {
             $this->item_id = $this->attributes['id'];
         }
-        if (!$this->item_id and $this->attributes['item_id']) {
+        if (!$this->item_id and !empty($this->attributes['item_id'])) {
             $this->item_id = $this->attributes['item_id'];
         }
 
