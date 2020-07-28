@@ -1308,9 +1308,13 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     // Use this to Debug/test things
     Route::get('/test', function () {
-        // $center = new Center;
+        $center = new Center;
         // $projects = $center->find(184)->center_projects()->get();
-        // $projects = $center->find(154)->batches()->teachers()->get();
+        $projects = $center->find(154)->projects()->get();
+        foreach($projects as $pro) {
+            $bat = $pro->batches()->get();
+            dump($bat);
+        }
 
         // $user_model = new User;
         // $links = $user_model->find(1)->links()->get();
@@ -1323,9 +1327,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         // $return = $credit->assign(1, 1);
         // dump($return);
 
-        $cls = (new Classes)->find(466879);
-        $return = $cls->subject()->get();
-        dump($return);
+        // $cls = (new Classes)->find(466879);
+        // $return = $cls->subject()->get();
+        // dump($return);
 
         // $allc = (new Allocation)->find(331307);
         // $return = $allc->batch()->get()[0]->name();
