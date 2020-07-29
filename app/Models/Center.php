@@ -19,17 +19,11 @@ final class Center extends Common
     {
         return $this->belongsTo('App\Models\City', 'city_id');
     }
-    // public function projects()
-    // {
-    //     $projects = $this->belongsToMany('App\Models\Project', 'CenterProject', 'center_id', 'project_id');
-    //     $projects->wherePivot('year', $this->year);
-    //     return $projects;
-    // }
 
     public function projects()
     {
         $projects = $this->hasMany('App\Models\CenterProject');
-        // $projects->wherePivot('year', $this->year);
+        $projects->where('year', $this->year);
         return $projects;
     }
 
