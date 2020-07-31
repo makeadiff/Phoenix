@@ -621,7 +621,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Search Results", ['users' => $data]);
     });
 
-    Route::get('/volunteers', 'UserController@index');
+    Route::get('/users_paginated', 'UserController@index');
 
     Route::get('/users/{user_id}', function ($user_id) {
         $user = new User;
