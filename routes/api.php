@@ -621,6 +621,8 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Search Results", ['users' => $data]);
     });
 
+    Route::get('/volunteers', 'UserController@index');
+
     Route::get('/users/{user_id}', function ($user_id) {
         $user = new User;
         $details = $user->fetch($user_id, false); // Right now this returns applicants as well - it was needed for Zoho. Migt be a problem later on. :TODO:
