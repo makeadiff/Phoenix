@@ -99,7 +99,7 @@ class UserController extends Controller
 
         $user = new User;
         $data = $user->search($search, true);
-        return $data;
+        return JSend::success("Users", array('users' => $data));;
         // return UserResource::collection($data);
     }
 }
