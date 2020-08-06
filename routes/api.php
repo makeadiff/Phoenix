@@ -365,12 +365,6 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
         return ""; // Deletes should return empty data with status 200
     });
-    Route::get("/levels/{level_id}/students", function ($level_id) {
-        $student_model = new Student;
-        $students = $student_model->search(['level_id' => $level_id]);
-
-        return JSend::success("Students in level", ['students' => $students]);
-    });
 
     Route::delete("/levels/{level_id}/students/{student_id}", function ($level_id, $student_id) {
         $level_model = new Level;
