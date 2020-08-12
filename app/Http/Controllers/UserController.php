@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use JSend;
 use Illuminate\Validation\Rule;
 
+use App\Http\Resources\User as UserResource;
+
 class UserController extends Controller
 {
     private $validation_messages = [
@@ -67,5 +69,37 @@ class UserController extends Controller
         $result = $user->find($user_id)->edit($request->all());
 
         return JSend::success("Edited the user", array('users' => $result));
+    }
+
+    public function index(Request $request){    
+
+        $search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','any_email','group_id','group_in','vertical_id','city_id',
+                            'user_type','center_id','project_id', 'not_user_type', 'credit', 'credit_lesser_than', 'credit_greater_than'];
+        $search = [];
+        foreach ($search_fields as $key) {
+            if (!$request->has($key)) {
+                continue;
+            }
+
+            if ($key == 'group_id') {
+                $search['user_group'] = [$request->input('group_id')];
+            } elseif ($key == 'group_in') {
+                $search['user_group'] = explode(",", $request->input('group_in'));
+            } elseif ($key == 'not_user_type') {
+                $search['not_user_type'] = explode(",", $request->input('not_user_type'));
+            } else {
+                $search[$key] = $request->input($key);
+            }
+        }
+        if (!isset($search['project_id'])) {
+            $search['project_id'] = 1;
+        }
+        
+        
+
+        $user = new User;
+        $data = $user->search($search, true);
+        return JSend::success("Users", array('users' => $data));;
+        // return UserResource::collection($data);
     }
 }

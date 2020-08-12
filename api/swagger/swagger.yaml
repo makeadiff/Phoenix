@@ -2607,6 +2607,15 @@ paths:
           in: formData
           type: string
           description: Longitude of the location of the event.
+        - name: repeat_until
+          in: formData          
+          type: "string"
+          format: "date"
+          description: End data of when the Event should repeat for. By default it'll be the end of the academic year.
+        - name: frequency
+          in: formData
+          type: string
+          description: values are 'monthly' or 'weekly'. Frequcny of Recurring of Event. Upon entering this event copies are created until end of academic year.          
       responses:
         200:
           description: New event created
@@ -2709,6 +2718,35 @@ paths:
           description: Event deleted
         404:
           description: Couldn't find the event with the given event ID.
+
+  /events/{event_id}/recur:
+    post:
+      tags:
+        - event
+      summary: Create Recurring event instances
+      description: Create instances of event until the said date of repeat_until with frequecy of weekly or monthly.
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          description: The ID of event whose instances you want to recur
+          type: integer
+        - name: repeat_until
+          in: formData          
+          type: "string"
+          format: "date"
+          description: End data of when the Event should repeat for. By default it'll be the end of the academic year. If not present will be taken from Event.repeat_until
+        - name: frequency
+          in: formData
+          type: string
+          description: values are 'monthly' or 'weekly'. Frequcny of Recurring of Event. Upon entering this event copies are created until end of academic year. If not present will be taken from Event.frequency 
+
+      responses:
+        200:
+          description: Event Instances created for Event
+        404:
+          description: Couldn't find the event with the given event ID.
+
 
   /event_types:
     get:
@@ -2913,6 +2951,22 @@ paths:
             $ref: "#/definitions/UserEvent"
         404:
           description: Can't find any event with the given ID
+    post: 
+      tags:
+        - event
+      summary: Update users who've attended the event
+      description: Sets the present data for users who attended the event
+      parameters:
+        - name: attendee_user_ids
+          in: formData
+          type: string
+          description: Comma Separated or Array of User IDs.
+      responses:
+        200:
+          description: 'Attendance Marked'
+        404:
+          description: 'Unable to mark attendance of User'
+
 
   ######## Surveys
   /survey_templates:

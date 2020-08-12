@@ -121,10 +121,14 @@ final class User extends Common
     // 	return $this->morphMany(Data::class, 'item', 'item_id');
     // }
 
-    public function search($data)
+    public function search($data, $pagination = false)
     {
         $q = app('db')->table('User');
-        $results = $this->baseSearch($data, $q)->get();
+        if($pagination)
+            $results = $this->baseSearch($data, $q)->paginate(50);
+        else{
+            $results = $this->baseSearch($data, $q)->get();
+        }
 
         // Add groups to each volunter that was returned.
         for ($i=0; $i<count($results); $i++) {
@@ -136,8 +140,8 @@ final class User extends Common
                 }
             }
         }
-
-        return $results;
+        
+        return $results;        
     }
 
     public function baseSearch($data, $q = false)
@@ -309,7 +313,7 @@ final class User extends Common
         $q->orderby('User.name');
         // dd($q->toSql(), $q->getBindings(), $data);
 
-        // :TODO: Pagination
+        // :TODO: Pagination    
 
         return $q;
     }
