@@ -18,8 +18,8 @@ type Query {
     donation(id: ID @eq): 	Donation 	@find(model: "App\\Models\\Donation")
     donor(id: ID @eq): 		Donor 		@find(model: "App\\Models\\Donor")
     survey(id: ID @eq):		Survey 		@find(model: "App\\Models\\Survey")
-	project(id: ID @eq):	Project		@find(model: "App\\Models\\Project")
-	subject(id: ID @eq):	Subject		@find(model: "App\\Models\\Subject")
+		project(id: ID @eq):	Project		@find(model: "App\\Models\\Project")
+		subject(id: ID @eq):	Subject		@find(model: "App\\Models\\Subject")
     survey_template(id: ID @eq):	Survey_Template @find(model: "App\\Models\\Survey_Template")
 
     # :HARDCODE: - Global replace all 2020 to next year. Not sure how to do it any other way yet. Other than custom resolvers for everything.
@@ -34,9 +34,9 @@ type Query {
 		[User] @all # @paginate(type: "paginator" model: "App\\Models\\User")
     centers(city_id: Int @eq, status: String = "1" @eq ): [Center!]! @all
     students(name: String @where(operator: "like"), sex: String @eq, center_id: Int @eq, status: String = "1" @eq): [Student!]! @all
-	levels(center_id: Int @eq, project_id: Int @eq, name: String @where(operator:"like"), grade: Int @eq,
+		levels(center_id: Int @eq, project_id: Int @eq, name: String @where(operator:"like"), grade: Int @eq,
 		status: String = "1" @eq, year: Int = 2020 @eq): [Level!]! @all
-	allocations(batch_id: Int @eq, level_id: Int @eq, user_id: Int @eq, subject_id: Int @eq, role: String = "teacher" @eq): [Allocation] @all
+		allocations(batch_id: Int @eq, level_id: Int @eq, user_id: Int @eq, subject_id: Int @eq, role: String = "teacher" @eq): [Allocation] @all
     cities(type: String = "actual" @eq): [City!]! @all
     groups(group_type: String = "normal" @eq, status: String = "1" @eq, type: String @eq, 
 		vertical_id: Int @eq): [Group!]! @all
@@ -57,8 +57,8 @@ type Query {
 		user_type: String, not_user_type: String, center_id: Int, group_id: Int, group_type: String, 
 		batch_id: Int, level_id: Int): [User]
     studentSearch(city_id: Int, name: String, center_id: Int): [Student]
-	sendOtp(email: String, phone: String): User
-	verifyOtp(id: ID, email: String, phone: String, otp: String): Int
+		sendOtp(email: String, phone: String): User
+		verifyOtp(id: ID, email: String, phone: String, otp: String): Int
 
     # classConnection(teacher_id: Int, mentor_id: Int): [ClassConnection] #Custom return  + resolver. Used for finding unfilled data in UPMA. Both teacher and student.
     teacherClassConnection(teacher_id: Int): [TeacherClassConnection]

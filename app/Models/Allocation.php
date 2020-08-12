@@ -79,7 +79,7 @@ class Allocation extends Common
 
         $allocation = Allocation::create($allocation_data);
         return $allocation->id;
-    }
+    }    
     public function assignMentor($batch_id, $user_id)
     {
         return $this->createAllocation($batch_id, 0, $user_id, 'mentor');

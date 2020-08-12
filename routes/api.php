@@ -615,6 +615,8 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Search Results", ['users' => $data]);
     });
 
+    Route::get('/users_paginated', 'UserController@index');
+
     Route::get('/users/{user_id}', function ($user_id) {
         $user = new User;
         $details = $user->fetch($user_id, false); // Right now this returns applicants as well - it was needed for Zoho. Migt be a problem later on. :TODO:
@@ -1140,8 +1142,12 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     Route::get('/events/{event_id}', function ($event_id) {
         $event = new Event;
-
+        
         $data = $event->fetch($event_id);
+        $event_type = $data->eventType()->get();
+        if(!empty($event_type)){
+            $data->event_type = $event_type[0]->name;
+        }
         if (!$data) {
             return JSend::fail("Can't find event with ID $event_id", $event->errors);
         }
@@ -1219,6 +1225,27 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Event: $event_id", ['user' => $data[0]]);
     });
 
+    Route::post('/events/{event_id}/attended', function ($event_id, Request $request) {                
+        $event = new Event;
+        $data = $event->find($event_id);
+        $user_ids_raw = $request->input('attendee_user_ids');
+    
+        if(!is_array($user_ids_raw) && $user_ids_raw!= NULL){
+            $user_ids = explode(",",$user_ids_raw);
+        }
+        else{
+            $user_ids = $user_ids_raw;
+        }        
+
+        if($user_ids == NULL || !count($user_ids)){
+            return JSend::fail("No UserID Passed for $event_id");
+        }
+        else{
+            $event->updateAttendance($user_ids, $event_id);
+            return JSend::success("Event: $event_id", ['user_ids_updated' => $user_ids]);
+        }                
+    });
+
     Route::post('/events/{event_id}/users/{user_id}', function ($event_id, $user_id, Request $request) {
         $event = new Event;
         $update = $event->find($event_id)->updateUserConnection($user_id, $request->all());
@@ -1244,6 +1271,25 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return "";
     });
 
+    Route::post('/events/{event_id}/recur', function($event_id, Request $request){
+       $event = new Event;
+       $event_data = $event->find($event_id);
+       if(empty($event_data)){
+           return JSend::fail("Can't find event with ID: $event_id");
+       }       
+       $frequency = $event_data['frequency'];       
+       if($request->input('frequency')) $frequency = $request->input('frequency');
+
+       $repeat_until = $event_data['repeat_until'];
+       if($request->input('repeat_until')) $repeat_until = $request->input('repeat_until');
+
+       $recurring = $event->createRecurringInstances($event_data, $frequency, $repeat_until);
+       if(!$recurring){
+           return JSend::fail("Invalid Frequency entered to repeat the event $event_id");
+       }
+       return JSend::success(count($recurring)." Event Instances created for $event_id",['event_ids' => $recurring]);
+    });
+
     Route::get('/event_types', function () {
         $eventtypes = Event_Type::getAll();
         return JSend::success("Event_Types", ['event_types' => $eventtypes]);
@@ -1258,6 +1304,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
         return JSend::success("Notification created", ['notification' => $notification]);
     });
+    
 
     Route::get('/notifications', function (Request $request) {
         $search_fields = ['id', 'user_id', 'phone', 'imei', 'fcm_regid', 'platform', 'app', 'status'];
