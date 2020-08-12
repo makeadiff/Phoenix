@@ -25,7 +25,7 @@ class LevelController extends Controller
         $validator = \Validator::make($request->all(), $this->validation_rules, $this->validation_messages);
 
         if ($validator->fails()) {
-            return response(JSend::fail("Unable to create class section - errors in input", $validator->errors()), 400);
+            return JSend::fail("Unable to create class section - errors in input", $validator->errors(), 400);
         }
 
         $level = new Level;
@@ -52,7 +52,7 @@ class LevelController extends Controller
         $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
 
         if ($validator->fails()) {
-            return response(JSend::fail("Unable to create class section - errors in input.", $validator->errors()), 400);
+            return JSend::fail("Unable to create class section - errors in input.", $validator->errors(), 400);
         }
         
         $result = $level->find($level_id)->edit($request->all());
@@ -73,7 +73,7 @@ class LevelController extends Controller
         }
 
         if (!$level) {
-            return response(JSend::fail("Can't find any class section with the given ID"), 404);
+            return JSend::fail("Can't find any class section with the given ID", [], 404);
         }
 
         $student_ids_raw = $request->input('student_ids');
@@ -96,7 +96,7 @@ class LevelController extends Controller
         // Are given students part of the same city as the level
 
         if (count($student_not_found)) {
-            return response(JSEND::fail("Can't find students with these IDs: " . implode(",", $student_not_found)));
+            return JSend::fail("Can't find students with these IDs: " . implode(",", $student_not_found));
         }
 
         $insert_count = 0;

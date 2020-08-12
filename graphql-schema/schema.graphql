@@ -33,6 +33,7 @@ type Query {
 		phone: String @eq, city_id: Int @eq, status: String = "1" @eq, user_type: String = "volunteer" @eq): 
 		[User] @all # @paginate(type: "paginator" model: "App\\Models\\User")
     centers(city_id: Int @eq, status: String = "1" @eq ): [Center!]! @all
+    students(name: String @where(operator: "like"), sex: String @eq, center_id: Int @eq, status: String = "1" @eq): [Student!]! @all
 		levels(center_id: Int @eq, project_id: Int @eq, name: String @where(operator:"like"), grade: Int @eq,
 		status: String = "1" @eq, year: Int = 2020 @eq): [Level!]! @all
 		allocations(batch_id: Int @eq, level_id: Int @eq, user_id: Int @eq, subject_id: Int @eq, role: String = "teacher" @eq): [Allocation] @all

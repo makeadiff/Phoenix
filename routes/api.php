@@ -365,12 +365,6 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
         return ""; // Deletes should return empty data with status 200
     });
-    Route::get("/levels/{level_id}/students", function ($level_id) {
-        $student_model = new Student;
-        $students = $student_model->search(['level_id' => $level_id]);
-
-        return JSend::success("Students in level", ['students' => $students]);
-    });
 
     Route::delete("/levels/{level_id}/students/{student_id}", function ($level_id, $student_id) {
         $level_model = new Level;
@@ -1231,6 +1225,27 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Event: $event_id", ['user' => $data[0]]);
     });
 
+    Route::post('/events/{event_id}/attended', function ($event_id, Request $request) {                
+        $event = new Event;
+        $data = $event->find($event_id);
+        $user_ids_raw = $request->input('attendee_user_ids');
+    
+        if(!is_array($user_ids_raw) && $user_ids_raw!= NULL){
+            $user_ids = explode(",",$user_ids_raw);
+        }
+        else{
+            $user_ids = $user_ids_raw;
+        }        
+
+        if($user_ids == NULL || !count($user_ids)){
+            return JSend::fail("No UserID Passed for $event_id");
+        }
+        else{
+            $event->updateAttendance($user_ids, $event_id);
+            return JSend::success("Event: $event_id", ['user_ids_updated' => $user_ids]);
+        }                
+    });
+
     Route::post('/events/{event_id}/users/{user_id}', function ($event_id, $user_id, Request $request) {
         $event = new Event;
         $update = $event->find($event_id)->updateUserConnection($user_id, $request->all());
@@ -1256,6 +1271,25 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return "";
     });
 
+    Route::post('/events/{event_id}/recur', function($event_id, Request $request){
+       $event = new Event;
+       $event_data = $event->find($event_id);
+       if(empty($event_data)){
+           return JSend::fail("Can't find event with ID: $event_id");
+       }       
+       $frequency = $event_data['frequency'];       
+       if($request->input('frequency')) $frequency = $request->input('frequency');
+
+       $repeat_until = $event_data['repeat_until'];
+       if($request->input('repeat_until')) $repeat_until = $request->input('repeat_until');
+
+       $recurring = $event->createRecurringInstances($event_data, $frequency, $repeat_until);
+       if(!$recurring){
+           return JSend::fail("Invalid Frequency entered to repeat the event $event_id");
+       }
+       return JSend::success(count($recurring)." Event Instances created for $event_id",['event_ids' => $recurring]);
+    });
+
     Route::get('/event_types', function () {
         $eventtypes = Event_Type::getAll();
         return JSend::success("Event_Types", ['event_types' => $eventtypes]);
@@ -1270,6 +1304,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
         return JSend::success("Notification created", ['notification' => $notification]);
     });
+    
 
     Route::get('/notifications', function (Request $request) {
         $search_fields = ['id', 'user_id', 'phone', 'imei', 'fcm_regid', 'platform', 'app', 'status'];
