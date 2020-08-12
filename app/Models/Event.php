@@ -27,7 +27,7 @@ final class Event extends Common
 
     protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'vertical_id',
                              'event_type_id', 'template_event_id', 'user_selection_options',
-                             'created_by_user_id', 'latitude', 'longitude', 'status'];
+                             'created_by_user_id', 'latitude', 'longitude', 'status', 'frequency','repeat_until'];
 
     public function city()
     {
@@ -163,14 +163,16 @@ final class Event extends Common
             'created_by_user_id'=> $data['created_by_user_id'],
             'latitude'      => isset($data['latitude']) ? $data['latitude'] : '',
             'longitude'     => isset($data['longitude']) ? $data['longitude'] : '',
+            'repeat_until'  => isset($data['repeat_until']) ? $data['repeat_until'] : NULL,
+            'frequency'     => isset($data['frequency']) ? $data['frequency']: 'none',
         ]);
-
+                
         return $event;
     }
 
     public function invite($user_ids, $send_invite_email = true, $event_id = false)
     {
-        $this->chain($event_id);
+        $this->chain($event_id);        
 
         $user_event_insert = [];
         $rsvp_auth_keys = [];
@@ -182,7 +184,7 @@ final class Event extends Common
 
             $user_event_insert[] = [
                 'user_id'   => $user_id,
-                'event_id'  => $this->id,
+                'event_id'  => $this->id ? $this->id: $event_id,
                 'present'   => '0',
                 'created_from'  => '1',
                 'created_on'=> date('Y-m-d H:i:s'),
@@ -264,7 +266,7 @@ final class Event extends Common
 
     public function updateUserConnection($user_id, $data, $event_id = false)
     {
-        $event_id = $this->chain($event_id);
+        $event_id = $this->chain($event_id);        
         $this->revertCredits($event_id, $user_id);
 
         $q = app('db')->table("UserEvent");
@@ -285,14 +287,25 @@ final class Event extends Common
 
             $update[$key] = $data[$key];
         }
-
-        // A better way to do this is using the ::save() - but for some season its not working. Hence, this.
+              
+        // A better way to do this is using the ::save() - but for some season its not working. Hence, this.                
         $user_connection = $q->update($update);
 
         // Credit assignment if any.
         $this->awardCredits($event_id, $user_id);
 
         return $user_connection;
+    }
+
+    public function updateAttendance($user_ids, $event_id = false){
+        $event = new Event;                
+        foreach($user_ids as $user_id){            
+            $event->updateUserConnection($user_id,['present' => '1'],$event_id);            
+        }
+        $unmarked_users = $event->find($event_id)->users(['present' => '3']);
+        foreach($unmarked_users as $user_id){
+            $event->updateUserConnection($user_id, ['present' => '0'], $event_id);
+        }
     }
 
     public function deleteUserConnection($user_id, $event_id = false)
@@ -343,4 +356,59 @@ final class Event extends Common
 
         $this->awardCredits($event_id, $user_id, true);
     }
+
+    public function createRecurringInstances($event, $frequency = null, $repeat_until = null){
+        $event_id = $event['id'];        
+        
+        if($repeat_until == NULL) $repeat_until = '2021-04-30';
+
+        unset($event['id']);        
+        $event['repeat_until'] = $repeat_until;
+        $event['frequency'] = $frequency;
+        $e = new Event;
+        $thisEvent = $e->find($event_id);
+        $thisEvent->edit($event);
+        $event['template_event_id'] = $event_id;
+        $event_instances = [];
+
+        $users_list = $thisEvent->users();
+        $users = [];
+        foreach($users_list as $user){
+            $users[] = $user['id'];
+        }
+        
+
+        if($frequency == 'monthly'){
+            while($event['starts_on'] < $repeat_until){           
+                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 month",strtotime($event['starts_on'])));
+                $response = $e->search($event);                                
+                
+                if(!count($response))
+                    $response = $this->add($event);                
+                else
+                    $response = (array)$response[0];
+                
+                $event_instances[] = $response['id'];
+                $e->invite($users, false, $response['id']);
+            }
+            return $event_instances;
+        }        
+        else if($frequency == 'weekly'){
+            while($event['starts_on'] < $repeat_until){                
+                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 week",strtotime($event['starts_on'])));  
+                $response = $e->search($event);
+                
+                if(!count($response))
+                    $response = $this->add($event);                
+                else
+                    $response = (array)$response[0];
+
+            }
+            return $event_instances; 
+        }  
+        else{
+            return false;
+        }        
+    }
+    
 }
