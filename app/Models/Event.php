@@ -120,7 +120,7 @@ final class Event extends Common
     public function users($filter = [])
     {
         $users = $this->belongsToMany('App\Models\User', 'UserEvent', 'event_id', 'user_id');
-        $users->select('User.id', 'User.name', 'UserEvent.present', 'UserEvent.late', 'UserEvent.user_choice', 'UserEvent.rsvp_auth_key', 'UserEvent.reason');
+        $users->select('User.id', 'User.name', 'UserEvent.present', 'UserEvent.late', 'UserEvent.user_choice', 'UserEvent.rsvp_auth_key', 'UserEvent.reason', 'User.city_id','User.email','User.mad_email');
         if (isset($filter['rsvp'])) {
             $key = array_search($filter['rsvp'], $this->rsvp);
             $users->where('UserEvent.user_choice', '=', $key);
