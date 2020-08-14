@@ -1349,13 +1349,19 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     // Use this to Debug/test things
     Route::get('/test', function () {
-        $center = new Center;
+        // $center = new Center;
         // $projects = $center->find(184)->center_projects()->get();
-        $projects = $center->find(154)->projects()->get();
-        foreach($projects as $pro) {
-            $bat = $pro->batches()->get();
-            dump($bat);
-        }
+        // $projects = $center->find(154)->projects()->get();
+        // foreach($projects as $pro) {
+        //     $bat = $pro->batches()->get();
+        //     dump($bat);
+        // }
+
+        $level_model = new Level;
+        $teachers = $level_model->find(10050)->teachers();
+        dump($teachers->toSql(), $teachers->getBindings());
+        dump($teachers->get());
+
 
         // $user_model = new User;
         // $links = $user_model->find(1)->links()->get();

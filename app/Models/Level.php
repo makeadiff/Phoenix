@@ -22,6 +22,10 @@ final class Level extends Common
     {
         return $this->belongsToMany('App\Models\Batch', 'BatchLevel', 'level_id', 'batch_id')->where('BatchLevel.year', $this->year);
     }
+    public function teachers()
+    {
+        return $this->hasManyThrough('App\Models\User', 'App\Models\Allocation', 'level_id', 'id', 'id', 'user_id');
+    }
     public function allocations()
     {
         return $this->hasMany("App\Models\Allocation");
