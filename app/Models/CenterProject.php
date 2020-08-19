@@ -12,9 +12,9 @@ final class CenterProject extends Common
     const CREATED_AT = 'added_on';
     const UPDATED_AT = null;
 
-    public function projects()
+    public function project()
     {
-        $projects = $this->hasMany('App\Models\Project', 'project_id')->where('year', $this->year);
+        $projects = $this->belongsTo('App\Models\Project', 'project_id')->where('year', $this->year);
         return $projects;
     }
 
