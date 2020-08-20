@@ -380,10 +380,7 @@ final class Event extends Common
         $users = [];
         foreach($users_list as $user){
             $users[] = $user['id'];
-        }
-        
-        
-        $event_name = $event['name'];
+        }        
 
         if($frequency == 'monthly'){
             while($event['starts_on'] < $repeat_until){           
