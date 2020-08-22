@@ -80,6 +80,11 @@ paths:
           type: integer
           required: false
           description: Return all users in the given city. If ommited the city of the user who's login is used to access the api is assumed.
+        - name: cities_in
+          in: query
+          type: string
+          required: false
+          description: Return all users in the given cities. Send an CSV, array of city_ids.
         - name: user_type
           in: query
           type: string
@@ -206,6 +211,11 @@ paths:
           type: integer
           required: false
           description: Return all users in the given city. If ommited the city of the user who's login is used to access the api is assumed.
+        - name: cities_in
+          in: query
+          type: string
+          required: false
+          description: Return all users in the given cities. Send an CSV, array of city_ids.
         - name: user_type
           in: query
           type: string

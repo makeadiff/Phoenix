@@ -252,6 +252,14 @@ final class User extends Common
             $q->where('UserGroup.year', $this->year);
             $q->distinct();
         }
+
+        if (!empty($data['city'])){
+            if(!is_array($data['city'])){
+                $data['city'] = array($data['city']);
+            }
+            $q->whereIn('User.city_id',$data['city']);            
+        }
+
         if (!empty($data['user_group_type'])) {
             $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
