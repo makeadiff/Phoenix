@@ -120,7 +120,7 @@ final class Event extends Common
     public function users($filter = [])
     {
         $users = $this->belongsToMany('App\Models\User', 'UserEvent', 'event_id', 'user_id');
-        $users->select('User.id', 'User.name', 'UserEvent.present', 'UserEvent.late', 'UserEvent.user_choice', 'UserEvent.rsvp_auth_key', 'UserEvent.reason');
+        $users->select('User.id', 'User.name', 'UserEvent.present', 'UserEvent.late', 'UserEvent.user_choice', 'UserEvent.rsvp_auth_key', 'UserEvent.reason', 'User.city_id','User.email','User.mad_email');
         if (isset($filter['rsvp'])) {
             $key = array_search($filter['rsvp'], $this->rsvp);
             $users->where('UserEvent.user_choice', '=', $key);
@@ -360,11 +360,16 @@ final class Event extends Common
     public function createRecurringInstances($event, $frequency = null, $repeat_until = null){
         $event_id = $event['id'];        
         
-        if($repeat_until == NULL) $repeat_until = '2021-04-30';
+        if($repeat_until == NULL) $repeat_until = ($this->year+1).'-04-30';
+        $event_name = $event['name'];
+        $count = 1;
 
         unset($event['id']);        
         $event['repeat_until'] = $repeat_until;
         $event['frequency'] = $frequency;
+        $event['name'] = $event_name.' #'.$count;
+        $count++;
+        
         $e = new Event;
         $thisEvent = $e->find($event_id);
         $thisEvent->edit($event);
@@ -375,12 +380,12 @@ final class Event extends Common
         $users = [];
         foreach($users_list as $user){
             $users[] = $user['id'];
-        }
-        
+        }        
 
         if($frequency == 'monthly'){
             while($event['starts_on'] < $repeat_until){           
-                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 month",strtotime($event['starts_on'])));
+                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 month",strtotime($event['starts_on'])));                
+                $event['name'] = $event_name.' #'.$count;
                 $response = $e->search($event);                                
                 
                 if(!count($response))
@@ -390,25 +395,29 @@ final class Event extends Common
                 
                 $event_instances[] = $response['id'];
                 $e->invite($users, false, $response['id']);
+                $count++;
             }
             return $event_instances;
         }        
         else if($frequency == 'weekly'){
             while($event['starts_on'] < $repeat_until){                
-                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 week",strtotime($event['starts_on'])));  
+                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 week",strtotime($event['starts_on'])));
+                $event['name'] = $event_name.' #'.$count;
                 $response = $e->search($event);
                 
                 if(!count($response))
                     $response = $this->add($event);                
                 else
                     $response = (array)$response[0];
-
+                    
+                $event_instances[] = $response['id'];
+                $e->invite($users, false, $response['id']);
+                $count++;
             }
             return $event_instances; 
         }  
         else{
             return false;
-        }        
-    }
-    
+        }    
+    }    
 }

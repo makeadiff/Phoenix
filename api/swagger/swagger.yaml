@@ -67,10 +67,10 @@ paths:
           in: query
           type: integer
           description: Return all users of the given group
-        - name: group_in
+        - name: groups_in
           in: query
           type: string
-          description: Returns all users in any of the given group. Can give an array - eg. group_in=3,5,9
+          description: Returns all users in any of the given group. Can give an array - eg. groups_in=3,5,9
         - name: vertical_id
           in: query
           type: integer
@@ -161,6 +161,70 @@ paths:
           description: User added successfully.
         400:
           description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+
+  /users_paginated:
+    get:
+      tags:
+        - user
+      summary: User Paginated Search
+      description: Search interface for users. Use any of the given parameters to search/filter the user table. The final result will be returned. Gives result in data of 50 users per page.
+      parameters:
+        - name: name
+          in: query
+          type: string
+          description: Search by user name
+        - name: phone
+          in: query
+          type: string
+          description: Search by phone number
+        - name: email
+          in: query
+          type: string
+          description: Search users by given email
+        - name: mad_email
+          in: query
+          type: string
+          description: Search users by just the mad email
+        - name: identifier
+          in: query
+          type: string
+          description: This will try to get a match by searching email, phone number, mad_email and the ID field against the given value. If any of it matches, it returns that row.
+        - name: group_id
+          in: query
+          type: integer
+          description: Return all users of the given group
+        - name: groups_in
+          in: query
+          type: string
+          description: Returns all users in any of the given group. Can give an array - eg. groups_in=3,5,9
+        - name: vertical_id
+          in: query
+          type: integer
+          description: Return all users of the given vertical
+        - name: city_id
+          in: query
+          type: integer
+          required: false
+          description: Return all users in the given city. If ommited the city of the user who's login is used to access the api is assumed.
+        - name: user_type
+          in: query
+          type: string
+          enum:
+            - volunteer
+            - applicant
+            - let_go
+            - alumnai
+          description: Can be 'volunteer', 'applicant', 'let_go' or 'alumnai'.
+        - name: center_id
+          in: query
+          type: integer
+          required: false
+          description: Returns all the teachers in the given center.
+      responses:
+        '200':
+          description: Returns the list of users according to the given parameters.
+          schema:            
+            $ref: "#/definitions/UserPaginated"
 
   /users/{user_id}:
     get:
@@ -3777,7 +3841,38 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Group"
-
+  
+  UserPaginated:
+    type: "object"
+    properties:
+      current_page: 
+        type: integer
+        description: Current Page Number
+      data: 
+        type: "array"
+        items:
+          $ref: "#/definitions/User"
+      first_page_url: 
+        type: string
+      from: 
+        type: integer
+      last_page: 
+        type: integer
+      last_page_url:
+        type: string
+      next_page_url:
+        type: string
+      path:
+        type: string
+      per_page: 
+        type: integer
+      prev_page_url:
+        type: string
+      to:
+        type: integer
+      total: 
+        type: integer
+    
   Group:
    type: "object"
    properties:
