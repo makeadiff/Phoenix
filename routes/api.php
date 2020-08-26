@@ -682,6 +682,8 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("User Groups for user $user_id", ['groups' => $info->groups]);
     });
 
+    // :TODO: POST /users/{user_id}/groups
+
     Route::post('/users/{user_id}/groups/{group_id}', function ($user_id, $group_id) {
         $user = new User;
         $info = $user->fetch($user_id);

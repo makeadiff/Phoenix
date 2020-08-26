@@ -459,14 +459,16 @@ final class User extends Common
                 'wingman'	=> 'Wingman (Youth Mentoring)',
                 'fundraising'=>'Fundraising Volunteer',
                 'hc'		=> 'Human Capital Volunteer',
+                'campaigns' => 'Campaigns Volunteer',
+                'finance'   => 'Finance Volunteer'
                 'other'		=> 'Other'
             ];
             $client = new Client(['http_errors' => false]); //GuzzleHttp\Client
             $response = '';
             try {
-                $result = $client->post('https://creator.zoho.com/api/jithincn1/json/recruitment-management/form/Registration/record/add', [
+                $result = $client->post('https://creator.zoho.com/api/jithincn1/json/mad-recruit/form/Registration/record/add', [
                     'form_params' => [
-                        'authtoken'         => '4f1c9be22a7d8fdd2c2a1a6e2921fa13',
+                        'authtoken'         => 'cdcfd4eb1b77b0835f4339827906e42a',
                         'scope'             => 'creatorapi',
                         'campaign_id'       => isset($data['campaign']) ? $data['campaign'] : '',
                         'Applicant_Name'    => $data['name'],
