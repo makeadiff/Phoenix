@@ -124,9 +124,9 @@ final class User extends Common
     public function search($data, $pagination = false)
     {
         $q = app('db')->table('User');
-        if($pagination)
+        if ($pagination) {
             $results = $this->baseSearch($data, $q)->paginate(50);
-        else{
+        } else {
             $results = $this->baseSearch($data, $q)->get();
         }
 
@@ -141,7 +141,7 @@ final class User extends Common
             }
         }
         
-        return $results;        
+        return $results;
     }
 
     public function baseSearch($data, $q = false)
@@ -313,7 +313,7 @@ final class User extends Common
         $q->orderby('User.name');
         // dd($q->toSql(), $q->getBindings(), $data);
 
-        // :TODO: Pagination    
+        // :TODO: Pagination
 
         return $q;
     }

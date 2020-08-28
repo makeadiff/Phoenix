@@ -69,7 +69,7 @@ final class Classes extends Common
         }
         
         // teacher_id: Int, status: String, batch_id: Int, level_id: Int, project_id: Int, class_date: Date, direction: String)
-        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'center_id', 'project_id', 'status', 
+        $search_fields = ['teacher_id', 'substitute_id', 'batch_id', 'level_id', 'center_id', 'project_id', 'status',
                         'class_date', 'class_on', 'class_date_to','class_date_from', 'class_status', 'direction', 'from_date', 'limit'];
         $q->select(
             'Class.id',
@@ -226,7 +226,7 @@ final class Classes extends Common
             'check_for_understanding' => $check_for_understanding
         ]);
         $this->edit([
-            'status' => 'happened', 
+            'status' => 'happened',
             'updated_by_teacher' => $teacher_id,
             'class_satisfaction' => $class_satisfaction
         ], $class_id);
@@ -283,15 +283,19 @@ final class Classes extends Common
     public function awardCredits($class_id, $teacher_id, $status, $substitute_id, $zero_hour_attendance, $options = [])
     {
         $options_template = [
-            'mentor_id' => 0, 
+            'mentor_id' => 0,
             'revert'    => false,
             'class'     => false
         ];
         $options = array_merge($options_template, $options);
         extract($options);
 
-        if(!$class) $class = $this->find($class_id);
-        if(!$class) return false;
+        if (!$class) {
+            $class = $this->find($class_id);
+        }
+        if (!$class) {
+            return false;
+        }
         $project_id = $class->project_id;
 
         $credit_options = [
@@ -301,16 +305,15 @@ final class Classes extends Common
             'revert'    => $revert // This will reset credits that used to exist.
         ];
 
-        if($project_id == 1) {
+        if ($project_id == 1) {
             $param_for_substituting = 1;
             $param_for_finding_a_substitute = 2;
-            $param_for_missing_class = 4; 
+            $param_for_missing_class = 4;
             $param_for_missing_zero_hour = 3;
-        
-        } elseif($project_id == 2) {
+        } elseif ($project_id == 2) {
             $param_for_substituting = 5;
             $param_for_finding_a_substitute = 6;
-            $param_for_missing_class = 8; 
+            $param_for_missing_class = 8;
             $param_for_missing_zero_hour = 7;
         }
 
@@ -319,22 +322,21 @@ final class Classes extends Common
         $credit = new Credit;
 
         // MADApp/Class_model.php:367
-        if($status == 'attended') {
-            if($substitute_id) {
+        if ($status == 'attended') {
+            if ($substitute_id) {
                 $credit->assign($substitute_id, $param_for_substituting, $credit_options);
                 $credit->assign($teacher_id, $param_for_finding_a_substitute, $credit_options);
   
-                if(!$zero_hour_attendance) {
+                if (!$zero_hour_attendance) {
                     $credit->assign($substitute_id, $param_for_missing_zero_hour, $credit_options);
                 }
             } else {
-                if(!$zero_hour_attendance) {
+                if (!$zero_hour_attendance) {
                     $credit->assign($substitute_id, $param_for_missing_zero_hour, $credit_options);
                 }
             }
-            
-        } elseif($status == 'absent') {
-            if($substitute_id) {
+        } elseif ($status == 'absent') {
+            if ($substitute_id) {
                 $credit->assign($substitute_id, $param_for_missing_class, $credit_options);
                 $credit->assign($teacher_id, $param_for_finding_a_substitute, $credit_options);
             } else {
@@ -352,11 +354,19 @@ final class Classes extends Common
             ->get();
 
         // No pre-existing class data. No need to revert credits.
-        if(!count($user_class)) return false;
-        elseif($user_class[0]->status === "projected") return false;
+        if (!count($user_class)) {
+            return false;
+        } elseif ($user_class[0]->status === "projected") {
+            return false;
+        }
 
-        $this->awardCredits($class_id, $teacher_id, $user_class[0]->status, $user_class[0]->substitute_id, 
-                        $user_class[0]->zero_hour_attendance, ['revert' => true]);
+        $this->awardCredits(
+            $class_id,
+            $teacher_id,
+            $user_class[0]->status,
+            $user_class[0]->substitute_id,
+            $user_class[0]->zero_hour_attendance,
+            ['revert' => true]
+        );
     }
-
 }

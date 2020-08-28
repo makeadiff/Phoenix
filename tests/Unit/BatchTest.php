@@ -61,8 +61,8 @@ class BatchTest extends TestCase
         $batch_ids = array_keys($this->ideal_batchs);
 
         $found = 0;
-        foreach($batches as $bth) {
-            if(in_array($bth->id, $batch_ids)) {
+        foreach ($batches as $bth) {
+            if (in_array($bth->id, $batch_ids)) {
                 $found++;
             }
         }

@@ -43,5 +43,4 @@ final class Parameter extends Common
         
         return $parameters;
     }
-
 }

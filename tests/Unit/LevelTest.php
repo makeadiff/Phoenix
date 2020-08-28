@@ -51,8 +51,8 @@ class LevelTest extends TestCase
         $level_ids = [10056, 10057];
 
         $found = 0;
-        foreach($data as $level) {
-            if(in_array($level->id, $level_ids)) {
+        foreach ($data as $level) {
+            if (in_array($level->id, $level_ids)) {
                 $found++;
             }
         }
