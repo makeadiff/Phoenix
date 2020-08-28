@@ -60,4 +60,41 @@ final class CenterProject extends Common
         // dump($q->toSql(), $q->getBindings());
         return $q;
     }
+
+    public function getAssign($center_id, $project_id, $year)
+    {
+        $assign = $this->where('center_id', $center_id)
+                        ->where('project_id', $project_id)
+                        ->where('year', $year)
+                        ->first();
+
+        return $assign;
+    }   
+
+
+    public function assignProject($center_id, $project_ids)
+    {
+        foreach($project_ids as $project_id)
+        {
+            $existing_assign = $this->getAssign($center_id, $project_id, $this->year);
+
+            if (isset($existing_assign->id)) 
+            {
+                $result[] = $existing_assign->id;
+            } 
+            else
+            {
+
+                $data = [
+                'center_id'   => $center_id,
+                'project_id'  => $project_id,
+                'added_on'  => date('Y-m-d H:i:s')
+                ];
+            
+                $assign = CenterProject::create($data);
+                $result[] = $assign->id;
+            }
+        }
+        return $result;
+    }
 }
