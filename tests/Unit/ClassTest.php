@@ -14,10 +14,10 @@ use App\Models\Credit;
 class ClassTest extends TestCase
 {
     use WithoutMiddleware;
-    public $class_id = 455176;
-    public $user_id = 136213;
-    public $mentor_id = 136222;
-    public $substitute_id = 136215;
+    public $class_id = 466897;
+    public $user_id = 203354;
+    public $mentor_id = 203358;
+    public $substitute_id = 203355;
 
     public function testTeacherAttendance()
     {

@@ -460,7 +460,7 @@ final class User extends Common
                 'fundraising'=>'Fundraising Volunteer',
                 'hc'		=> 'Human Capital Volunteer',
                 'campaigns' => 'Campaigns Volunteer',
-                'finance'   => 'Finance Volunteer'
+                'finance'   => 'Finance Volunteer',
                 'other'		=> 'Other'
             ];
             $client = new Client(['http_errors' => false]); //GuzzleHttp\Client
