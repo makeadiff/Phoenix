@@ -27,9 +27,9 @@ class EventTest extends TestCase
         $para_credit_lost_by_missing_ac_circle_without_informing = 11;
         $credit_model = new Credit;
         $credit_data = $credit_model->search([
-                'user_id' => $this->ideal_user_id, 
-                'parameter_id' => $para_credit_lost_by_missing_ac_circle_without_informing, 
-                'item' => 'Event', 
+                'user_id' => $this->ideal_user_id,
+                'parameter_id' => $para_credit_lost_by_missing_ac_circle_without_informing,
+                'item' => 'Event',
                 'item_id' => $this->event_id
             ]);
         $this->assertEquals($credit_data[count($credit_data) - 1]->change, -2);
@@ -48,9 +48,9 @@ class EventTest extends TestCase
         $para_credit_lost_by_missing_ac_circle_after_informing = 10;
         $credit_model = new Credit;
         $credit_data = $credit_model->search([
-                'user_id' => $this->ideal_user_id, 
-                'parameter_id' => $para_credit_lost_by_missing_ac_circle_after_informing, 
-                'item' => 'Event', 
+                'user_id' => $this->ideal_user_id,
+                'parameter_id' => $para_credit_lost_by_missing_ac_circle_after_informing,
+                'item' => 'Event',
                 'item_id' => $this->event_id
             ]);
         $this->assertEquals($credit_data[count($credit_data) - 1]->change, -1);

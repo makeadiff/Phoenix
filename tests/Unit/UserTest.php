@@ -56,8 +56,8 @@ class UserTest extends TestCase
 
         $teacher_ids = [203356, 203355, 203354, 203353];
         $found = 0;
-        foreach($data as $usr) {
-            if(in_array($usr->id, $teacher_ids)) {
+        foreach ($data as $usr) {
+            if (in_array($usr->id, $teacher_ids)) {
                 $found++;
             }
         }

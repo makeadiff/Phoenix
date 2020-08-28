@@ -122,9 +122,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("User Groups", ['groups' => $groups]);
     });
 
-    Route::get('/group_types', function( Request $request){
+    Route::get('/group_types', function (Request $request) {
         $types = Group::getTypes();
-        return JSend::success('Group Types',['types' => $types]);
+        return JSend::success('Group Types', ['types' => $types]);
     });
 
     Route::get('/groups/{group_id}', function ($group_id) {
@@ -489,32 +489,32 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     if (!function_exists('getComments')) { // It was causing some wierd issues in 'php artisan config:cache' command.
         function getComments($item, $item_id)
         {
-        	$class_name = "App\Models\\$item";
+            $class_name = "App\Models\\$item";
             $model = new $class_name;
-        	$item_row = $model->find($item_id);
+            $item_row = $model->find($item_id);
             if (!$item_row) {
                 return JSend::fail("Can't find any $item with ID $item_id", []);
             }
-            $comments = $item_row->comments()->select('id','comment', 'added_on', 'added_by_user_id')->get();
+            $comments = $item_row->comments()->select('id', 'comment', 'added_on', 'added_by_user_id')->get();
 
             return JSend::success("Comments for $item ID:$item_id", ['comments' => $comments]);
         }
         function addComment($item_type, $item_id, $request)
         {
-        	$class_name = "App\Models\\$item_type";
+            $class_name = "App\Models\\$item_type";
             $item_model = new $class_name;
-        	$item_row = $item_model->find($item_id);
+            $item_row = $item_model->find($item_id);
             if (!$item_row) {
                 return JSend::fail("Can't find any $item_type with ID $item_id", []);
             }
 
-        	$model = new Comment;
+            $model = new Comment;
             if ($item_type and $item_id and $request->input('comment')) {
                 $comment = $model->add([
-                	'item_type'	=> $item_type,
-                	'item_id'	=> $item_id,
-                	'comment'	=> $request->input('comment'),
-                	'added_by_user_id'	=> $request->input('added_by_user_id') ? $request->input('added_by_user_id') : 0
+                    'item_type'	=> $item_type,
+                    'item_id'	=> $item_id,
+                    'comment'	=> $request->input('comment'),
+                    'added_by_user_id'	=> $request->input('added_by_user_id') ? $request->input('added_by_user_id') : 0
                 ]);
                 return JSend::success("Added a comment for $item_type $item_id", ['comment' => $comment]);
             }
@@ -1147,7 +1147,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         
         $data = $event->fetch($event_id);
         $event_type = $data->eventType()->get();
-        if(!empty($event_type)){
+        if (!empty($event_type)) {
             $data->event_type = $event_type[0]->name;
         }
         if (!$data) {
@@ -1227,25 +1227,23 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Event: $event_id", ['user' => $data[0]]);
     });
 
-    Route::post('/events/{event_id}/attended', function ($event_id, Request $request) {                
+    Route::post('/events/{event_id}/attended', function ($event_id, Request $request) {
         $event = new Event;
         $data = $event->find($event_id);
         $user_ids_raw = $request->input('attendee_user_ids');
     
-        if(!is_array($user_ids_raw) && $user_ids_raw!= NULL){
-            $user_ids = explode(",",$user_ids_raw);
-        }
-        else{
+        if (!is_array($user_ids_raw) && $user_ids_raw!= null) {
+            $user_ids = explode(",", $user_ids_raw);
+        } else {
             $user_ids = $user_ids_raw;
-        }        
-
-        if($user_ids == NULL || !count($user_ids)){
-            return JSend::fail("No UserID Passed for $event_id");
         }
-        else{
+
+        if ($user_ids == null || !count($user_ids)) {
+            return JSend::fail("No UserID Passed for $event_id");
+        } else {
             $event->updateAttendance($user_ids, $event_id);
             return JSend::success("Event: $event_id", ['user_ids_updated' => $user_ids]);
-        }                
+        }
     });
 
     Route::post('/events/{event_id}/users/{user_id}', function ($event_id, $user_id, Request $request) {
@@ -1273,23 +1271,27 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return "";
     });
 
-    Route::post('/events/{event_id}/recur', function($event_id, Request $request){
-       $event = new Event;
-       $event_data = $event->find($event_id);
-       if(empty($event_data)){
-           return JSend::fail("Can't find event with ID: $event_id");
-       }       
-       $frequency = $event_data['frequency'];       
-       if($request->input('frequency')) $frequency = $request->input('frequency');
+    Route::post('/events/{event_id}/recur', function ($event_id, Request $request) {
+        $event = new Event;
+        $event_data = $event->find($event_id);
+        if (empty($event_data)) {
+            return JSend::fail("Can't find event with ID: $event_id");
+        }
+        $frequency = $event_data['frequency'];
+        if ($request->input('frequency')) {
+            $frequency = $request->input('frequency');
+        }
 
-       $repeat_until = $event_data['repeat_until'];
-       if($request->input('repeat_until')) $repeat_until = $request->input('repeat_until');
+        $repeat_until = $event_data['repeat_until'];
+        if ($request->input('repeat_until')) {
+            $repeat_until = $request->input('repeat_until');
+        }
 
-       $recurring = $event->createRecurringInstances($event_data, $frequency, $repeat_until);
-       if(!$recurring){
-           return JSend::fail("Invalid Frequency entered to repeat the event $event_id");
-       }
-       return JSend::success(count($recurring)." Event Instances created for $event_id",['event_ids' => $recurring]);
+        $recurring = $event->createRecurringInstances($event_data, $frequency, $repeat_until);
+        if (!$recurring) {
+            return JSend::fail("Invalid Frequency entered to repeat the event $event_id");
+        }
+        return JSend::success(count($recurring)." Event Instances created for $event_id", ['event_ids' => $recurring]);
     });
 
     Route::get('/event_types', function () {
