@@ -18,12 +18,13 @@ class LevelTest extends TestCase
         // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $model = new Level;
-        $data = $model->search(['id'=> 7355]);
+        $level_id = array_rand($this->ideal_levels);
+        $data = $model->search(['id'=> $level_id]);
 
         $result = $data->first();
 
-        $this->assertEquals($result->id, '7355');
-        $this->assertEquals($result->name, '7 A');
+        $this->assertEquals($result->id, $level_id);
+        $this->assertEquals($result->name, $this->ideal_levels[$level_id]['level_name']);
     }
 
     public function testLevelSearchBatch()
@@ -31,11 +32,14 @@ class LevelTest extends TestCase
         // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $model = new Level;
-        $data = $model->search(['batch_id'=> 2609]);
+        
+        $batch_id = array_rand($this->ideal_batch_level_user_mapping);
+        $level_id = array_key_first($this->ideal_batch_level_user_mapping[$batch_id]);
 
+        $data = $model->search(['batch_id'=> $batch_id]);
         $result = $data->first();
 
-        $this->assertEquals($result->id, '7355');
+        $this->assertEquals($result->id, $level_id);
     }
 
     public function testLevelinCenter()
@@ -43,10 +47,15 @@ class LevelTest extends TestCase
         // if($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
 
         $model = new Level;
-        $data = $model->inCenter(220);
+        $data = $model->inCenter($this->ideal_center_id);
+        $level_ids = [10056, 10057];
 
-        $result = $data->first();
-
-        $this->assertEquals($result->id, '7903');
+        $found = 0;
+        foreach($data as $level) {
+            if(in_array($level->id, $level_ids)) {
+                $found++;
+            }
+        }
+        $this->assertEquals($found, count($level_ids));
     }
 }
