@@ -52,7 +52,7 @@ final class Event extends Common
 
     public function eventType()
     {
-        return $this->belongsTo('App\Models\Event_Type','event_type_id');
+        return $this->belongsTo('App\Models\Event_Type', 'event_type_id');
     }
 
     public function eventsInCity($city_id)
@@ -120,7 +120,7 @@ final class Event extends Common
     public function users($filter = [])
     {
         $users = $this->belongsToMany('App\Models\User', 'UserEvent', 'event_id', 'user_id');
-        $users->select('User.id', 'User.name', 'UserEvent.present', 'UserEvent.late', 'UserEvent.user_choice', 'UserEvent.rsvp_auth_key', 'UserEvent.reason', 'User.city_id','User.email','User.mad_email');
+        $users->select('User.id', 'User.name', 'UserEvent.present', 'UserEvent.late', 'UserEvent.user_choice', 'UserEvent.rsvp_auth_key', 'UserEvent.reason', 'User.city_id', 'User.email', 'User.mad_email');
         if (isset($filter['rsvp'])) {
             $key = array_search($filter['rsvp'], $this->rsvp);
             $users->where('UserEvent.user_choice', '=', $key);
@@ -163,7 +163,7 @@ final class Event extends Common
             'created_by_user_id'=> $data['created_by_user_id'],
             'latitude'      => isset($data['latitude']) ? $data['latitude'] : '',
             'longitude'     => isset($data['longitude']) ? $data['longitude'] : '',
-            'repeat_until'  => isset($data['repeat_until']) ? $data['repeat_until'] : NULL,
+            'repeat_until'  => isset($data['repeat_until']) ? $data['repeat_until'] : null,
             'frequency'     => isset($data['frequency']) ? $data['frequency']: 'none',
         ]);
                 
@@ -172,7 +172,7 @@ final class Event extends Common
 
     public function invite($user_ids, $send_invite_email = true, $event_id = false)
     {
-        $this->chain($event_id);        
+        $this->chain($event_id);
 
         $user_event_insert = [];
         $rsvp_auth_keys = [];
@@ -266,7 +266,7 @@ final class Event extends Common
 
     public function updateUserConnection($user_id, $data, $event_id = false)
     {
-        $event_id = $this->chain($event_id);        
+        $event_id = $this->chain($event_id);
         $this->revertCredits($event_id, $user_id);
 
         $q = app('db')->table("UserEvent");
@@ -288,7 +288,7 @@ final class Event extends Common
             $update[$key] = $data[$key];
         }
               
-        // A better way to do this is using the ::save() - but for some season its not working. Hence, this.                
+        // A better way to do this is using the ::save() - but for some season its not working. Hence, this.
         $user_connection = $q->update($update);
 
         // Credit assignment if any.
@@ -297,13 +297,14 @@ final class Event extends Common
         return $user_connection;
     }
 
-    public function updateAttendance($user_ids, $event_id = false){
-        $event = new Event;                
-        foreach($user_ids as $user_id){            
-            $event->updateUserConnection($user_id,['present' => '1'],$event_id);            
+    public function updateAttendance($user_ids, $event_id = false)
+    {
+        $event = new Event;
+        foreach ($user_ids as $user_id) {
+            $event->updateUserConnection($user_id, ['present' => '1'], $event_id);
         }
         $unmarked_users = $event->find($event_id)->users(['present' => '3']);
-        foreach($unmarked_users as $user_id){
+        foreach ($unmarked_users as $user_id) {
             $event->updateUserConnection($user_id, ['present' => '0'], $event_id);
         }
     }
@@ -322,7 +323,9 @@ final class Event extends Common
         $user_event = app('db')->table("UserEvent")
                         ->join("Event", "UserEvent.event_id", "=", "Event.id")
                         ->where('event_id', $event_id)->where('user_id', $user_id)->first();
-        if(!$user_event) return false;
+        if (!$user_event) {
+            return false;
+        }
 
         $credit_options = [
             'item'      => 'Event',
@@ -333,11 +336,11 @@ final class Event extends Common
         $param_for_missing_aftercare_circle_after_informing = 10;
         $param_for_missing_aftercare_circle_without_informing = 11;
         $aftercare_circle_event_type = 32;
-        if($user_event->event_type_id === $aftercare_circle_event_type) {
+        if ($user_event->event_type_id === $aftercare_circle_event_type) {
             $credit = new Credit;
 
-            if($user_event->present == 3) {
-                if($user_event->user_choice == 3) {
+            if ($user_event->present == 3) {
+                if ($user_event->user_choice == 3) {
                     $credit->assign($user_event->user_id, $param_for_missing_aftercare_circle_after_informing, $credit_options);
                 } else {
                     $credit->assign($user_event->user_id, $param_for_missing_aftercare_circle_without_informing, $credit_options);
@@ -351,20 +354,26 @@ final class Event extends Common
         $user_event = app('db')->table("UserEvent")->where('event_id', $event_id)->where('user_id', $user_id)->first();
 
         // No pre-existing event data. No need to revert credits.
-        if(!$user_event) return false;
-        elseif($user_event->present != 3) return false;
+        if (!$user_event) {
+            return false;
+        } elseif ($user_event->present != 3) {
+            return false;
+        }
 
         $this->awardCredits($event_id, $user_id, true);
     }
 
-    public function createRecurringInstances($event, $frequency = null, $repeat_until = null){
-        $event_id = $event['id'];        
+    public function createRecurringInstances($event, $frequency = null, $repeat_until = null)
+    {
+        $event_id = $event['id'];
         
-        if($repeat_until == NULL) $repeat_until = ($this->year+1).'-04-30';
+        if ($repeat_until == null) {
+            $repeat_until = ($this->year+1).'-04-30';
+        }
         $event_name = $event['name'];
         $count = 1;
 
-        unset($event['id']);        
+        unset($event['id']);
         $event['repeat_until'] = $repeat_until;
         $event['frequency'] = $frequency;
         $event['name'] = $event_name.' #'.$count;
@@ -378,46 +387,46 @@ final class Event extends Common
 
         $users_list = $thisEvent->users();
         $users = [];
-        foreach($users_list as $user){
+        foreach ($users_list as $user) {
             $users[] = $user['id'];
-        }        
+        }
 
-        if($frequency == 'monthly'){
-            while($event['starts_on'] < $repeat_until){           
-                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 month",strtotime($event['starts_on'])));                
+        if ($frequency == 'monthly') {
+            while ($event['starts_on'] < $repeat_until) {
+                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 month", strtotime($event['starts_on'])));
                 $event['name'] = $event_name.' #'.$count;
-                $response = $e->search($event);                                
+                $response = $e->search($event);
                 
-                if(!count($response))
-                    $response = $this->add($event);                
-                else
+                if (!count($response)) {
+                    $response = $this->add($event);
+                } else {
                     $response = (array)$response[0];
+                }
                 
                 $event_instances[] = $response['id'];
                 $e->invite($users, false, $response['id']);
                 $count++;
             }
             return $event_instances;
-        }        
-        else if($frequency == 'weekly'){
-            while($event['starts_on'] < $repeat_until){                
-                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 week",strtotime($event['starts_on'])));
+        } elseif ($frequency == 'weekly') {
+            while ($event['starts_on'] < $repeat_until) {
+                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 week", strtotime($event['starts_on'])));
                 $event['name'] = $event_name.' #'.$count;
                 $response = $e->search($event);
                 
-                if(!count($response))
-                    $response = $this->add($event);                
-                else
+                if (!count($response)) {
+                    $response = $this->add($event);
+                } else {
                     $response = (array)$response[0];
+                }
                     
                 $event_instances[] = $response['id'];
                 $e->invite($users, false, $response['id']);
                 $count++;
             }
-            return $event_instances; 
-        }  
-        else{
+            return $event_instances;
+        } else {
             return false;
-        }    
-    }    
+        }
+    }
 }

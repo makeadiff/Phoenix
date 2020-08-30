@@ -87,7 +87,8 @@ final class Group extends Common
     }
 
 
-    public static function getTypes(){
-        return Group::select('type')->where('group_type','normal')->where('status','1')->distinct()->get();
+    public static function getTypes()
+    {
+        return Group::select('type')->where('group_type', 'normal')->where('status', '1')->distinct()->get();
     }
 }

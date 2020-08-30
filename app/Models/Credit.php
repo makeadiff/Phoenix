@@ -27,8 +27,20 @@ final class Credit extends Common
     {
         $q = app('db')->table('Credit AS C');
 
-        $q->select('C.id', 'C.user_id', 'C.parameter_id', 'C.change', 'C.current_credit', 'C.item', 'C.item_id', 
-                    'C.comment', 'C.added_by_user_id', 'C.added_on', 'P.name', 'P.vertical_id');
+        $q->select(
+            'C.id',
+            'C.user_id',
+            'C.parameter_id',
+            'C.change',
+            'C.current_credit',
+            'C.item',
+            'C.item_id',
+            'C.comment',
+            'C.added_by_user_id',
+            'C.added_on',
+            'P.name',
+            'P.vertical_id'
+        );
         $q->join('Parameter AS P', 'C.parameter_id', '=', 'P.id');
         
         if (!empty($data['user_id'])) {
@@ -67,9 +79,9 @@ final class Credit extends Common
     public function assign($user_id, $parameter_id, $options = [])
     {
         $options_template = [
-            'added_on'  => date('Y-m-d H:i:s'), 
-            'added_by_user_id' => 0, 
-            'item'      => null, 
+            'added_on'  => date('Y-m-d H:i:s'),
+            'added_by_user_id' => 0,
+            'item'      => null,
             'item_id'   => null,
             'revert'    => false
         ];
@@ -77,7 +89,7 @@ final class Credit extends Common
 
         $user_model = new User;
         $user = $user_model->fetch($user_id);
-        if(!$user) {
+        if (!$user) {
             $this->error("Can't find any user with the given ID($user_id)");
             return false;
         }
@@ -85,12 +97,12 @@ final class Credit extends Common
         $paramater_model = new Parameter;
         $para = $paramater_model->fetch($parameter_id);
         
-        if(!$para) {
+        if (!$para) {
             $this->error("Given Paramater ID($parameter_id) is not valid.");
             return false;
         }
 
-        if($options['revert']) {
+        if ($options['revert']) {
             return $this->unassign($user_id, $parameter_id, $options['item'], $options['item_id']);
         }
 
@@ -111,17 +123,17 @@ final class Credit extends Common
     public function unassign($user_id, $parameter_id, $item, $item_id)
     {
         $credit = $this->search([
-            'user_id'       => $user_id, 
-            'parameter_id'  => $parameter_id, 
-            'item'          => $item, 
+            'user_id'       => $user_id,
+            'parameter_id'  => $parameter_id,
+            'item'          => $item,
             'item_id'       => $item_id
         ]);
 
-        if(!count($credit)) { // No previous data.
+        if (!count($credit)) { // No previous data.
             return 0;
-        } elseif(count($credit) > 1) {
+        } elseif (count($credit) > 1) {
             $this->errors[] = "Multiple credit rows are matching your search query";
-            // return false; 
+            // return false;
         }
         $cre = $credit->last();
 
@@ -131,7 +143,9 @@ final class Credit extends Common
     public function unassignById($credit_id)
     {
         $credit = $this->fetch($credit_id);
-        if(!$credit) return false;
+        if (!$credit) {
+            return false;
+        }
 
         $user_model = new User;
         $user = $user_model->find($credit->user_id);
@@ -141,6 +155,6 @@ final class Credit extends Common
         return $this->find($credit_id)->delete();
     }
 
-// recalculateHistory($user_id)
+    // recalculateHistory($user_id)
     // Do this in a more optimized way. Don't use awardCredit function.
 }
