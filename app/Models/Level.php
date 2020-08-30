@@ -95,7 +95,9 @@ final class Level extends Common
             return false;
         }
         $grade = $this->grade;
-        if($this->grade == 13) $grade = "Aftercare";
+        if ($this->grade == 13) {
+            $grade = "Aftercare";
+        }
 
         return $grade . ' ' . $this->name;
     }

@@ -14,10 +14,10 @@ use App\Models\Credit;
 class ClassTest extends TestCase
 {
     use WithoutMiddleware;
-    public $class_id = 455176;
-    public $user_id = 136213;
-    public $mentor_id = 136222;
-    public $substitute_id = 136215;
+    public $class_id = 466897;
+    public $user_id = 203354;
+    public $mentor_id = 203358;
+    public $substitute_id = 203355;
 
     public function testTeacherAttendance()
     {
@@ -50,18 +50,18 @@ class ClassTest extends TestCase
         $para_credit_gained_for_subbing = 1;
         $credit_model = new Credit;
         $credit_data = $credit_model->search([
-                'user_id' => $this->user_id, 
-                'parameter_id' => $para_credit_lost_for_getting_sub, 
-                'item' => 'Class', 
+                'user_id' => $this->user_id,
+                'parameter_id' => $para_credit_lost_for_getting_sub,
+                'item' => 'Class',
                 'item_id' => $this->class_id
             ]);
         $this->assertEquals($credit_data[0]->change, -1);
         $this->assertEquals($credit_data[0]->added_by_user_id, $this->mentor_id);
 
         $credit_data_sub = $credit_model->search([
-                'user_id' => $this->substitute_id, 
-                'parameter_id' => $para_credit_gained_for_subbing, 
-                'item' => 'Class', 
+                'user_id' => $this->substitute_id,
+                'parameter_id' => $para_credit_gained_for_subbing,
+                'item' => 'Class',
                 'item_id' => $this->class_id
             ]);
         $this->assertEquals($credit_data_sub[0]->change, 1);
@@ -93,17 +93,17 @@ class ClassTest extends TestCase
         $para_credit_gained_for_subbing = 1;
         $credit_model = new Credit;
         $credit_data = $credit_model->search([
-                'user_id' => $this->user_id, 
-                'parameter_id' => $para_credit_lost_for_getting_sub, 
-                'item' => 'Class', 
+                'user_id' => $this->user_id,
+                'parameter_id' => $para_credit_lost_for_getting_sub,
+                'item' => 'Class',
                 'item_id' => $this->class_id
             ]);
         $this->assertEquals(count($credit_data), 0);
 
         $credit_data_sub = $credit_model->search([
-                'user_id' => $this->substitute_id, 
+                'user_id' => $this->substitute_id,
                 'parameter_id' => $para_credit_gained_for_subbing,
-                'item' => 'Class', 
+                'item' => 'Class',
                 'item_id' => $this->class_id
             ]);
         $this->assertEquals(count($credit_data_sub), 0);
@@ -112,6 +112,4 @@ class ClassTest extends TestCase
         $this->assertEquals($teacher_credit + 1, $user_model->find($this->user_id)->credit); // For teacher
         $this->assertEquals($substitute_credit - 1, $user_model->find($this->substitute_id)->credit); // And Sub
     }
-
-
 }

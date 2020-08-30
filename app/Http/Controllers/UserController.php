@@ -71,8 +71,8 @@ class UserController extends Controller
         return JSend::success("Edited the user", array('users' => $result));
     }
 
-    public function index(Request $request){    
-
+    public function index(Request $request)
+    {
         $search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','any_email','group_id','group_in','vertical_id','city_id',
                             'user_type','center_id','project_id', 'not_user_type', 'credit', 'credit_lesser_than', 'credit_greater_than'];
         $search = [];
@@ -99,7 +99,8 @@ class UserController extends Controller
 
         $user = new User;
         $data = $user->search($search, true);
-        return JSend::success("Users", array('users' => $data));;
+        return JSend::success("Users", array('users' => $data));
+        ;
         // return UserResource::collection($data);
     }
 }
