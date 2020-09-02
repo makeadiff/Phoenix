@@ -123,6 +123,7 @@ type User {
     donations: [Donation] @hasMany
     devices: [Device] @hasMany
     links: [Link] @hasMany
+    conversations: [Conversation] @hasMany
     pivot: UserPivot
 }
 
@@ -437,6 +438,19 @@ type Comment {
     added_on: DateTime
     added_by_user: User
     item: Item @morphTo
+}
+
+type Conversation {
+    id: ID!
+    type: String
+    stage: String
+    user: User 
+    assigned_to: User 
+    scheduled_on: DateTime
+    comment: String
+    parent_conversation: Conversation
+    added_by: User
+    added_on: DateTime
 }
 
 # Custom Returns 
