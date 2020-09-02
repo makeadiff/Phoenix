@@ -91,6 +91,12 @@ final class User extends Common
         return $devices;
     }
 
+    public function conversations()
+    {
+        $conversation = $this->hasMany("App\Models\Conversation", 'user_id');
+        return $conversation;
+    }
+
     public function links()
     {
         $groups = $this->groups();
@@ -310,7 +316,7 @@ final class User extends Common
                 $q->orderBy('User.left_on', 'desc');
             }
         }
-        $q->orderby('User.name');
+        $q->orderBy('User.name');
         // dd($q->toSql(), $q->getBindings(), $data);
 
         // :TODO: Pagination
