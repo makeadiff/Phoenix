@@ -1,12 +1,9 @@
 <?php
-
 namespace Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use App\Models\Batch;
-
-// You'll have to disable header() calls in api.php in routes for this to work.
 
 /**
  * @runInSeparateProcess
