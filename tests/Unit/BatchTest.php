@@ -20,6 +20,7 @@ class BatchTest extends TestCase
         $batch = new Batch;
         $batch_id = array_rand($this->ideal_batchs);
         $batch = $batch->search(['id' => $batch_id]);
+        $result = $batch->first();
 
         $this->assertEquals($result->id, $batch_id);
         $this->assertEquals($result->day, $this->ideal_batchs[$batch_id]['day']);
