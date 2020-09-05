@@ -33,6 +33,8 @@ final class Conversation extends Common
 
     public static function search($data)
     {
+        // :TODO: Option to return an entire chain of conversation if you search for any conversation id within the chain.
+        
         $search_fields = ['id', 'user_id','assigned_to_user_id', 'city_id', 'center_id', 'group_id', 'vertical_id', 'comment'];
         $q = app('db')->table('Conversation')->distinct();
         $q->select('Conversation.id','Conversation.user_id','Conversation.assigned_to_user_id','Conversation.type',
@@ -76,6 +78,7 @@ final class Conversation extends Common
 
     public function add($data)
     {
+        // :TODO: Validate 
         $conversation = [
             'user_id'       => $data['user_id'],
             'assigned_to_user_id' => $data['assigned_to_user_id'], 

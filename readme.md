@@ -1,6 +1,6 @@
 # Phoenix
 
-### 2.5.0
+### 2.5.1
 
 ## Project Description/Purpose
 
@@ -63,6 +63,6 @@ These problems will be solved if we create one centralized API system with which
 * Quicker learning time for anyone starting new
 * Centralized authentication
 * Clean up existing apps for maintainability
-* Any future app will be using these APIs and extend APIs a needed
+* Any future app will be using these APIs and extend APIs as needed
 
 [Reference Document](https://docs.google.com/document/d/1YgDsgXaLp5HERyIkqpBCSs398C1xc54cE1Th6shs17o/) - Logic Cycle for why we choose the API Approach
