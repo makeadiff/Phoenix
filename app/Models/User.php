@@ -93,8 +93,10 @@ final class User extends Common
 
     public function conversations()
     {
-        $conversation = $this->hasMany("App\Models\Conversation", 'user_id');
-        return $conversation;
+        $conversations = $this->hasMany("App\Models\Conversation", 'user_id');
+        $conversations->where("added_on", '>=', $this->year_start_date);
+        $conversations->orderBy("scheduled_on", 'desc');
+        return $conversations;
     }
 
     public function links()
@@ -141,7 +143,7 @@ final class User extends Common
             $results[$i]->groups = [];
             if (!isset($data['user_type']) or $data['user_type'] == 'volunteer') {
                 $this_user = User::fetch($results[$i]->id);
-                if ($this_user->groups) {
+                if ($this_user and $this_user->groups) {
                     $results[$i]->groups = $this_user->groups;
                 }
             }

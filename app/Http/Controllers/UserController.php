@@ -22,24 +22,61 @@ class UserController extends Controller
     {
         $validation_rules = [
             'name'      => 'required|max:50',
-            'email'     => 'required|email|unique:User,email,well_wisher,user_type,user_type,!alumni',
+            'email'     => 'required|email|unique:User,email',
             'mad_email' => 'email|regex:/.+\@makeadiff\.in$/',
             'password'  => 'required',
             'sex'       => 'regex:/^[mfo]$/',
-            'phone'     => 'required|unique:User,phone,well_wisher,user_type,user_type,!alumni|regex:/[\+0-9]{10}/',
+            'phone'     => 'required|unique:User,phone|regex:/[\+0-9]{10}/',
             'city_id'   => 'required|numeric|exists:City,id'
         ];
 
-        $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
+        if($request->input('user_type') === 'applicant') {
+            $validation_rules['email'] = 'required|email';
+            $validation_rules['phone'] = 'required|regex:/[\+0-9]{10}/';
+            $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
 
-        if ($validator->fails()) {
-            return JSend::fail("Unable to create user - errors in input", $validator->errors(), 400);
+            if ($validator->fails()) {
+                return JSend::fail("Unable to create user - errors in input", $validator->errors(), 400);
+            }
+
+            $user = new User;
+
+            $user_exists = $user->search(['email' => $request->input('email'), 'not_user_type' => ['other']]); // The 'other' will get as all valid user type ka people. Slightly hacky for my taste.
+            if(!$user_exists->count()) {
+                $user_exists = $user->search(['phone' => $request->input('phone'), 'not_user_type' => ['other']]);
+            }
+
+            if($user_exists->count()) { // Custom rules if we found an existing application.
+                $existing_user = $user_exists->first();
+
+                if($existing_user->user_type === 'volunteer') { // If the found user is an active volunteer, don't make any changes.
+                    return JSend::fail("The given details match an existing volunteer in our records.");
+
+                } else { // If anything else(even let_go), mark them as applicant again with current joined_on date.
+                    $data = $request->all(); 
+                    $data['joined_on'] = date('Y-m-d H:i:s');
+                    $user_data = $user->edit($data, $existing_user->id); // Also, update their row with latest details.
+
+                    return JSend::success("Found an existing record with your details. We are marking you as an applicant again.", ['users' => $user_data]);
+                }
+
+            } else {
+                $result = $user->add($request->all());
+
+                return JSend::success("Created the user successfully", array('users' => $result));
+            }
+        } else {
+            $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
+
+            if ($validator->fails()) {
+                return JSend::fail("Unable to create user - errors in input", $validator->errors(), 400);
+            }
+
+            $user = new User;
+            $result = $user->add($request->all());
+
+            return JSend::success("Created the user successfully", array('users' => $result));
         }
-
-        $user = new User;
-        $result = $user->add($request->all());
-
-        return JSend::success("Created the user successfully", array('users' => $result));
     }
 
     public function edit(Request $request, $user_id)
