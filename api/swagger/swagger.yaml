@@ -75,11 +75,19 @@ paths:
           in: query
           type: integer
           description: Return all users of the given vertical
+        - name: only_main_group
+          in: query
+          type: integer
+          description: If this is '1' returns only the users having the given vertical id/group id as the main role. This can be used only if vertical_id OR group_id is given too.
         - name: city_id
           in: query
           type: integer
           required: false
           description: Return all users in the given city. If ommited the city of the user who's login is used to access the api is assumed.
+        - name: center_id
+          in: query
+          type: integer
+          description: Returns all users assigned to the given shelter.
         - name: user_type
           in: query
           type: string
@@ -146,6 +154,11 @@ paths:
           required: true
           description: ID of the city that user belongs to. Must be a valid city.
           # example: 1
+        - name: center_id
+          type: integer
+          in: formData
+          required: false
+          description: ID of the shelter user is assigned to.
         - name: user_type
           in: formData
           type: string
@@ -154,7 +167,8 @@ paths:
             - applicant
             - let_go
             - alumnai
-          description: Can be 'volunteer', 'applicant', 'let_go' or 'alumnai'.
+            - well_wisher
+          description: Can be 'volunteer', 'applicant', 'well_wisher', let_go' or 'alumnai'.
           # example: volunteer
       responses:
         200:
@@ -206,6 +220,10 @@ paths:
           type: integer
           required: false
           description: Return all users in the given city. If ommited the city of the user who's login is used to access the api is assumed.
+        - name: center_id
+          in: query
+          type: integer
+          description: Returns users assigned to given shelter.
         - name: user_type
           in: query
           type: string
@@ -214,7 +232,8 @@ paths:
             - applicant
             - let_go
             - alumnai
-          description: Can be 'volunteer', 'applicant', 'let_go' or 'alumnai'.
+            - well_wisher
+          description: Can be 'volunteer', 'applicant', 'well_wisher', 'let_go' or 'alumnai'.
         - name: center_id
           in: query
           type: integer
@@ -292,6 +311,10 @@ paths:
           in: formData
           type: string
           description: Address of the user
+        - name: center_id
+          in: formData
+          type: integer
+          description: ID of the shelter the user is assigned to.
         - name: sex
           in: formData
           type: string
@@ -363,6 +386,11 @@ paths:
           in: path
           required: true
           description: ID of the Group
+        - name: main 
+          type: integer
+          in: formData
+          required: false
+          description: Indicates if the group is the main group of the user. Has to be '1' or '0'. User can have only 1 main group.
       responses:
         200:
           description: Ok

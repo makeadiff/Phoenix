@@ -118,6 +118,7 @@ type User {
     groups: [Group]
     data: [Data]
     city: City @belongsTo
+    center: Center @belongsTo
     classes: [Class] @hasMany(relation: "classes") # :TODO: - Ideally, this should take an argument - (status: String)
     batches: [Batch] @hasMany
     donations: [Donation] @hasMany
@@ -168,6 +169,7 @@ type Center {
     batches: [Batch]
     levels: [Level]
     # projects: [Project]
+    users: [User]
     projects: [CenterProject]
     city: City @belongsTo
     comments: [Comment] @morphMany
@@ -197,6 +199,7 @@ type Group {
     name: String!
     vertical_id: Int
     vertical: Vertical
+    main: Int
     users: [User]
 }
 

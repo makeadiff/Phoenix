@@ -684,14 +684,17 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     // :TODO: POST /users/{user_id}/groups
 
-    Route::post('/users/{user_id}/groups/{group_id}', function ($user_id, $group_id) {
+    Route::post('/users/{user_id}/groups/{group_id}', function ($user_id, $group_id, Request $request) {
         $user = new User;
         $info = $user->fetch($user_id);
         if (!$info) {
             return JSend::fail("Can't find user with user id '$user_id'");
         }
 
-        $groups = $user->find($user_id)->addGroup($group_id);
+        $main = $request->input('main');
+        if(!$main) $main = 0;
+
+        $groups = $user->find($user_id)->addGroup($group_id, $main);
         if (!$groups) {
             return JSend::fail("User already has the given group", [], 400);
         }
