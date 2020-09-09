@@ -17,14 +17,15 @@ final class User extends Common
     public $timestamps = true;
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
-    protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
+    protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','center_id',
+                            'credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
     public $enable_logging = true; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()
     {
         $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
                             ->where('Group.status', '=', '1')->wherePivot('year', $this->year)
-                            ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type');
+                            ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
         $groups->orderByRaw("FIELD(Group.type, 'executive', 'national', 'strat', 'fellow', 'volunteer')");
         return $groups;
     }
@@ -32,6 +33,11 @@ final class User extends Common
     public function city()
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function center()
+    {
+        return $this->belongsTo(Center::class);
     }
 
     public function classes($status = '')
@@ -258,6 +264,9 @@ final class User extends Common
             $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $q->whereIn('UserGroup.group_id', $data['user_group']);
             $q->where('UserGroup.year', $this->year);
+            if(!empty($data['only_main_group'])) {
+                $q->where('UserGroup.main', $data['only_main_group']);
+            }
             $q->distinct();
         }
         if (!empty($data['user_group_type'])) {
@@ -265,6 +274,9 @@ final class User extends Common
             $q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
             $q->where('Group.type', $data['user_group_type']);
             $q->where('UserGroup.year', $this->year);
+            if(!empty($data['only_main_group'])) {
+                $q->where('UserGroup.main', $data['only_main_group']);
+            }
             $q->distinct();
         }
         if (!empty($data['vertical_id'])) {
@@ -272,9 +284,12 @@ final class User extends Common
             $q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
             $q->where('Group.vertical_id', $data['vertical_id']);
             $q->where('UserGroup.year', $this->year);
+            if(!empty($data['only_main_group'])) {
+                $q->where('UserGroup.main', $data['only_main_group']);
+            }
             $q->distinct();
         }
-        if (!empty($data['center_id'])) {
+        if (!empty($data['teaching_in_center_id'])) {
             $mentor_group_id = 8; // :HARDCODE:
 
             if (isset($data['user_group']) and in_array($mentor_group_id, $data['user_group'])) { // Find the mentors
@@ -294,6 +309,10 @@ final class User extends Common
                 }
             }
             $q->distinct();
+        }
+
+        if(!empty($data['center_id'])) {
+            $q->where('User.center_id', $data['center_id']);
         }
 
         if (!empty($data['batch_id'])) {
@@ -542,28 +561,48 @@ final class User extends Common
         return $this->item;
     }
 
-    public function addGroup($group_id, $user_id = false)
+    private function unsetMainGroup($user_id = false)
     {
-        $this->chain($user_id);
+        $user_id = $this->chain($user_id);
+        app('db')->table('UserGroup')->update(['main' => '0'])->where([
+                'user_id' => $user_id, 
+                'year' => $this->year, 
+                'main' => '1'
+            ]);
+    }
+
+    public function addGroup($group_id, $main=0, $user_id = false)
+    {
+        $user_id = $this->chain($user_id);
 
         // Check if the user has the group already.
         $existing_groups = $this->groups()->get();
         $group_found = false;
         foreach ($existing_groups as $grp) {
             if ($grp->id == $group_id) {
-                $group_found = true;
+                $group_found = $grp;
                 break;
             }
         }
 
         if ($group_found) {
-            return false;
+            if($grp->main == $main) return false; // No change required
+            else { // If the main group is not correctly, do that.
+                $this->unsetMainGroup($user_id);
+                app('db')->table("UserGroup")->update(['main' => $main])->where(['id' => $grp->id]);
+                return false;
+            }
+        }
+
+        if($main) { // If a new group is getting the main tag, remove main tag from other group -if any.
+            $this->unsetMainGroup($user_id);
         }
 
         app('db')->table("UserGroup")->insert([
             'user_id'   => $this->id,
             'group_id'  => $group_id,
-            'year'      => $this->year
+            'year'      => $this->year,
+            'main'      => $main
         ]);
 
         return $this->groups();
