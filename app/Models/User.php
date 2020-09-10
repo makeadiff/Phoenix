@@ -18,7 +18,7 @@ final class User extends Common
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','center_id',
-                            'credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
+                            'credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on', 'campaign'];
     public $enable_logging = true; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()
@@ -178,6 +178,7 @@ final class User extends Common
             "User.sex",
             "User.status",
             "User.city_id",
+            "User.center_id",
             app('db')->raw("City.name AS city_name")
         );
         $q->join("City", "City.id", '=', 'User.city_id');
@@ -372,7 +373,8 @@ final class User extends Common
             'user_type',
             'status',
             'credit',
-            'city_id'
+            'city_id',
+            'center_id'
         )->where('status', '1');
         if ($only_volunteers) {
             $user = $user->where('user_type', 'volunteer');
@@ -387,6 +389,12 @@ final class User extends Common
 
         $data->groups = $data->groups()->get();
         $data->city = $data->city()->first()->name;
+        $center = $data->center()->first();
+        if($center) {
+            $data->center = $center->name;
+        } else {
+            $data->center = "";
+        }
 
         return $data;
     }
@@ -423,6 +431,7 @@ final class User extends Common
                 'status'    => isset($data['status']) ? $data['status'] : '1',
                 'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
                 'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s'),
+                'campaign'  => isset($data['campaign']) ? $data['campaign'] : '',
                 'zoho_user_id'=>$zoho_user_id
             ]);
         } else {
