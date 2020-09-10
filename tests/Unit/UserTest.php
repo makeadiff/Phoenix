@@ -14,7 +14,7 @@ class UserTest extends TestCase
     use WithoutMiddleware;
     // :TODO: Rewrite these using SQL that live pulls the data instead of hard coding. These will break when year changes(mostly.)
     
-    protected $only_priority_tests = false;
+    protected $only_priority_tests = true;
     protected $write_to_db = false;
 
     public function testUserSearchId()
@@ -27,8 +27,8 @@ class UserTest extends TestCase
         $data = $model->search(['id' => $this->ideal_user_id]);
 
         $result = $data->first();
-
         $this->assertEquals($result->name, $this->ideal_user['name']);
+        $this->assertEquals($result->center_id, $this->ideal_user['center_id']);
     }
 
     public function testUserSearchByIdentifier()
@@ -64,7 +64,6 @@ class UserTest extends TestCase
         $this->assertEquals($found, count($teacher_ids));
     }
 
-
     // Risky tests. Data can change.
     public function testUserSearchByVertical()
     {
@@ -79,7 +78,7 @@ class UserTest extends TestCase
         $this->assertEquals($result->id, '169630');
     }
 
-
+    // Risky tests. Data can change.
     public function testUserSearchByGroupType()
     {
         if ($this->only_priority_tests) {
@@ -92,5 +91,64 @@ class UserTest extends TestCase
         $result = $data->first();
 
         $this->assertEquals($result->id, '154737');
+    }
+
+    /// See if found user have a group with main role. Risky. 
+    public function testUserMainGroup() 
+    {
+        if($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $model = new User;
+        $data = $model->search(['user_id' => $this->ideal_user_id]);
+
+        $result = $data->first();
+
+        $this->assertEquals($result->id, '1');
+        $found = 0;
+        foreach($result->groups as $grp) {
+            if($grp->main) $found = $grp->id;
+        }
+        $this->assertEquals($found, '24');
+    }
+
+    // Search by main role
+    public function testUserSearchOnlyMainGroup() 
+    {
+        if($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $model = new User;
+        $data = $model->search(['group_id' => 24, 'only_main_group' => '1']);
+
+        $found = 0;
+        foreach($data as $usr) {
+            foreach($usr->groups as $grp) {
+                if($grp->main == "1" and $grp->id == 24) { // Check if all the returned users have the group 24 as main group.
+                    $found++;
+                    break;
+                }
+            }
+        }
+
+        $this->assertEquals(count($data), $found);
+    }
+
+    // Edit user and give center_id
+    public function testUeserEdit()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if ($this->write_to_db) {
+            $this->markTestSkipped("Running only tests that don't change DB.");
+        }
+
+        $model = new User;
+        $model->edit(['center_id' => 154], $this->ideal_user_id);
+        $user_center_id = app('db')->table('User')->where('id', $this->ideal_user_id)->first()->center_id;
+        $this->assertEquals($user_center_id, 154);
     }
 }

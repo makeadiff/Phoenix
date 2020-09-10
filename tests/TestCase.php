@@ -71,10 +71,11 @@ abstract class TestCase extends BaseTestCase
 
     protected $ideal_user_id = 1;
     protected $ideal_user = [
-        'id'	=> 1,
-        'name'	=> 'Binny V A',
-        'email'	=> 'binnyva@gmail.com',
-        'phone'	=> '9746068565'
+        'id'	    => 1,
+        'name'	    => 'Binny V A',
+        'email'	    => 'binnyva@gmail.com',
+        'phone'	    => '9746068565',
+        'center_id' => 184
     ];
 
 

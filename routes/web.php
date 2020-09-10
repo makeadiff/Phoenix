@@ -14,3 +14,8 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/testing', function () {
+    $model = new \App\Models\User;
+    $data = $model->search(['group_id' => 24, 'only_main_group' => '1']);
+    return view('testing', [ 'data' => $data ]);
+});

@@ -1356,6 +1356,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     // Use this to Debug/test things
     Route::get('/test', function () {
+
         // $center = new Center;
         // $projects = $center->find(184)->center_projects()->get();
         // $projects = $center->find(154)->projects()->get();
@@ -1364,10 +1365,10 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         //     dump($bat);
         // }
 
-        $level_model = new Level;
-        $teachers = $level_model->find(10050)->teachers();
-        dump($teachers->toSql(), $teachers->getBindings());
-        dump($teachers->get());
+        // $level_model = new Level;
+        // $teachers = $level_model->find(10050)->teachers();
+        // dump($teachers->toSql(), $teachers->getBindings());
+        // dump($teachers->get());
 
 
         // $user_model = new User;

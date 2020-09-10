@@ -3847,6 +3847,7 @@ definitions:
         - "let_go"
         - "alumnai"
         - "applicant"
+        - "well_wisher"
       address:
         type: string
       birthday:
@@ -3902,14 +3903,19 @@ definitions:
         type: integer
     
   Group:
-   type: "object"
-   properties:
-     id:
-       type: integer
-     name:
-       type: string
-     vertical_id:
-       type: integer
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      vertical_id:
+        type: integer
+      main:
+        type: string
+        enum:
+          - "1"
+          - "0"
 
   Student:
     type: "object"
