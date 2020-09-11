@@ -180,9 +180,21 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         }
 
         $user = new User;
-        $teachers = $user->search(['center_id' => $center_id]);
+        $teachers = $user->search(['teaching_in_center_id' => $center_id]);
 
         return JSend::success("Teachers in Center $center_id", ['users' => $teachers]);
+    });
+
+    Route::get('/centers/{center_id}/users', function ($center_id) {
+        $center = (new Center)->fetch($center_id);
+        if (!$center) {
+            return JSend::fail("Can't find any center with ID $center_id");
+        }
+
+        $user = new User;
+        $vols = $user->search(['center_id' => $center_id]);
+
+        return JSend::success("Volunteers in Center $center_id", ['users' => $vols]);
     });
 
     Route::get('/centers/{center_id}/students', function ($center_id) {
