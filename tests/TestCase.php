@@ -15,7 +15,7 @@ abstract class TestCase extends BaseTestCase
     protected $client;
     protected $response;
     protected $response_data;
-    protected $year = 2019; //:TODO: :HARDCODE:
+    protected $year = 2020; //:TODO: :HARDCODE:
     protected $auth = ['username' => "sulu.simulation@makeadiff.in", 'password' => 'pass'];
     protected $headers = [
             // "HTTP_Authorization" => "Basic " . base64_encode("sulu.simulation@makeadiff.in:pass"), // This should be there - but for some reason php thows up an error.

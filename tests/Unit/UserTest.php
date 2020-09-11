@@ -14,8 +14,8 @@ class UserTest extends TestCase
     use WithoutMiddleware;
     // :TODO: Rewrite these using SQL that live pulls the data instead of hard coding. These will break when year changes(mostly.)
     
-    protected $only_priority_tests = true;
-    protected $write_to_db = false;
+    protected $only_priority_tests = false;
+    protected $write_to_db = true;
 
     public function testUserSearchId()
     {
@@ -137,12 +137,12 @@ class UserTest extends TestCase
     }
 
     // Edit user and give center_id
-    public function testUeserEdit()
+    public function testUserEdit()
     {
         if ($this->only_priority_tests) {
             $this->markTestSkipped("Running only priority tests.");
         }
-        if ($this->write_to_db) {
+        if (!$this->write_to_db) {
             $this->markTestSkipped("Running only tests that don't change DB.");
         }
 
@@ -150,5 +150,30 @@ class UserTest extends TestCase
         $model->edit(['center_id' => 154], $this->ideal_user_id);
         $user_center_id = app('db')->table('User')->where('id', $this->ideal_user_id)->first()->center_id;
         $this->assertEquals($user_center_id, 154);
+    }
+
+    public function testUserGroupAddAndRemove()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Running only tests that don't change DB.");
+        }
+
+        $model = new User;
+        $hc_strat_id =  357;
+        $model->addGroup($hc_strat_id, '1', $this->ideal_user_id);
+
+        $user_main_group = app('db')->table('UserGroup')->where('user_id', $this->ideal_user_id)->where('main','1')->where('year',$this->year)->get();
+
+        $this->assertEquals(count($user_main_group), 1); // There should be just 1 main group.
+        $this->assertEquals($user_main_group->first()->group_id, $hc_strat_id);
+
+        $model->removeGroup($hc_strat_id, $this->ideal_user_id);
+
+        $user_main_group = app('db')->table('UserGroup')->where('user_id', $this->ideal_user_id)->where('group_id', $hc_strat_id)->where('year',$this->year)->get();
+
+        $this->assertEquals(count($user_main_group), 0); // There should be just 1 main group.
     }
 }

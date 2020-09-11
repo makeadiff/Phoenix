@@ -573,11 +573,7 @@ final class User extends Common
     private function unsetMainGroup($user_id = false)
     {
         $user_id = $this->chain($user_id);
-        app('db')->table('UserGroup')->update(['main' => '0'])->where([
-                'user_id' => $user_id, 
-                'year' => $this->year, 
-                'main' => '1'
-            ]);
+        app('db')->table('UserGroup')->where('main','1')->where('user_id', $user_id)->where('year',$this->year)->update(['main' => '0']);
     }
 
     public function addGroup($group_id, $main=0, $user_id = false)
@@ -585,7 +581,7 @@ final class User extends Common
         $user_id = $this->chain($user_id);
 
         // Check if the user has the group already.
-        $existing_groups = $this->groups()->get();
+        $existing_groups = $this->item->groups()->get();
         $group_found = false;
         foreach ($existing_groups as $grp) {
             if ($grp->id == $group_id) {
@@ -595,10 +591,10 @@ final class User extends Common
         }
 
         if ($group_found) {
-            if($grp->main == $main) return false; // No change required
+            if($group_found->main == $main) return false; // No change required
             else { // If the main group is not correctly, do that.
                 $this->unsetMainGroup($user_id);
-                app('db')->table("UserGroup")->update(['main' => $main])->where(['id' => $grp->id]);
+                app('db')->table("UserGroup")->where('group_id',$group_found->id)->where('user_id', $user_id)->where('year',$this->year)->update(['main' => $main]);
                 return false;
             }
         }
@@ -608,21 +604,21 @@ final class User extends Common
         }
 
         app('db')->table("UserGroup")->insert([
-            'user_id'   => $this->id,
+            'user_id'   => $user_id,
             'group_id'  => $group_id,
             'year'      => $this->year,
-            'main'      => $main
+            'main'      => (string) $main
         ]);
 
-        return $this->groups();
+        return $this->item->groups();
     }
 
     public function removeGroup($group_id, $user_id = false)
     {
-        $this->chain($user_id);
+        $user_id = $this->chain($user_id);
 
         // Check if the user has the group.
-        $existing_groups = $this->groups()->get();
+        $existing_groups = $this->item->groups()->get();
         $group_found = false;
         foreach ($existing_groups as $grp) {
             if ($grp->id == $group_id) {
@@ -634,14 +630,11 @@ final class User extends Common
         if (!$group_found) {
             return false;
         }
+        // :TODO: What happens if the 'main' Group is deleted. Assign them the highest?
 
-        app('db')->table("UserGroup")->where([
-            'user_id'   => $this->id,
-            'group_id'  => $group_id,
-            'year'      => $this->year
-        ])->delete();
+        app('db')->table("UserGroup")->where('user_id', $user_id)->where('group_id',$group_id)->where('year',$this->year)->delete();
 
-        return $this->groups();
+        return $this->item->groups();
     }
 
     public function setCredit($credit, $user_id = false)
