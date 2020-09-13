@@ -3,8 +3,10 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use App\Models\User;
+use App\Http\Controllers\UserController;
 
 /**
  * @runInSeparateProcess
@@ -12,7 +14,6 @@ use App\Models\User;
 class UserTest extends TestCase
 {
     use WithoutMiddleware;
-    // :TODO: Rewrite these using SQL that live pulls the data instead of hard coding. These will break when year changes(mostly.)
     
     protected $only_priority_tests = false;
     protected $write_to_db = true;
@@ -175,5 +176,44 @@ class UserTest extends TestCase
         $user_main_group = app('db')->table('UserGroup')->where('user_id', $this->ideal_user_id)->where('group_id', $hc_strat_id)->where('year',$this->year)->get();
 
         $this->assertEquals(count($user_main_group), 0); // There should be just 1 main group.
+    }
+
+    public function testUserNewRegisteration()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Running only tests that don't change DB.");
+        }
+
+        $number = rand(0, 9999);
+        $uniquer = str_pad($number, 4, 0, STR_PAD_LEFT);
+
+        $email = "test_user_$uniquer@makeadiff.in";
+        // This will create a new user.
+        $user = array(
+            'name'      => 'Test Dude',
+            'phone'     => '1000000' . $uniquer,
+            'email'     => $email,
+            'password'  => 'test-pass',
+            'joined_on' => date('Y-m-d H:i:s'),
+            'city_id'   => 28,
+            'profile'   => 'teacher',
+            'source'    => 'internet',
+            'user_type' => 'applicant'
+        );
+
+        $request = Request::create('/users', 'POST', $user);
+        $user_controller = new UserController;
+        $response = $user_controller->add($request);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $json = json_decode($response->content());
+        $this->assertEquals("success", $json->status);
+        $user_id = $json->data->users->id;
+
+        $inserted_user = app('db')->table('User')->where('id', $user_id)->first();
+        $this->assertEquals($inserted_user->email, $email);
     }
 }

@@ -26,13 +26,13 @@ class UserController extends Controller
             'mad_email' => 'email|regex:/.+\@makeadiff\.in$/',
             'password'  => 'required',
             'sex'       => 'regex:/^[mfo]$/',
-            'phone'     => 'required|unique:User,phone|regex:/[\+0-9]{10}/',
+            'phone'     => 'required|unique:User,phone|regex:/[\+\-0-9 ]{10,14}/',
             'city_id'   => 'required|numeric|exists:City,id'
         ];
 
         if($request->input('user_type') === 'applicant') {
             $validation_rules['email'] = 'required|email';
-            $validation_rules['phone'] = 'required|regex:/[\+0-9]{10}/';
+            $validation_rules['phone'] = 'required|regex:/[\+\-0-9 ]{10,14}/';
             $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
 
             if ($validator->fails()) {
