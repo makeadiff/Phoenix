@@ -30,6 +30,14 @@ final class User extends Common
         return $groups;
     }
 
+    public function mainGroup()
+    {
+        $group = $this->belongsTo('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
+                            ->where('Group.status', '=', '1')->where('UserGroup.main', '1')->wherePivot('year', $this->year)
+                            ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
+        return $group;
+    }
+
     public function city()
     {
         return $this->belongsTo(City::class);
@@ -412,6 +420,7 @@ final class User extends Common
 
         $results = $q->first();
         $zoho_user_id = isset($data['zoho_user_id']) ? $data['zoho_user_id'] : 0;
+        $madapp_user_id = 0;
 
         if (empty($results)) {
             $user = User::create([
@@ -434,8 +443,10 @@ final class User extends Common
                 'campaign'  => isset($data['campaign']) ? $data['campaign'] : '',
                 'zoho_user_id'=>$zoho_user_id
             ]);
+            $madapp_user_id = $user->id;
         } else {
             $user = User::where('id', $results->id)->first();
+            $madapp_user_id = $user->id;
             $user->email        = $data['email'];
             $user->mad_email    = isset($data['mad_email']) ? $data['mad_email'] : '';
             $user->phone        = User::correctPhoneNumber($data['phone']);
@@ -517,20 +528,23 @@ final class User extends Common
                         'Occupation'        => isset($data['job_status']) ? ucwords($data['job_status']) : '',
                         'Role_Type'			=> isset($role_types[$data['profile']]) ? $role_types[$data['profile']] : 'Other',
                         'Reason_for_choosing_to_volunteer_at_MAD'   => isset($data['why_mad']) ? $data['why_mad'] : '',
-                        'MAD_Applicant_Id'  => $user->id,  // 'Unique_Applicant_ID'    => $status['id'],
+                        'MAD_Applicant_Id'  => $madapp_user_id,  // 'Unique_Applicant_ID'    => $status['id'],
                     ]
                 ]);
                 $response = $result->getBody();
             } catch (Exception $e) {
                 // Can't send data to Zoho
+                Log::add(['name' => 'zoho_user_push_error', 'user_id' => $madapp_user_id, 'data' => $e]);
             } finally {
                 if ($response) {
                     $zoho_response = json_decode($response);
                     $zoho_user_id = @$zoho_response->formname[1]->operation[1]->values->ID;
 
-                    if ($zoho_user_id and $user->id) {
+                    if ($zoho_user_id and $madapp_user_id) {
                         $user->zoho_user_id = $zoho_user_id;
                         $user->save();
+                    } else {
+                        Log::add(['name' => 'zoho_user_push_error', 'user_id' => $madapp_user_id, 'data' => $zoho_response]);
                     }
                 }
             }
