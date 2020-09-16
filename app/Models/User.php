@@ -32,7 +32,7 @@ final class User extends Common
 
     public function mainGroup()
     {
-        $group = $this->belongsTo('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
+        $group = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
                             ->where('Group.status', '=', '1')->where('UserGroup.main', '1')->wherePivot('year', $this->year)
                             ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
         return $group;
@@ -189,7 +189,7 @@ final class User extends Common
             "User.center_id",
             app('db')->raw("City.name AS city_name")
         );
-        $q->join("City", "City.id", '=', 'User.city_id');
+        $this->joinOnce($q, "City", "City.id", '=', 'User.city_id');
 
         // Aliases.
         if (isset($data['group_id']) and !isset($data['user_group'])) {
@@ -270,7 +270,7 @@ final class User extends Common
             if (!is_array($data['user_group'])) {
                 $data['user_group'] = array($data['user_group']);
             }
-            $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
+            $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $q->whereIn('UserGroup.group_id', $data['user_group']);
             $q->where('UserGroup.year', $this->year);
             if(!empty($data['only_main_group'])) {
@@ -279,8 +279,8 @@ final class User extends Common
             $q->distinct();
         }
         if (!empty($data['user_group_type'])) {
-            $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
-            $q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
+            $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
+            $this->joinOnce($q, 'Group', 'Group.id', '=', 'UserGroup.group_id');
             $q->where('Group.type', $data['user_group_type']);
             $q->where('UserGroup.year', $this->year);
             if(!empty($data['only_main_group'])) {
@@ -289,8 +289,8 @@ final class User extends Common
             $q->distinct();
         }
         if (!empty($data['vertical_id'])) {
-            $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
-            $q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
+            $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
+            $this->joinOnce($q, 'Group', 'Group.id', '=', 'UserGroup.group_id');
             $q->where('Group.vertical_id', $data['vertical_id']);
             $q->where('UserGroup.year', $this->year);
             if(!empty($data['only_main_group'])) {
@@ -302,16 +302,16 @@ final class User extends Common
             $mentor_group_id = 8; // :HARDCODE:
 
             if (isset($data['user_group']) and in_array($mentor_group_id, $data['user_group'])) { // Find the mentors
-                $q->join("Batch", 'User.id', '=', 'Batch.batch_head_id');
+                $this->joinOnce($q, "Batch", 'User.id', '=', 'Batch.batch_head_id');
                 $q->where('Batch.center_id', $data['center_id']);
                 $q->where('Batch.year', $this->year);
                 if (isset($data['project_id'])) {
                     $q->where('Batch.project_id', $data['project_id']);
                 }
             } else { // Find the teachers
-                $q->join('UserClass', 'User.id', '=', 'UserClass.user_id');
-                $q->join('Class', 'Class.id', '=', 'UserClass.class_id');
-                $q->join('Level', 'Class.level_id', '=', 'Level.id');
+                $this->joinOnce($q, 'UserClass', 'User.id', '=', 'UserClass.user_id');
+                $this->joinOnce($q, 'Class', 'Class.id', '=', 'UserClass.class_id');
+                $this->joinOnce($q, 'Level', 'Class.level_id', '=', 'Level.id');
                 $q->where('Level.center_id', $data['center_id']);
                 if (isset($data['project_id'])) {
                     $q->where('Level.project_id', $data['project_id']);
@@ -325,7 +325,8 @@ final class User extends Common
         }
 
         if (!empty($data['batch_id'])) {
-            $q->join('UserBatch', 'User.id', '=', 'UserBatch.user_id');
+            if(!$this->isTableJoined($q, 'UserBatch'))
+            $this->joinOnce($q, 'UserBatch', 'User.id', '=', 'UserBatch.user_id');
             $q->addSelect("UserBatch.level_id");
             $q->where('UserBatch.batch_id', $data['batch_id']);
 
@@ -347,9 +348,8 @@ final class User extends Common
             }
         }
         $q->orderBy('User.name');
-        // dd($q->toSql(), $q->getBindings(), $data);
 
-        // :TODO: Pagination
+        // dd($q->toSql(), $q->getBindings(), $data);
 
         return $q;
     }
