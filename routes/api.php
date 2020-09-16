@@ -1371,11 +1371,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
         $user_model = new User;
 
-        // $grps = $user_model->fetch(1)->groups()->get();
-        // dump($grps);
-
-        $grps = $user_model->removeGroup(357, 1);
-        dump($grps);
+        $grps = $user_model->fetch(1)->groups()->get();
+        $main_grp = $user_model->fetch(1)->mainGroup();
+        dump($grps, $main_grp->name);
 
         // $center = new Center;
         // $projects = $center->find(184)->center_projects()->get();

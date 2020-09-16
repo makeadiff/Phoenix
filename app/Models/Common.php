@@ -30,6 +30,28 @@ class Common extends Model
         $this->year_start_time = $this->year_start_date . ' 00:00:00';
     }
 
+    public function isTableJoined($q, $table) 
+    {
+        $found = false;
+        if(!$q->joins) return $found;
+        
+        foreach($q->joins as $jn) {
+            if($jn->table === $table) {
+                $found = true;
+                break;
+            }
+        }
+        return $found;
+    }
+
+    public function joinOnce(&$q, $table, $field_1, $condition, $field_2)
+    {
+        if(!$this->isTableJoined($q, $table)) {
+            $q->join($table, $field_1, $condition, $field_2);
+        }
+        return $q;
+    }
+
     public function fetch($id)
     {
         $this->item_id = $id;
