@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Models\Group;
+use App\Models\UserGroup;
 use App\Models\Log;
 use App\Models\Common;
 use App\Models\Classes;
@@ -24,7 +25,7 @@ final class User extends Common
     public function groups()
     {
         $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
-                            ->where('Group.status', '=', '1')->wherePivot('year', $this->year)
+                            ->where('Group.status', '1')->wherePivot('year', $this->year)
                             ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
         $groups->orderByRaw("FIELD(Group.type, 'executive', 'national', 'strat', 'fellow', 'volunteer')");
         return $groups;
@@ -32,8 +33,8 @@ final class User extends Common
 
     public function mainGroup()
     {
-        $group = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
-                            ->where('Group.status', '=', '1')->where('UserGroup.main', '1')->wherePivot('year', $this->year)
+        $group = $this->hasOneThrough('App\Models\Group', 'App\Models\UserGroup', 'user_id', 'id', 'id', 'group_id')
+                            ->where('Group.status', '1')->where('UserGroup.year', $this->year)->where('UserGroup.main', '1')
                             ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
         return $group;
     }
@@ -320,7 +321,7 @@ final class User extends Common
             $q->distinct();
         }
 
-        if(!empty($data['center_id'])) {
+        if(isset($data['center_id'])) {
             $q->where('User.center_id', $data['center_id']);
         }
 
@@ -444,6 +445,7 @@ final class User extends Common
                 'zoho_user_id'=>$zoho_user_id
             ]);
             $madapp_user_id = $user->id;
+
         } else {
             $user = User::where('id', $results->id)->first();
             $madapp_user_id = $user->id;
@@ -534,7 +536,7 @@ final class User extends Common
                 $response = $result->getBody();
             } catch (Exception $e) {
                 // Can't send data to Zoho
-                Log::add(['name' => 'zoho_user_push_error', 'user_id' => $madapp_user_id, 'data' => $e]);
+                Log::add(['name' => 'zoho_user_push_exception', 'user_id' => $madapp_user_id, 'data' => $e]);
             } finally {
                 if ($response) {
                     $zoho_response = json_decode($response);
