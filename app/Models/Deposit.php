@@ -40,11 +40,11 @@ final class Deposit extends Common
     {
         // Validations...
         $user = new User;
-        if (!$user->fetch($collected_from_user_id)) {
+        if (!$user->find($collected_from_user_id)) { // As long as they are in the DB its fine. They don't have to be an active volunteer. This was done after we had to move donations by alumni
             return $this->error("Invalid User ID of depositer.");
         }
         if (!$user->fetch($given_to_user_id)) {
-            return $this->error("Invalid User ID of collector.");
+            return $this->error("Invalid User ID of collector. Make sure they are an active volunteer.");
         }
         if ($collected_from_user_id == $given_to_user_id) {
             return $this->error("Depositer and collector can't be the same person.");

@@ -321,8 +321,11 @@ final class User extends Common
             $q->distinct();
         }
 
-        if(isset($data['center_id'])) {
+        if(!empty($data['center_id'])) {
             $q->where('User.center_id', $data['center_id']);
+        }
+        if(isset($data['without_center_id'])) {
+            $q->where('User.center_id', '0');
         }
 
         if (!empty($data['batch_id'])) {
