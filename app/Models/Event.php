@@ -174,15 +174,17 @@ final class Event extends Common
 
     public function invite($user_ids, $send_invite_email = true, $event_id = false)
     {
-        $this->chain($event_id);
+        $event_id = $this->chain($event_id);
+
+        // Remove users already at the event.
+        $users_already_in_event = Event::find($event_id)->users()->pluck('id')->all();
+        $users_not_yet_invited = array_diff($user_ids, $users_already_in_event);
 
         $user_event_insert = [];
         $rsvp_auth_keys = [];
 
-        foreach ($user_ids as $user_id) {
+        foreach ($users_not_yet_invited as $user_id) {
             $rsvp_auth_key = substr(md5(uniqid()), 0, 10);
-
-            // :TODO: Check if the user_id, event_id combo is there already
 
             $user_event_insert[] = [
                 'user_id'   => $user_id,
@@ -365,70 +367,75 @@ final class Event extends Common
         $this->awardCredits($event_id, $user_id, true);
     }
 
-    public function createRecurringInstances($event, $frequency = null, $repeat_until = null)
+    public function createRecurringInstances($event, $frequency = false, $repeat_until = false)
     {
-        $event_id = $event['id'];
-        
-        if ($repeat_until == null) {
-            $repeat_until = ($this->year+1).'-04-30';
-        }
-        $event_name = $event['name'];
-        $count = 1;
-
-        unset($event['id']);
-        $event['repeat_until'] = $repeat_until;
-        $event['frequency'] = $frequency;
-        $event['name'] = $event_name.' #'.$count;
-        $count++;
-        
-        $e = new Event;
-        $thisEvent = $e->find($event_id);
-        $thisEvent->edit($event);
-        $event['template_event_id'] = $event_id;
-        $event_instances = [];
-
-        $users_list = $thisEvent->users();
-        $users = [];
-        foreach ($users_list as $user) {
-            $users[] = $user['id'];
-        }
-
-        if ($frequency == 'monthly') {
-            while ($event['starts_on'] < $repeat_until) {
-                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 month", strtotime($event['starts_on'])));
-                $event['name'] = $event_name.' #'.$count;
-                $response = $e->search($event);
-                
-                if (!count($response)) {
-                    $response = $this->add($event);
-                } else {
-                    $response = (array)$response[0];
-                }
-                
-                $event_instances[] = $response['id'];
-                $e->invite($users, false, $response['id']);
-                $count++;
-            }
-            return $event_instances;
-        } elseif ($frequency == 'weekly') {
-            while ($event['starts_on'] < $repeat_until) {
-                $event['starts_on'] = date('Y-m-d H:i:s', strtotime("+1 week", strtotime($event['starts_on'])));
-                $event['name'] = $event_name.' #'.$count;
-                $response = $e->search($event);
-                
-                if (!count($response)) {
-                    $response = $this->add($event);
-                } else {
-                    $response = (array)$response[0];
-                }
-                    
-                $event_instances[] = $response['id'];
-                $e->invite($users, false, $response['id']);
-                $count++;
-            }
-            return $event_instances;
-        } else {
+        // Validations.
+        if(!in_array($frequency, ['monthly', 'weekly', 'bi-weekly'])) {
+            $this->error("Invilid frequency value. Must be 'monthly' OR 'weekly' OR 'bi-weekly'");
             return false;
         }
+        if(!$event or !$event->id) {
+            $this->error("Invalid event provided.");
+            return false;   
+        }
+
+        if (!$repeat_until) {
+            $repeat_until = ($this->year+1).'-04-30'; // Basically, year end.
+        } else {
+            $repeat_until = date('Y-m-d', strtotime($repeat_until));
+            if($repeat_until < date('Y-m-d')) {
+                return $this->error("Date is invalid or in the past.");
+            }
+        }
+        $count = 1;
+
+        $event_id = $event->id;
+        unset($event->id);
+
+        // First, we update the template event to assign it the recurring values.
+        $event->repeat_until = $repeat_until;
+        $event->frequency = $frequency;
+        if(!preg_match('/ \#\d+$/', $event->name)) { // If the name is not already in the #<Number format>
+            $event->name = $event->name . ' #' . $count;
+        }
+        
+        $event_model = new Event;
+        $thisEvent = $event_model->find($event_id);
+        $thisEvent->edit($event);
+        $event->template_event_id = $event_id;
+        $event_instances = [];
+
+        // Get the list of all invited users.
+        $users = $thisEvent->users()->pluck('id')->all();
+
+        while ($event->starts_on < $repeat_until) {
+            if ($frequency == 'monthly') {
+                $event->starts_on = date('Y-m-d H:i:s', strtotime("+1 month", strtotime($event->starts_on)));
+            } elseif ($frequency == 'weekly') {
+                $event->starts_on = date('Y-m-d H:i:s', strtotime("+1 week", strtotime($event->starts_on)));
+            } elseif ($frequency == 'bi-weekly') {
+                $event->starts_on = date('Y-m-d H:i:s', strtotime("+2 week", strtotime($event->starts_on)));
+            }
+            if($event->starts_on > $repeat_until) break; //:UGLY: If this is not there, one instance after the repeat_until will be created.
+            $count++;
+            $event_instances[] = $this->addEventInstance($event, $users, $count);
+            if($count > 100) break; // Just in case.
+        }
+        return $event_instances;
+    }
+
+    private function addEventInstance($event, $invited_user_ids, $count)
+    {
+        $event->name = str_replace(' #'.($count-1), ' #'.$count, $event->name);
+        $event_in_db = $this->search($event); // Just to make sure this event don't exist already.
+        
+        if (!count($event_in_db)) { // Yup, doesn't exist
+            $event_in_db = $this->add($event); // So, add it.
+        } else {
+            $event_in_db = $event_in_db[0];
+        }
+        $this->invite($invited_user_ids, false, $event_in_db->id);
+
+        return $event_in_db->id;
     }
 }
