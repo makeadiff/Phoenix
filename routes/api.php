@@ -1292,12 +1292,12 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         if (empty($event_data)) {
             return JSend::fail("Can't find event with ID: $event_id");
         }
-        $frequency = $event_data['frequency'];
+        $frequency = $event_data->frequency;
         if ($request->input('frequency')) {
             $frequency = $request->input('frequency');
         }
 
-        $repeat_until = $event_data['repeat_until'];
+        $repeat_until = $event_data->repeat_until;
         if ($request->input('repeat_until')) {
             $repeat_until = $request->input('repeat_until');
         }
