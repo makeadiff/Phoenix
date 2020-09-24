@@ -1161,9 +1161,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $event = new Event;
         
         $data = $event->fetch($event_id);
-        $event_type = $data->eventType()->get();
+        $event_type = $data->event_type()->first();
         if (!empty($event_type)) {
-            $data->event_type = $event_type[0]->name;
+            $data->type = $event_type->name;
         }
         if (!$data) {
             return JSend::fail("Can't find event with ID $event_id", $event->errors);
@@ -1368,45 +1368,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     // Use this to Debug/test things
     Route::get('/test', function () {
-
-        $user_model = new User;
-
-        // $grps = $user_model->fetch(1)->groups()->get();
-        $main_grp = $user_model->find(1)->mainGroup()->first()->name;
-        dump($main_grp);
-
-        // $center = new Center;
-        // $projects = $center->find(184)->center_projects()->get();
-        // $projects = $center->find(154)->projects()->get();
-        // foreach($projects as $pro) {
-        //     $bat = $pro->batches()->get();
-        //     dump($bat);
-        // }
-
-        // $level_model = new Level;
-        // $teachers = $level_model->find(10050)->teachers();
-        // dump($teachers->toSql(), $teachers->getBindings());
-        // dump($teachers->get());
-
-
-        // $user_model = new User;
-        // $links = $user_model->find(1)->links()->get();
-        // dump($links->pluck('name'));
-
-        // $center = (new Center)->find(25);
-        // dump($center->comments()->first()->added_by_user()->get());
-
-        // $credit = new App\Models\Credit;
-        // $return = $credit->assign(1, 1);
-        // dump($return);
-
-        // $cls = (new Classes)->find(466879);
-        // $return = $cls->subject()->get();
-        // dump($return);
-
-        // $allc = (new Allocation)->find(331307);
-        // $return = $allc->batch()->get()[0]->name();
-        // dump($return);
+        $type_model = new Event_Type;
+        $type = $type_model->find(39)->computed_name();
+        dump($type);
     });
 
     require_once base_path('routes/api-surveys.php');
