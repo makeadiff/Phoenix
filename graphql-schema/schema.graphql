@@ -288,7 +288,8 @@ type Event {
     starts_on: DateTime
     event_type_id: ID
     status: String
-    event_type: String @method(name: "eventType")
+    event_type_name: String @method(name: "computed_type_name")
+    event_type: Event_Type
     city: City
     invitees: [User]
     attendees: [User]
@@ -297,6 +298,10 @@ type Event {
 type Event_Type {
     id: ID!
     name: String!
+    computed_name: String @method(name: "computed_name")
+    vertical_id: ID
+    role: String
+    audience: String
 }
 
 type Survey {

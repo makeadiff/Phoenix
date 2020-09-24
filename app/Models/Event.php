@@ -50,16 +50,25 @@ final class Event extends Common
                     ->withPivot('present', 'late', 'user_choice', 'reason');
     }
 
-    public function eventType()
+    public function event_type()
     {
         return $this->belongsTo('App\Models\Event_Type', 'event_type_id');
+    }
+
+    public function computed_type_name()
+    {
+        $type = $this->belongsTo('App\Models\Event_Type', 'event_type_id')->first();
+        if($type) {
+            return $type->computed_name();
+        } else {
+            return "";
+        }
     }
 
     public function eventsInCity($city_id)
     {
         return app('db')->table("Event")->where("status", '1')->where("starts_on", '>=', $this->year_start_time)->where("city_id", $city_id)->get();
     }
-
 
     public function filter($data)
     {
@@ -68,7 +77,8 @@ final class Event extends Common
 
     public function search($data)
     {
-        $search_fields = ['id', 'name', 'description', 'starts_on', 'date', 'from_date', 'to_date', 'place', 'city_id', 'event_type_id', 'template_event_id', 'created_by_user_id', 'status', 'invited_user_id'];
+        $search_fields = ['id', 'name', 'description', 'starts_on', 'date', 'from_date', 'to_date', 'place', 'city_id', 
+                            'event_type_id', 'template_event_id', 'created_by_user_id', 'status', 'invited_user_id'];
 
         $q = app('db')->table('Event');
         $q->select(
@@ -81,7 +91,10 @@ final class Event extends Common
             'Event.event_type_id',
             'Event.created_by_user_id',
             'Event.status',
-            app('db')->raw('Event_Type.name AS event_type')
+            app('db')->raw('Event_Type.name AS event_type'),
+            app('db')->raw('Event_Type.vertical_id AS vertical_id'),
+            app('db')->raw('Event_Type.role AS role'),
+            app('db')->raw('Event_Type.audience AS audience')
         );
         if (!isset($data['status'])) {
             $data['status'] = '1';
