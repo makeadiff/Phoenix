@@ -45,7 +45,7 @@ class Event_Type extends Model
     {
         $event_types =  Event_Type::select('id', 'name', 'vertical_id', 'role', 'audience')->where('status', '1')->orderBy('name')->get();
         foreach ($event_types as $key => $types) {
-            $vertical = $types->verticals()->select('name')->first();
+            $vertical = $types->vertical()->select('name')->first();
             if ($vertical) {
                 $event_types[$key]->vertical = $vertical->name;
             }

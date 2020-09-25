@@ -27,8 +27,9 @@ type Query {
     donations(added_on: Date = "2020-05-01" @where(operator: ">="), amount: Int, status: String, 
         type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): 
         [Donation] @all(model: "App\\Models\\Donation")
-    events(name: String @eq, starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, 
+    events(name: String @where(operator: "like"), starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, 
         event_type_id: Int @eq, vertical_id: Int @eq, status: String = "1" @eq): [Event!]! @all
+    event_types(name: String @where(operator: "like"), vertical_id: Int @eq, role: String @eq, audience: String @eq): [Event_Type!]! @all
     users(name: String @where(operator: "like"), email: String @eq, mad_email: String @eq, 
         phone: String @eq, city_id: Int @eq, status: String = "1" @eq, user_type: String = "volunteer" @eq): 
         [User] @all # @paginate(type: "paginator" model: "App\\Models\\User")
