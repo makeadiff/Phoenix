@@ -210,6 +210,9 @@ final class User extends Common
         if (isset($data['city_id']) and $data['city_id'] != 0) {
             $q->where('User.city_id', $data['city_id']);
         }
+        if (!empty($data['city_in'])) {
+            $q->whereIn('User.city_id', $data['city_in']);
+        }
 
         if (empty($data['user_type'])) {
             $data['user_type'] = 'volunteer';
