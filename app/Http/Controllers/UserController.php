@@ -122,6 +122,8 @@ class UserController extends Controller
                 $search['user_group'] = [$request->input('group_id')];
             } elseif ($key == 'group_in') {
                 $search['user_group'] = explode(",", $request->input('group_in'));
+            } elseif ($key == 'city_in') {
+                $search['city_in'] = explode(",", $request->input('city_in'));
             } elseif ($key == 'not_user_type') {
                 $search['not_user_type'] = explode(",", $request->input('not_user_type'));
             } else {
@@ -131,13 +133,14 @@ class UserController extends Controller
         if (!isset($search['project_id'])) {
             $search['project_id'] = 1;
         }
-        
-        
+
+        $uri = $request->path();
+        $paginated = false;
+        if(stripos($uri, '_paginated')) $paginated = true;
 
         $user = new User;
-        $data = $user->search($search, true);
-        return JSend::success("Users", array('users' => $data));
-        ;
+        $data = $user->search($search, $paginated);
+        return JSend::success("Users", ['users' => $data]);
         // return UserResource::collection($data);
     }
 }
