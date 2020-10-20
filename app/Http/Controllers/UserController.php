@@ -110,8 +110,8 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','any_email','group_id','group_in','vertical_id','city_id',
-                            'user_type','center_id','project_id', 'not_user_type', 'credit', 'credit_lesser_than', 'credit_greater_than'];
+        $search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','any_email','group_id','group_in','group_type','vertical_id',
+                            'city_id', 'city_in','user_type','center_id','project_id', 'not_user_type', 'credit', 'credit_lesser_than', 'credit_greater_than'];
         $search = [];
         foreach ($search_fields as $key) {
             if (!$request->has($key)) {
@@ -137,6 +137,8 @@ class UserController extends Controller
         $uri = $request->path();
         $paginated = false;
         if(stripos($uri, '_paginated')) $paginated = true;
+
+        // dump($search); exit;
 
         $user = new User;
         $data = $user->search($search, $paginated);
