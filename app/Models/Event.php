@@ -25,7 +25,7 @@ final class Event extends Common
             'cant_go'   => '3',
         ];
 
-    protected $fillable = ['name','description','starts_on','place','type', 'city_id', 'vertical_id',
+    protected $fillable = ['name','description','starts_on','place','type', 'city_id',
                              'event_type_id', 'template_event_id', 'user_selection_options',
                              'created_by_user_id', 'latitude', 'longitude', 'status', 'frequency','repeat_until'];
 
@@ -170,7 +170,7 @@ final class Event extends Common
         $event = Event::create([
             'name'          => $data['name'],
             'description'   => isset($data['description']) ? $data['description'] : '',
-            'starts_on'     => isset($data['starts_on']) ? $data['starts_on'] : date('Y-m-d H:i:s'),
+            'starts_on'     => isset($data['starts_on']) ? date('Y-m-d H:i:s', strtotime($data['starts_on'])) : date('Y-m-d H:i:s'),
             'place'         => isset($data['place']) ? $data['place'] : '',
             'city_id'       => $data['city_id'],
             'event_type_id' => $data['event_type_id'],

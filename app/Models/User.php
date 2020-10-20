@@ -148,21 +148,21 @@ final class User extends Common
     {
         $q = app('db')->table('User');
         if ($pagination) {
-            $results = $this->baseSearch($data, $q)->paginate(50);
+            $results = $this->baseSearch($data, $q)->paginate(50, ['User.*']);
         } else {
             $results = $this->baseSearch($data, $q)->get();
         }
 
         // Add groups to each volunter that was returned.
-        for ($i=0; $i<count($results); $i++) {
-            $results[$i]->groups = [];
-            if (!isset($data['user_type']) or $data['user_type'] == 'volunteer') {
-                $this_user = User::fetch($results[$i]->id);
-                if ($this_user and $this_user->groups) {
-                    $results[$i]->groups = $this_user->groups;
-                }
-            }
-        }
+        // for ($i=0; $i<count($results); $i++) {
+        //     $results[$i]->groups = [];
+        //     if (!isset($data['user_type']) or $data['user_type'] == 'volunteer') {
+        //         $this_user = User::fetch($results[$i]->id);
+        //         if ($this_user and $this_user->groups) {
+        //             $results[$i]->groups = $this_user->groups;
+        //         }
+        //     }
+        // }
         
         return $results;
     }
@@ -280,7 +280,8 @@ final class User extends Common
             if(!empty($data['only_main_group'])) {
                 $q->where('UserGroup.main', $data['only_main_group']);
             }
-            $q->distinct();
+            // $q->distinct();
+            $q->groupBy("User.id"); // Using group by instead of distinct because distinct does not work well with paginate.
         }
         if (!empty($data['user_group_type'])) {
             $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
@@ -290,7 +291,8 @@ final class User extends Common
             if(!empty($data['only_main_group'])) {
                 $q->where('UserGroup.main', $data['only_main_group']);
             }
-            $q->distinct();
+            // $q->distinct();
+            $q->groupBy("User.id");
         }
         if (!empty($data['vertical_id'])) {
             $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
@@ -300,7 +302,8 @@ final class User extends Common
             if(!empty($data['only_main_group'])) {
                 $q->where('UserGroup.main', $data['only_main_group']);
             }
-            $q->distinct();
+            // $q->distinct();
+            $q->groupBy("User.id");
         }
         if (!empty($data['teaching_in_center_id'])) {
             $mentor_group_id = 8; // :HARDCODE:
@@ -321,7 +324,8 @@ final class User extends Common
                     $q->where('Level.project_id', $data['project_id']);
                 }
             }
-            $q->distinct();
+            // $q->distinct();
+            $q->groupBy("User.id");
         }
 
         if(!empty($data['center_id'])) {
