@@ -154,15 +154,15 @@ final class User extends Common
         }
 
         // Add groups to each volunter that was returned.
-        // for ($i=0; $i<count($results); $i++) {
-        //     $results[$i]->groups = [];
-        //     if (!isset($data['user_type']) or $data['user_type'] == 'volunteer') {
-        //         $this_user = User::fetch($results[$i]->id);
-        //         if ($this_user and $this_user->groups) {
-        //             $results[$i]->groups = $this_user->groups;
-        //         }
-        //     }
-        // }
+        for ($i=0; $i<count($results); $i++) {
+            $results[$i]->groups = [];
+            if (!isset($data['user_type']) or $data['user_type'] == 'volunteer') {
+                $this_user = User::fetch($results[$i]->id);
+                if ($this_user and $this_user->groups) {
+                    $results[$i]->groups = $this_user->groups;
+                }
+            }
+        }
         
         return $results;
     }

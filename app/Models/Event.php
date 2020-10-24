@@ -298,13 +298,19 @@ final class Event extends Common
             }
 
             if ($key == 'rsvp') {
-                $data['user_choice'] = $this->rsvp_number_codes[$data[$key]];
                 $key = 'user_choice'; // DB Field is called user_choice.
+                if(isset($this->rsvp_number_codes[$data['rsvp']])) {
+                    $data['user_choice'] = $this->rsvp_number_codes[$data['rsvp']];
+                } else if(isset($data['rsvp'])) {
+                    $data['user_choice'] = $data['rsvp'];
+                }
             }
 
             $update[$key] = $data[$key];
         }
-              
+
+        // dump($q->toSql(), $q->getBindings(), $update, $data);
+
         // A better way to do this is using the ::save() - but for some season its not working. Hence, this.
         $user_connection = $q->update($update);
 
@@ -314,8 +320,27 @@ final class Event extends Common
         return $user_connection;
     }
 
+    public function markEventAttendance($user_attendance, $event_id = false)
+    {
+        $event_id = $this->chain($event_id);
+        $count = 0;
+
+        foreach($user_attendance as $user) {
+            $data = [];
+            if(isset($user['present'])) $data['present'] = (string) $user['present'];
+            if(isset($user['late'])) $data['late'] = (string) $user['late'];
+            if(isset($user['rsvp'])) $data['rsvp'] = (string) $user['rsvp'];
+            if(isset($user['reason'])) $data['reason'] = $user['reason'];
+
+            $this->updateUserConnection($user['user_id'], $data);
+            $count++;
+        }
+        return $count;
+    }
+
     public function updateAttendance($user_ids, $event_id = false)
     {
+        $event_id = $this->chain($event_id);
         $event = new Event;
         foreach ($user_ids as $user_id) {
             $event->updateUserConnection($user_id, ['present' => '1'], $event_id);
@@ -328,7 +353,7 @@ final class Event extends Common
 
     public function deleteUserConnection($user_id, $event_id = false)
     {
-        $this->chain($event_id);
+        $event_id = $this->chain($event_id);
 
         $q = app('db')->table("UserEvent");
         $q->where('event_id', '=', $this->id)->where('user_id', '=', $user_id);
