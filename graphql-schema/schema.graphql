@@ -64,7 +64,6 @@ type Query {
     # classConnection(teacher_id: Int, mentor_id: Int): [ClassConnection] #Custom return  + resolver. Used for finding unfilled data in UPMA. Both teacher and student.
     teacherClassConnection(teacher_id: Int): [TeacherClassConnection]
     mentorClassConnection(mentor_id: Int): [MentorClassConnection]
-    
 }
 
 type Mutation {
@@ -76,6 +75,7 @@ type Mutation {
     assignBatchTeachers(batch_id: ID!, level_id: ID!, subject_id: ID, teacher_ids: [ID]): String
     assignBatchMentors(batch_id: ID!, mentor_ids: [ID]): String
     assignLevelStudents(level_id: ID!, student_ids: [ID]): String
+    markEventAttendance(event_id: ID!, attendance: [InputUseEventAttendance]): Int
 }
 input InputTeacherAttendance {
     user_id: Int!
@@ -93,6 +93,14 @@ input InputSurveyResponse {
     choice_id: ID
     response: String
 }
+input InputUseEventAttendance {
+    user_id: Int!
+    present: Int
+    late: Int
+    rsvp: Int
+    reason: String
+}
+
 
 # For Polymorphic relations - In Comment and Data
 union Item = User | Student | Center | Event | Class | City | Batch | Level
