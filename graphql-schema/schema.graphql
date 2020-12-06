@@ -77,6 +77,7 @@ type Mutation {
     assignLevelStudents(level_id: ID!, student_ids: [ID]): String
     markEventAttendance(event_id: ID!, attendance: [InputUseEventAttendance]): Int
 }
+
 input InputTeacherAttendance {
     user_id: Int!
     substitute_id: Int

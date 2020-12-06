@@ -587,6 +587,8 @@ final class User extends Common
             $this->item->$key = $data[$key];
         }
         // :TODO: Special cases that should be handled.
+        //  - User moved to Volunteer from applicant
+        //      - joined_on date update
         //  - User moved to Alumnai / Let_go
         //      - left_on date update
         //      - delete future class.
