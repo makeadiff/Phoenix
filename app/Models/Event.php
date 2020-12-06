@@ -338,6 +338,7 @@ final class Event extends Common
         return $count;
     }
 
+    // This will mark all the users given as an array in the first argument as attended - and everyone else in the event with no data as missed.
     public function updateAttendance($user_ids, $event_id = false)
     {
         $event_id = $this->chain($event_id);
