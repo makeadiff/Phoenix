@@ -21,6 +21,11 @@ final class Tag extends Common
         return null;
     }
 
+    public function item()
+    {
+        $this->morphTo();
+    }
+
     public function items($item)
     {
         if(in_array($item, $this->all_item_types)) {
