@@ -22,6 +22,50 @@ Unassign students from given level: DELETE /levels/{level_id}/students/{student_
 Schedule Classes : Cron / Artisan (Done)
 Calculate Credits
 
+Create GraphQL Mutations for these POST calls...
+POST	/users
+POST	/users/{user_id}
+POST	/users/{user_id}/groups/{group_id}
+POST	/users/{user_id}/credit
+POST	/users/login
+POST	/users/{user_id}/devices
+POST	/users/{user_id}/devices/{token}
+POST	/users/{user_id}/data/{data_name}
+POST	/centers/{center_id}/data/{data_name}
+POST	/centers/{center_id}/comments
+POST	/students/{student_id}/comments
+POST	/students
+POST	/students/{student_id}
+POST	/students/{student_id}/data/{data_name}
+POST	/levels
+POST	/levels/{level_id}
+POST	/levels/{level_id}/students
+POST	/batches
+POST	/batches/{batch_id}
+POST	/batches/{batch_id}/mentors
+POST	/batches/{batch_id}/levels/{level_id}/teachers
+POST	/batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}
+POST	/classes/{class_id}/data/{data_name}
+POST	/donations
+POST	/deposits
+POST	/deposits/{deposit_id}
+POST	/events
+POST	/events/{event_id}
+POST	/events/{event_id}/recur
+POST	/events/{event_id}/users
+POST	/events/{event_id}/users/{user_id}
+POST	/events/{event_id}/attended
+POST	/survey_templates
+POST	/survey_templates/{survey_template_id}
+POST	/survey_templates/{survey_template_id}/questions
+POST	/survey_templates/{survey_template_id}/questions/{survey_question_id}
+POST	/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices
+POST	/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices/{survey_choice_id}
+POST	/surveys
+POST	/surveys/{survey_id}/responses
+POST	/surveys/{survey_id}/questions/{survey_question_id}/responses
+POST	/notifications
+
 
 
 Done
