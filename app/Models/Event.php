@@ -178,7 +178,7 @@ final class Event extends Common
             'created_by_user_id'=> $data['created_by_user_id'],
             'latitude'      => isset($data['latitude']) ? $data['latitude'] : '',
             'longitude'     => isset($data['longitude']) ? $data['longitude'] : '',
-            'repeat_until'  => isset($data['repeat_until']) ? $data['repeat_until'] : null,
+            'repeat_until'  => isset($data['repeat_until']) ? date('Y-m-d H:i:s', strtotime($data['repeat_until'])) : null,
             'frequency'     => isset($data['frequency']) ? $data['frequency']: 'none',
         ]);
                 
