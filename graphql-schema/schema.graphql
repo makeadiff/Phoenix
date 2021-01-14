@@ -20,6 +20,7 @@ type Query {
     survey(id: ID @eq):     Survey      @find(model: "App\\Models\\Survey")
     project(id: ID @eq):    Project     @find(model: "App\\Models\\Project")
     subject(id: ID @eq):    Subject     @find(model: "App\\Models\\Subject")
+    tag(name: String @eq):  Tag         @find(model: "App\\Models\\Tag")
     survey_template(id: ID @eq):    Survey_Template @find(model: "App\\Models\\Survey_Template")
 
     # :HARDCODE: - Global replace all 2020 to next year. Not sure how to do it any other way yet. Other than custom resolvers for everything.
@@ -77,6 +78,7 @@ type Mutation {
     assignLevelStudents(level_id: ID!, student_ids: [ID]): String
     markEventAttendance(event_id: ID!, attendance: [InputUseEventAttendance]): Int
 }
+
 input InputTeacherAttendance {
     user_id: Int!
     substitute_id: Int
@@ -103,7 +105,7 @@ input InputUseEventAttendance {
 
 
 # For Polymorphic relations - In Comment and Data
-union Item = User | Student | Center | Event | Class | City | Batch | Level
+union Item = User | Student | Center | Event | Class | City | Batch | Level | Comment
 
 # Volunteer details.
 type User {
@@ -455,6 +457,14 @@ type Comment {
     added_on: DateTime
     added_by_user: User
     item: Item @morphTo
+}
+
+type Tag {
+    id: ID!
+    name: String
+    item: Item @morphTo
+    comments: [Comment] @morphMany
+    # :TODO: More items to come
 }
 
 type Conversation {

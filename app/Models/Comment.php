@@ -16,6 +16,11 @@ final class Comment extends Common
         return $this->morphTo();
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany("App\Models\Tag", 'TagItem', 'item_id', 'tag_id')->where('item_type', 'Comment');
+    }
+
     public function added_by_user()
     {
         return $this->hasOne("App\Models\User", 'id', "added_by_user_id");
