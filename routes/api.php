@@ -22,6 +22,7 @@ use App\Models\Alert;
 use App\Models\Device;
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DonationController;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -1033,7 +1034,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
             $search[$key] = $request->input($key);
         }
 
-        $donation = new Donation;
+        $donation = new DonationController;
         $data = $donation->search($search);
 
         return JSend::success("Donations", ['donations' => $data]);
