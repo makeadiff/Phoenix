@@ -20,6 +20,7 @@
 # Reference table must be named in the format <First table><Second table> - Eg. PageTag
 # Foreign key must be in the format '<table>_<primary key>' - all lower case - Eg. user_id
 
+
 App_CSVGo: Used in the app 'CSV:Go'. Stores queries as text that is used to generate CSV's of needed data that can be imported into other tools like Google Spreadsheet
 App_CSVGo.id: 
 App_CSVGo.name: Name of the report. This should be passed as a parameter to CSV:Go.
@@ -30,7 +31,7 @@ App_CSVGo.last_run_on: The time when this query was last executed
 App_CSVGo.vertical_id: Vertical.id
 App_CSVGo.status: 
 
-App_Director: Used by the 'eDirectors' app. Stores a list of all the directors in the system. The website director listing comes from this table.
+App_Director: Used by the 'eDirectors' app. Stores a list of all the directors in the system. The website director listing comes from this table. :DEPRECATED:
 App_Director.id: 
 App_Director.name: 
 App_Director.role: 
@@ -73,7 +74,7 @@ BatchSubject.id:
 BatchSubject.batch_id: Batch.id
 BatchSubject.subject_id: Subject.id
 
-Center: All information about Shelters are stored in this table. Note - Shelters used to be called Centers earlier.
+Center: All information about Shelters are stored in this table. Note - Shelters/Child Care Institutions used to be called Centers earlier.
 Center.id: 
 Center.name: Name of the Shelter
 Center.city_id: City.id - The city this shelter belongs to
@@ -116,7 +117,7 @@ CenterProject.added_on:
 City: All cities that are active in MAD
 City.id: 
 City.name: 
-City.president_id: User.id - City Team Lead of this city. :TODO: Delete
+City.president_id: User.id - City Team Lead of this city. :TODO: Delete :DEPRECATED:
 City.added_on: 
 City.latitude: Geoglaphic location of the city.
 City.longitude: Geoglaphic location of the city.
@@ -168,16 +169,29 @@ Contact.added_on:
 Contact.updated_on: 
 Contact.status: 
 
-Credit: This holds all the credit changes for all users. 
-Credit.id:
+Conversation: Used to schedule and enter data about conversations that happen between fellows and volunteers. This can be general check up, feedback, exit etc. Its used in the Vocal App - but I'm not sure if its live yet.
+Conversation.id:
+Conversation.user_id: User.id - The person who the conversation is for. 
+Conversation.assigned_to_user_id: User.id - The fellow who will be taking up the conversation.
+Conversation.type: Type of conversation - can be 'check-in', 'developmental', 'exit'
+Conversation.stage: The status of the conversation - can be 'scheduled' or 'done'
+Conversation.scheduled_on:
+Conversation.comment: Any comment about the conversation - the fellow will add this before or after the conversation.
+Conversation.followup_to_conversation_id: Conversation.id - If this conversation is a follow up/continuation of a previous conversation, the id of the last conversation should be here.
+Conversation.added_by_user_id: User.id
+Conversation.added_on:
+Conversation.updated_on:
+
+Credit: This holds all the credit changes for all users.
+Credit.id: 
 Credit.user_id: User.id
 Credit.parameter_id: Parameter.id - This will be 0 if its a manually added credit.
-Credit.change: The credit change that was applied. 
+Credit.change: The credit change that was applied.
 Credit.current_credit: The credit of the user after the change has been applied.
 Credit.item: Which table has the related row. If the user got this credit by substituting, this will have the value 'Class'
 Credit.item_id: The row ID of the related event/class. If user got this credit by substituting, this will have the id of the class that they substituted for.
 Credit.comment: If its a manually added credit, this will have some info on why it was added.
-Credit.added_on:
+Credit.added_on: 
 Credit.added_by_user_id: User.id
 
 Credit_Parameter: Possible actions that can give user credits. Right now, used for FR tasks/credits. Depricated in favor of Parameter table.
@@ -279,6 +293,8 @@ Donut_Donor.name:
 Donut_Donor.phone: 
 Donut_Donor.email: 
 Donut_Donor.address: 
+Donut_Donor.nationality:
+Donut_Donor.pan:
 Donut_Donor.donor_finance_id: This stores the Donor ID as stored by the finance team.
 Donut_Donor.added_by_user_id: User.id
 Donut_Donor.added_on: 
@@ -314,7 +330,7 @@ Event.id:
 Event.name: 
 Event.description: 
 Event.starts_on: Event time
-Event.ends_on: Not captured in UI. Not used thanks to that. 
+Event.ends_on: Not captured in UI. Not used thanks to that.
 Event.place: Location where the event is happening.
 Event.type: Not used anymore - legacy. Might have to do a migration that moves this data to event_type_id.
 Event.city_id: City.id - If this is 0, it means its a multi city event(Users from more than one city participating - eg. National Ed Support Fellows Zoom Call)
@@ -326,14 +342,18 @@ Event.latitude: Location of the event
 Event.longitude: Location of the event.
 Event.created_on: 
 Event.updated_on: 
-Event.notification_status: Not used for now.
-Event.created_from: Which app created this event - not used right now.
+Event.notification_status: Not used for now. :DEPRECATED:
+Event.created_from: Which app created this event - not used right now. :DEPRECATED:
 Event.status: 
+Event.repeat_until: If its a recurring event, it will happen till this date.
+Event.frequency: 'monthly','weekly','none' - if 'none', this is NOT a recurring event. Else, it recurrs at that frequency.
 
 Event_Type: All the different event types. Note - add vertical_id, description to this. Consider making this a hirarchy using parent_event_type_id
 Event_Type.id: 
 Event_Type.name: 
 Event_Type.vertical_id: Vertical.id
+Event_Type.role: All the attendees of this event will be this or above(eg. fellow or above).
+Event_Type.audience: All the attendees of this event will be from a city/shelter/vertical.
 Event_Type.status: 
 
 Exam: Stores all exams that has been assessed, used for End of Year School Scores. Note: add added_on, added_by_user_id.
@@ -400,7 +420,7 @@ FAM_Parameter_Category.group_id: Group.id
 FAM_Parameter_Category.name: 
 FAM_Parameter_Category.status: 
 
-FAM_Referral: Applicants can refer other people for  roles. This holdes the referals.
+FAM_Referral: Applicants can refer other people for roles. This holdes the referals.
 FAM_Referral.id: 
 FAM_Referral.referer_user_id: User.id
 FAM_Referral.referee_user_id: User.id
@@ -580,7 +600,7 @@ Medium.id:
 Medium.name: 
 Medium.status: 
 
-Message_Queue: Queue for sending emails, SMS or push notifications(not implemented yet). Supports SMSs too - but right now only emails recedes here.
+Message_Queue: Queue for sending emails, SMS or push notifications(not implemented yet). Supports SMSs too - but right now only emails lives here.
 Message_Queue.id: 
 Message_Queue.type: 
 Message_Queue.to: Email/Phone number the message should be sent to.
@@ -610,22 +630,23 @@ Online_Donation.currency: Defaults to INR. We'll need this when other currencies
 Online_Donation.gateway: Which gateway was used - right now, one of these tech_process,simply_donor,razorpay,payu,other
 Online_Donation.gateway_transaction_id: ID provided by the gateway for this payment.
 Online_Donation.info: More info can be stored here. JSON - so it can store structures.
-Online_Donation.fundraiser_id: If its a referral donation, the fund raiser ID can be stored here. This a link to User.id
+Online_Donation.fundraiser_user_id: User.id
 Online_Donation.repeat_count: Defaults to 1. If its a recurring donation, this will store how many times the donation needs to be repeated. If a one time donation, it will be 1.
 Online_Donation.unit_amount: If its a recurring donation the amount field will be the total amount. This field will store how much a single donation was.
 Online_Donation.conversion_rate: The conversion rate we got on the day of donation. Only applicable for foreign donations. Defaults to 1(INR)
 Online_Donation.receipt_number: ID of the receipt that should go in the Receipt PDF - and should be unique
 Online_Donation.frequency: Donation frequency for the Donation, monthly or one-time
+Online_Donation.parent_donation_id: If this is a recurring donation, the first donation ID will be here.
 
-Parameter: All the parameters that can effect User's credits. 
-Parameter.id:
+Parameter: All the parameters that can effect User's credits.
+Parameter.id: 
 Parameter.name: A short name of the parameter.
-Parameter.description:
+Parameter.description: 
 Parameter.credit: The positive/negative credit that will be applied to User's credit if this parameter happens.
 Parameter.vertical_id: Vertical.id
-Parameter.added_on:
-Parameter.updated_on:
-Parameter.status:
+Parameter.added_on: 
+Parameter.updated_on: 
+Parameter.status: 
 
 Permission: User group permissions.
 Permission.id: 
@@ -672,6 +693,17 @@ Retention_UserGroupPreference.city_id: City.id
 Retention_UserGroupPreference.year: Year of data entry, entered accoriding to MAD Academic year.
 Retention_UserGroupPreference.added_on: 
 Retention_UserGroupPreference.status: '1' for Active Preference and '0' for Obsolete preference.
+
+SSG_Cycle: There was an app to add SSG Cycles - not sure if its used anymore :DEPRECATED: 
+SSG_Cycle.id:
+SSG_Cycle.name:
+SSG_Cycle.start_on:
+SSG_Cycle.end_on:
+SSG_Cycle.ssg_level_id: Level.id
+SSG_Cycle.added_on:
+SSG_Cycle.updated_on:
+SSG_Cycle.added_by_user_id: User.id
+SSG_Cycle.status:
 
 SS_Answer: Stakeholder Survey. An older survey system. We'll have to merge this with Survey in an year or two.
 SS_Answer.id: 
@@ -799,6 +831,18 @@ Survey_Template.responder: What type of responder is this for - is it a student,
 Survey_Template.options: Use this to store extra data in JSON format.
 Survey_Template.status: 
 
+Tag: Tagging system. Used to tag comments, users, events etc. Not used much right now - its a layup for later useage.
+Tag.id:
+Tag.name:
+Tag.added_on:
+
+TagItem: Tagging referce table
+TagItem.id:
+TagItem.item_type: The Table that the tagging links to. We can tag any table that has its name in this field.
+TagItem.item_id:
+TagItem.tag_id: Tag.id
+TagItem.added_on:
+
 Temp_Employee_Signup: This is used for employing sorcing project. It was run out of madapp - and there is a lot of good leads in this.
 Temp_Employee_Signup.id: 
 Temp_Employee_Signup.name: 
@@ -818,12 +862,12 @@ Temp_Employee_Signup.stage:
 User: All volunteer data will be stored here.
 User.id: 
 User.name: 
-User.title: Deprecated
+User.title: :DEPRECATED:
 User.email: 
 User.mad_email: 
 User.phone: 
 User.sex: 
-User.password: Deprecated
+User.password: :DEPRECATED:
 User.password_hash: 
 User.auth_token: Token used to authenticate user after login - used in the remember me feature.
 User.photo: 
@@ -848,6 +892,7 @@ User.updated_on:
 User.reason_for_leaving: 
 User.city_other: 
 User.city_id: City.id
+User.center_id: Center.id - The Shelter this volunteer is assigned to.
 User.subject_id: 
 User.project_id: Not used
 User.user_type: volunteer - Currently active volunteer. alumni - Was a volunteer in the past, left MAD at the end of the year. let_go - Was a volunteer in the past - left in the middle of the year. applicant - Applied to be a MAD volunteer - but hasn't been accepted yet. well_wisher - Rejected at interview
@@ -855,7 +900,7 @@ User.credit: Stores the Credits of the user.
 User.campaign: Used for Zoho linking.
 User.zoho_user_id: ID of this user in the zoho recruit app
 User.status: Deleted users will have '0'. Active volunteers will have '1'
-User.app_version: Not used. Only used in apps/events-api/
+User.app_version: Not used. Only used in apps/events-api/ :DEPRECATED:
 
 UserBatch: This holds the teacher mapping - which teacher is assigned to which batch/level
 UserBatch.id: 
@@ -870,7 +915,7 @@ UserClass: User attendance is marked in this table
 UserClass.id: 
 UserClass.user_id: User.id
 UserClass.class_id: Class.id
-UserClass.substitute_id: User.id
+UserClass.substitute_id: User.id - 0 Means original teacher took the class - no substitute. If this has a number that teacher took the class.
 UserClass.zero_hour_attendance: 
 UserClass.status: If this is 1, the teacher was present, if 0 teacher was absent. This goes against convention that is generally followed in the DB where status 0 means soft delete.
 
@@ -895,12 +940,12 @@ UserEvent: User event attendance data.
 UserEvent.id: 
 UserEvent.user_id: User.id
 UserEvent.event_id: Event.id
-UserEvent.present: 0-No data, 1-Present, 3-Missed
+UserEvent.present: 0-No data, 1-Present, 3-Missed :UGLY: Table was created by externals - they didn't follow our conventions. Will have to change this later.
 UserEvent.late: Was the user late for the event. Right now, we are not capturing this data. Kept here for future purpose.
 UserEvent.user_choice: 0-No Data, 1-I'm going, 2-Maybe, 3-Can't go
 UserEvent.reason: If user marks Can't go in RSVP, capture reason
-UserEvent.created_from: 1-Web, 2-App. Not used - can delete after code review.
-UserEvent.type: Not used anymore. Can Delete after review - but this has historic data. Might have to migrate.
+UserEvent.created_from: 1-Web, 2-App. Not used - can delete after code review. :DEPRECATED:
+UserEvent.type: Not used anymore. Can Delete after review - but this has historic data. Might have to migrate. :DEPRECATED:
 UserEvent.created_on: 
 UserEvent.rsvp_auth_key: To make sure that the right user RSVPs. People RSVP using a link sent on email.
 
@@ -909,6 +954,7 @@ UserGroup.id:
 UserGroup.user_id: User.id
 UserGroup.group_id: Group.id
 UserGroup.year: This lets us store historical data.
+UserGroup.main: If this is the volunteer's primary role, this will be '1'. The volunteer should only have one main role - that will tell which vertical the volunteer belongs to.
 
 User_Credit_Archive: Historical credit data - this is saved every week. Also saved in Archive Table. Need a review. :TODO: Merge this and Archive table.
 User_Credit_Archive.id: 
@@ -948,7 +994,7 @@ mailchimp_volunteers: Not used
 mailchimp_volunteers.id: 
 mailchimp_volunteers.user_id: 
 
-migrations:
-migrations.id:
-migrations.migration:
-migrations.batch:
+migrations: Delete this :DEPRECATED:
+migrations.id: 
+migrations.migration: 
+migrations.batch: 

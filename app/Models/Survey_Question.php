@@ -134,10 +134,10 @@ final class Survey_Question extends Common
                     $fields['name'] = Survey_Question::questionName($fields['question']);
                 }
 
-                $last_question = json_decode(json_encode(Survey_Question::create($fields))); // I was not getting the ID without doing this. Because it was protected.
-                $questions[] = $last_question;
+                $last_question = Survey_Question::create($fields);
+                $questions[] = $last_question->toArray();
                 
-                if ($fields['response_type'] == 'choice' and isset($fields['choices']) and is_array($fields['choices'])) {
+                if ($last_question->id and $fields['response_type'] == 'choice' and isset($fields['choices']) and is_array($fields['choices'])) {
                     $status = $choice_model->addMany($fields['choices'], $last_question->id);
                     if (!$status) {
                         $this->error($choice_model->errors);

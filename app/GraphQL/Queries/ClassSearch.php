@@ -26,6 +26,7 @@ class classSearch
         // Use the project model to connect with the class because I can't figure out how to do it directly. Tried posting the question on stack overflow as well - https://stackoverflow.com/questions/56713311/implementing-search-funtionality-in-laravel-lighthouse-graphql-api
         $project_model = new Project;
 
+        // :TODO: Find the users project and use that as default - if teacher_id, user_id, level_id, batch_id
         $project_id = 1;
         if (isset($args['project_id'])) {
             $project_id = $args['project_id'];

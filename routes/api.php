@@ -429,6 +429,17 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Search Results", ['classes' => $data]);
     });
 
+    Route::get('/users/{user_id}/class_history', function (Request $request, $user_id) {
+        $search = [];
+        $search['teacher_id'] = $user_id;
+        $search['class_date_to'] = date('Y-m-d H:i:s');
+
+        $classes = new Classes;
+        $data = $classes->search($search);
+
+        return JSend::success("Search Results", ['classes' => $data]);
+    });
+
     ///////////////////////////////////////////////// Data ////////////////////////////////////////
     if (!function_exists('getData')) { // It was causing some wierd issues in 'php artisan config:cache' command.
         function getData($item, $item_id, $data_name)
