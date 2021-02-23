@@ -5,6 +5,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use JSend;
 use Illuminate\Validation\Rule;
+use Validator;
 
 use App\Http\Resources\User as UserResource;
 
@@ -33,7 +34,7 @@ class UserController extends Controller
         if($request->input('user_type') === 'applicant') {
             $validation_rules['email'] = 'required|email';
             $validation_rules['phone'] = 'required|regex:/[\+\-0-9 ]{10,14}/';
-            $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
+            $validator = Validator::make($request->all(), $validation_rules, $this->validation_messages);
 
             if ($validator->fails()) {
                 return JSend::fail("Unable to create user - errors in input", $validator->errors(), 400);
@@ -66,7 +67,7 @@ class UserController extends Controller
                 return JSend::success("Created the user successfully", array('users' => $result));
             }
         } else {
-            $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
+            $validator = Validator::make($request->all(), $validation_rules, $this->validation_messages);
 
             if ($validator->fails()) {
                 return JSend::fail("Unable to create user - errors in input", $validator->errors(), 400);
@@ -91,13 +92,13 @@ class UserController extends Controller
         $validation_rules = [
             'name'      => 'max:50',
             'email'     => ['email', Rule::unique('User')->ignore($user_id)],
-            'mad_email' => ['email|nullable|regex:/.+\@makeadiff\.in$/', Rule::unique('User')->ignore($user_id)],
+            'mad_email' => ['nullable', 'email', 'regex:/.+\@makeadiff\.in$/', Rule::unique('User')->ignore($user_id)],
             'sex'       => 'regex:/^[mfo]$/',
             'phone'     => ['regex:/[\+0-9]{10,13}/', Rule::unique('User')->ignore($user_id)],
             'city_id'   => 'numeric|exists:City,id'
         ];
 
-        $validator = \Validator::make($request->all(), $validation_rules, $this->validation_messages);
+        $validator = Validator::make($request->all(), $validation_rules, $this->validation_messages);
 
         if ($validator->fails()) {
             return JSend::fail("Unable to create user - errors in input.", $validator->errors(), 400);

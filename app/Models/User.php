@@ -586,6 +586,7 @@ final class User extends Common
 
             $this->item->$key = $data[$key];
         }
+
         // :TODO: Special cases that should be handled.
         //  - User moved to Volunteer from applicant
         //      - joined_on date update
@@ -602,6 +603,45 @@ final class User extends Common
     {
         $user_id = $this->chain($user_id);
         app('db')->table('UserGroup')->where('main','1')->where('user_id', $user_id)->where('year',$this->year)->update(['main' => '0']);
+    }
+    private function setMainGroup($group_id, $main ='1', $user_id = false)
+    {
+        $user_id = $this->chain($user_id);
+        app('db')->table("UserGroup")->where('group_id',$group_id)->where('user_id', $user_id)->where('year',$this->year)->update(['main' => $main]);
+    }
+    private function unsetAllGroups($user_id = false)
+    {
+        $user_id = $this->chain($user_id);
+        app('db')->table('UserGroup')->where('user_id', $user_id)->where('year',$this->year)->delete();
+    }
+
+    /// $groups should be in the format of [{group_id: 12, main: "0"}, {group_id: 13, main: "1"}]
+    public function setGroups($groups, $user_id = false)
+    {
+        $user_id = $this->chain($user_id);
+
+        $new_groups = [];
+        foreach($groups as $g) {
+            $new_groups[$g->group_id] = $g->main;
+        }
+        $existing_groups_raw = $this->item->groups()->get();
+        $existing_groups = [];
+        foreach($existing_groups_raw as $g) {
+            $existing_groups[$g->id] = $g->main;
+        }
+
+        // Any difference between the currently given group list and the existing groups for the user?
+        $diff = array_intersect_assoc($existing_groups, $new_groups);
+        if(count($diff) == count($existing_groups) and count($diff) == count($new_groups))  {
+            return $existing_groups; // No, its the same. Nothing to be done.
+        }
+
+        $this->unsetAllGroups($user_id);
+        foreach($new_groups as $group_id => $main) {
+            $this->addGroup($group_id, $main, $user_id);
+        }
+
+        return $new_groups;
     }
 
     public function addGroup($group_id, $main=0, $user_id = false)
@@ -622,7 +662,7 @@ final class User extends Common
             if($group_found->main == $main) return false; // No change required
             else { // If the main group is not correctly, do that.
                 $this->unsetMainGroup($user_id);
-                app('db')->table("UserGroup")->where('group_id',$group_found->id)->where('user_id', $user_id)->where('year',$this->year)->update(['main' => $main]);
+                $this->setMainGroup($group_found->id, $main, $user_id);
                 return false;
             }
         }

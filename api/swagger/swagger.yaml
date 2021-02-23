@@ -367,6 +367,24 @@ paths:
           description: Ok
         404:
           description: Can't find any user with the given ID.
+    post:
+      tags:
+        - user
+        - group
+      summary: Bulk edit User Groups of an user
+      description: "Updates the user with the given user groups. Give all the User Groups of this user as a JSON string in the body. Example - `[{group_id: 1, main: 1}, {group_id: 277, main: 0}]`"
+      requestBody:
+        description: Give all the User Groups of the user as JSON object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/UserGroups'
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find any user with the given ID.
 
   /users/{user_id}/groups/{group_id}:
     post:
@@ -4339,3 +4357,14 @@ definitions:
           - UPMA
           - Donut
           - ''
+
+  UserGroups:
+    type: "object"
+    properties:
+      group_id:
+        type: integer
+      main:
+        type: string
+        enum:
+          - 0
+          - 1
