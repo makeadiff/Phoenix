@@ -678,7 +678,25 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("User Groups for user $user_id", ['groups' => $info->groups]);
     });
 
-    // :TODO: POST /users/{user_id}/groups
+    Route::post('/users/{user_id}/groups', function ($user_id, Request $request) {
+        $user = new User;
+        $info = $user->fetch($user_id);
+        if (!$info) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        // Get groups as JSON and update it 
+        $body = $request->getContent();
+        $groups = [];
+        if ($body) {
+            $data = json_decode($body);
+            $groups = $user->setGroups($data, $user_id);
+        } else {
+            return JSend::fail("Did not receive the group ids as a valid JSON in the body of the request");
+        }
+
+        return JSend::success("Added user to the given group.", ['groups' => $groups]);
+    });
 
     Route::post('/users/{user_id}/groups/{group_id}', function ($user_id, $group_id, Request $request) {
         $user = new User;
