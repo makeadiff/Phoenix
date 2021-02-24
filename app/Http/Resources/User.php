@@ -18,7 +18,8 @@ class User extends JsonResource
         return ['data' => $this->collection];
     }
 
-    public function with($request){
+    public function with($request)
+    {
         return [
             'ver'   => '1.0.0',
             'document_author'   => 'Make A Difference'

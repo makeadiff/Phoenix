@@ -52,6 +52,21 @@ final class Center extends Common
         return Center::where('status', '1')->orderBy('name')->get();
     }
 
+    public static function getCityShelterMapping()
+    {
+        $all_citites = City::getAll();
+        $all_centers = static::getAll();
+        $centers = [];
+        foreach($all_centers as $center) {
+            if(!isset($centers[$center->city_id])) {
+                $centers[$center->city_id] = [];
+            }
+            $centers[$center->city_id][$center->id] = $center->name;
+        }
+
+        return $centers;
+    }
+
     public static function search($data)
     {
         $search_fields = ['id', 'name', 'city_id'];

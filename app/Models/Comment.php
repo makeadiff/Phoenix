@@ -16,6 +16,11 @@ final class Comment extends Common
         return $this->morphTo();
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany("App\Models\Tag", 'TagItem', 'item_id', 'tag_id')->where('item_type', 'Comment');
+    }
+
     public function added_by_user()
     {
         return $this->hasOne("App\Models\User", 'id', "added_by_user_id");
@@ -25,13 +30,13 @@ final class Comment extends Common
     {
         $search_fields = ['id', 'item_type','item_id', 'comment', 'added_by_user_id'];
         $q = app('db')->table('Comment');
-        $q->select('id', 'item_type', 'item_id', 'comment','added_on','added_by_user_id');
+        $q->select('id', 'item_type', 'item_id', 'comment', 'added_on', 'added_by_user_id');
 
         foreach ($search_fields as $field) {
             if (empty($data[$field])) {
                 continue;
             }
-            if($field === 'comment') {
+            if ($field === 'comment') {
                 $q->whereLike($field, "%" . $data[$field] . "%");
             } else {
                 $q->where($field, $data[$field]);
@@ -62,7 +67,7 @@ final class Comment extends Common
         if (empty($data['item_type']) or empty($data['item_id']) or empty($data['comment'])) {
             return false;
         }
-        // Ideally this should be done using create() - but it was giving me a wierd issue that 
+        // Ideally this should be done using create() - but it was giving me a wierd issue that
         //      I was not able to fix. Possibly due to the polymorphic relationship. So, this.
         $comment_id = app('db')->table('Comment')->insertGetId([
             'item_type' => $data['item_type'],

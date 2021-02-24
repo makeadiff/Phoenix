@@ -20,6 +20,7 @@ type Query {
     survey(id: ID @eq):     Survey      @find(model: "App\\Models\\Survey")
     project(id: ID @eq):    Project     @find(model: "App\\Models\\Project")
     subject(id: ID @eq):    Subject     @find(model: "App\\Models\\Subject")
+    tag(name: String @eq):  Tag         @find(model: "App\\Models\\Tag")
     survey_template(id: ID @eq):    Survey_Template @find(model: "App\\Models\\Survey_Template")
 
     # :HARDCODE: - Global replace all 2020 to next year. Not sure how to do it any other way yet. Other than custom resolvers for everything.
@@ -27,8 +28,9 @@ type Query {
     donations(added_on: Date = "2020-05-01" @where(operator: ">="), amount: Int, status: String, 
         type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): 
         [Donation] @all(model: "App\\Models\\Donation")
-    events(name: String @eq, starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, 
+    events(name: String @where(operator: "like"), starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, 
         event_type_id: Int @eq, vertical_id: Int @eq, status: String = "1" @eq): [Event!]! @all
+    event_types(name: String @where(operator: "like"), vertical_id: Int @eq, role: String @eq, audience: String @eq): [Event_Type!]! @all
     users(name: String @where(operator: "like"), email: String @eq, mad_email: String @eq, 
         phone: String @eq, city_id: Int @eq, status: String = "1" @eq, user_type: String = "volunteer" @eq): 
         [User] @all # @paginate(type: "paginator" model: "App\\Models\\User")
@@ -63,7 +65,6 @@ type Query {
     # classConnection(teacher_id: Int, mentor_id: Int): [ClassConnection] #Custom return  + resolver. Used for finding unfilled data in UPMA. Both teacher and student.
     teacherClassConnection(teacher_id: Int): [TeacherClassConnection]
     mentorClassConnection(mentor_id: Int): [MentorClassConnection]
-    
 }
 
 type Mutation {
@@ -75,7 +76,9 @@ type Mutation {
     assignBatchTeachers(batch_id: ID!, level_id: ID!, subject_id: ID, teacher_ids: [ID]): String
     assignBatchMentors(batch_id: ID!, mentor_ids: [ID]): String
     assignLevelStudents(level_id: ID!, student_ids: [ID]): String
+    markEventAttendance(event_id: ID!, attendance: [InputUseEventAttendance]): Int
 }
+
 input InputTeacherAttendance {
     user_id: Int!
     substitute_id: Int
@@ -92,9 +95,17 @@ input InputSurveyResponse {
     choice_id: ID
     response: String
 }
+input InputUseEventAttendance {
+    user_id: Int!
+    present: Int
+    late: Int
+    rsvp: Int
+    reason: String
+}
+
 
 # For Polymorphic relations - In Comment and Data
-union Item = User | Student | Center | Event | Class | City | Batch | Level
+union Item = User | Student | Center | Event | Class | City | Batch | Level | Comment
 
 # Volunteer details.
 type User {
@@ -118,11 +129,13 @@ type User {
     groups: [Group]
     data: [Data]
     city: City @belongsTo
+    center: Center @belongsTo
     classes: [Class] @hasMany(relation: "classes") # :TODO: - Ideally, this should take an argument - (status: String)
     batches: [Batch] @hasMany
     donations: [Donation] @hasMany
     devices: [Device] @hasMany
     links: [Link] @hasMany
+    conversations: [Conversation] @hasMany
     pivot: UserPivot
 }
 
@@ -167,6 +180,7 @@ type Center {
     batches: [Batch]
     levels: [Level]
     # projects: [Project]
+    users: [User]
     projects: [CenterProject]
     city: City @belongsTo
     comments: [Comment] @morphMany
@@ -196,6 +210,7 @@ type Group {
     name: String!
     vertical_id: Int
     vertical: Vertical
+    main: Int
     users: [User]
 }
 
@@ -284,7 +299,8 @@ type Event {
     starts_on: DateTime
     event_type_id: ID
     status: String
-    event_type: String @method(name: "eventType")
+    event_type_name: String @method(name: "computed_type_name")
+    event_type: Event_Type
     city: City
     invitees: [User]
     attendees: [User]
@@ -293,6 +309,10 @@ type Event {
 type Event_Type {
     id: ID!
     name: String!
+    computed_name: String @method(name: "computed_name")
+    vertical_id: ID
+    role: String
+    audience: String
 }
 
 type Survey {
@@ -437,6 +457,27 @@ type Comment {
     added_on: DateTime
     added_by_user: User
     item: Item @morphTo
+}
+
+type Tag {
+    id: ID!
+    name: String
+    item: Item @morphTo
+    comments: [Comment] @morphMany
+    # :TODO: More items to come
+}
+
+type Conversation {
+    id: ID!
+    type: String
+    stage: String
+    user: User 
+    assigned_to: User 
+    scheduled_on: DateTime
+    comment: String
+    parent_conversation: Conversation
+    added_by: User
+    added_on: DateTime
 }
 
 # Custom Returns 

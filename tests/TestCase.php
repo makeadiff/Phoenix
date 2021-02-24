@@ -15,7 +15,7 @@ abstract class TestCase extends BaseTestCase
     protected $client;
     protected $response;
     protected $response_data;
-    protected $year = 2019; //:TODO: :HARDCODE:
+    protected $year = 2020; //:TODO: :HARDCODE:
     protected $auth = ['username' => "sulu.simulation@makeadiff.in", 'password' => 'pass'];
     protected $headers = [
             // "HTTP_Authorization" => "Basic " . base64_encode("sulu.simulation@makeadiff.in:pass"), // This should be there - but for some reason php thows up an error.
@@ -23,6 +23,61 @@ abstract class TestCase extends BaseTestCase
             "PHP_AUTH_PW"        => "pass",
             "HTTP_Accept"        => "application/json"
     ];
+
+    // This is a mirroring of the DB structure for easier ideal case testing.
+    protected $ideal_center_id = 247;
+    protected $ideal_project_id= 1;
+    protected $ideal_batchs = [
+        '3359'	=> [
+            'day'			=> 6,
+            'class_time'	=> '10:00:00',
+            'name'			=> 'Saturday 10:00 AM',
+            'center_id'		=> 247,
+            'project_id'	=> 1
+        ],
+        '3360'	=> [
+            'day'			=> 0,
+            'class_time'	=> '15:00:00',
+            'name'			=> 'Sunday 03:00 PM',
+            'center_id'		=> 247,
+            'project_id'	=> 1
+        ],
+    ];
+    protected $ideal_levels = [
+        '10056'	=> [
+            'name'	=> 'A',
+            'grade'	=> '5',
+            'level_name' =>	'5 A',
+            'center_id'		=> 247,
+            'project_id'	=> 1,
+        ],
+        '10057'	=> [
+            'name'	=> 'A',
+            'grade'	=> '6',
+            'level_name' =>	'6 A',
+            'center_id'		=> 247,
+            'project_id'	=> 1,
+        ]
+    ];
+    protected $ideal_batch_level_user_mapping = [
+        '3359'	=> [
+            '10056'	=> [203356],
+            '10057'	=> [203355]
+        ],
+        '3360'	=> [
+            '10057'	=> [203354, 203353]
+        ]
+    ];
+
+    protected $ideal_user_id = 1;
+    protected $ideal_user = [
+        'id'	    => 1,
+        'name'	    => 'Binny V A',
+        'email'	    => 'binnyva@gmail.com',
+        'phone'	    => '9746068565',
+        'center_id' => 184
+    ];
+
 
     public function load($url, $method = 'GET', $form_data = [])
     {

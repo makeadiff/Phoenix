@@ -23,6 +23,7 @@ use App\Models\Device;
 use App\Models\CenterProject;
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DonationController;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -123,9 +124,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("User Groups", ['groups' => $groups]);
     });
 
-    Route::get('/group_types', function( Request $request){
+    Route::get('/group_types', function (Request $request) {
         $types = Group::getTypes();
-        return JSend::success('Group Types',['types' => $types]);
+        return JSend::success('Group Types', ['types' => $types]);
     });
 
     Route::get('/groups/{group_id}', function ($group_id) {
@@ -181,9 +182,21 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         }
 
         $user = new User;
-        $teachers = $user->search(['center_id' => $center_id]);
+        $teachers = $user->search(['teaching_in_center_id' => $center_id]);
 
         return JSend::success("Teachers in Center $center_id", ['users' => $teachers]);
+    });
+
+    Route::get('/centers/{center_id}/users', function ($center_id) {
+        $center = (new Center)->fetch($center_id);
+        if (!$center) {
+            return JSend::fail("Can't find any center with ID $center_id");
+        }
+
+        $user = new User;
+        $vols = $user->search(['center_id' => $center_id]);
+
+        return JSend::success("Volunteers in Center $center_id", ['users' => $vols]);
     });
 
     Route::get('/centers/{center_id}/students', function ($center_id) {
@@ -417,6 +430,17 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Search Results", ['classes' => $data]);
     });
 
+    Route::get('/users/{user_id}/class_history', function (Request $request, $user_id) {
+        $search = [];
+        $search['teacher_id'] = $user_id;
+        $search['class_date_to'] = date('Y-m-d H:i:s');
+
+        $classes = new Classes;
+        $data = $classes->search($search);
+
+        return JSend::success("Search Results", ['classes' => $data]);
+    });
+
     ///////////////////////////////////////////////// Data ////////////////////////////////////////
     if (!function_exists('getData')) { // It was causing some wierd issues in 'php artisan config:cache' command.
         function getData($item, $item_id, $data_name)
@@ -508,32 +532,32 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     if (!function_exists('getComments')) { // It was causing some wierd issues in 'php artisan config:cache' command.
         function getComments($item, $item_id)
         {
-        	$class_name = "App\Models\\$item";
+            $class_name = "App\Models\\$item";
             $model = new $class_name;
-        	$item_row = $model->find($item_id);
+            $item_row = $model->find($item_id);
             if (!$item_row) {
                 return JSend::fail("Can't find any $item with ID $item_id", []);
             }
-            $comments = $item_row->comments()->select('id','comment', 'added_on', 'added_by_user_id')->get();
+            $comments = $item_row->comments()->select('id', 'comment', 'added_on', 'added_by_user_id')->get();
 
             return JSend::success("Comments for $item ID:$item_id", ['comments' => $comments]);
         }
         function addComment($item_type, $item_id, $request)
         {
-        	$class_name = "App\Models\\$item_type";
+            $class_name = "App\Models\\$item_type";
             $item_model = new $class_name;
-        	$item_row = $item_model->find($item_id);
+            $item_row = $item_model->find($item_id);
             if (!$item_row) {
                 return JSend::fail("Can't find any $item_type with ID $item_id", []);
             }
 
-        	$model = new Comment;
+            $model = new Comment;
             if ($item_type and $item_id and $request->input('comment')) {
                 $comment = $model->add([
-                	'item_type'	=> $item_type,
-                	'item_id'	=> $item_id,
-                	'comment'	=> $request->input('comment'),
-                	'added_by_user_id'	=> $request->input('added_by_user_id') ? $request->input('added_by_user_id') : 0
+                    'item_type'	=> $item_type,
+                    'item_id'	=> $item_id,
+                    'comment'	=> $request->input('comment'),
+                    'added_by_user_id'	=> $request->input('added_by_user_id') ? $request->input('added_by_user_id') : 0
                 ]);
                 return JSend::success("Added a comment for $item_type $item_id", ['comment' => $comment]);
             }
@@ -605,35 +629,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     });
 
     ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
-    Route::get('/users', function (Request $request) {
-        $search_fields = ['id','user_id', 'identifier', 'name','phone','email','mad_email','any_email','group_id','group_in','vertical_id','city_id',
-                            'user_type','center_id','project_id', 'not_user_type', 'credit', 'credit_lesser_than', 'credit_greater_than'];
-        $search = [];
-        foreach ($search_fields as $key) {
-            if (!$request->has($key)) {
-                continue;
-            }
-
-            if ($key == 'group_id') {
-                $search['user_group'] = [$request->input('group_id')];
-            } elseif ($key == 'group_in') {
-                $search['user_group'] = explode(",", $request->input('group_in'));
-            } elseif ($key == 'not_user_type') {
-                $search['not_user_type'] = explode(",", $request->input('not_user_type'));
-            } else {
-                $search[$key] = $request->input($key);
-            }
-        }
-        if (!isset($search['project_id'])) {
-            $search['project_id'] = 1;
-        }
-
-        $user = new User;
-        $data = $user->search($search);
-
-        return JSend::success("Search Results", ['users' => $data]);
-    });
-
+    Route::get('/users', 'UserController@index');
     Route::get('/users_paginated', 'UserController@index');
 
     Route::get('/users/{user_id}', function ($user_id) {
@@ -701,14 +697,37 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("User Groups for user $user_id", ['groups' => $info->groups]);
     });
 
-    Route::post('/users/{user_id}/groups/{group_id}', function ($user_id, $group_id) {
+    Route::post('/users/{user_id}/groups', function ($user_id, Request $request) {
         $user = new User;
         $info = $user->fetch($user_id);
         if (!$info) {
             return JSend::fail("Can't find user with user id '$user_id'");
         }
 
-        $groups = $user->find($user_id)->addGroup($group_id);
+        // Get groups as JSON and update it 
+        $body = $request->getContent();
+        $groups = [];
+        if ($body) {
+            $data = json_decode($body);
+            $groups = $user->setGroups($data, $user_id);
+        } else {
+            return JSend::fail("Did not receive the group ids as a valid JSON in the body of the request");
+        }
+
+        return JSend::success("Added user to the given group.", ['groups' => $groups]);
+    });
+
+    Route::post('/users/{user_id}/groups/{group_id}', function ($user_id, $group_id, Request $request) {
+        $user = new User;
+        $info = $user->fetch($user_id);
+        if (!$info) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        $main = $request->input('main');
+        if(!$main) $main = 0;
+
+        $groups = $user->find($user_id)->addGroup($group_id, $main);
         if (!$groups) {
             return JSend::fail("User already has the given group", [], 400);
         }
@@ -1063,7 +1082,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
             $search[$key] = $request->input($key);
         }
 
-        $donation = new Donation;
+        $donation = new DonationController;
         $data = $donation->search($search);
 
         return JSend::success("Donations", ['donations' => $data]);
@@ -1163,9 +1182,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         $event = new Event;
         
         $data = $event->fetch($event_id);
-        $event_type = $data->eventType()->get();
-        if(!empty($event_type)){
-            $data->event_type = $event_type[0]->name;
+        $event_type = $data->event_type()->first();
+        if (!empty($event_type)) {
+            $data->type = $event_type->name;
         }
         if (!$data) {
             return JSend::fail("Can't find event with ID $event_id", $event->errors);
@@ -1244,25 +1263,23 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return JSend::success("Event: $event_id", ['user' => $data[0]]);
     });
 
-    Route::post('/events/{event_id}/attended', function ($event_id, Request $request) {                
+    Route::post('/events/{event_id}/attended', function ($event_id, Request $request) {
         $event = new Event;
         $data = $event->find($event_id);
         $user_ids_raw = $request->input('attendee_user_ids');
     
-        if(!is_array($user_ids_raw) && $user_ids_raw!= NULL){
-            $user_ids = explode(",",$user_ids_raw);
-        }
-        else{
+        if (!is_array($user_ids_raw) && $user_ids_raw!= null) {
+            $user_ids = explode(",", $user_ids_raw);
+        } else {
             $user_ids = $user_ids_raw;
-        }        
-
-        if($user_ids == NULL || !count($user_ids)){
-            return JSend::fail("No UserID Passed for $event_id");
         }
-        else{
+
+        if ($user_ids == null || !count($user_ids)) {
+            return JSend::fail("No UserID Passed for $event_id");
+        } else {
             $event->updateAttendance($user_ids, $event_id);
             return JSend::success("Event: $event_id", ['user_ids_updated' => $user_ids]);
-        }                
+        }
     });
 
     Route::post('/events/{event_id}/users/{user_id}', function ($event_id, $user_id, Request $request) {
@@ -1290,23 +1307,27 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
         return "";
     });
 
-    Route::post('/events/{event_id}/recur', function($event_id, Request $request){
-       $event = new Event;
-       $event_data = $event->find($event_id);
-       if(empty($event_data)){
-           return JSend::fail("Can't find event with ID: $event_id");
-       }       
-       $frequency = $event_data['frequency'];       
-       if($request->input('frequency')) $frequency = $request->input('frequency');
+    Route::post('/events/{event_id}/recur', function ($event_id, Request $request) {
+        $event = new Event;
+        $event_data = $event->find($event_id);
+        if (empty($event_data)) {
+            return JSend::fail("Can't find event with ID: $event_id");
+        }
+        $frequency = $event_data->frequency;
+        if ($request->input('frequency')) {
+            $frequency = $request->input('frequency');
+        }
 
-       $repeat_until = $event_data['repeat_until'];
-       if($request->input('repeat_until')) $repeat_until = $request->input('repeat_until');
+        $repeat_until = $event_data->repeat_until;
+        if ($request->input('repeat_until')) {
+            $repeat_until = $request->input('repeat_until');
+        }
 
-       $recurring = $event->createRecurringInstances($event_data, $frequency, $repeat_until);
-       if(!$recurring){
-           return JSend::fail("Invalid Frequency entered to repeat the event $event_id");
-       }
-       return JSend::success(count($recurring)." Event Instances created for $event_id",['event_ids' => $recurring]);
+        $recurring = $event->createRecurringInstances($event_data, $frequency, $repeat_until);
+        if (!$recurring) {
+            return JSend::fail("Invalid Frequency entered to repeat the event $event_id");
+        }
+        return JSend::success(count($recurring)." Event Instances created for $event_id", ['event_ids' => $recurring]);
     });
 
     Route::get('/event_types', function () {
@@ -1368,38 +1389,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     // Use this to Debug/test things
     Route::get('/test', function () {
-        // $center = new Center;
-        // $projects = $center->find(184)->center_projects()->get();
-        // $projects = $center->find(154)->projects()->get();
-        // foreach($projects as $pro) {
-        //     $bat = $pro->batches()->get();
-        //     dump($bat);
-        // }
-
-        $level_model = new Level;
-        $teachers = $level_model->find(10050)->teachers();
-        dump($teachers->toSql(), $teachers->getBindings());
-        dump($teachers->get());
-
-
-        // $user_model = new User;
-        // $links = $user_model->find(1)->links()->get();
-        // dump($links->pluck('name'));
-
-        // $center = (new Center)->find(25);
-        // dump($center->comments()->first()->added_by_user()->get());
-
-        // $credit = new App\Models\Credit;
-        // $return = $credit->assign(1, 1);
-        // dump($return);
-
-        // $cls = (new Classes)->find(466879);
-        // $return = $cls->subject()->get();
-        // dump($return);
-
-        // $allc = (new Allocation)->find(331307);
-        // $return = $allc->batch()->get()[0]->name();
-        // dump($return);
+        $type_model = new Event_Type;
+        $type = $type_model->find(39)->computed_name();
+        dump($type);
     });
 
     require_once base_path('routes/api-surveys.php');

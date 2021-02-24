@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Models\Group;
+use App\Models\UserGroup;
 use App\Models\Log;
 use App\Models\Common;
 use App\Models\Classes;
@@ -17,21 +18,35 @@ final class User extends Common
     public $timestamps = true;
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
-    protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on'];
+    protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','center_id',
+                            'credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on', 'campaign'];
     public $enable_logging = true; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()
     {
         $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
-                            ->where('Group.status', '=', '1')->wherePivot('year', $this->year)
-                            ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type');
+                            ->where('Group.status', '1')->wherePivot('year', $this->year)
+                            ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
         $groups->orderByRaw("FIELD(Group.type, 'executive', 'national', 'strat', 'fellow', 'volunteer')");
         return $groups;
+    }
+
+    public function mainGroup()
+    {
+        $group = $this->hasOneThrough('App\Models\Group', 'App\Models\UserGroup', 'user_id', 'id', 'id', 'group_id')
+                            ->where('Group.status', '1')->where('UserGroup.year', $this->year)->where('UserGroup.main', '1')
+                            ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
+        return $group;
     }
 
     public function city()
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function center()
+    {
+        return $this->belongsTo(Center::class);
     }
 
     public function classes($status = '')
@@ -91,6 +106,14 @@ final class User extends Common
         return $devices;
     }
 
+    public function conversations()
+    {
+        $conversations = $this->hasMany("App\Models\Conversation", 'user_id');
+        $conversations->where("added_on", '>=', $this->year_start_date);
+        $conversations->orderBy("scheduled_on", 'desc');
+        return $conversations;
+    }
+
     public function links()
     {
         $groups = $this->groups();
@@ -124,9 +147,9 @@ final class User extends Common
     public function search($data, $pagination = false)
     {
         $q = app('db')->table('User');
-        if($pagination)
-            $results = $this->baseSearch($data, $q)->paginate(50);
-        else{
+        if ($pagination) {
+            $results = $this->baseSearch($data, $q)->paginate(50, ['User.*']);
+        } else {
             $results = $this->baseSearch($data, $q)->get();
         }
 
@@ -135,13 +158,13 @@ final class User extends Common
             $results[$i]->groups = [];
             if (!isset($data['user_type']) or $data['user_type'] == 'volunteer') {
                 $this_user = User::fetch($results[$i]->id);
-                if ($this_user->groups) {
+                if ($this_user and $this_user->groups) {
                     $results[$i]->groups = $this_user->groups;
                 }
             }
         }
         
-        return $results;        
+        return $results;
     }
 
     public function baseSearch($data, $q = false)
@@ -164,9 +187,10 @@ final class User extends Common
             "User.sex",
             "User.status",
             "User.city_id",
+            "User.center_id",
             app('db')->raw("City.name AS city_name")
         );
-        $q->join("City", "City.id", '=', 'User.city_id');
+        $this->joinOnce($q, "City", "City.id", '=', 'User.city_id');
 
         // Aliases.
         if (isset($data['group_id']) and !isset($data['user_group'])) {
@@ -185,6 +209,9 @@ final class User extends Common
 
         if (isset($data['city_id']) and $data['city_id'] != 0) {
             $q->where('User.city_id', $data['city_id']);
+        }
+        if (!empty($data['city_in'])) {
+            $q->whereIn('User.city_id', $data['city_in']);
         }
 
         if (empty($data['user_type'])) {
@@ -247,49 +274,70 @@ final class User extends Common
             if (!is_array($data['user_group'])) {
                 $data['user_group'] = array($data['user_group']);
             }
-            $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
+            $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $q->whereIn('UserGroup.group_id', $data['user_group']);
             $q->where('UserGroup.year', $this->year);
-            $q->distinct();
+            if(!empty($data['only_main_group'])) {
+                $q->where('UserGroup.main', $data['only_main_group']);
+            }
+            // $q->distinct();
+            $q->groupBy("User.id"); // Using group by instead of distinct because distinct does not work well with paginate.
         }
         if (!empty($data['user_group_type'])) {
-            $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
-            $q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
+            $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
+            $this->joinOnce($q, 'Group', 'Group.id', '=', 'UserGroup.group_id');
             $q->where('Group.type', $data['user_group_type']);
             $q->where('UserGroup.year', $this->year);
-            $q->distinct();
+            if(!empty($data['only_main_group'])) {
+                $q->where('UserGroup.main', $data['only_main_group']);
+            }
+            // $q->distinct();
+            $q->groupBy("User.id");
         }
         if (!empty($data['vertical_id'])) {
-            $q->join('UserGroup', 'User.id', '=', 'UserGroup.user_id');
-            $q->join('Group', 'Group.id', '=', 'UserGroup.group_id');
+            $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
+            $this->joinOnce($q, 'Group', 'Group.id', '=', 'UserGroup.group_id');
             $q->where('Group.vertical_id', $data['vertical_id']);
             $q->where('UserGroup.year', $this->year);
-            $q->distinct();
+            if(!empty($data['only_main_group'])) {
+                $q->where('UserGroup.main', $data['only_main_group']);
+            }
+            // $q->distinct();
+            $q->groupBy("User.id");
         }
-        if (!empty($data['center_id'])) {
+        if (!empty($data['teaching_in_center_id'])) {
             $mentor_group_id = 8; // :HARDCODE:
 
             if (isset($data['user_group']) and in_array($mentor_group_id, $data['user_group'])) { // Find the mentors
-                $q->join("Batch", 'User.id', '=', 'Batch.batch_head_id');
+                $this->joinOnce($q, "Batch", 'User.id', '=', 'Batch.batch_head_id');
                 $q->where('Batch.center_id', $data['center_id']);
                 $q->where('Batch.year', $this->year);
                 if (isset($data['project_id'])) {
                     $q->where('Batch.project_id', $data['project_id']);
                 }
             } else { // Find the teachers
-                $q->join('UserClass', 'User.id', '=', 'UserClass.user_id');
-                $q->join('Class', 'Class.id', '=', 'UserClass.class_id');
-                $q->join('Level', 'Class.level_id', '=', 'Level.id');
+                $this->joinOnce($q, 'UserClass', 'User.id', '=', 'UserClass.user_id');
+                $this->joinOnce($q, 'Class', 'Class.id', '=', 'UserClass.class_id');
+                $this->joinOnce($q, 'Level', 'Class.level_id', '=', 'Level.id');
                 $q->where('Level.center_id', $data['center_id']);
                 if (isset($data['project_id'])) {
                     $q->where('Level.project_id', $data['project_id']);
                 }
             }
-            $q->distinct();
+            // $q->distinct();
+            $q->groupBy("User.id");
+        }
+
+        if(!empty($data['center_id'])) {
+            $q->where('User.center_id', $data['center_id']);
+        }
+        if(isset($data['without_center_id'])) {
+            $q->where('User.center_id', '0');
         }
 
         if (!empty($data['batch_id'])) {
-            $q->join('UserBatch', 'User.id', '=', 'UserBatch.user_id');
+            if(!$this->isTableJoined($q, 'UserBatch'))
+            $this->joinOnce($q, 'UserBatch', 'User.id', '=', 'UserBatch.user_id');
             $q->addSelect("UserBatch.level_id");
             $q->where('UserBatch.batch_id', $data['batch_id']);
 
@@ -310,10 +358,9 @@ final class User extends Common
                 $q->orderBy('User.left_on', 'desc');
             }
         }
-        $q->orderby('User.name');
-        // dd($q->toSql(), $q->getBindings(), $data);
+        $q->orderBy('User.name');
 
-        // :TODO: Pagination    
+        // dd($q->toSql(), $q->getBindings(), $data);
 
         return $q;
     }
@@ -345,7 +392,8 @@ final class User extends Common
             'user_type',
             'status',
             'credit',
-            'city_id'
+            'city_id',
+            'center_id'
         )->where('status', '1');
         if ($only_volunteers) {
             $user = $user->where('user_type', 'volunteer');
@@ -360,6 +408,12 @@ final class User extends Common
 
         $data->groups = $data->groups()->get();
         $data->city = $data->city()->first()->name;
+        $center = $data->center()->first();
+        if($center) {
+            $data->center = $center->name;
+        } else {
+            $data->center = "";
+        }
 
         return $data;
     }
@@ -377,6 +431,7 @@ final class User extends Common
 
         $results = $q->first();
         $zoho_user_id = isset($data['zoho_user_id']) ? $data['zoho_user_id'] : 0;
+        $madapp_user_id = 0;
 
         if (empty($results)) {
             $user = User::create([
@@ -396,10 +451,14 @@ final class User extends Common
                 'status'    => isset($data['status']) ? $data['status'] : '1',
                 'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
                 'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s'),
+                'campaign'  => isset($data['campaign']) ? $data['campaign'] : '',
                 'zoho_user_id'=>$zoho_user_id
             ]);
+            $madapp_user_id = $user->id;
+
         } else {
             $user = User::where('id', $results->id)->first();
+            $madapp_user_id = $user->id;
             $user->email        = $data['email'];
             $user->mad_email    = isset($data['mad_email']) ? $data['mad_email'] : '';
             $user->phone        = User::correctPhoneNumber($data['phone']);
@@ -459,14 +518,16 @@ final class User extends Common
                 'wingman'	=> 'Wingman (Youth Mentoring)',
                 'fundraising'=>'Fundraising Volunteer',
                 'hc'		=> 'Human Capital Volunteer',
+                'campaigns' => 'Campaigns Volunteer',
+                'finance'   => 'Finance Volunteer',
                 'other'		=> 'Other'
             ];
             $client = new Client(['http_errors' => false]); //GuzzleHttp\Client
             $response = '';
             try {
-                $result = $client->post('https://creator.zoho.com/api/jithincn1/json/recruitment-management/form/Registration/record/add', [
+                $result = $client->post('https://creator.zoho.com/api/jithincn1/json/mad-recruit/form/Registration/record/add', [
                     'form_params' => [
-                        'authtoken'         => '4f1c9be22a7d8fdd2c2a1a6e2921fa13',
+                        'authtoken'         => 'cdcfd4eb1b77b0835f4339827906e42a',
                         'scope'             => 'creatorapi',
                         'campaign_id'       => isset($data['campaign']) ? $data['campaign'] : '',
                         'Applicant_Name'    => $data['name'],
@@ -479,20 +540,23 @@ final class User extends Common
                         'Occupation'        => isset($data['job_status']) ? ucwords($data['job_status']) : '',
                         'Role_Type'			=> isset($role_types[$data['profile']]) ? $role_types[$data['profile']] : 'Other',
                         'Reason_for_choosing_to_volunteer_at_MAD'   => isset($data['why_mad']) ? $data['why_mad'] : '',
-                        'MAD_Applicant_Id'  => $user->id,  // 'Unique_Applicant_ID'    => $status['id'],
+                        'MAD_Applicant_Id'  => $madapp_user_id,  // 'Unique_Applicant_ID'    => $status['id'],
                     ]
                 ]);
                 $response = $result->getBody();
             } catch (Exception $e) {
                 // Can't send data to Zoho
+                Log::add(['name' => 'zoho_user_push_exception', 'user_id' => $madapp_user_id, 'data' => $e]);
             } finally {
                 if ($response) {
                     $zoho_response = json_decode($response);
                     $zoho_user_id = @$zoho_response->formname[1]->operation[1]->values->ID;
 
-                    if ($zoho_user_id and $user->id) {
+                    if ($zoho_user_id and $madapp_user_id) {
                         $user->zoho_user_id = $zoho_user_id;
                         $user->save();
+                    } else {
+                        Log::add(['name' => 'zoho_user_push_error', 'user_id' => $madapp_user_id, 'data' => $zoho_response]);
                     }
                 }
             }
@@ -522,7 +586,10 @@ final class User extends Common
 
             $this->item->$key = $data[$key];
         }
+
         // :TODO: Special cases that should be handled.
+        //  - User moved to Volunteer from applicant
+        //      - joined_on date update
         //  - User moved to Alumnai / Let_go
         //      - left_on date update
         //      - delete future class.
@@ -532,39 +599,94 @@ final class User extends Common
         return $this->item;
     }
 
-    public function addGroup($group_id, $user_id = false)
+    private function unsetMainGroup($user_id = false)
     {
-        $this->chain($user_id);
+        $user_id = $this->chain($user_id);
+        app('db')->table('UserGroup')->where('main','1')->where('user_id', $user_id)->where('year',$this->year)->update(['main' => '0']);
+    }
+    private function setMainGroup($group_id, $main ='1', $user_id = false)
+    {
+        $user_id = $this->chain($user_id);
+        app('db')->table("UserGroup")->where('group_id',$group_id)->where('user_id', $user_id)->where('year',$this->year)->update(['main' => $main]);
+    }
+    private function unsetAllGroups($user_id = false)
+    {
+        $user_id = $this->chain($user_id);
+        app('db')->table('UserGroup')->where('user_id', $user_id)->where('year',$this->year)->delete();
+    }
+
+    /// $groups should be in the format of [{group_id: 12, main: "0"}, {group_id: 13, main: "1"}]
+    public function setGroups($groups, $user_id = false)
+    {
+        $user_id = $this->chain($user_id);
+
+        $new_groups = [];
+        foreach($groups as $g) {
+            $new_groups[$g->group_id] = $g->main;
+        }
+        $existing_groups_raw = $this->item->groups()->get();
+        $existing_groups = [];
+        foreach($existing_groups_raw as $g) {
+            $existing_groups[$g->id] = $g->main;
+        }
+
+        // Any difference between the currently given group list and the existing groups for the user?
+        $diff = array_intersect_assoc($existing_groups, $new_groups);
+        if(count($diff) == count($existing_groups) and count($diff) == count($new_groups))  {
+            return $existing_groups; // No, its the same. Nothing to be done.
+        }
+
+        $this->unsetAllGroups($user_id);
+        foreach($new_groups as $group_id => $main) {
+            $this->addGroup($group_id, $main, $user_id);
+        }
+
+        return $new_groups;
+    }
+
+    public function addGroup($group_id, $main=0, $user_id = false)
+    {
+        $user_id = $this->chain($user_id);
 
         // Check if the user has the group already.
-        $existing_groups = $this->groups()->get();
+        $existing_groups = $this->item->groups()->get();
         $group_found = false;
         foreach ($existing_groups as $grp) {
             if ($grp->id == $group_id) {
-                $group_found = true;
+                $group_found = $grp;
                 break;
             }
         }
 
         if ($group_found) {
-            return false;
+            if($group_found->main == $main) return false; // No change required
+            else { // If the main group is not correctly, do that.
+                $this->unsetMainGroup($user_id);
+                $this->setMainGroup($group_found->id, $main, $user_id);
+                return false;
+            }
+        }
+
+        if($main) { // If a new group is getting the main tag, remove main tag from other group -if any.
+            $this->unsetMainGroup($user_id);
         }
 
         app('db')->table("UserGroup")->insert([
-            'user_id'   => $this->id,
+            'user_id'   => $user_id,
             'group_id'  => $group_id,
-            'year'      => $this->year
+            'year'      => $this->year,
+            'main'      => (string) $main
         ]);
 
-        return $this->groups();
+        return $this->item->groups();
     }
 
     public function removeGroup($group_id, $user_id = false)
     {
-        $this->chain($user_id);
+        $user_id = $this->chain($user_id);
 
         // Check if the user has the group.
-        $existing_groups = $this->groups()->get();
+        $existing_groups = $this->item->groups()->get();
         $group_found = false;
         foreach ($existing_groups as $grp) {
             if ($grp->id == $group_id) {
@@ -576,14 +698,11 @@ final class User extends Common
         if (!$group_found) {
             return false;
         }
+        // :TODO: What happens if the 'main' Group is deleted. Assign them the highest?
 
-        app('db')->table("UserGroup")->where([
-            'user_id'   => $this->id,
-            'group_id'  => $group_id,
-            'year'      => $this->year
-        ])->delete();
+        app('db')->table("UserGroup")->where('user_id', $user_id)->where('group_id',$group_id)->where('year',$this->year)->delete();
 
-        return $this->groups();
+        return $this->item->groups();
     }
 
     public function setCredit($credit, $user_id = false)
