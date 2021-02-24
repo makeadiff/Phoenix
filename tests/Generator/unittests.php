@@ -1,6 +1,6 @@
 <?php
-require('iframe.php');
-$html = new HTML;
+require('common.php');
+$html = new iframe\HTML\HTML;
 
 $app = require('includes/Phonenix.php');
 
@@ -29,7 +29,6 @@ $all_test_types = [	'single'=> 'Single',
                     'edit'	=> 'Edit',
                     'delete'=> 'Delete'];
 $test_type = 'search';
-
 
 if ($action == 'Show Step 2') {
     eval("use App\Models\{$model_name};

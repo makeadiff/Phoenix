@@ -1,3 +1,86 @@
+GraphQL Calls
+-------------
+POST /users 	createUser()
+POST /users/{user_id}	updateUser()
+DELETE /users/{user_id}		removeUser()
+
+POST /users/{user_id}/groups/{group_id}		addUserToGroup()
+DELETE /users/{user_id}/groups/{group_id}	removeUserFromGroup
+
+POST /users/{user_id}/credit 	updateUserCredit(user_id, credit, reason)
+post /users/login 				login(user_details)
+post /users/{user_id}/devices  	createDevice(user_id)
+post /users/{user_id}/devices/{token} 	updateDevice(user_id, token)
+delete /users/{user_id}/devices/{token}    removeDevice(user_id, token)
+
+post /batches/{batch_id}/mentors
+delete /batches/{batch_id}/mentors/{mentor_user_id}
+post /batches/{batch_id}/levels/{level_id}/teachers
+post /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}
+delete /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}
+
+
+post /donations
+delete /donations/{donation_id}
+
+
+post /centers/{center_id}/comments
+delete /centers/{center_id}/comments/{comment_id}
+
+
+
+post /users/{user_id}/data/{data_name}
+delete /users/{user_id}/data/{data_name}
+student, center, class    
+
+
+post /students
+post /students/{student_id}
+delete /students/{student_id}
+post /levels/{level_id}/students
+delete /levels/{level_id}/students/{student_id}
+
+
+post /levels
+post /levels/{level_id}
+delete /levels/{level_id}
+post /levels/{level_id}/students
+delete /levels/{level_id}/students/{student_id}
+
+post /batches
+post /batches/{batch_id}
+delete /batches/{batch_id}
+post /batches/{batch_id}/mentors
+delete /batches/{batch_id}/mentors/{mentor_user_id}
+post /batches/{batch_id}/levels/{level_id}/teachers
+post /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}
+delete /batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}
+
+post /events
+post /events/{event_id}
+post /events/{event_id}/recur
+post /events/{event_id}/users
+post /events/{event_id}/users/{user_id}
+delete /events/{event_id}/users/{user_id}
+post /events/{event_id}/attended
+
+post /survey_templates    
+post /survey_templates/{survey_template_id}
+post /survey_templates/{survey_template_id}/questions
+post /survey_templates/{survey_template_id}/questions/{survey_question_id}
+post /survey_templates/{survey_template_id}/questions/{survey_question_id}/choices
+post /survey_templates/{survey_template_id}/questions/{survey_question_id}/choices/{survey_choice_id}
+post /surveys
+post /surveys/{survey_id}/responses
+post /surveys/{survey_id}/questions/{survey_question_id}/responses
+
+post /surveys/{survey_id}/responses
+post /surveys/{survey_id}/questions/{survey_question_id}/responses
+
+post /notifications
+
+
+
 Todo
 ----
 Create Batches : POST /batches(Done) - GraphQL: createBatch(day: Int, time: String, project_id: Int, center_id: Int, year: Int)
@@ -21,6 +104,50 @@ Unassign students from given level: DELETE /levels/{level_id}/students/{student_
 
 Schedule Classes : Cron / Artisan (Done)
 Calculate Credits
+
+Create GraphQL Mutations for these POST calls...
+POST	/users
+POST	/users/{user_id}
+POST	/users/{user_id}/groups/{group_id}
+POST	/users/{user_id}/credit
+POST	/users/login
+POST	/users/{user_id}/devices
+POST	/users/{user_id}/devices/{token}
+POST	/users/{user_id}/data/{data_name}
+POST	/centers/{center_id}/data/{data_name}
+POST	/centers/{center_id}/comments
+POST	/students/{student_id}/comments
+POST	/students
+POST	/students/{student_id}
+POST	/students/{student_id}/data/{data_name}
+POST	/levels
+POST	/levels/{level_id}
+POST	/levels/{level_id}/students
+POST	/batches
+POST	/batches/{batch_id}
+POST	/batches/{batch_id}/mentors
+POST	/batches/{batch_id}/levels/{level_id}/teachers
+POST	/batches/{batch_id}/levels/{level_id}/teachers/{teacher_id}
+POST	/classes/{class_id}/data/{data_name}
+POST	/donations
+POST	/deposits
+POST	/deposits/{deposit_id}
+POST	/events
+POST	/events/{event_id}
+POST	/events/{event_id}/recur
+POST	/events/{event_id}/users
+POST	/events/{event_id}/users/{user_id}
+POST	/events/{event_id}/attended
+POST	/survey_templates
+POST	/survey_templates/{survey_template_id}
+POST	/survey_templates/{survey_template_id}/questions
+POST	/survey_templates/{survey_template_id}/questions/{survey_question_id}
+POST	/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices
+POST	/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices/{survey_choice_id}
+POST	/surveys
+POST	/surveys/{survey_id}/responses
+POST	/surveys/{survey_id}/questions/{survey_question_id}/responses
+POST	/notifications
 
 
 

@@ -16,7 +16,8 @@ class PermissionTest extends TestCase
     public function testGroupPermission()
     {
         $group = new Group;
-        $permissions = $group->find(9)->permissions();
+        $es_vol_group_id = 9;
+        $permissions = $group->find($es_vol_group_id)->permissions();
 
         $this->assertContains('kids_index', $permissions);
     }
@@ -24,7 +25,8 @@ class PermissionTest extends TestCase
     public function testGroupPermissionInheritence()
     {
         $group = new Group;
-        $permissions = $group->find(368)->permissions(); // This group inherits from group#9
+        $es_trained_group_id = 368;
+        $permissions = $group->find($es_trained_group_id)->permissions(); // This group inherits from group#9
 
         $this->assertContains('kids_index', $permissions);
     }

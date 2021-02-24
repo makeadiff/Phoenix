@@ -15,7 +15,7 @@ class AddFrequencyRepeatUntilToEvent extends Migration
     {
         Schema::table('Event', function (Blueprint $table) {
             $table->date('repeat_until')->nullable();
-            $table->enum('frequency',array('monthly','weekly','none'))->default('none');            
+            $table->enum('frequency', array('monthly','weekly','none'))->default('none');
         });
     }
 
