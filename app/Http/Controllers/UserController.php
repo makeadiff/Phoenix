@@ -88,11 +88,16 @@ class UserController extends Controller
         if (!$exists) {
             return JSend::fail("Can't find any user with the given ID", [], 404);
         }
+        $user_id = intval($user_id); // SQL Injection prevention.
 
         $validation_rules = [
             'name'      => 'max:50',
-            'email'     => ['email', Rule::unique('User')->ignore($user_id)],
-            'mad_email' => ['nullable', 'email', 'regex:/.+\@makeadiff\.in$/', Rule::unique('User')->ignore($user_id)],
+            'email'     => ['email', Rule::unique('User')->where(function ($query) {
+                                return $query->where('user_type', 'volunteer')->where('status', '1');
+                            })->ignore($user_id)],
+            'mad_email' => ['nullable', 'email', 'regex:/.+\@makeadiff\.in$/', Rule::unique('User')->where(function ($query) {
+                                return $query->where('user_type', 'volunteer')->where('status', '1');
+                            })->ignore($user_id)],
             'sex'       => 'regex:/^[mfo]$/',
             'phone'     => ['regex:/[\+0-9]{10,13}/', Rule::unique('User')->ignore($user_id)],
             'city_id'   => 'numeric|exists:City,id'
