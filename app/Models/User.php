@@ -604,7 +604,7 @@ final class User extends Common
         $user_id = $this->chain($user_id);
         app('db')->table('UserGroup')->where('main','1')->where('user_id', $user_id)->where('year',$this->year)->update(['main' => '0']);
     }
-    private function setMainGroup($group_id, $main ='1', $user_id = false)
+    public function setMainGroup($group_id, $main ='1', $user_id = false)
     {
         $user_id = $this->chain($user_id);
         app('db')->table("UserGroup")->where('group_id',$group_id)->where('user_id', $user_id)->where('year',$this->year)->update(['main' => $main]);
