@@ -20,6 +20,7 @@ use App\Models\Notification;
 use App\Models\Contact;
 use App\Models\Alert;
 use App\Models\Device;
+use App\Models\CenterProject;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DonationController;
@@ -506,6 +507,24 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     });
     Route::delete('/centers/{center_id}/data/{data_name}', function ($item_id, $data_name) {
         return deleteData('Center', $item_id, $data_name);
+    });
+
+    Route::post("/centers/{center_id}/projects", function ($center_id, Request $request) {
+        $center_project_model = new CenterProject;
+        $project_ids_raw = $request->input('project_ids');
+        if (!is_array($project_ids_raw)) 
+        {
+            $project_ids = explode(",", $project_ids_raw);
+        } else 
+        {
+            $project_ids = $project_ids_raw;
+        }
+
+        $assign_status = $center_project_model->assignProject($center_id, $project_ids);
+
+        if (!$assign_status) {
+            return JSend::fail("Error assigning projects");
+        }
     });
 
     ///////////////////////////////////// Comments /////////////////////////////////////

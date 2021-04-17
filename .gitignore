@@ -16,3 +16,5 @@ Phoenix.sublime-workspace
 api/swagger/batman-swagger.yaml
 storage/tinx/
 .php_cs.cache
+.env.example
+/config/database.php
