@@ -20,7 +20,7 @@ class Common extends Model
         // Current year
         $this_month = intval(date('m'));
         $months = [];
-        $start_month = 6; // June
+        $start_month = 7; // July, made this change for 2020 year. It was a wierd year.
         $start_year = date('Y');
         if ($this_month < $start_month) {
             $start_year = date('Y')-1;
