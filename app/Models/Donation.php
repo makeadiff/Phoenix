@@ -25,7 +25,7 @@ final class Donation extends Common
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->start_date = $this->year . '-05-01 00:00:00';
+        $this->start_date = $this->year_start_time;
     }
     
     public function fundraiser()

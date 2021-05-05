@@ -20,7 +20,7 @@ final class User extends Common
     const UPDATED_AT = 'updated_on';
     protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','center_id',
                             'credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on', 'campaign'];
-    public $enable_logging = true; // Used to disable logging the basic auth authentications for API Calls
+    public $enable_logging = false; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()
     {
