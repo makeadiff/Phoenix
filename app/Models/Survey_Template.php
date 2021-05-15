@@ -56,6 +56,10 @@ final class Survey_Template extends Common
 
     public static function add($fields)
     {
+        if($fields['responder'] == 'User' and empty($fields['options'])) {
+            $fields['options'] = json_encode(["responder_list" => "self"]);
+        }
+        
         return Survey_Template::create($fields);
     }
 }

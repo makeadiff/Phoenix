@@ -159,6 +159,10 @@ final class Survey_Question extends Common
         
         $name = trim(self::format(preg_replace('/\s\s+/', ' ', $name)));
         $name = str_replace('Mad', 'MAD', $name);
+
+        if(strlen($name) > 100) {
+            $name = substr($name, 0, 97) . '...'; // If the name is too big, smallize it.
+        }
         return $name;
     }
 
