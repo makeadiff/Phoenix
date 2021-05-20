@@ -1220,7 +1220,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     /// Invite Users
     Route::post('/events/{event_id}/users', function ($event_id, Request $request) {
-        $event = new Event;
+        $event_model = new Event;
 
         $user_ids_raw = $request->input('invite_user_ids');
         if (!is_array($user_ids_raw)) {
@@ -1229,9 +1229,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
             $user_ids = $user_ids_raw;
         }
 
-        $event = $event->find($event_id);
+        $event = $event_model->find($event_id);
         if (!$event) {
-            return JSend::fail("Can't find event with ID $event_id", $event->errors);
+            return JSend::fail("Can't find event with ID $event_id", $event_model->errors);
         }
 
         $send_invites = $request->input('send_invite_emails') == 'true' ? true : false;
