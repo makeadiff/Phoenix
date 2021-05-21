@@ -1,5 +1,6 @@
 <?php
 namespace App\Models;
+// :TODO: This should be a interface - should be inhereted using 'implements' - NOT 'extends' (?)
 
 use Illuminate\Database\Eloquent\Model;
 
