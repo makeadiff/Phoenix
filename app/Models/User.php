@@ -9,10 +9,16 @@ use App\Models\Classes;
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 // :TODO: Don't return password as plain text. Esp on /users/<ID> GET or /users/<ID> POST
 
-final class User extends Common
+// final class User extends Common implements JWTSubject
+class User extends Authenticatable implements JWTSubject
 {
     protected $table = 'User';
     public $timestamps = true;
@@ -137,6 +143,17 @@ final class User extends Common
         // $links->select('id','name','url','text', 'sort_order');
 
         return $links;
+    }
+
+    // Both functions needed for JWT authentication(https://blog.pusher.com/laravel-jwt/)
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 
     // public function data()
@@ -743,7 +760,7 @@ final class User extends Common
                 $is_correct = Hash::check($password, $data->password_hash);
             } elseif ($auth_token) {
                 $is_correct = ($data->auth_token == $auth_token);
-            }
+            } // :TODO: elseif($jwt_token) { $token = JWTAuth::attempt($credentials) }
 
             if (!$is_correct) { // Incorrect password / Auth key
                 $data = null;
@@ -762,6 +779,9 @@ final class User extends Common
 
                 $user_data = $this->fetch($user_id);
                 $user_data->auth_token = $data->auth_token;
+
+                // Create JWT token.
+                $user_data->jwt_token = JWTAuth::fromUser($user_data);
                 $user_data->permissions = $this->permissions($user_id);
 
                 return $user_data;

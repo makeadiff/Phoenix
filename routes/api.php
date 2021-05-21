@@ -36,7 +36,10 @@ Route::get('/', function () {
 });
 
 $url_prefix = 'v1';
-Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function () {
+Route::group([
+    'prefix' => $url_prefix, 
+    'middleware' => ['jwt.verify'], // ['auth.basic']
+], function () {
 
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
     Route::get('/cities', function () {
@@ -619,10 +622,6 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
             }
 
             return JSend::fail($error, [], 400);
-        } else {
-            // Get permissions for this user.
-            $this_user = $user->find($data['id']);
-            $data['permissions'] = $this_user->permissions();
         }
 
         return JSend::success("Welcome back, $data[name]", ['users' => $data]);

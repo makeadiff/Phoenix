@@ -18,3 +18,4 @@ storage/tinx/
 .php_cs.cache
 .env.example
 /config/database.php
+DB Structure Changes Pending.txt
