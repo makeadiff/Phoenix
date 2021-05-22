@@ -3,9 +3,12 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Donation;
+use Illuminate\Database\Eloquent\Model;
 
-final class Donor extends Common
+final class Donor extends Model
 {
+    use Common;
+    
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $table = 'Donut_Donor';

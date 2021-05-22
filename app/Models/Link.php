@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Link extends Common
+final class Link extends Model
 {
+    use Common;
+    
     protected $table = 'Link';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

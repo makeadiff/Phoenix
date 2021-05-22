@@ -4,9 +4,12 @@ namespace App\Models;
 use App\Models\Center;
 use App\Models\Project;
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class CenterProject extends Common
+final class CenterProject extends Model
 {
+    use Common;
+    
     protected $table = 'CenterProject';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

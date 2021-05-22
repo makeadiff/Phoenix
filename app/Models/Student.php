@@ -5,9 +5,12 @@ use App\Models\Common;
 use App\Models\Center;
 use App\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Model;
 
-final class Student extends Common
+final class Student extends Model
 {
+    use Comment;
+    
     protected $table = 'Student';
     public $timestamps = false;
     protected $fillable = ['name','sex','birthday','center_id','status','added_on', 'description', 'photo'];

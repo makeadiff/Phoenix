@@ -3,9 +3,12 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Center;
+use Illuminate\Database\Eloquent\Model;
 
-final class Level extends Common
+final class Level extends Model
 {
+    use Common;
+    
     protected $table = 'Level';
     public $timestamps = false;
     protected $fillable = ['name','grade','center_id','status','year','project_id', 'medium', 'preferred_gender'];

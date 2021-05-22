@@ -4,9 +4,12 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\Classes;
 use App\Models\Batch;
+use Illuminate\Database\Eloquent\Model;
 
-final class Project extends Common
+final class Project extends Model
 {
+    use Common;
+    
     protected $table = 'Project';
     public $timestamps = false;
 

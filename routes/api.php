@@ -36,6 +36,46 @@ Route::get('/', function () {
 });
 
 $url_prefix = 'v1';
+
+// Pubilc functions - these can be called without JWT authentication
+Route::group([
+    'prefix' => $url_prefix, 
+    'middleware' => ['auth.basic']
+], function () {
+    /*
+    Route::post('/users/login', function(Request $request) {  // - This line is here to get this call picked up the the all_call.php monitor.
+    */
+    Route::addRoute(['POST','GET'], '/users/login', function (Request $request) {
+        $user = new User;
+        $phone_or_email = $request->input('phone');
+        if (!$phone_or_email) {
+            $phone_or_email = $request->input('email');
+        }
+        if (!$phone_or_email) {
+            $phone_or_email = $request->input('identifier');
+        }
+
+        if ($request->input('password')) {
+            $data = $user->login($phone_or_email, $request->input('password'));
+        } elseif ($request->input('auth_token')) {
+            $data = $user->login($phone_or_email, false, $request->input('auth_token'));
+        }
+
+        if (!$data) {
+            $error = "Invalid username/password";
+            if (count($user->errors)) {
+                $error = implode(", ", $user->errors);
+            }
+
+            return JSend::fail($error, [], 400);
+        }
+
+        return JSend::success("Welcome back, $data[name]", ['users' => $data]);
+    });
+    Route::post("/users", ['uses' => 'UserController@add']);
+});
+
+
 Route::group([
     'prefix' => $url_prefix, 
     'middleware' => ['jwt.verify'], // ['auth.basic']
@@ -593,38 +633,6 @@ Route::group([
     });
     Route::delete('/students/{student_id}/comments/{comment_id}', function ($item_id, $comment_id) {
         return deleteComment($comment_id);
-    });
-
-    ////////////////////////////////////////////////// Auth //////////////////////////////////////////////////////
-    /*
-    Route::post('/users/login', function(Request $request) {  // - This line is here to get this call picked up the the all_call.php monitor.
-    */
-    Route::addRoute(['POST','GET'], '/users/login', function (Request $request) {
-        $user = new User;
-        $phone_or_email = $request->input('phone');
-        if (!$phone_or_email) {
-            $phone_or_email = $request->input('email');
-        }
-        if (!$phone_or_email) {
-            $phone_or_email = $request->input('identifier');
-        }
-
-        if ($request->input('password')) {
-            $data = $user->login($phone_or_email, $request->input('password'));
-        } elseif ($request->input('auth_token')) {
-            $data = $user->login($phone_or_email, false, $request->input('auth_token'));
-        }
-
-        if (!$data) {
-            $error = "Invalid username/password";
-            if (count($user->errors)) {
-                $error = implode(", ", $user->errors);
-            }
-
-            return JSend::fail($error, [], 400);
-        }
-
-        return JSend::success("Welcome back, $data[name]", ['users' => $data]);
     });
 
     ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
@@ -1396,7 +1404,6 @@ Route::group([
     require_once base_path('routes/api-surveys.php');
 });
 
-Route::post("/users", ['uses' => 'UserController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
 Route::post("/users/{user_id}", ['uses' => 'UserController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
 Route::post("/students", ['uses' => 'StudentController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
 Route::post("/students/{student_id}", ['uses' => 'StudentController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);

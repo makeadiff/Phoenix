@@ -3,9 +3,12 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Center;
+use Illuminate\Database\Eloquent\Model;
 
-final class Batch extends Common
+final class Batch extends Model
 {
+    use Common;
+    
     protected $table = 'Batch';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

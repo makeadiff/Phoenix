@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Conversation extends Common
+final class Conversation extends Models
 {
+    use Common;
+    
     protected $table = 'Conversation';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

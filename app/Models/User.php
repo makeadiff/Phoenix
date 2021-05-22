@@ -6,6 +6,7 @@ use App\Models\UserGroup;
 use App\Models\Log;
 use App\Models\Common;
 use App\Models\Classes;
+
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -20,6 +21,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 // final class User extends Common implements JWTSubject
 class User extends Authenticatable implements JWTSubject
 {
+    use Common;
+    
     protected $table = 'User';
     public $timestamps = true;
     const CREATED_AT = 'added_on';
