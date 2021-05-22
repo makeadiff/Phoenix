@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Group extends Common
+final class Group extends Model
 {
+    use Common;
+    
     protected $table = 'Group';
     public $timestamps = false;
     protected $hidden = ['pivot'];

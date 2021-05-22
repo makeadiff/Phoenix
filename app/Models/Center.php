@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Center extends Common
+final class Center extends Model
 {
+    use Common;
+    
     protected $table = 'Center';
     public $timestamps = true;
     const CREATED_AT = null;

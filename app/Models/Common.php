@@ -1,10 +1,7 @@
 <?php
 namespace App\Models;
-// :TODO: This should be a interface - should be inhereted using 'implements' - NOT 'extends' (?)
 
-use Illuminate\Database\Eloquent\Model;
-
-class Common extends Model
+trait Common
 {
     public $errors = [];
 

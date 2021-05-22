@@ -3,9 +3,12 @@ namespace App\Models;
 
 use App\Models\Common;
 use Validator;
+use Illuminate\Database\Eloquent\Model;
 
-final class Survey extends Common
+final class Survey extends Model
 {
+    use Common;
+    
     protected $table = 'Survey';
     const CREATED_AT = 'added_on';
     const UPDATED_AT = null;

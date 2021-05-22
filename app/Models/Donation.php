@@ -7,11 +7,14 @@ use App\Models\Donor;
 use App\Libraries\SMS;
 use App\Libraries\Email;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Model;
 use \Datetime;
 use JSend;
 
-final class Donation extends Common
+final class Donation extends Model
 {
+    use Common;
+    
     protected $table = 'Donut_Donation';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

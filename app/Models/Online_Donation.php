@@ -5,9 +5,12 @@ use App\Models\Common;
 use App\Models\User;
 use App\Models\Donor;
 use JSend;
+use Illuminate\Database\Eloquent\Model;
 
-final class Online_Donation extends Common
+final class Online_Donation extends Model
 {
+    use Common;
+    
     protected $table = 'Online_Donation';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

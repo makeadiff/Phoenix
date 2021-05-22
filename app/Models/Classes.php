@@ -6,11 +6,14 @@ use App\Models\Batch;
 use App\Models\Level;
 use App\Models\Student;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
 // This is named 'Classes' - going against the convention in other classes - because Class is a reserved keyword in PHP
 
-final class Classes extends Common
+final class Classes extends Model
 {
+    use Common;
+    
     protected $table = 'Class';
     public $timestamps = false;
     protected $fillable = ['batch_id', 'level_id', 'project_id', 'class_on', 'class_type', 'class_satisfaction',

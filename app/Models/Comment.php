@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Comment extends Common
+final class Comment extends Model
 {
+    use Common;
+    
     protected $table = 'Comment';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

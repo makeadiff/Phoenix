@@ -4,9 +4,12 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\Credit;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
-final class Parameter extends Common
+final class Parameter extends Model
 {
+    use Common;
+    
     protected $table = 'Parameter';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

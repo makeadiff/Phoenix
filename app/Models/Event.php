@@ -4,9 +4,12 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\User;
 use App\Libraries\Email;
+use Illuminate\Database\Eloquent\Model;
 
-final class Event extends Common
+final class Event extends Model
 {
+    use Common;
+    
     protected $table = 'Event';
     public $timestamps = true;
     const CREATED_AT = 'created_on';

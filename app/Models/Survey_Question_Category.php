@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Survey_Question_Category extends Common
+final class Survey_Question_Category extends Model
 {
+    use Common;
+    
     protected $table = 'Survey_Question_Category';
     public $timestamps = false;
 
