@@ -2,6 +2,7 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Storage;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -15,7 +16,15 @@ abstract class TestCase extends BaseTestCase
     protected $client;
     protected $response;
     protected $response_data;
-    protected $year = 2020; //:TODO: :HARDCODE:
+    protected $year = 2020; // :HARDCODE:
+    protected $jwt_token = null;
+    protected $jtw_token_file = null;
+
+    // :TODO: Move the username/password to 'secrets.php' file.
+    protected $api_user_login_for_jwt = [
+        'email'     => 'binnyva@gmail.com',
+        'password'  => 'driven'
+    ];
     protected $auth = ['username' => "sulu.simulation@makeadiff.in", 'password' => 'pass'];
     protected $headers = [
             // "HTTP_Authorization" => "Basic " . base64_encode("sulu.simulation@makeadiff.in:pass"), // This should be there - but for some reason php thows up an error.
@@ -78,12 +87,11 @@ abstract class TestCase extends BaseTestCase
         'center_id' => 184
     ];
 
-
     public function load($url, $method = 'GET', $form_data = [])
     {
-        // On April 18, I found all the feature tests are giving 404 erros and not running. I spent the entire day dubgging it without figuring out what's causing. Finally decided to go with another approch(using a HTTP Client within the TestCase::load()). I'm hoping someday well be able to use the native methord
+        // On April 2020, I found all the feature tests are giving 404 erros and not running. I spent the entire day dubgging it without figuring out what's causing. Finally decided to go with another approch(using a HTTP Client within the TestCase::load()). I'm hoping someday well be able to use the native methord
         // $this->withoutMiddleware();
-        // $this->response = $this->call($method, $this->url_prefix . $url, $form_data, [], [], $this->call_headers);
+        // $this->response = $this->call($method, $this->url_prefix . $url, $form_data, [], [], $this->headers);
         // $this->response_data = json_decode($this->response->getContent());
         // return $this->response;
 
@@ -91,29 +99,86 @@ abstract class TestCase extends BaseTestCase
         $this->response = null;
         $this->response_data = null;
 
+        if (!$this->client) {
+            $this->client = new \GuzzleHttp\Client();
+        }
+
+        if(($url == '/users/login') or ($url == '/users' and $method == 'POST')) {
+            // Nothing specific. Right now, basic authentication is happening in both JWT and non-JWT calls.
+        } else {
+            // This would be better off in the constructor - but some issue in creating a constructor.
+            $this->jtw_token_file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Secrets/jwt_token.txt';
+            if(file_exists($this->jtw_token_file)) {
+                $this->jwt_token = file_get_contents($this->jtw_token_file);
+            }
+
+            if(!$this->jwt_token) {
+                $this->saveJWToken();
+            }
+        }
+
         $full_url = $this->baseUrl . $this->url_prefix . $url;
         if (!$this->client) {
             $this->client = new \GuzzleHttp\Client();
         }
         try {
-            $this->response = $this->client->request($method, $full_url, [
-                'auth'          => array_values($this->auth),
+            $headers = [
                 'form_params'   => $form_data
-            ]);
+            ];
+            if($this->jwt_token) {
+                $headers['headers'] = ['Authorization' => "Basic " . base64_encode($this->auth['username'].":".$this->auth['password']) . 
+                                                          ", Bearer {$this->jwt_token}"];
+            } else {
+                $headers['headers'] = ['Authorization' => "Basic " . base64_encode($this->auth['username'].":".$this->auth['password'])];
+            }
+
+            $this->response = $this->client->request($method, $full_url, $headers);
             $contents = $this->response->getBody()->getContents();
+
             if ($contents) {
                 $this->response_data = json_decode($contents);
             }
         } catch (\GuzzleHttp\Exception\BadResponseException $exception) {
-            // If we get a 404, it makes the response null. This fixes it.
+            // If we get a 40X, it makes the response null. This fixes it.
             $this->response = $exception->getResponse();
             $contents = $this->response->getBody()->getContents();
+
             if ($contents) {
                 $this->response_data = json_decode($contents);
+
+                $error = $this->response_data->data[0];
+                if($error == "Token is Expired" or $error == "Token is Invalid") {
+                    if($this->saveJWToken()) {
+                        $this->load($url, $method, $form_data); // :TODO: This can cause infinite loop
+                    }
+                }
             }
         }
 
         return $this->response;
+    }
+
+    public function saveJWToken()
+    {
+        try {
+            $auth_response = $this->client->request('POST', $this->baseUrl . $this->url_prefix . '/users/login', [
+                'auth'          => array_values($this->auth),
+                'form_params'   => $this->api_user_login_for_jwt
+            ]);
+            $auth_contents = $auth_response->getBody()->getContents();
+            if ($auth_contents) {
+                $auth_contents_data = json_decode($auth_contents, true);
+                $this->jwt_token = $auth_contents_data['data']['users']['jwt_token'];
+
+                // Save JWT Token to storage, it will be loaded in constructor
+                if($this->jtw_token_file) file_put_contents($this->jtw_token_file, $this->jwt_token);
+            }
+        } catch (\GuzzleHttp\Exception\BadResponseException $exception) {
+            echo $exception->getResponse();
+            exit;
+        }
+
+        return $this->jwt_token;
     }
 
     public function graphql($query)
