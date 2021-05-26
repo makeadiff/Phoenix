@@ -70,12 +70,20 @@ abstract class TestCase extends BaseTestCase
     ];
     protected $ideal_batch_level_user_mapping = [
         '3359'	=> [
-            '10056'	=> [203356],
-            '10057'	=> [203355]
+            '10056'	=> [203355],
+            '10057'	=> [203356]
         ],
         '3360'	=> [
             '10057'	=> [203354, 203353]
         ]
+    ];
+    protected $ideal_users = [
+        '203353'    => ['name' => 'Ideal Teacher 1'],
+        '203354'    => ['name' => 'Ideal Teacher 2'],
+        '203355'    => ['name' => 'Ideal Teacher 3'],
+        '203356'    => ['name' => 'Ideal Teacher 4'],
+        '203357'    => ['name' => 'Ideal Mentor 1'],
+        '203358'    => ['name' => 'Ideal Mentor 3'],
     ];
 
     protected $ideal_user_id = 1;
@@ -103,7 +111,7 @@ abstract class TestCase extends BaseTestCase
             $this->client = new \GuzzleHttp\Client();
         }
 
-        if(($url == '/users/login') or ($url == '/users' and $method == 'POST')) {
+        if((strpos($url,'/users/login') !== false) or ($url == '/users' and $method == 'POST')) {
             // Nothing specific. Right now, basic authentication is happening in both JWT and non-JWT calls.
         } else {
             // This would be better off in the constructor - but some issue in creating a constructor.
@@ -113,7 +121,7 @@ abstract class TestCase extends BaseTestCase
             }
 
             if(!$this->jwt_token) {
-                $this->saveJWToken();
+                $this->fetchAndSaveJWToken();
             }
         }
 
@@ -132,11 +140,13 @@ abstract class TestCase extends BaseTestCase
                 $headers['headers'] = ['Authorization' => "Basic " . base64_encode($this->auth['username'].":".$this->auth['password'])];
             }
 
+            // var_dump([$full_url, $headers]);
             $this->response = $this->client->request($method, $full_url, $headers);
             $contents = $this->response->getBody()->getContents();
 
             if ($contents) {
                 $this->response_data = json_decode($contents);
+                // var_dump($this->response_data);
             }
         } catch (\GuzzleHttp\Exception\BadResponseException $exception) {
             // If we get a 40X, it makes the response null. This fixes it.
@@ -145,11 +155,15 @@ abstract class TestCase extends BaseTestCase
 
             if ($contents) {
                 $this->response_data = json_decode($contents);
+                // print "Response: " . $contents . "\n";
+                // var_dump($this->response_data);
 
-                $error = $this->response_data->data[0];
-                if($error == "Token is Expired" or $error == "Token is Invalid") {
-                    if($this->saveJWToken()) {
-                        $this->load($url, $method, $form_data); // :TODO: This can cause infinite loop
+                if(is_array($this->response_data->data)) {
+                    $error = $this->response_data->data[0];
+                    if($error == "Token is Expired" or $error == "Token is Invalid") {
+                        if($this->fetchAndSaveJWToken()) {
+                            $this->load($url, $method, $form_data); // :TODO: This can cause infinite loop
+                        }
                     }
                 }
             }
@@ -158,7 +172,7 @@ abstract class TestCase extends BaseTestCase
         return $this->response;
     }
 
-    public function saveJWToken()
+    public function fetchAndSaveJWToken()
     {
         try {
             $auth_response = $this->client->request('POST', $this->baseUrl . $this->url_prefix . '/users/login', [

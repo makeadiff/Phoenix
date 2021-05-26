@@ -134,10 +134,12 @@ class BatchTest extends TestCase
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $this->load('/batches/2608/levels');
+        $batch_id  = array_key_first($this->ideal_batchs);
+        $this->load("/batches/$batch_id/levels");
 
         $this->assertEquals($this->response_data->status, 'success');
-        $search_for = '7 A';
+        $level_name = array_values($this->ideal_levels)[0]['level_name'];
+        $search_for = $level_name;
         $found = false;
         foreach ($this->response_data->data->levels as $key => $info) {
             if ($info->name == $search_for) {

@@ -153,7 +153,7 @@ final class Donation extends Model
         if (!empty($data['from'])) {
             $q->where('Donut_Donation.added_on', '>', date('Y-m-d 00:00:00', strtotime($data['from'])));
         } elseif (empty($data['id'])) {
-            $q->where('Donut_Donation.added_on', '>', $this->start_date);
+            $q->where('Donut_Donation.added_on', '>', date('Y-m-d 00:00:00', strtotime($this->start_date)));
         } // If ID is given, should find donation anywhere in history - not just this year.
         if (!empty($data['to'])) {
             $q->where('Donut_Donation.added_on', '<', date('Y-m-d 00:00:00', strtotime($data['to'])));

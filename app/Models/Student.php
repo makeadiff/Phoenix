@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 final class Student extends Model
 {
-    use Comment;
+    use Common;
     
     protected $table = 'Student';
     public $timestamps = false;

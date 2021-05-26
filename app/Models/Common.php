@@ -31,7 +31,7 @@ trait Common
     public function isTableJoined($q, $table) 
     {
         $found = false;
-        if(!$q->joins) return $found;
+        if(empty($q->joins)) return $found;
         
         foreach($q->joins as $jn) {
             if($jn->table === $table) {
