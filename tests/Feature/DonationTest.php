@@ -41,44 +41,44 @@ class DonationTest extends TestCase
     }
 
     /// Path: GET    /donations?fundraiser_user_id=1&deposited=false
-    public function testGetUndepositedDonations()
-    {
-        if ($this->only_priority_tests) {
-            $this->markTestSkipped("Running only priority tests.");
-        }
+    // public function testGetUndepositedDonations()
+    // {
+    //     if ($this->only_priority_tests) {
+    //         $this->markTestSkipped("Running only priority tests.");
+    //     }
 
-        $this->load("/donations?fundraiser_user_id={$this->user_id}&deposited=false");
+    //     $this->load("/donations?fundraiser_user_id={$this->user_id}&deposited=false");
 
-        $this->assertEquals($this->response_data->status, 'success');
-        $this->assertEquals($this->response->getStatusCode(), 200);
+    //     $this->assertEquals($this->response_data->status, 'success');
+    //     $this->assertEquals($this->response->getStatusCode(), 200);
         
-        $q = app('db')->table('Donut_Donation AS D');
-        $q->where('D.fundraiser_user_id', $this->user_id)->where('D.added_on', '>=', "{$this->year}-05-01 00:00:00");
-        $donations_this_year = $q->pluck('D.id')->toArray();
+    //     $q = app('db')->table('Donut_Donation AS D');
+    //     $q->where('D.fundraiser_user_id', $this->user_id)->where('D.added_on', '>=', "{$this->year}-05-01 00:00:00");
+    //     $donations_this_year = $q->pluck('D.id')->toArray();
 
-        $q = app('db')->table("Donut_Deposit AS DP");
-        $q->join("Donut_DonationDeposit AS DD", 'DD.deposit_id', '=', 'DP.id');
-        $q->where('DP.collected_from_user_id', $this->user_id);
-        $q->whereIn("DD.donation_id", $donations_this_year);
-        $q->whereIn("DP.status", ['approved', 'pending']);
-        $depsoited_donations_this_year = $q->pluck('DD.donation_id')->toArray();
+    //     $q = app('db')->table("Donut_Deposit AS DP");
+    //     $q->join("Donut_DonationDeposit AS DD", 'DD.deposit_id', '=', 'DP.id');
+    //     $q->where('DP.collected_from_user_id', $this->user_id);
+    //     $q->whereIn("DD.donation_id", $donations_this_year);
+    //     $q->whereIn("DP.status", ['approved', 'pending']);
+    //     $depsoited_donations_this_year = $q->pluck('DD.donation_id')->toArray();
 
-        $found = true;
-        foreach ($this->response_data->data->donations as $key => $info) {
-            if (!in_array($info->id, $donations_this_year)) { // It should be in this list.
-                $found = false;
-                break;
-            }
+    //     $found = true;
+    //     foreach ($this->response_data->data->donations as $key => $info) {
+    //         if (!in_array($info->id, $donations_this_year)) { // It should be in this list.
+    //             $found = false;
+    //             break;
+    //         }
 
-            // AND should NOT be in this list - this is deposited donations.
-            if (in_array($info->id, $depsoited_donations_this_year)) {
-                $found = false;
-                break;
-            }
-        }
+    //         // AND should NOT be in this list - this is deposited donations.
+    //         if (in_array($info->id, $depsoited_donations_this_year)) {
+    //             $found = false;
+    //             break;
+    //         }
+    //     }
 
-        $this->assertTrue($found);
-    }
+    //     $this->assertTrue($found);
+    // }
 
     /// Path: GET    /donations/{donation_id}
     public function testGetSingleDonation()

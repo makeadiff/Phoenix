@@ -128,7 +128,7 @@ class UserTest extends TestCase
             'password'  => 'test-pass',
             'joined_on' => date('Y-m-d H:i:s'),
             'city_id'   => 28,
-            'profile'   => 'teacher',
+            'profile'   => 'teaching',
             'user_type' => 'volunteer'
         );
 
@@ -163,13 +163,13 @@ class UserTest extends TestCase
         $this->load('/users', 'POST', $user);
 
         $this->assertEquals($this->response_data->status, 'fail');
-        $this->assertEquals($this->response_data->data->email[0], "Entered Email ID already exists in the MAD System");
+        $this->assertEquals($this->response_data->data->email[0], "Entered Email ID already exists in the MAD database");
         $this->assertEquals($this->response->getStatusCode(), 400);
     }
 
     /// Path: POST /users
     /**
-     * @depe nds testPostUsers
+     * @depends testPostUsers
      */
     public function testPostUsersEdit($created_user_id = 198344)
     {

@@ -330,7 +330,7 @@ class User extends Authenticatable implements JWTSubject
 
             if (isset($data['user_group']) and in_array($mentor_group_id, $data['user_group'])) { // Find the mentors
                 $this->joinOnce($q, "Batch", 'User.id', '=', 'Batch.batch_head_id');
-                $q->where('Batch.center_id', $data['center_id']);
+                $q->where('Batch.center_id', $data['teaching_in_center_id']);
                 $q->where('Batch.year', $this->year);
                 if (isset($data['project_id'])) {
                     $q->where('Batch.project_id', $data['project_id']);
@@ -339,7 +339,7 @@ class User extends Authenticatable implements JWTSubject
                 $this->joinOnce($q, 'UserClass', 'User.id', '=', 'UserClass.user_id');
                 $this->joinOnce($q, 'Class', 'Class.id', '=', 'UserClass.class_id');
                 $this->joinOnce($q, 'Level', 'Class.level_id', '=', 'Level.id');
-                $q->where('Level.center_id', $data['center_id']);
+                $q->where('Level.center_id', $data['teaching_in_center_id']);
                 if (isset($data['project_id'])) {
                     $q->where('Level.project_id', $data['project_id']);
                 }

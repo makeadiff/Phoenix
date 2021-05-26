@@ -1404,21 +1404,21 @@ Route::group([
     require_once base_path('routes/api-surveys.php');
 });
 
-Route::post("/users/{user_id}", ['uses' => 'UserController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/students", ['uses' => 'StudentController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/students/{student_id}", ['uses' => 'StudentController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/events", ['uses' => 'EventController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/events/{event_id}", ['uses' => 'EventController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/batches", ['uses' => 'BatchController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/batches/{batch_id}", ['uses' => 'BatchController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/batches/{batch_id}/mentors", ['uses' => 'BatchController@assignMentors', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/levels", ['uses' => 'LevelController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/levels/{level_id}", ['uses' => 'LevelController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/levels/{level_id}/students", ['uses' => 'LevelController@assignStudents', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/users/{user_id}", ['uses' => 'UserController@edit', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/students", ['uses' => 'StudentController@add', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/students/{student_id}", ['uses' => 'StudentController@edit', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/events", ['uses' => 'EventController@add', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/events/{event_id}", ['uses' => 'EventController@edit', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/batches", ['uses' => 'BatchController@add', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/batches/{batch_id}", ['uses' => 'BatchController@edit', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/batches/{batch_id}/mentors", ['uses' => 'BatchController@assignMentors', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/levels", ['uses' => 'LevelController@add', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/levels/{level_id}", ['uses' => 'LevelController@edit', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/levels/{level_id}/students", ['uses' => 'LevelController@assignStudents', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
 
-Route::post("/survey_templates", ['uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/survey_templates/{survey_template_id}/questions", ['uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/surveys/{survey_id}/responses", ['uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/survey_templates", ['uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/survey_templates/{survey_template_id}/questions", ['uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/surveys/{survey_id}/responses", ['uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);
+Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix, 'middleware' => ['jwt.verify', 'json.output']]);

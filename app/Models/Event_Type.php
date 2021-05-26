@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Common
+use App\Models\Common;
 use Illuminate\Database\Eloquent\Model;
 
 class Event_Type extends Model

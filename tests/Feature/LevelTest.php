@@ -22,10 +22,12 @@ class LevelTest extends TestCase
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $this->load('/levels/7357');
+        $ideal_level_id = array_key_first($this->ideal_levels);
+
+        $this->load('/levels/' . $ideal_level_id);
 
         $this->assertEquals($this->response_data->status, 'success');
-        $this->assertEquals($this->response_data->data->levels->name, '9 B');
+        $this->assertEquals($this->response_data->data->levels->name, $this->ideal_levels[$ideal_level_id]['level_name']);
         $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
@@ -115,10 +117,11 @@ class LevelTest extends TestCase
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $this->load('/levels/7354/students');
+        $ideal_level_id = array_key_first($this->ideal_levels);
+        $this->load("/levels/{$ideal_level_id}/students");
 
         $this->assertEquals($this->response_data->status, 'success');
-        $search_for = 'Jar Jar';
+        $search_for = 'Ideal Student 1';
         $found = false;
         foreach ($this->response_data->data->students as $key => $info) {
             if ($info->name == $search_for) {
@@ -137,10 +140,27 @@ class LevelTest extends TestCase
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $this->load('/levels/7355/batches');
+        $ideal_level_id = array_key_first($this->ideal_levels);
+        $this->load("/levels/{$ideal_level_id}/batches");
 
         $this->assertEquals($this->response_data->status, 'success');
-        $search_for = 'Saturday 04:00 PM';
+
+        $conected_batch_id = 0;
+        foreach($this->ideal_batch_level_user_mapping as $batch_id => $level_details) {
+            if(in_array($ideal_level_id, array_keys($level_details))) {
+                $conected_batch_id = $batch_id;
+                break;
+            }
+        }
+
+        if(!$conected_batch_id) {
+            // ERROR IN TEST
+            $this->assertTrue(false);
+            return;
+        }
+
+        $batch_name = $this->ideal_batchs[$conected_batch_id]['name'];
+        $search_for = $batch_name;
         $found = false;
         foreach ($this->response_data->data->batches as $key => $info) {
             if ($info->name == $search_for) {
@@ -162,8 +182,9 @@ class LevelTest extends TestCase
         //     $this->markTestSkipped("Skipping as this test writes to the Database.");
         // }
 
-        $level_id = 7356;
-        $student_ids = [21930, 21918];
+        $student_ids = [27029, 27030];
+
+        $level_id = array_key_first($this->ideal_levels);
         $this->load("/levels/$level_id/students", 'POST', [
             'student_ids'  => implode(',', $student_ids)
         ]);
@@ -191,8 +212,8 @@ class LevelTest extends TestCase
         //     $this->markTestSkipped("Skipping as this test writes to the Database.");
         // }
 
-        $level_id = 7356;
-        $student_id = 21930;
+        $level_id = array_key_first($this->ideal_levels);
+        $student_id = 27030;
         $this->load("/levels/$level_id/students/$student_id", 'DELETE');
         $this->assertEquals($this->response->getStatusCode(), 200);
 
