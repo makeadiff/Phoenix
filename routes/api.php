@@ -36,7 +36,7 @@ Route::get('/', function () {
 });
 
 $url_prefix = 'v1';
-Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function () {
+Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic', 'cors']], function () {
 
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
     Route::get('/cities', function () {
