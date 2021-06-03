@@ -13,6 +13,7 @@ abstract class TestCase extends BaseTestCase
     protected $write_to_db = true;
     protected $url_prefix = '/v1';
 
+    protected $db;
     protected $client;
     protected $response;
     protected $response_data;
@@ -20,16 +21,12 @@ abstract class TestCase extends BaseTestCase
     protected $jwt_token = null;
     protected $jtw_token_file = null;
 
-    // :TODO: Move the username/password to 'secrets.php' file.
-    protected $api_user_login_for_jwt = [
-        'email'     => 'binnyva@gmail.com',
-        'password'  => 'driven'
-    ];
-    protected $auth = ['username' => "sulu.simulation@makeadiff.in", 'password' => 'pass'];
+    protected $api_user_login_for_jwt = []; // Filled by constructor
+    protected $auth = []; // Filled by constructor
     protected $headers = [
-            // "HTTP_Authorization" => "Basic " . base64_encode("sulu.simulation@makeadiff.in:pass"), // This should be there - but for some reason php thows up an error.
-            "PHP_AUTH_USER"      => "sulu.simulation@makeadiff.in",
-            "PHP_AUTH_PW"        => "pass",
+            // "HTTP_Authorization" => "Basic " . base64_encode("USERNAME:PASSWORD"),
+            "PHP_AUTH_USER"      => "", // Filled by constructor
+            "PHP_AUTH_PW"        => "", // Filled by constructor
             "HTTP_Accept"        => "application/json"
     ];
 
@@ -95,7 +92,38 @@ abstract class TestCase extends BaseTestCase
         'center_id' => 184
     ];
 
-    public function load($url, $method = 'GET', $form_data = [])
+    // Almost the constructor. These will be called before tests are run.
+    protected function setUp():void 
+    {   
+        parent::setUp();
+
+        // Loading Secrets
+        $auth_logins = require(__DIR__ . '/Secrets/Logins.php');
+        $this->api_user_login_for_jwt = $auth_logins['api_user_login_for_jwt'];
+        $this->auth = $auth_logins['basic_auth'];
+        $this->headers['PHP_AUTH_USER'] = $this->auth['username'];
+        $this->headers['PHP_AUTH_PW'] = $this->auth['password'];
+
+        // Setting up an HTTP Client
+        if (!$this->client) {
+            $this->client = new \GuzzleHttp\Client();
+        }
+
+        // Getting the JWT Token for calls.
+        $this->jtw_token_file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Secrets/jwt_token.txt';
+        if(file_exists($this->jtw_token_file)) {
+            $this->jwt_token = file_get_contents($this->jtw_token_file);
+        }
+
+        if(!$this->jwt_token) {
+            $this->fetchAndSaveJWToken();
+        }
+
+
+        $this->db = app('db');
+    }
+
+    public function load($url, $method = 'GET', $form_data = [], $auth = 'jwt')
     {
         // On April 2020, I found all the feature tests are giving 404 erros and not running. I spent the entire day dubgging it without figuring out what's causing. Finally decided to go with another approch(using a HTTP Client within the TestCase::load()). I'm hoping someday well be able to use the native methord
         // $this->withoutMiddleware();
@@ -107,35 +135,13 @@ abstract class TestCase extends BaseTestCase
         $this->response = null;
         $this->response_data = null;
 
-        if (!$this->client) {
-            $this->client = new \GuzzleHttp\Client();
-        }
-
-        if((strpos($url,'/users/login') !== false) or ($url == '/users' and $method == 'POST')) {
-            // Nothing specific. Right now, basic authentication is happening in both JWT and non-JWT calls.
-        } else {
-            // This would be better off in the constructor - but some issue in creating a constructor.
-            $this->jtw_token_file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Secrets/jwt_token.txt';
-            if(file_exists($this->jtw_token_file)) {
-                $this->jwt_token = file_get_contents($this->jtw_token_file);
-            }
-
-            if(!$this->jwt_token) {
-                $this->fetchAndSaveJWToken();
-            }
-        }
-
         $full_url = $this->baseUrl . $this->url_prefix . $url;
-        if (!$this->client) {
-            $this->client = new \GuzzleHttp\Client();
-        }
         try {
             $headers = [
                 'form_params'   => $form_data
             ];
-            if($this->jwt_token) {
-                $headers['headers'] = ['Authorization' => "Basic " . base64_encode($this->auth['username'].":".$this->auth['password']) . 
-                                                          ", Bearer {$this->jwt_token}"];
+            if($this->jwt_token and $auth == 'jwt') {
+                $headers['headers'] = ['Authorization' => "Bearer {$this->jwt_token}"];
             } else {
                 $headers['headers'] = ['Authorization' => "Basic " . base64_encode($this->auth['username'].":".$this->auth['password'])];
             }

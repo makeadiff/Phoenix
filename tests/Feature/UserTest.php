@@ -210,13 +210,13 @@ class UserTest extends TestCase
     }
 
     /// Path: POST  /users/login
-    public function testGetUserLogin()
+    public function testPostUserLogin()
     {
         if ($this->only_priority_tests) {
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $this->load('/users/login?email=sulu.simulation@makeadiff.in&password=pass');
+        $this->load('/users/login', 'POST', ['email' => 'sulu.simulation@makeadiff.in', 'password' => 'pass'], 'basic');
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response_data->data->users->name, 'Sulu');
     }
@@ -289,7 +289,7 @@ class UserTest extends TestCase
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response->getStatusCode(), 200);
 
-        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
+        $tokens = $this->db->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
         $found = 0;
 
         foreach ($this->response_data->data->devices as $device) {
@@ -309,7 +309,7 @@ class UserTest extends TestCase
 
         $this->graphql('{ user(id: 1) { devices { token }} }');
 
-        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
+        $tokens = $this->db->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
         $found = 0;
 
         foreach ($this->response_data->data->user->devices as $device) {
@@ -335,7 +335,7 @@ class UserTest extends TestCase
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response->getStatusCode(), 200);
 
-        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
+        $tokens = $this->db->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
         $found = false;
 
         foreach ($tokens as $tok) {
@@ -364,7 +364,7 @@ class UserTest extends TestCase
         $this->load('/users/1/devices/test-token-that-should-be-deleted', 'DELETE');
         $this->assertEquals($this->response->getStatusCode(), 200);
 
-        $deleted_device = app('db')->table('Device')->select('status')->where('id', $device_id)->first();
+        $deleted_device = $this->db->table('Device')->select('status')->where('id', $device_id)->first();
         $this->assertEquals($deleted_device->status, '0');
     }
 
@@ -379,7 +379,7 @@ class UserTest extends TestCase
 
         // Delete Binny's CPP Signing to test this...
         $user_id = 1;
-        app('db')->table("UserData")->where('name', 'child_protection_policy_signed')->where('user_id', $user_id)->delete();
+        $this->db->table("UserData")->where('name', 'child_protection_policy_signed')->where('user_id', $user_id)->delete();
 
         $this->load("/users/$user_id/alerts", 'GET');
         $this->assertEquals($this->response->getStatusCode(), 200);
