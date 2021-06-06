@@ -18,7 +18,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 // :TODO: Don't return password as plain text. Esp on /users/<ID> GET or /users/<ID> POST
 
-// final class User extends Common implements JWTSubject
 class User extends Authenticatable implements JWTSubject
 {
     use Common;
