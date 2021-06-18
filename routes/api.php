@@ -1398,9 +1398,9 @@ Route::group([
 
     // Use this to Debug/test things
     Route::get('/test', function () {
-        $type_model = new Event_Type;
-        $type = $type_model->find(39)->computed_name();
-        dump($type);
+        $donation_model = new DonationController;
+        $data = $donation_model->search(['fundraiser_user_id' => 1]);
+        return $data;
     });
 
     require_once base_path('routes/api-surveys.php');

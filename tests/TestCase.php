@@ -89,7 +89,7 @@ abstract class TestCase extends BaseTestCase
         'name'	    => 'Binny V A',
         'email'	    => 'binnyva@gmail.com',
         'phone'	    => '9746068565',
-        'center_id' => 184
+        'center_id' => 154
     ];
 
     // Almost the constructor. These will be called before tests are run.

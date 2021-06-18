@@ -52,10 +52,10 @@ class UserTest extends TestCase
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $model = new User;
-        $data = $model->search(['center_id' => $this->ideal_center_id]);
+        $user_model = new User;
+        $data = $user_model->search(['center_id' => $this->ideal_center_id]);
 
-        $teacher_ids = [203356, 203355, 203354, 203353];
+        $teacher_ids = [203356, 203355, 203354, 203353]; // Should be values of $this->ideal_batch_level_user_mapping
         $found = 0;
         foreach ($data as $usr) {
             if (in_array($usr->id, $teacher_ids)) {
@@ -76,7 +76,7 @@ class UserTest extends TestCase
         $data = $model->search(['vertical_id' => 1]);
 
         $result = $data->first();
-        $this->assertEquals($result->id, '169630');
+        $this->assertEquals($result->id, '189385');
     }
 
     // Risky tests. Data can change.
@@ -89,9 +89,16 @@ class UserTest extends TestCase
         $model = new User;
         $data = $model->search(['user_group_type' => 'national']);
 
-        $result = $data->first();
+        $search_for = 1;
+        $found = false;
 
-        $this->assertEquals($result->id, '154737');
+        foreach ($data as $usr) {
+            if($usr->id == $search_for) {
+                $found = true;
+            }
+        }
+
+        $this->assertTrue($found);
     }
 
     /// See if found user have a group with main role. Risky. 

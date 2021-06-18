@@ -17,7 +17,7 @@ final class CenterProject extends Model
 
     public function project()
     {
-        $projects = $this->belongsTo('App\Models\Project', 'project_id')->where('year', $this->year);
+        $projects = $this->belongsTo('App\Models\Project', 'project_id')->where('year', $this->year());
         return $projects;
     }
 
@@ -41,7 +41,7 @@ final class CenterProject extends Model
             $join->on('Batch.center_id', '=', 'CenterProject.center_id')
                 ->where('CenterProject.project_id', '=', app('db')->raw('Batch.project_id'));
         });
-        $q->where("Batch.year", $this->year)->where("Batch.status", 1);
+        $q->where("Batch.year", $this->year())->where("Batch.status", 1);
         $q->where('Batch.project_id', '=', $this->project_id); // So that we can handle centers with multilpe centerproject
         $q->select(app('db')->raw("Batch.*"))->distinct(); // Because Otherwise CenterProject.id was owerwriting the ID
 
@@ -56,7 +56,7 @@ final class CenterProject extends Model
             $join->on('Level.center_id', '=', 'CenterProject.center_id')
                 ->where('Level.project_id', '=', app('db')->raw('CenterProject.project_id'));
         });
-        $q->where("Level.year", $this->year)->where("Level.status", 1);
+        $q->where("Level.year", $this->year())->where("Level.status", 1);
         $q->where('Level.project_id', '=', $this->project_id); // So that we can handle centers with multilpe centerproject
         $q->select(app('db')->raw("Level.*"))->distinct(); // Because Otherwise CenterProject.id was owerwriting the ID
 
@@ -79,7 +79,7 @@ final class CenterProject extends Model
     {
         foreach($project_ids as $project_id)
         {
-            $existing_assign = $this->getAssign($center_id, $project_id, $this->year);
+            $existing_assign = $this->getAssign($center_id, $project_id, $this->year());
 
             if (isset($existing_assign->id)) 
             {

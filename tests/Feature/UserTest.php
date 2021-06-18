@@ -84,7 +84,9 @@ class UserTest extends TestCase
     /// GraphQL: users(name:"Binny")
     public function testGraphQLUsers()
     {
-        // if ($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->graphql('{users(name:"Binny%") { id name }}');
         $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");

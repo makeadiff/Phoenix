@@ -14,7 +14,8 @@ final class Group extends Model
 
     public function users()
     {
-        return $this->belongsToMany('App\Models\User', 'UserGroup')->where('User.status', '=', '1')->where('User.user_type', '=', 'volunteer')->wherePivot('year', $this->year);
+        return $this->belongsToMany('App\Models\User', 'UserGroup')->where('User.status', '=', '1')
+                ->where('User.user_type', '=', 'volunteer')->wherePivot('year', $this->year());
     }
 
     public function vertical()

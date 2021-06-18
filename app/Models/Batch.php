@@ -21,7 +21,7 @@ final class Batch extends Model
     }
     public function levels()
     {
-        return $this->belongsToMany("App\Models\Level", 'BatchLevel'); // ->where('BatchLevel.year', '=', $this->year);
+        return $this->belongsToMany("App\Models\Level", 'BatchLevel'); // ->where('BatchLevel.year', '=', $this->year());
     }
     public function teachers()
     {
@@ -62,7 +62,7 @@ final class Batch extends Model
             $data['status'] = '1';
         }
         if (!isset($data['year'])) {
-            $data['year'] = $this->year;
+            $data['year'] = $this->year();
         }
 
         if (isset($data['teacher_id'])) {
@@ -72,7 +72,7 @@ final class Batch extends Model
         if (isset($data['level_id'])) {
             $q->join('BatchLevel', 'Batch.id', '=', 'BatchLevel.batch_id');
             $q->join("Level", 'Level.id', '=', 'BatchLevel.level_id');
-            $q->where("Level.year", $this->year)->where('Level.status', '1');
+            $q->where("Level.year", $this->year())->where('Level.status', '1');
         }
 
         if (isset($data['city_id'])) {
@@ -124,7 +124,7 @@ final class Batch extends Model
     {
         $this->id = $id;
         if ($is_active) {
-            $this->item = $this->where('status', '1')->where('year', $this->year)->find($id);
+            $this->item = $this->where('status', '1')->where('year', $this->year())->find($id);
         } else {
             $this->item = $this->find($id);
         }
@@ -150,7 +150,7 @@ final class Batch extends Model
             'class_time'=> $data['class_time'],
             'center_id' => $data['center_id'],
             'project_id'=> $data['project_id'],
-            'year'      => isset($data['year']) ? $data['year'] : $this->year,
+            'year'      => isset($data['year']) ? $data['year'] : $this->year(),
             'status'    => isset($data['status']) ? $data['status'] : '1',
             'batch_head_id' => '0'
         ];

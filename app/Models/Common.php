@@ -4,28 +4,33 @@ namespace App\Models;
 trait Common
 {
     public $errors = [];
-
-    public $year;
-    public $year_start_date;
-    public $year_start_time;
     protected $item_id = 0;
     protected $item = 0;
 
-    public function __construct(array $attributes = [])
+    public function yearStartMonth()
     {
-        parent::__construct($attributes);
+        return 7; // July, made this change for 2020 year. It was a wierd year.
+    }
 
-        // Current year
+    public function year()
+    {
         $this_month = intval(date('m'));
-        $months = [];
-        $start_month = 7; // July, made this change for 2020 year. It was a wierd year.
+        $start_month = $this->yearStartMonth();
         $start_year = date('Y');
         if ($this_month < $start_month) {
             $start_year = date('Y')-1;
         }
-        $this->year = $start_year;
-        $this->year_start_date = $start_year . "-0{$start_month}-01";
-        $this->year_start_time = $this->year_start_date . ' 00:00:00';
+        return $start_year;
+    }
+
+    public function yearStartDate()
+    {
+        return $this->year() . "-0" . $this->yearStartMonth() . "-01";
+    }
+
+    public function yearStartTime()
+    {
+        return $this->yearStartDate() . ' 00:00:00';
     }
 
     public function isTableJoined($q, $table) 

@@ -74,7 +74,7 @@ final class Data extends Model
             'item_id'   => $item->item_id,
             'name'      => $item->name,
             'data'      => $data,
-            'year'      => $this->year,
+            'year'      => $this->year(),
             'added_on'  => date('Y-m-d H:i:s')
         ]);
     }

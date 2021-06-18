@@ -33,7 +33,7 @@ class User extends Authenticatable implements JWTSubject
     public function groups()
     {
         $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
-                            ->where('Group.status', '1')->wherePivot('year', $this->year)
+                            ->where('Group.status', '1')->wherePivot('year', $this->year())
                             ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
         $groups->orderByRaw("FIELD(Group.type, 'executive', 'national', 'strat', 'fellow', 'volunteer')");
         return $groups;
@@ -42,7 +42,7 @@ class User extends Authenticatable implements JWTSubject
     public function mainGroup()
     {
         $group = $this->hasOneThrough('App\Models\Group', 'App\Models\UserGroup', 'user_id', 'id', 'id', 'group_id')
-                            ->where('Group.status', '1')->where('UserGroup.year', $this->year)->where('UserGroup.main', '1')
+                            ->where('Group.status', '1')->where('UserGroup.year', $this->year())->where('UserGroup.main', '1')
                             ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
         return $group;
     }
@@ -59,7 +59,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function classes($status = '')
     {
-        $classes = $this->belongsToMany("App\Models\Classes", 'UserClass', 'user_id', 'class_id')->where('Class.class_on', '>=', $this->year_start_time);
+        $classes = $this->belongsToMany("App\Models\Classes", 'UserClass', 'user_id', 'class_id')->where('Class.class_on', '>=', $this->yearStartTime());
         if ($status) {
             $classes->where('Class.status', $status);
         }
@@ -73,7 +73,7 @@ class User extends Authenticatable implements JWTSubject
         $batches = $this->belongsToMany("App\Models\Batch", 'UserBatch', 'user_id', 'batch_id');
         $batches->select("Batch.id", "Batch.class_time", "Batch.day", "Batch.batch_head_id");
         $batches->join("Class", "Class.batch_id", '=', 'Batch.id');
-        $batches->where('Batch.year', '=', $this->year)->where("Class.class_on", '>', date('Y-m-d H:i:s'))
+        $batches->where('Batch.year', '=', $this->year())->where("Class.class_on", '>', date('Y-m-d H:i:s'))
                 ->where("Batch.status", '=', '1')->where('UserBatch.role', 'mentor');
         if ($status) {
             $batches->where('Class.status', $status);
@@ -86,7 +86,7 @@ class User extends Authenticatable implements JWTSubject
     public function batches()
     {
         $batches = $this->belongsToMany("App\Models\Batch", 'UserBatch', 'user_id', 'batch_id');
-        $batches->where('Batch.year', '=', $this->year)->where("Batch.status", '=', '1')->where('UserBatch.role', 'teacher');
+        $batches->where('Batch.year', '=', $this->year())->where("Batch.status", '=', '1')->where('UserBatch.role', 'teacher');
         return $batches;
     }
 
@@ -94,7 +94,7 @@ class User extends Authenticatable implements JWTSubject
     public function levels()
     {
         $levels = $this->belongsToMany("App\Models\Level", 'UserBatch', 'user_id', 'level_id');
-        $levels->where('Level.year', '=', $this->year)->where("Level.status", '=', '1');
+        $levels->where('Level.year', '=', $this->year())->where("Level.status", '=', '1');
         return $levels;
     }
 
@@ -102,7 +102,7 @@ class User extends Authenticatable implements JWTSubject
     public function donations()
     {
         $donations = $this->hasMany("App\Models\Donation", 'fundraiser_user_id');
-        $donations->where("added_on", '>=', $this->year_start_date);
+        $donations->where("added_on", '>=', $this->yearStartDate());
         $donations->orderBy("added_on", 'desc');
         return $donations;
     }
@@ -117,7 +117,7 @@ class User extends Authenticatable implements JWTSubject
     public function conversations()
     {
         $conversations = $this->hasMany("App\Models\Conversation", 'user_id');
-        $conversations->where("added_on", '>=', $this->year_start_date);
+        $conversations->where("added_on", '>=', $this->yearStartDate());
         $conversations->orderBy("scheduled_on", 'desc');
         return $conversations;
     }
@@ -295,7 +295,7 @@ class User extends Authenticatable implements JWTSubject
             }
             $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $q->whereIn('UserGroup.group_id', $data['user_group']);
-            $q->where('UserGroup.year', $this->year);
+            $q->where('UserGroup.year', $this->year());
             if(!empty($data['only_main_group'])) {
                 $q->where('UserGroup.main', $data['only_main_group']);
             }
@@ -306,7 +306,7 @@ class User extends Authenticatable implements JWTSubject
             $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $this->joinOnce($q, 'Group', 'Group.id', '=', 'UserGroup.group_id');
             $q->where('Group.type', $data['user_group_type']);
-            $q->where('UserGroup.year', $this->year);
+            $q->where('UserGroup.year', $this->year());
             if(!empty($data['only_main_group'])) {
                 $q->where('UserGroup.main', $data['only_main_group']);
             }
@@ -317,7 +317,7 @@ class User extends Authenticatable implements JWTSubject
             $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $this->joinOnce($q, 'Group', 'Group.id', '=', 'UserGroup.group_id');
             $q->where('Group.vertical_id', $data['vertical_id']);
-            $q->where('UserGroup.year', $this->year);
+            $q->where('UserGroup.year', $this->year());
             if(!empty($data['only_main_group'])) {
                 $q->where('UserGroup.main', $data['only_main_group']);
             }
@@ -330,7 +330,7 @@ class User extends Authenticatable implements JWTSubject
             if (isset($data['user_group']) and in_array($mentor_group_id, $data['user_group'])) { // Find the mentors
                 $this->joinOnce($q, "Batch", 'User.id', '=', 'Batch.batch_head_id');
                 $q->where('Batch.center_id', $data['teaching_in_center_id']);
-                $q->where('Batch.year', $this->year);
+                $q->where('Batch.year', $this->year());
                 if (isset($data['project_id'])) {
                     $q->where('Batch.project_id', $data['project_id']);
                 }
@@ -621,17 +621,17 @@ class User extends Authenticatable implements JWTSubject
     private function unsetMainGroup($user_id = false)
     {
         $user_id = $this->chain($user_id);
-        app('db')->table('UserGroup')->where('main','1')->where('user_id', $user_id)->where('year',$this->year)->update(['main' => '0']);
+        app('db')->table('UserGroup')->where('main','1')->where('user_id', $user_id)->where('year',$this->year())->update(['main' => '0']);
     }
     public function setMainGroup($group_id, $main ='1', $user_id = false)
     {
         $user_id = $this->chain($user_id);
-        app('db')->table("UserGroup")->where('group_id',$group_id)->where('user_id', $user_id)->where('year',$this->year)->update(['main' => $main]);
+        app('db')->table("UserGroup")->where('group_id',$group_id)->where('user_id', $user_id)->where('year',$this->year())->update(['main' => $main]);
     }
     private function unsetAllGroups($user_id = false)
     {
         $user_id = $this->chain($user_id);
-        app('db')->table('UserGroup')->where('user_id', $user_id)->where('year',$this->year)->delete();
+        app('db')->table('UserGroup')->where('user_id', $user_id)->where('year',$this->year())->delete();
     }
 
     /// $groups should be in the format of [{group_id: 12, main: "0"}, {group_id: 13, main: "1"}]
@@ -693,7 +693,7 @@ class User extends Authenticatable implements JWTSubject
         app('db')->table("UserGroup")->insert([
             'user_id'   => $user_id,
             'group_id'  => $group_id,
-            'year'      => $this->year,
+            'year'      => $this->year(),
             'main'      => (string) $main
         ]);
 
@@ -719,7 +719,7 @@ class User extends Authenticatable implements JWTSubject
         }
         // :TODO: What happens if the 'main' Group is deleted. Assign them the highest?
 
-        app('db')->table("UserGroup")->where('user_id', $user_id)->where('group_id',$group_id)->where('year',$this->year)->delete();
+        app('db')->table("UserGroup")->where('user_id', $user_id)->where('group_id',$group_id)->where('year',$this->year())->delete();
 
         return $this->item->groups();
     }
@@ -742,7 +742,7 @@ class User extends Authenticatable implements JWTSubject
             'credit_assigned_by_user_id' => $credit_assigned_by_user_id,
             'comment'   => $reason,
             'added_on'  => date('Y-m-d H:i:s'),
-            'year'      => $this->year
+            'year'      => $this->year()
         ]);
 
         return $this->find($this->id)->setCredit($new_credit);
@@ -798,7 +798,7 @@ class User extends Authenticatable implements JWTSubject
     {
         $user_id = $this->chain($user_id);
 
-        $groups = app('db')->table("UserGroup")->where('user_id', $user_id)->where('year', $this->year)->select('group_id')->get()->pluck('group_id');
+        $groups = app('db')->table("UserGroup")->where('user_id', $user_id)->where('year', $this->year())->select('group_id')->get()->pluck('group_id');
 
         $parent_groups = app('db')->table("Group")->distinct('parent_group_id')
             ->whereIn('id', $groups)->where('status', '1')->where('parent_group_id', '!=', '0')->get()->pluck('parent_group_id');

@@ -23,7 +23,7 @@ final class Student extends Model
     public function level($project_id = 1)
     {
         $levels = $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')
-                    ->where('Level.status', '1')->where('Level.year', $this->year)->where("Level.project_id", $project_id);
+                    ->where('Level.status', '1')->where('Level.year', $this->year())->where("Level.project_id", $project_id);
         $levels->select(
             'Level.id',
             'Level.name',

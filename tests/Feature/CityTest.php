@@ -112,7 +112,7 @@ class CityTest extends TestCase
         $this->load('/cities/28/fellows');
 
         $this->assertEquals($this->response_data->status, 'success');
-        $search_for = 'finance.test@makeadiff.in';
+        $search_for = 'ideal.fellow.hc@makeadiff.in';
         $found = false;
         foreach ($this->response_data->data->users as $key => $info) {
             if ($info->email == $search_for) {
