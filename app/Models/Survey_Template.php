@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Survey_Template extends Common
+final class Survey_Template extends Model
 {
+    use Common;
+    
     protected $table = 'Survey_Template';
     const CREATED_AT = 'added_on';
     const UPDATED_AT = null;

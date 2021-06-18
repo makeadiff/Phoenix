@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Tag extends Common
+final class Tag extends Model
 {
+    use Common;
+    
     protected $table = 'Tag';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

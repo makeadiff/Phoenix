@@ -134,10 +134,12 @@ class BatchTest extends TestCase
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $this->load('/batches/2608/levels');
+        $batch_id  = array_key_first($this->ideal_batchs);
+        $this->load("/batches/$batch_id/levels");
 
         $this->assertEquals($this->response_data->status, 'success');
-        $search_for = '7 A';
+        $level_name = array_values($this->ideal_levels)[0]['level_name'];
+        $search_for = $level_name;
         $found = false;
         foreach ($this->response_data->data->levels as $key => $info) {
             if ($info->name == $search_for) {
@@ -331,11 +333,19 @@ class BatchTest extends TestCase
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $this->graphql('{ batchSearch(teacher_id: 1, level_id: 7794, center_id: 184, project_id: 1) { id batch_name day }}');
+        $batch_id = array_key_first($this->ideal_batchs);
+        $center_id = $this->ideal_batchs[$batch_id]['center_id'];
+        $project_id = $this->ideal_batchs[$batch_id]['project_id'];
+        $mapping_for_batch = $this->ideal_batch_level_user_mapping[$batch_id];
+        $level_id = array_key_first($mapping_for_batch);
+        $teacher_id = $mapping_for_batch[$level_id][0];
+
+        $this->graphql("{ batchSearch(teacher_id: $teacher_id, level_id: $level_id, center_id: $center_id, project_id: $project_id) 
+                            { id batch_name day }}");
 
         $db_batch_ids = app('db')->table('UserBatch AS UB')->join("Batch AS B", "UB.batch_id", "=", "B.id")
-            ->select('B.id', 'B.day')->where('UB.user_id', 1)->where('B.year', $this->year)
-            ->where("B.center_id", 184)->where("B.project_id", 1)->where("UB.level_id", 7794)
+            ->select('B.id', 'B.day')->where('UB.user_id', $teacher_id)->where('B.year', $this->year)
+            ->where("B.center_id", $center_id)->where("B.project_id", $project_id)->where("UB.level_id", $level_id)
             ->get()->pluck('id')->toArray();
         $found = 0;
 

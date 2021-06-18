@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Batch;
+use Illuminate\Database\Eloquent\Model;
 
-class Allocation extends Common
+class Allocation extends Model
 {
+    use Common;
     protected $table = 'UserBatch';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

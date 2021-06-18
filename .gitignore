@@ -1,6 +1,7 @@
 /node_modules
 /public/hot
 /public/storage
+/tests/Secrets
 /storage/*.key
 /vendor
 /config/app.php
@@ -18,3 +19,4 @@ storage/tinx/
 .php_cs.cache
 .env.example
 /config/database.php
+DB Structure Changes Pending.txt

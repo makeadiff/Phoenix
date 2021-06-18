@@ -165,6 +165,7 @@ return [
          * Package Service Providers...
          */
         Barryvdh\Debugbar\ServiceProvider::class,
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -230,6 +231,8 @@ return [
         // 'Sentry' => Sentry\Laravel\Facade::class,
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
         'GraphQL' => Nuwave\Lighthouse\Support\Facades\GraphQLFacade::class,
+        'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class, 
+        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
     ],
 
 ];

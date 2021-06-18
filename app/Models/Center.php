@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Center extends Common
+final class Center extends Model
 {
+    use Common;
+    
     protected $table = 'Center';
     public $timestamps = true;
     const CREATED_AT = null;
@@ -23,18 +26,18 @@ final class Center extends Common
     public function projects()
     {
         $projects = $this->hasMany('App\Models\CenterProject');
-        $projects->where('year', $this->year);
+        $projects->where('year', $this->year());
         return $projects;
     }
 
     public function batches($project_id = 1)
     {
-        return $this->hasMany('App\Models\Batch')->where('Batch.status', '1')->where('Batch.year', $this->year)
+        return $this->hasMany('App\Models\Batch')->where('Batch.status', '1')->where('Batch.year', $this->year())
                     ->where('Batch.project_id', $project_id)->orderBy("Batch.day");
     }
     public function levels($project_id = 1)
     {
-        return $this->hasMany('App\Models\Level')->where('Level.status', '1')->where('Level.year', $this->year)
+        return $this->hasMany('App\Models\Level')->where('Level.status', '1')->where('Level.year', $this->year())
                     ->where('Level.project_id', $project_id)->orderBy("Level.grade")->orderBy("Level.name");
     }
     public function students()
