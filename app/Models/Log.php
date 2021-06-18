@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Log extends Common
+final class Log extends Model
 {
+    use Common;
+    
     protected $table = 'Log';
     public $timestamps = true;
     const CREATED_AT = 'added_on';

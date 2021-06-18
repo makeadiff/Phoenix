@@ -5,9 +5,12 @@ use App\Models\Common;
 use JSend;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
+use Illuminate\Database\Eloquent\Model;
 
-final class Contact extends Common
+final class Contact extends Model
 {
+    use Common;
+    
     protected $table = 'Contact';
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';

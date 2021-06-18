@@ -1,6 +1,6 @@
 # Phoenix
 
-### 2.5.11
+### 2.6.0
 
 ## Project Description/Purpose
 

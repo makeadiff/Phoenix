@@ -4,9 +4,12 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\User;
 use App\Libraries\Email;
+use Illuminate\Database\Eloquent\Model;
 
-final class Event extends Common
+final class Event extends Model
 {
+    use Common;
+    
     protected $table = 'Event';
     public $timestamps = true;
     const CREATED_AT = 'created_on';
@@ -67,7 +70,7 @@ final class Event extends Common
 
     public function eventsInCity($city_id)
     {
-        return app('db')->table("Event")->where("status", '1')->where("starts_on", '>=', $this->year_start_time)->where("city_id", $city_id)->get();
+        return app('db')->table("Event")->where("status", '1')->where("starts_on", '>=', $this->yearStartTime())->where("city_id", $city_id)->get();
     }
 
     public function filter($data)
@@ -120,7 +123,7 @@ final class Event extends Common
                 $q->where("Event." . $field, $data[$field]);
             }
         }
-        $q->where("Event.starts_on", '>=', $this->year_start_time);
+        $q->where("Event.starts_on", '>=', $this->yearStartTime());
 
         $q->join('Event_Type', 'Event.event_type_id', '=', 'Event_Type.id');
         $q->orderBy('Event.starts_on')->orderBy('Event.name');

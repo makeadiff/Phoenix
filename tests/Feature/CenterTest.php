@@ -55,10 +55,14 @@ class CenterTest extends TestCase
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $this->load('/centers/220/teachers');
+        $this->load("/centers/{$this->ideal_center_id}/teachers");
 
         $this->assertEquals($this->response_data->status, 'success');
-        $search_for = 'Forge';
+        $levels = array_values($this->ideal_batch_level_user_mapping);
+        $first_teacher_id = array_values($levels[0]);
+        $first_teacher_id = $first_teacher_id[0][0];
+
+        $search_for = $this->ideal_users[$first_teacher_id]['name'];
         $found = false;
 
         foreach ($this->response_data->data->users as $key => $info) {
@@ -89,7 +93,7 @@ class CenterTest extends TestCase
                 break;
             }
         }
-        // $this->assertTrue($found);
+        $this->assertTrue($found);
         $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
@@ -100,10 +104,11 @@ class CenterTest extends TestCase
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $this->load('/centers/220/levels');
+        $this->load("/centers/{$this->ideal_center_id}/levels");
 
         $this->assertEquals($this->response_data->status, 'success');
-        $search_for = '7 A';
+        $level_name = array_values($this->ideal_levels)[0]['level_name'];
+        $search_for = $level_name;
         $found = false;
         foreach ($this->response_data->data->levels as $key => $info) {
             if ($info->name == $search_for) {
@@ -125,7 +130,7 @@ class CenterTest extends TestCase
         $this->load('/centers/154/levels?project_id=2');
 
         $this->assertEquals($this->response_data->status, 'success');
-        $search_for = '11 A';
+        $search_for = '12 A';
         $found = false;
         foreach ($this->response_data->data->levels as $key => $info) {
             if ($info->name == $search_for) {

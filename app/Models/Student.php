@@ -5,9 +5,12 @@ use App\Models\Common;
 use App\Models\Center;
 use App\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Model;
 
-final class Student extends Common
+final class Student extends Model
 {
+    use Common;
+    
     protected $table = 'Student';
     public $timestamps = false;
     protected $fillable = ['name','sex','birthday','center_id','status','added_on', 'description', 'photo'];
@@ -20,7 +23,7 @@ final class Student extends Common
     public function level($project_id = 1)
     {
         $levels = $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')
-                    ->where('Level.status', '1')->where('Level.year', $this->year)->where("Level.project_id", $project_id);
+                    ->where('Level.status', '1')->where('Level.year', $this->year())->where("Level.project_id", $project_id);
         $levels->select(
             'Level.id',
             'Level.name',

@@ -1,5 +1,5 @@
 {
-    "name": "phoenix",
+    "name": "makeadiff/phoenix",
     "type": "project",
     "description": "API Backend for MAD Applications",
     "keywords": [
@@ -17,7 +17,8 @@
         "guzzlehttp/guzzle": "^6.5",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
-        "nuwave/lighthouse": "^4.12"
+        "nuwave/lighthouse": "^4.12",
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "ajthinking/tinx": "^2.3",

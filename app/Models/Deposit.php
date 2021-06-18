@@ -4,9 +4,12 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\Donation;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
-final class Deposit extends Common
+final class Deposit extends Model
 {
+    use Common;
+    
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'reviewed_on';
     protected $table = 'Donut_Deposit';

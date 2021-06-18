@@ -3,9 +3,12 @@ namespace App\Models;
 
 use App\Models\Common;
 use Validator;
+use Illuminate\Database\Eloquent\Model;
 
-final class Survey_Choice extends Common
+final class Survey_Choice extends Model
 {
+    use Common;
+    
     protected $table = 'Survey_Choice';
     public $timestamps = false;
     protected $fillable = ['name', 'description', 'survey_question_id', 'sort_order', 'value', 'status'];

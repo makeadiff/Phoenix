@@ -6,11 +6,14 @@ use App\Models\Batch;
 use App\Models\Level;
 use App\Models\Student;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
 // This is named 'Classes' - going against the convention in other classes - because Class is a reserved keyword in PHP
 
-final class Classes extends Common
+final class Classes extends Model
 {
+    use Common;
+    
     protected $table = 'Class';
     public $timestamps = false;
     protected $fillable = ['batch_id', 'level_id', 'project_id', 'class_on', 'class_type', 'class_satisfaction',
@@ -90,9 +93,9 @@ final class Classes extends Common
         $q->join("Batch", 'Batch.id', '=', 'Class.batch_id');
         $q->join("Level", 'Level.id', '=', 'Class.level_id');
 
-        $q->where("Batch.year", '=', $this->year);
+        $q->where("Batch.year", '=', $this->year());
         $q->where("Batch.status", '=', '1');
-        $q->where("Level.year", '=', $this->year);
+        $q->where("Level.year", '=', $this->year());
         $q->where("Level.status", '=', '1');
 
         foreach ($search_fields as $field) {
@@ -156,7 +159,7 @@ final class Classes extends Common
             }
         }
 
-        $q->where("Class.class_on", '>=', $this->year_start_time);
+        $q->where("Class.class_on", '>=', $this->yearStartTime());
         if (isset($search['direction']) and $search['direction'] == '-' and isset($search['limit'])) {
             $q->orderBy("Class.class_on", "DESC"); // If we are trying to find the latest class...
         } else {

@@ -2,10 +2,13 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
 // :TODO: I'm not sure this is in use anymore. Might have to depricate and delete the table.
-final class Notification extends Common
+final class Notification extends Model
 {
+    use Common;
+    
     const CREATED_AT = 'created_on';
     const UPDATED_AT = 'updated_on';
     protected $table = 'Push_Notification';
