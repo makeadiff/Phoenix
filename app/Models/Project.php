@@ -16,7 +16,7 @@ final class Project extends Model
     public function centers()
     {
         $centers = $this->belongsToMany('App\Models\Center', 'CenterProject', 'project_id', 'center_id');
-        $centers->wherePivot('year', $this->year);
+        $centers->wherePivot('year', $this->year());
         return $centers;
     }
 

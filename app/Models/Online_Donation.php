@@ -22,7 +22,7 @@ final class Online_Donation extends Model
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->start_date = $this->year . '-05-01 00:00:00';
+        $this->start_date = $this->year() . '-05-01 00:00:00';
     }
     
     public function fundraiser()
@@ -39,7 +39,8 @@ final class Online_Donation extends Model
     {
         $q = app('db')->table('Online_Donation');
         $q->select(
-            "Online_Donation.id",
+            'Online_Donation.id',
+            'Online_Donation.id AS online_donation_id',
             'Online_Donation.fundraiser_user_id',
             'Online_Donation.donor_id',
             'Online_Donation.amount',

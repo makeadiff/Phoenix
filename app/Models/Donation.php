@@ -28,7 +28,7 @@ final class Donation extends Model
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->start_date = $this->year_start_time;
+        $this->start_date = $this->yearStartTime();
     }
     
     public function fundraiser()
@@ -103,7 +103,8 @@ final class Donation extends Model
         }
 
         $q->select(
-            "Donut_Donation.id",
+            'Donut_Donation.id',
+            'Donut_Donation.id AS donut_id',
             'Donut_Donation.type',
             'Donut_Donation.fundraiser_user_id',
             'Donut_Donation.donor_id',
@@ -237,6 +238,8 @@ final class Donation extends Model
 
         $this->id = $donation_id;
         $this->item = $this->find($donation_id);
+
+        $data->donut_id = $donation_id;
 
         return $data;
     }
@@ -590,7 +593,8 @@ final class Donation extends Model
             $res .= (empty($res) ? "" : " ") . $this->convertNumber($hundreds) . " Hundred";
         }
 
-        $ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eightteen", "Nineteen"];
+        $ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", 
+                "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eightteen", "Nineteen"];
         $all_tens = ["", "", "Twenty", "Thirty", "Fourty", "Fifty", "Sixty", "Seventy", "Eigthy", "Ninety"];
 
         if ($tens || $unit) {
