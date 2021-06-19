@@ -149,7 +149,7 @@ final class Student extends Model
         $student = Student::create([
             'name'      => $data['name'],
             'sex'       => isset($data['sex']) ? $data['sex'] : 'u',
-            'birthday'  => isset($data['birthday']) ? date('Y-m-d', strtotime($data['birthday'])) : '',
+            'birthday'  => isset($data['birthday']) ? date('Y-m-d', strtotime($data['birthday'])) : null,
             'center_id' => $data['center_id'],
             'description'   => isset($data['description']) ? $data['description'] : '',
             'photo'     => isset($data['photo']) ? $data['photo'] : '',
