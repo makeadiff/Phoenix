@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\Common;
 use Validator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 final class Survey extends Model
 {
@@ -85,9 +86,15 @@ final class Survey extends Model
         return false;
     }
 
-    public function add($survey_template_id, $name, $added_by_user_id)
+    public function add($survey_template_id, $name, $added_by_user_id = 0)
     {
-        $fields = ['survey_template_id' => $survey_template_id, 'added_by_user_id' => $added_by_user_id, 'name' => $name];
+        if(!$added_by_user_id) $added_by_user_id = Auth::id();
+
+        $fields = [
+            'survey_template_id' => $survey_template_id, 
+            'added_by_user_id' => $added_by_user_id, 
+            'name' => $name
+        ];
         $validator = Validator::make($fields, [
             'survey_template_id'    => 'required|integer|exists:Survey_Template,id',
             'added_by_user_id'      => 'required|integer|exists:User,id'

@@ -2,7 +2,9 @@
 namespace App\Models;
 
 use App\Models\Common;
+use App\Models\Tag;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 final class Comment extends Model
 {
@@ -70,18 +72,28 @@ final class Comment extends Model
         if (empty($data['item_type']) or empty($data['item_id']) or empty($data['comment'])) {
             return false;
         }
+
+        $added_by_user_id = Auth::id();
+        if(!empty($data['added_by_user_id'])) $added_by_user_id = $data['added_by_user_id'];
+
         // Ideally this should be done using create() - but it was giving me a wierd issue that
         //      I was not able to fix. Possibly due to the polymorphic relationship. So, this.
         $comment_id = app('db')->table('Comment')->insertGetId([
             'item_type' => $data['item_type'],
             'item_id'   => $data['item_id'],
             'comment'   => $data['comment'],
-            'added_by_user_id'  => isset($data['added_by_user_id']) ? $data['added_by_user_id'] : 0,
+            'added_by_user_id'  => ($added_by_user_id) ? $added_by_user_id : 0,
             'added_on'  => date('Y-m-d H:i:s')
         ]);
 
         $comment = $this->find($comment_id);
 
         return $comment;
+    }
+
+    public function tagComment($comment_id, $tag)
+    {
+        $tag_model = new Tag;
+        $tag_model->tagItem('Comment', $comment_id, $tag);
     }
 }

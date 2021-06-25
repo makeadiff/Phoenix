@@ -6,10 +6,9 @@ use App\Models\User;
 use JWTAuth;
 use Exception;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
+use Illuminate\Support\Facades\Auth;
 
-/*
-Combining both BasicAuth.php and JwtMiddleware.php Middlewares together. Either auth format is supported.
-*/
+// Combining both BasicAuth.php and JwtMiddleware.php Middlewares together. Either auth format is supported.
 
 class BasicOrJwtAuth
 {
@@ -33,7 +32,11 @@ class BasicOrJwtAuth
             define('DEVELOPER_GROUP_ID', 388);
 
             if (!in_array(DEVELOPER_GROUP_ID, $group_ids)) {
-                return response(['status' => "fail", "data" => ["Your auth account does not have the Developer user group. Contact the tech team to add this to your account."]], 401);
+                return response(
+                    [
+                    'status'=> "fail", 
+                    'data'  => ["Your auth account does not have the Developer user group. Contact the tech team to add this to your account."]
+                ], 401);
             }
 
         } else { // Basic authentication not present. Try JWT 
@@ -56,6 +59,7 @@ class BasicOrJwtAuth
             return response(['status' => "fail", "data" => ["You need a login provided by the Make a Difference Tech Team to acccess this API."]], 401, $headers);
         }
 
+        Auth::login($auth_details);
 
         return $next($request);
     }
