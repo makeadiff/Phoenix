@@ -5,6 +5,7 @@ use App\Models\Common;
 use App\Models\User;
 use App\Libraries\Email;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 final class Event extends Model
 {
@@ -170,6 +171,9 @@ final class Event extends Model
 
     public function add($data)
     {
+        $created_by_user_id = Auth::id();
+        if(!empty($data['created_by_user_id'])) $created_by_user_id = $data['created_by_user_id'];
+
         $event = Event::create([
             'name'          => $data['name'],
             'description'   => isset($data['description']) ? $data['description'] : '',
@@ -178,7 +182,7 @@ final class Event extends Model
             'city_id'       => $data['city_id'],
             'event_type_id' => $data['event_type_id'],
             'template_event_id' => isset($data['template_event_id']) ? $data['template_event_id'] : 0,
-            'created_by_user_id'=> $data['created_by_user_id'],
+            'created_by_user_id'=> $created_by_user_id,
             'latitude'      => isset($data['latitude']) ? $data['latitude'] : '',
             'longitude'     => isset($data['longitude']) ? $data['longitude'] : '',
             'repeat_until'  => isset($data['repeat_until']) ? date('Y-m-d H:i:s', strtotime($data['repeat_until'])) : null,

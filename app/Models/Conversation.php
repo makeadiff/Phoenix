@@ -3,6 +3,7 @@ namespace App\Models;
 
 use App\Models\Common;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 final class Conversation extends Models
 {
@@ -81,6 +82,9 @@ final class Conversation extends Models
 
     public function add($data)
     {
+        $added_by_user_id = Auth::id();
+        if(!empty($data['added_by_user_id'])) $added_by_user_id = $data['added_by_user_id'];
+
         // :TODO: Validate 
         $conversation = [
             'user_id'       => $data['user_id'],
@@ -90,7 +94,7 @@ final class Conversation extends Models
             'scheduled_on'  => !empty($data['scheduled_on']) ? date('Y-m-d', strtotime($data['scheduled_on'])) : null,
             'comment'       => !empty($data['comment']) ? $data['comment'] : '',
             'followup_to_conversation_id'   => !empty($data['followup_to_conversation_id']) ? !empty($data['followup_to_conversation_id']) : 0,
-            'added_by_user_id' => !empty($data['added_by_user_id']) ? $data['added_by_user_id'] : 0
+            'added_by_user_id' => $added_by_user_id
         ];
 
         $conversation = $this->create($conversation);

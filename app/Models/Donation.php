@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 use \Datetime;
 use JSend;
+use Illuminate\Support\Facades\Auth;
 
 final class Donation extends Model
 {
@@ -295,12 +296,14 @@ final class Donation extends Model
             }
             $donation_repeat_count = $diff_months;
         }
+
+        $updated_by_user_id = Auth::id();
         
         $donation = Donation::create([
             'donor_id'          => $donor_id,
             'type'              => $data['type'],
             'fundraiser_user_id'=> $data['fundraiser_user_id'],
-            'updated_by_user_id'=> $data['fundraiser_user_id'],
+            'updated_by_user_id'=> $updated_by_user_id,
             'with_user_id'      => $data['fundraiser_user_id'],
             'amount'            => $data['amount'],
             'added_on'          => $data['added_on'],
@@ -355,10 +358,12 @@ final class Donation extends Model
         $this->chain($donation_id);
         $donation_id = $this->id;
 
+        $updated_by_user_id = Auth::id();
+
         $this->edit([
             'status'            => 'collected',
             'with_user_id'      => $given_to_user_id,
-            'updated_by_user_id'=> $given_to_user_id
+            'updated_by_user_id'=> $updated_by_user_id
         ]);
 
         ///  If national account does the approval, send recipt.

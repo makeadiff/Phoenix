@@ -25,6 +25,7 @@ use App\Models\CenterProject;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DonationController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     $result = [];

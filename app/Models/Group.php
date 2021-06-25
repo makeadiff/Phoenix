@@ -70,7 +70,9 @@ final class Group extends Model
         }
 
         // Get all the permissions of the current Group.
-        $permissions = app('db')->table('Permission')->select('Permission.name')->join('GroupPermission', 'Permission.id', '=', 'GroupPermission.permission_id')->where('GroupPermission.group_id', $this->id)->get()->toArray();
+        $permissions = app('db')->table('Permission')->select('Permission.name')
+                                ->join('GroupPermission', 'Permission.id', '=', 'GroupPermission.permission_id')
+                                ->where('GroupPermission.group_id', $this->id)->get()->toArray();
         $permissions_arr = json_decode(json_encode($permissions), true); // Making it an array.
 
         // Merge both permission sets together - all permissions of current group + parent group.
