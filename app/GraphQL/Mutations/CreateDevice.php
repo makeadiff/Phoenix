@@ -22,12 +22,12 @@ class createDevice
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
         $user_id = $args['user_id'];
+        $token = $args['token'];
         $device_model = new Device;
-        $device = $device_model->addOrActivate(array_merge($request->all(), ['user_id' => $user_id]));
+        $device = $device_model->addOrActivate( ['user_id' => $user_id, 'token' => $token]);
 
-        $device->createDevice($args['device_id']);
 
-        return 1;
+        return $device->id;
 
     }
 }
