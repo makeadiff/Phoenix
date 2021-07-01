@@ -77,6 +77,8 @@ type Mutation {
     assignBatchMentors(batch_id: ID!, mentor_ids: [ID]): String
     assignLevelStudents(level_id: ID!, student_ids: [ID]): String
     markEventAttendance(event_id: ID!, attendance: [InputUseEventAttendance]): Int
+    createDevice(user_id:ID, token: String): Int
+    insertDonation(donationData:[InputDonationData]): Int
 }
 
 input InputTeacherAttendance {
@@ -101,6 +103,18 @@ input InputUseEventAttendance {
     late: Int
     rsvp: Int
     reason: String
+}
+
+input InputDonationData {
+    donor_name: String!
+    donor_email: String!
+    donor_phone: Int!
+    donor_address: String
+    type: String!
+    fundraiser_user_id: Int 
+    amount: Int 
+    comment: String
+    
 }
 
 
