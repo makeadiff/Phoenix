@@ -39,6 +39,15 @@ class User extends Authenticatable implements JWTSubject
         return $groups;
     }
 
+    public function pastGroups()
+    {
+        $past_groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
+                            ->where('Group.status', '1')
+                            ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main', 'UserGroup.year');
+        $past_groups->orderBy("UserGroup.year");
+        return $past_groups;
+    }
+
     public function mainGroup()
     {
         $group = $this->hasOneThrough('App\Models\Group', 'App\Models\UserGroup', 'user_id', 'id', 'id', 'group_id')
@@ -426,6 +435,7 @@ class User extends Authenticatable implements JWTSubject
         $this->item = $data;
 
         $data->groups = $data->groups()->get();
+        $data->past_groups = $data->pastGroups()->get();
         $data->city = $data->city()->first()->name;
         $center = $data->center()->first();
         if($center) {
