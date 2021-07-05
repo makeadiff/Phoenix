@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Device extends Common
+final class Device extends Model
 {
+    use Common;
+    
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $table = 'Device';

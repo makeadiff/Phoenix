@@ -70,7 +70,7 @@ class ClassTest extends TestCase
         $this->graphql('{ mentorClassConnection( mentor_id:1) { batch_id class_on }}');
 
         $batch_ids = array_unique(app('db')->table('Class AS C')->join("Batch AS B", "C.batch_id", "=", "B.id")
-            // ->join("UserBatch AS UB", "UB.batch_id", "=", "B.id")
+            ->join("UserBatch AS UB", "UB.batch_id", "=", "B.id")
             ->select('C.batch_id', 'C.class_on')
             ->where('B.year', $this->year)->where("B.batch_head_id", 1)->where("C.class_on", "<=", date('Y-m-d H:i:s'))
             ->get()->pluck('batch_id')->toArray());

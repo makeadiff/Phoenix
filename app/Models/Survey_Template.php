@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Survey_Template extends Common
+final class Survey_Template extends Model
 {
+    use Common;
+    
     protected $table = 'Survey_Template';
     const CREATED_AT = 'added_on';
     const UPDATED_AT = null;
@@ -56,6 +59,10 @@ final class Survey_Template extends Common
 
     public static function add($fields)
     {
+        if($fields['responder'] == 'User' and empty($fields['options'])) {
+            $fields['options'] = json_encode(["responder_list" => "self"]); // :TODO: I don't think this is working. Please test.
+        }
+        
         return Survey_Template::create($fields);
     }
 }

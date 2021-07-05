@@ -2,12 +2,15 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
 // :TODO: Might need to rename 'item' field to 'item_type' to make this work with Laravel's polymorphic relation. See 'Comment' model.
 // Also, that will fix wierd hacky solutions with having the 'type' field in Common model.
 
-final class Data extends Common
+final class Data extends Model
 {
+    use Common;
+    
     protected $table = 'Data';
     public $timestamps = true;
     const CREATED_AT = 'added_on';
@@ -71,7 +74,7 @@ final class Data extends Common
             'item_id'   => $item->item_id,
             'name'      => $item->name,
             'data'      => $data,
-            'year'      => $this->year,
+            'year'      => $this->year(),
             'added_on'  => date('Y-m-d H:i:s')
         ]);
     }

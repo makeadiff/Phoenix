@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Common;
 use Illuminate\Database\Eloquent\Model;
 
 class Event_Type extends Model
 {
+    use Common;
+    
     protected $table = 'Event_Type';
     public $timestamps = false;
 

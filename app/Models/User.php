@@ -6,26 +6,34 @@ use App\Models\UserGroup;
 use App\Models\Log;
 use App\Models\Common;
 use App\Models\Classes;
+
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 // :TODO: Don't return password as plain text. Esp on /users/<ID> GET or /users/<ID> POST
 
-final class User extends Common
+class User extends Authenticatable implements JWTSubject
 {
+    use Common;
+    
     protected $table = 'User';
     public $timestamps = true;
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','center_id',
                             'credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on', 'campaign'];
-    public $enable_logging = true; // Used to disable logging the basic auth authentications for API Calls
+    public $enable_logging = false; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()
     {
         $groups = $this->belongsToMany('App\Models\Group', 'UserGroup', 'user_id', 'group_id')
-                            ->where('Group.status', '1')->wherePivot('year', $this->year)
+                            ->where('Group.status', '1')->wherePivot('year', $this->year())
                             ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
         $groups->orderByRaw("FIELD(Group.type, 'executive', 'national', 'strat', 'fellow', 'volunteer')");
         return $groups;
@@ -34,7 +42,7 @@ final class User extends Common
     public function mainGroup()
     {
         $group = $this->hasOneThrough('App\Models\Group', 'App\Models\UserGroup', 'user_id', 'id', 'id', 'group_id')
-                            ->where('Group.status', '1')->where('UserGroup.year', $this->year)->where('UserGroup.main', '1')
+                            ->where('Group.status', '1')->where('UserGroup.year', $this->year())->where('UserGroup.main', '1')
                             ->select('Group.id', 'Group.vertical_id', 'Group.name', 'Group.type', 'UserGroup.main');
         return $group;
     }
@@ -51,7 +59,7 @@ final class User extends Common
 
     public function classes($status = '')
     {
-        $classes = $this->belongsToMany("App\Models\Classes", 'UserClass', 'user_id', 'class_id')->where('Class.class_on', '>=', $this->year_start_time);
+        $classes = $this->belongsToMany("App\Models\Classes", 'UserClass', 'user_id', 'class_id')->where('Class.class_on', '>=', $this->yearStartTime());
         if ($status) {
             $classes->where('Class.status', $status);
         }
@@ -65,7 +73,7 @@ final class User extends Common
         $batches = $this->belongsToMany("App\Models\Batch", 'UserBatch', 'user_id', 'batch_id');
         $batches->select("Batch.id", "Batch.class_time", "Batch.day", "Batch.batch_head_id");
         $batches->join("Class", "Class.batch_id", '=', 'Batch.id');
-        $batches->where('Batch.year', '=', $this->year)->where("Class.class_on", '>', date('Y-m-d H:i:s'))
+        $batches->where('Batch.year', '=', $this->year())->where("Class.class_on", '>', date('Y-m-d H:i:s'))
                 ->where("Batch.status", '=', '1')->where('UserBatch.role', 'mentor');
         if ($status) {
             $batches->where('Class.status', $status);
@@ -78,7 +86,7 @@ final class User extends Common
     public function batches()
     {
         $batches = $this->belongsToMany("App\Models\Batch", 'UserBatch', 'user_id', 'batch_id');
-        $batches->where('Batch.year', '=', $this->year)->where("Batch.status", '=', '1')->where('UserBatch.role', 'teacher');
+        $batches->where('Batch.year', '=', $this->year())->where("Batch.status", '=', '1')->where('UserBatch.role', 'teacher');
         return $batches;
     }
 
@@ -86,7 +94,7 @@ final class User extends Common
     public function levels()
     {
         $levels = $this->belongsToMany("App\Models\Level", 'UserBatch', 'user_id', 'level_id');
-        $levels->where('Level.year', '=', $this->year)->where("Level.status", '=', '1');
+        $levels->where('Level.year', '=', $this->year())->where("Level.status", '=', '1');
         return $levels;
     }
 
@@ -94,7 +102,7 @@ final class User extends Common
     public function donations()
     {
         $donations = $this->hasMany("App\Models\Donation", 'fundraiser_user_id');
-        $donations->where("added_on", '>=', $this->year_start_date);
+        $donations->where("added_on", '>=', $this->yearStartDate());
         $donations->orderBy("added_on", 'desc');
         return $donations;
     }
@@ -109,7 +117,7 @@ final class User extends Common
     public function conversations()
     {
         $conversations = $this->hasMany("App\Models\Conversation", 'user_id');
-        $conversations->where("added_on", '>=', $this->year_start_date);
+        $conversations->where("added_on", '>=', $this->yearStartDate());
         $conversations->orderBy("scheduled_on", 'desc');
         return $conversations;
     }
@@ -137,6 +145,17 @@ final class User extends Common
         // $links->select('id','name','url','text', 'sort_order');
 
         return $links;
+    }
+
+    // Both functions needed for JWT authentication(https://blog.pusher.com/laravel-jwt/)
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 
     // public function data()
@@ -276,7 +295,7 @@ final class User extends Common
             }
             $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $q->whereIn('UserGroup.group_id', $data['user_group']);
-            $q->where('UserGroup.year', $this->year);
+            $q->where('UserGroup.year', $this->year());
             if(!empty($data['only_main_group'])) {
                 $q->where('UserGroup.main', $data['only_main_group']);
             }
@@ -287,7 +306,7 @@ final class User extends Common
             $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $this->joinOnce($q, 'Group', 'Group.id', '=', 'UserGroup.group_id');
             $q->where('Group.type', $data['user_group_type']);
-            $q->where('UserGroup.year', $this->year);
+            $q->where('UserGroup.year', $this->year());
             if(!empty($data['only_main_group'])) {
                 $q->where('UserGroup.main', $data['only_main_group']);
             }
@@ -298,7 +317,7 @@ final class User extends Common
             $this->joinOnce($q, 'UserGroup', 'User.id', '=', 'UserGroup.user_id');
             $this->joinOnce($q, 'Group', 'Group.id', '=', 'UserGroup.group_id');
             $q->where('Group.vertical_id', $data['vertical_id']);
-            $q->where('UserGroup.year', $this->year);
+            $q->where('UserGroup.year', $this->year());
             if(!empty($data['only_main_group'])) {
                 $q->where('UserGroup.main', $data['only_main_group']);
             }
@@ -310,8 +329,8 @@ final class User extends Common
 
             if (isset($data['user_group']) and in_array($mentor_group_id, $data['user_group'])) { // Find the mentors
                 $this->joinOnce($q, "Batch", 'User.id', '=', 'Batch.batch_head_id');
-                $q->where('Batch.center_id', $data['center_id']);
-                $q->where('Batch.year', $this->year);
+                $q->where('Batch.center_id', $data['teaching_in_center_id']);
+                $q->where('Batch.year', $this->year());
                 if (isset($data['project_id'])) {
                     $q->where('Batch.project_id', $data['project_id']);
                 }
@@ -319,7 +338,7 @@ final class User extends Common
                 $this->joinOnce($q, 'UserClass', 'User.id', '=', 'UserClass.user_id');
                 $this->joinOnce($q, 'Class', 'Class.id', '=', 'UserClass.class_id');
                 $this->joinOnce($q, 'Level', 'Class.level_id', '=', 'Level.id');
-                $q->where('Level.center_id', $data['center_id']);
+                $q->where('Level.center_id', $data['teaching_in_center_id']);
                 if (isset($data['project_id'])) {
                     $q->where('Level.project_id', $data['project_id']);
                 }
@@ -602,17 +621,17 @@ final class User extends Common
     private function unsetMainGroup($user_id = false)
     {
         $user_id = $this->chain($user_id);
-        app('db')->table('UserGroup')->where('main','1')->where('user_id', $user_id)->where('year',$this->year)->update(['main' => '0']);
+        app('db')->table('UserGroup')->where('main','1')->where('user_id', $user_id)->where('year',$this->year())->update(['main' => '0']);
     }
-    private function setMainGroup($group_id, $main ='1', $user_id = false)
+    public function setMainGroup($group_id, $main ='1', $user_id = false)
     {
         $user_id = $this->chain($user_id);
-        app('db')->table("UserGroup")->where('group_id',$group_id)->where('user_id', $user_id)->where('year',$this->year)->update(['main' => $main]);
+        app('db')->table("UserGroup")->where('group_id',$group_id)->where('user_id', $user_id)->where('year',$this->year())->update(['main' => $main]);
     }
     private function unsetAllGroups($user_id = false)
     {
         $user_id = $this->chain($user_id);
-        app('db')->table('UserGroup')->where('user_id', $user_id)->where('year',$this->year)->delete();
+        app('db')->table('UserGroup')->where('user_id', $user_id)->where('year',$this->year())->delete();
     }
 
     /// $groups should be in the format of [{group_id: 12, main: "0"}, {group_id: 13, main: "1"}]
@@ -674,7 +693,7 @@ final class User extends Common
         app('db')->table("UserGroup")->insert([
             'user_id'   => $user_id,
             'group_id'  => $group_id,
-            'year'      => $this->year,
+            'year'      => $this->year(),
             'main'      => (string) $main
         ]);
 
@@ -700,7 +719,7 @@ final class User extends Common
         }
         // :TODO: What happens if the 'main' Group is deleted. Assign them the highest?
 
-        app('db')->table("UserGroup")->where('user_id', $user_id)->where('group_id',$group_id)->where('year',$this->year)->delete();
+        app('db')->table("UserGroup")->where('user_id', $user_id)->where('group_id',$group_id)->where('year',$this->year())->delete();
 
         return $this->item->groups();
     }
@@ -723,7 +742,7 @@ final class User extends Common
             'credit_assigned_by_user_id' => $credit_assigned_by_user_id,
             'comment'   => $reason,
             'added_on'  => date('Y-m-d H:i:s'),
-            'year'      => $this->year
+            'year'      => $this->year()
         ]);
 
         return $this->find($this->id)->setCredit($new_credit);
@@ -743,7 +762,7 @@ final class User extends Common
                 $is_correct = Hash::check($password, $data->password_hash);
             } elseif ($auth_token) {
                 $is_correct = ($data->auth_token == $auth_token);
-            }
+            } // :TODO: elseif($jwt_token) { $token = JWTAuth::attempt($credentials) }
 
             if (!$is_correct) { // Incorrect password / Auth key
                 $data = null;
@@ -762,6 +781,9 @@ final class User extends Common
 
                 $user_data = $this->fetch($user_id);
                 $user_data->auth_token = $data->auth_token;
+
+                // Create JWT token.
+                $user_data->jwt_token = JWTAuth::fromUser($user_data);
                 $user_data->permissions = $this->permissions($user_id);
 
                 return $user_data;
@@ -776,7 +798,7 @@ final class User extends Common
     {
         $user_id = $this->chain($user_id);
 
-        $groups = app('db')->table("UserGroup")->where('user_id', $user_id)->where('year', $this->year)->select('group_id')->get()->pluck('group_id');
+        $groups = app('db')->table("UserGroup")->where('user_id', $user_id)->where('year', $this->year())->select('group_id')->get()->pluck('group_id');
 
         $parent_groups = app('db')->table("Group")->distinct('parent_group_id')
             ->whereIn('id', $groups)->where('status', '1')->where('parent_group_id', '!=', '0')->get()->pluck('parent_group_id');

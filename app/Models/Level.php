@@ -3,9 +3,12 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Center;
+use Illuminate\Database\Eloquent\Model;
 
-final class Level extends Common
+final class Level extends Model
 {
+    use Common;
+    
     protected $table = 'Level';
     public $timestamps = false;
     protected $fillable = ['name','grade','center_id','status','year','project_id', 'medium', 'preferred_gender'];
@@ -20,7 +23,7 @@ final class Level extends Common
     }
     public function batches()
     {
-        return $this->belongsToMany('App\Models\Batch', 'BatchLevel', 'level_id', 'batch_id')->where('BatchLevel.year', $this->year);
+        return $this->belongsToMany('App\Models\Batch', 'BatchLevel', 'level_id', 'batch_id')->where('BatchLevel.year', $this->year());
     }
     public function teachers()
     {
@@ -40,7 +43,7 @@ final class Level extends Common
             $data['status'] = '1';
         }
         if (!isset($data['year'])) {
-            $data['year'] = $this->year;
+            $data['year'] = $this->year();
         }
 
         foreach ($search_fields as $field) {
@@ -54,7 +57,7 @@ final class Level extends Common
         if (!empty($data['batch_id'])) {
             $q->join('BatchLevel', 'Level.id', '=', 'BatchLevel.level_id');
             $q->join("Batch", 'Batch.id', '=', 'BatchLevel.batch_id');
-            $q->where("Batch.year", $this->year)->where('Batch.status', '1');
+            $q->where("Batch.year", $this->year())->where('Batch.status', '1');
 
             $q->where('BatchLevel.batch_id', $data['batch_id']);
         }
@@ -76,7 +79,7 @@ final class Level extends Common
         $this->id = $this->item_id = $id;
 
         if ($is_active) {
-            $this->item = $this->where('status', '1')->where('year', $this->year)->find($id);
+            $this->item = $this->where('status', '1')->where('year', $this->year())->find($id);
         } else {
             $this->item = $this->find($id);
         }
@@ -114,7 +117,7 @@ final class Level extends Common
             'grade'     => $data['grade'],
             'center_id' => $data['center_id'],
             'project_id'=> $data['project_id'],
-            'year'      => isset($data['year']) ? $data['year'] : $this->year,
+            'year'      => isset($data['year']) ? $data['year'] : $this->year(),
             'medium'    => isset($data['medium']) ? $data['medium'] : 'english',
             'preferred_gender'      => isset($data['preferred_gender']) ? $data['preferred_gender'] : 'any',
             'status'    => isset($data['status']) ? $data['status'] : '1'

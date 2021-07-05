@@ -21,7 +21,7 @@ class EventTest extends TestCase
         $this->load('/events?name=Test');
 
         $this->assertEquals($this->response_data->status, 'success');
-        $search_for = 'test sid and mo'; // This will get deleted at some point. Plan for it.
+        $search_for = 'Volunteer Social Test'; // This will get deleted at some point. Plan for it.
         $found = false;
         foreach ($this->response_data->data->events as $key => $info) {
             if ($info->name == $search_for) {

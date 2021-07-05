@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Compliance stuff (High priority)
@@ -16,8 +17,10 @@ use App\Models\Common;
  *			Launchs, Surveys,
  *			Backend needs to be built for this - so not going to be done
  */
-class Alert extends Common
+class Alert extends Model
 {
+    use Common;
+    
     public function generate($user_id)
     {
         $alerts = [];

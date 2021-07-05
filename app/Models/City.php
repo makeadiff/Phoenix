@@ -5,8 +5,12 @@ use App\Models\Common;
 use App\Models\User;
 use App\Models\Student;
 
-final class City extends Common
+use Illuminate\Database\Eloquent\Model;
+
+final class City extends Model
 {
+    use Common;
+
     protected $table = 'City';
     public $timestamps = false;
 

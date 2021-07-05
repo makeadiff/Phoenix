@@ -3,9 +3,12 @@ namespace App\Models;
 
 use App\Models\Group;
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Permission extends Common
+final class Permission extends Model
 {
+    use Common;
+    
     protected $table = 'Permission';
     public $timestamps = false;
     protected $hidden = ['pivot'];

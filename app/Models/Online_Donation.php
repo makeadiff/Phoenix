@@ -5,9 +5,12 @@ use App\Models\Common;
 use App\Models\User;
 use App\Models\Donor;
 use JSend;
+use Illuminate\Database\Eloquent\Model;
 
-final class Online_Donation extends Common
+final class Online_Donation extends Model
 {
+    use Common;
+    
     protected $table = 'Online_Donation';
     public $timestamps = true;
     const CREATED_AT = 'added_on';
@@ -19,7 +22,7 @@ final class Online_Donation extends Common
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->start_date = $this->year . '-05-01 00:00:00';
+        $this->start_date = $this->year() . '-05-01 00:00:00';
     }
     
     public function fundraiser()
@@ -36,7 +39,8 @@ final class Online_Donation extends Common
     {
         $q = app('db')->table('Online_Donation');
         $q->select(
-            "Online_Donation.id",
+            'Online_Donation.id',
+            'Online_Donation.id AS online_donation_id',
             'Online_Donation.fundraiser_user_id',
             'Online_Donation.donor_id',
             'Online_Donation.amount',
