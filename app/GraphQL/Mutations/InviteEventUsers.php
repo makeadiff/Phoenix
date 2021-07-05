@@ -3,12 +3,9 @@ namespace App\GraphQL\Mutations;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-use App\Models\Donation;
-use App\Http\Controllers\BatchController;
-use Illuminate\Http\Request;
-use App\Exceptions\GraphQLException;
+use App\Models\Event;
 
-class insertDonation
+class inviteEventUsers
 {
     /**
      * Return a value for the field.
@@ -21,15 +18,23 @@ class insertDonation
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-       
-        $donation_model = new Donation;
-        $request_dummy = new Request;
-        $donation = $donation_model->add($request_dummy->all());
-        $donation->insertDonation($args['donation']);
+        $event_id = $args['event_id'];
+        $user_ids = $args['user_ids'];
+        $send_invites = $args['send_invites']; //True or False
+        $event_model = new Event;
 
+        if (!is_array($user_ids)) {
+            $user_ids = [$user_ids];
+        }
 
-        return 1;
+        $event = $event_model->find($event_id);
+        if (!$event) {
+            return 0;
+        } // No event with given id
 
+        $event->invite(['user_ids'=>$user_ids, 'send_invites'=>$send_invites]);
+        $count = count($user_ids);
+
+        return $count;
     }
 }
-
