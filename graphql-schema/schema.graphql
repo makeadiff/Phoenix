@@ -81,6 +81,7 @@ type Mutation {
     insertDonation(donation:[InputDonationData]): Int
     inviteEventUsers(event_id: ID!, user_ids:[ID], send_invites: String ): Int
     updateEventAttendance(event_id: ID!, user_ids:[ID]!): Int
+    createRecurringEvent(event_id: ID!, event_data:[InputEventData]!): Int
 }
 
 input InputTeacherAttendance {
@@ -118,6 +119,11 @@ input InputDonationData {
     added_on: String
     comment: String
     
+}
+
+input InputEventData {
+    frequency: Int 
+    repeat_until: String
 }
 
 
