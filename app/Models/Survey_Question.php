@@ -5,9 +5,12 @@ use App\Models\Common;
 use App\Models\Survey_Question_Category;
 use App\Models\Survey_Choice;
 use Validator;
+use Illuminate\Database\Eloquent\Model;
 
-final class Survey_Question extends Common
+final class Survey_Question extends Model
 {
+    use Common;
+    
     protected $table = 'Survey_Question';
     public $timestamps = false;
     protected $fillable = ['name', 'question', 'survey_question_category_id', 'survey_template_id', 'response_type', 'required', 'sort_order'];
@@ -159,6 +162,10 @@ final class Survey_Question extends Common
         
         $name = trim(self::format(preg_replace('/\s\s+/', ' ', $name)));
         $name = str_replace('Mad', 'MAD', $name);
+
+        if(strlen($name) > 100) {
+            $name = substr($name, 0, 97) . '...'; // If the name is too big, smallize it.
+        }
         return $name;
     }
 

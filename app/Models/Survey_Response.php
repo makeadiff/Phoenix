@@ -3,12 +3,15 @@ namespace App\Models;
 
 use App\Models\Common;
 use Validator;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 // use App\Models\Survey_Question;
 // use App\Models\Survey_Choice;
 
-final class Survey_Response extends Common
+final class Survey_Response extends Model
 {
+    use Common;
     protected $table = 'Survey_Response';
     const CREATED_AT = 'added_on';
     const UPDATED_AT = null;
@@ -118,6 +121,14 @@ final class Survey_Response extends Common
         }
         if (empty($fields['survey_question_id']) and $question_id) {
             $fields['survey_question_id'] = $question_id;
+        }
+
+        if (empty($fields['responder_id']) {
+            $fields['responder_id'] = Auth::id();
+        }
+
+        if (empty($fields['added_by_user_id']) {
+            $fields['added_by_user_id'] = Auth::id();
         }
 
         $validator = Validator::make($fields, [

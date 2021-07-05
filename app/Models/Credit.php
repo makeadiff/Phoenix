@@ -4,9 +4,13 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\Parameter;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
-final class Credit extends Common
+final class Credit extends Model
 {
+    use Common;
+    
     protected $table = 'Credit';
     public $timestamps = true;
     const CREATED_AT = 'added_on';
@@ -80,7 +84,7 @@ final class Credit extends Common
     {
         $options_template = [
             'added_on'  => date('Y-m-d H:i:s'),
-            'added_by_user_id' => 0,
+            'added_by_user_id' => Auth::id(),
             'item'      => null,
             'item_id'   => null,
             'revert'    => false

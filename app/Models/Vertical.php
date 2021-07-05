@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Vertical extends Common
+final class Vertical extends Model
 {
+    use Common;
+    
     protected $table = 'Vertical';
     public $timestamps = false;
 

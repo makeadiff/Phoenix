@@ -4,9 +4,13 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\User;
 use App\Libraries\Email;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
-final class Event extends Common
+final class Event extends Model
 {
+    use Common;
+    
     protected $table = 'Event';
     public $timestamps = true;
     const CREATED_AT = 'created_on';
@@ -67,7 +71,7 @@ final class Event extends Common
 
     public function eventsInCity($city_id)
     {
-        return app('db')->table("Event")->where("status", '1')->where("starts_on", '>=', $this->year_start_time)->where("city_id", $city_id)->get();
+        return app('db')->table("Event")->where("status", '1')->where("starts_on", '>=', $this->yearStartTime())->where("city_id", $city_id)->get();
     }
 
     public function filter($data)
@@ -120,7 +124,7 @@ final class Event extends Common
                 $q->where("Event." . $field, $data[$field]);
             }
         }
-        $q->where("Event.starts_on", '>=', $this->year_start_time);
+        $q->where("Event.starts_on", '>=', $this->yearStartTime());
 
         $q->join('Event_Type', 'Event.event_type_id', '=', 'Event_Type.id');
         $q->orderBy('Event.starts_on')->orderBy('Event.name');
@@ -167,6 +171,9 @@ final class Event extends Common
 
     public function add($data)
     {
+        $created_by_user_id = Auth::id();
+        if(!empty($data['created_by_user_id'])) $created_by_user_id = $data['created_by_user_id'];
+
         $event = Event::create([
             'name'          => $data['name'],
             'description'   => isset($data['description']) ? $data['description'] : '',
@@ -175,7 +182,7 @@ final class Event extends Common
             'city_id'       => $data['city_id'],
             'event_type_id' => $data['event_type_id'],
             'template_event_id' => isset($data['template_event_id']) ? $data['template_event_id'] : 0,
-            'created_by_user_id'=> $data['created_by_user_id'],
+            'created_by_user_id'=> $created_by_user_id,
             'latitude'      => isset($data['latitude']) ? $data['latitude'] : '',
             'longitude'     => isset($data['longitude']) ? $data['longitude'] : '',
             'repeat_until'  => isset($data['repeat_until']) ? date('Y-m-d H:i:s', strtotime($data['repeat_until'])) : null,

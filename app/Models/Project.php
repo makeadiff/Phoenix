@@ -4,16 +4,19 @@ namespace App\Models;
 use App\Models\Common;
 use App\Models\Classes;
 use App\Models\Batch;
+use Illuminate\Database\Eloquent\Model;
 
-final class Project extends Common
+final class Project extends Model
 {
+    use Common;
+    
     protected $table = 'Project';
     public $timestamps = false;
 
     public function centers()
     {
         $centers = $this->belongsToMany('App\Models\Center', 'CenterProject', 'project_id', 'center_id');
-        $centers->wherePivot('year', $this->year);
+        $centers->wherePivot('year', $this->year());
         return $centers;
     }
 

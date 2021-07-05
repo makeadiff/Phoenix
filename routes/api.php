@@ -25,6 +25,7 @@ use App\Models\CenterProject;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DonationController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     $result = [];
@@ -36,7 +37,52 @@ Route::get('/', function () {
 });
 
 $url_prefix = 'v1';
-Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function () {
+
+// Pubilc functions - these can be called without JWT authentication
+Route::group([
+    'prefix' => $url_prefix, 
+    'middleware' => ['auth.basic', 'log.call']
+], function () {
+    /*
+    Route::post('/users/login', function(Request $request) {  // - This line is here to get this call picked up the the all_call.php monitor.
+    */
+    Route::addRoute(['POST','GET'], '/users/login', function (Request $request) {
+        $user = new User;
+        $phone_or_email = $request->input('phone');
+        if (!$phone_or_email) {
+            $phone_or_email = $request->input('email');
+        }
+        if (!$phone_or_email) {
+            $phone_or_email = $request->input('identifier');
+        }
+
+        if ($request->input('password')) {
+            $data = $user->login($phone_or_email, $request->input('password'));
+        } elseif ($request->input('auth_token')) {
+            $data = $user->login($phone_or_email, false, $request->input('auth_token'));
+        }
+
+        if (!$data) {
+            $error = "Invalid username/password";
+            if (count($user->errors)) {
+                $error = implode(", ", $user->errors);
+            }
+
+            return JSend::fail($error, [], 400);
+        }
+
+        return JSend::success("Welcome back, $data[name]", ['users' => $data]);
+    });
+    Route::post("/users", ['uses' => 'UserController@add']);
+});
+
+
+$middleware = ['auth.jwt_or_basic', 'json.output', 'log.call'];
+
+Route::group([
+    'prefix' => $url_prefix, 
+    'middleware' => $middleware
+], function () {
 
 ///////////////////////////////////////////////// City Calls ////////////////////////////////////////////
     Route::get('/cities', function () {
@@ -590,42 +636,6 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
     });
     Route::delete('/students/{student_id}/comments/{comment_id}', function ($item_id, $comment_id) {
         return deleteComment($comment_id);
-    });
-
-    ////////////////////////////////////////////////// Auth //////////////////////////////////////////////////////
-    /*
-    Route::post('/users/login', function(Request $request) {  // - This line is here to get this call picked up the the all_call.php monitor.
-    */
-    Route::addRoute(['POST','GET'], '/users/login', function (Request $request) {
-        $user = new User;
-        $phone_or_email = $request->input('phone');
-        if (!$phone_or_email) {
-            $phone_or_email = $request->input('email');
-        }
-        if (!$phone_or_email) {
-            $phone_or_email = $request->input('identifier');
-        }
-
-        if ($request->input('password')) {
-            $data = $user->login($phone_or_email, $request->input('password'));
-        } elseif ($request->input('auth_token')) {
-            $data = $user->login($phone_or_email, false, $request->input('auth_token'));
-        }
-
-        if (!$data) {
-            $error = "Invalid username/password";
-            if (count($user->errors)) {
-                $error = implode(", ", $user->errors);
-            }
-
-            return JSend::fail($error, [], 400);
-        } else {
-            // Get permissions for this user.
-            $this_user = $user->find($data['id']);
-            $data['permissions'] = $this_user->permissions();
-        }
-
-        return JSend::success("Welcome back, $data[name]", ['users' => $data]);
     });
 
     ///////////////////////////////////////////////////////// User Calls //////////////////////////////////////////////
@@ -1220,7 +1230,7 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     /// Invite Users
     Route::post('/events/{event_id}/users', function ($event_id, Request $request) {
-        $event = new Event;
+        $event_model = new Event;
 
         $user_ids_raw = $request->input('invite_user_ids');
         if (!is_array($user_ids_raw)) {
@@ -1229,9 +1239,9 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
             $user_ids = $user_ids_raw;
         }
 
-        $event = $event->find($event_id);
+        $event = $event_model->find($event_id);
         if (!$event) {
-            return JSend::fail("Can't find event with ID $event_id", $event->errors);
+            return JSend::fail("Can't find event with ID $event_id", $event_model->errors);
         }
 
         $send_invites = $request->input('send_invite_emails') == 'true' ? true : false;
@@ -1389,30 +1399,29 @@ Route::group(['prefix' => $url_prefix, 'middleware' => ['auth.basic']], function
 
     // Use this to Debug/test things
     Route::get('/test', function () {
-        $type_model = new Event_Type;
-        $type = $type_model->find(39)->computed_name();
-        dump($type);
+        $donation_model = new DonationController;
+        $data = $donation_model->search(['fundraiser_user_id' => 1]);
+        return $data;
     });
 
     require_once base_path('routes/api-surveys.php');
 });
 
-Route::post("/users", ['uses' => 'UserController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/users/{user_id}", ['uses' => 'UserController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/students", ['uses' => 'StudentController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/students/{student_id}", ['uses' => 'StudentController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/events", ['uses' => 'EventController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/events/{event_id}", ['uses' => 'EventController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/batches", ['uses' => 'BatchController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/batches/{batch_id}", ['uses' => 'BatchController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/batches/{batch_id}/mentors", ['uses' => 'BatchController@assignMentors', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/levels", ['uses' => 'LevelController@add', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/levels/{level_id}", ['uses' => 'LevelController@edit', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/levels/{level_id}/students", ['uses' => 'LevelController@assignStudents', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/users/{user_id}", ['uses' => 'UserController@edit', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/students", ['uses' => 'StudentController@add', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/students/{student_id}", ['uses' => 'StudentController@edit', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/events", ['uses' => 'EventController@add', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/events/{event_id}", ['uses' => 'EventController@edit', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/batches", ['uses' => 'BatchController@add', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/batches/{batch_id}", ['uses' => 'BatchController@edit', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/batches/{batch_id}/levels/{level_id}/teachers", ['uses' => 'BatchController@assignTeachers', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/batches/{batch_id}/mentors", ['uses' => 'BatchController@assignMentors', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/levels", ['uses' => 'LevelController@add', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/levels/{level_id}", ['uses' => 'LevelController@edit', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/levels/{level_id}/students", ['uses' => 'LevelController@assignStudents', 'prefix' => $url_prefix, 'middleware' => $middleware]);
 
-Route::post("/survey_templates", ['uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/survey_templates/{survey_template_id}/questions", ['uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/surveys/{survey_id}/responses", ['uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
-Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix, 'middleware' => ['auth.basic', 'json.output']]);
+Route::post("/survey_templates", ['uses' => 'SurveyController@addSurveyTemplate', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/survey_templates/{survey_template_id}/questions", ['uses' => 'SurveyController@addQuestion', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/survey_templates/{survey_template_id}/questions/{survey_question_id}/choices", ['uses' => 'SurveyController@addChoice', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/surveys/{survey_id}/responses", ['uses' => 'SurveyController@addResponse', 'prefix' => $url_prefix, 'middleware' => $middleware]);
+Route::post("/surveys/{survey_id}/questions/{survey_question_id}/responses", ['uses' => 'SurveyController@addQuestionResponse', 'prefix' => $url_prefix, 'middleware' => $middleware]);
