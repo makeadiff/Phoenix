@@ -714,9 +714,20 @@ Route::group([
             return JSend::fail("Can't find user with user id '$user_id'");
         }
 
-        $past_groups = $info->past_groups;
+        $past_groups = $info->pastGroups()->get();
 
-        return JSend::success("User Groups for user $user_id using `past_grous`", ['groups' => $past_groups]);
+        $groups_by_year = [];
+
+        foreach ($past_groups as $grp) {
+    	    if(!isset($groups_by_year[$grp->year])){
+                $groups_by_year[$grp->year] = [$grp];
+            }
+    	    else {
+                $groups_by_year[$grp->year][] = $grp;
+            }
+        }
+
+        return JSend::success("User Groups for user $user_id using `past_grous`", ['groups' => $groups_by_year]);
     });
 
     Route::post('/users/{user_id}/groups', function ($user_id, Request $request) {
