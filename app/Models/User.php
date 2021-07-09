@@ -435,7 +435,6 @@ class User extends Authenticatable implements JWTSubject
         $this->item = $data;
 
         $data->groups = $data->groups()->get();
-        $data->past_groups = $data->pastGroups()->get();
         $data->city = $data->city()->first()->name;
         $center = $data->center()->first();
         if($center) {
