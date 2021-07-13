@@ -50,6 +50,7 @@ type Query {
     # Custom Resolvers... 
     # The files that control these can be found at  app/GraphQL/Queries/<FileName>.php
     eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php - This is just a sample 
+    past_groups(user_id: Int): [PastGroups]
     batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, 
         class_status: String, direction: String, from_date: Date, limit: String): [Batch]
     classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, 
@@ -127,6 +128,7 @@ type User {
     sex: String
     status: String
     groups: [Group]
+    past_groups: [PastGroups] @hasMany(relation: "pastGroups")
     data: [Data]
     city: City @belongsTo
     center: Center @belongsTo
@@ -212,6 +214,14 @@ type Group {
     vertical: Vertical
     main: Int
     users: [User]
+}
+
+type PastGroups {
+    id: ID!
+    name: String!
+    vertical_id: Int
+    vertical: Vertical
+    year: String
 }
 
 type Vertical {
