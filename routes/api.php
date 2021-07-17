@@ -476,10 +476,23 @@ Route::group([
         return JSend::success("Search Results", ['classes' => $data]);
     });
 
-    Route::get('/users/{user_id}/class_history', function (Request $request, $user_id) {
+    Route::get('/users/{user_id}/classes', function (Request $request, $user_id) {
         $search = [];
         $search['teacher_id'] = $user_id;
         $search['class_date_to'] = date('Y-m-d H:i:s');
+        $search['past'] = false;
+
+        $classes = new Classes;
+        $data = $classes->search($search);
+
+        return JSend::success("Search Results", ['classes' => $data]);
+    });
+
+    Route::get('/users/{user_id}/past_classes', function (Request $request, $user_id) {
+        $search = [];
+        $search['teacher_id'] = $user_id;
+        $search['class_date_to'] = date('Y-m-d H:i:s');
+        $search['past'] = true;
 
         $classes = new Classes;
         $data = $classes->search($search);
