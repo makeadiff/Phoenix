@@ -397,7 +397,7 @@ paths:
         - name : user_id
           type: integer
           in: path
-          required: given_to_user_name
+          required: true
           description: ID of the user
       responses:
         200:
