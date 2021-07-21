@@ -127,7 +127,7 @@ type User {
     sex: String
     status: String
     groups: [Group]
-    past_groups: [PastGroups] @hasMany(relation: "pastGroups")
+    past_groups: [Group] @hasMany(relation: "pastGroups")
     data: [Data]
     city: City @belongsTo
     center: Center @belongsTo
@@ -212,15 +212,8 @@ type Group {
     vertical_id: Int
     vertical: Vertical
     main: Int
-    users: [User]
-}
-
-type PastGroups {
-    id: ID!
-    name: String!
-    vertical_id: Int
-    vertical: Vertical
     year: String
+    users: [User]
 }
 
 type Vertical {
