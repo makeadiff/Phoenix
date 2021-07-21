@@ -131,6 +131,7 @@ type User {
     city: City @belongsTo
     center: Center @belongsTo
     classes: [Class] @hasMany(relation: "classes") # :TODO: - Ideally, this should take an argument - (status: String)
+    past_classes: [Class] @hasMany(relation: "pastClasses")
     batches: [Batch] @hasMany
     donations: [Donation] @hasMany
     devices: [Device] @hasMany
