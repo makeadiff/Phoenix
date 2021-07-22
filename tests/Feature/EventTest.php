@@ -127,5 +127,18 @@ class EventTest extends TestCase
         $this->assertEquals($this->response->getStatusCode(), 200);
     }
 
+    /// GraphQL: events(name:"city circle")
+    public function testGraphQLEvents()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $this->graphql('{events(name:"City Circle") { name }}');
+        $this->assertEquals($this->response_data->data->events[0]->name, "City Circle");
+        $this->assertEquals($this->response->getStatusCode(), 200);
+        
+    }
+
     // :TODO: Create, Edit events, mark attendance. Basically all POST, DELETE calls have to be tested.
 }
