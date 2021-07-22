@@ -33,7 +33,12 @@ class SurveyController extends Controller
             $question_model->addMany($questions, $survey_template->id);
         }
 
-        return JSend::success("Added a Survey Template", ['templates' => $survey_template]);
+        // Create a Survey with the template.
+        $survey_model = new Survey;
+        $added_by_user_id = 1;
+        $survey = $survey_model->add($survey_template->id, $fields['name'], $added_by_user_id);
+
+        return JSend::success("Added a Survey Template", ['templates' => $survey_template, 'survey' => $survey]);
     }
 
     public function addQuestion($survey_template_id, Request $request)

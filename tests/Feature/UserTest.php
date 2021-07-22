@@ -84,7 +84,9 @@ class UserTest extends TestCase
     /// GraphQL: users(name:"Binny")
     public function testGraphQLUsers()
     {
-        // if ($this->only_priority_tests) $this->markTestSkipped("Running only priority tests.");
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
 
         $this->graphql('{users(name:"Binny%") { id name }}');
         $this->assertEquals($this->response_data->data->users[0]->name, "Binny V A");
@@ -128,7 +130,7 @@ class UserTest extends TestCase
             'password'  => 'test-pass',
             'joined_on' => date('Y-m-d H:i:s'),
             'city_id'   => 28,
-            'profile'   => 'teacher',
+            'profile'   => 'teaching',
             'user_type' => 'volunteer'
         );
 
@@ -163,13 +165,13 @@ class UserTest extends TestCase
         $this->load('/users', 'POST', $user);
 
         $this->assertEquals($this->response_data->status, 'fail');
-        $this->assertEquals($this->response_data->data->email[0], "Entered Email ID already exists in the MAD System");
+        $this->assertEquals($this->response_data->data->email[0], "Entered Email ID already exists in the MAD database");
         $this->assertEquals($this->response->getStatusCode(), 400);
     }
 
     /// Path: POST /users
     /**
-     * @depe nds testPostUsers
+     * @depends testPostUsers
      */
     public function testPostUsersEdit($created_user_id = 198344)
     {
@@ -210,13 +212,13 @@ class UserTest extends TestCase
     }
 
     /// Path: POST  /users/login
-    public function testGetUserLogin()
+    public function testPostUserLogin()
     {
         if ($this->only_priority_tests) {
             $this->markTestSkipped("Running only priority tests.");
         }
 
-        $this->load('/users/login?email=sulu.simulation@makeadiff.in&password=pass');
+        $this->load('/users/login', 'POST', ['email' => 'sulu.simulation@makeadiff.in', 'password' => 'pass'], 'basic');
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response_data->data->users->name, 'Sulu');
     }
@@ -289,7 +291,7 @@ class UserTest extends TestCase
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response->getStatusCode(), 200);
 
-        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
+        $tokens = $this->db->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
         $found = 0;
 
         foreach ($this->response_data->data->devices as $device) {
@@ -309,7 +311,7 @@ class UserTest extends TestCase
 
         $this->graphql('{ user(id: 1) { devices { token }} }');
 
-        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
+        $tokens = $this->db->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
         $found = 0;
 
         foreach ($this->response_data->data->user->devices as $device) {
@@ -335,7 +337,7 @@ class UserTest extends TestCase
         $this->assertEquals($this->response_data->status, 'success');
         $this->assertEquals($this->response->getStatusCode(), 200);
 
-        $tokens = app('db')->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
+        $tokens = $this->db->table('Device')->select('token')->where('user_id', 1)->where('status', 1)->get()->pluck('token')->toArray();
         $found = false;
 
         foreach ($tokens as $tok) {
@@ -364,7 +366,7 @@ class UserTest extends TestCase
         $this->load('/users/1/devices/test-token-that-should-be-deleted', 'DELETE');
         $this->assertEquals($this->response->getStatusCode(), 200);
 
-        $deleted_device = app('db')->table('Device')->select('status')->where('id', $device_id)->first();
+        $deleted_device = $this->db->table('Device')->select('status')->where('id', $device_id)->first();
         $this->assertEquals($deleted_device->status, '0');
     }
 
@@ -379,7 +381,7 @@ class UserTest extends TestCase
 
         // Delete Binny's CPP Signing to test this...
         $user_id = 1;
-        app('db')->table("UserData")->where('name', 'child_protection_policy_signed')->where('user_id', $user_id)->delete();
+        $this->db->table("UserData")->where('name', 'child_protection_policy_signed')->where('user_id', $user_id)->delete();
 
         $this->load("/users/$user_id/alerts", 'GET');
         $this->assertEquals($this->response->getStatusCode(), 200);

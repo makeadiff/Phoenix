@@ -26,8 +26,8 @@ class DonationController extends Controller
         $search['type'] = 'crowdfunding_patforms';
         $donuts = $donut_donation->baseSearch($search)->get();
 
-        $all_donations = $online->merge($donuts)->sortByDesc('added_on');
+        $all_donations = $online->merge($donuts)->sortByDesc('added_on')->all();
 
-        return $all_donations;
+        return array_values($all_donations); // If array_values is not there, it will preserve the key after sorting. Array index will be something like 3,0,2,1.
     }
 }

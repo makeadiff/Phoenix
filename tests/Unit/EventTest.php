@@ -61,7 +61,7 @@ class EventTest extends TestCase
     public function testEventRecurring()
     {
         $event_model = new Event;
-        $until_date = '2020-12-31';
+        $until_date = '2021-12-31';
         $frequency = 'weekly';
 
         $org_event = $event_model->find($this->event_id);
