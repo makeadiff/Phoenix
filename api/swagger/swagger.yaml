@@ -386,6 +386,25 @@ paths:
         404:
           description: Can't find any user with the given ID.
 
+  /users/{user_id}/past_groups:
+    get:
+      tags:
+        - user
+        - group
+      summary: Past User Group of an user
+      description: Return all the groups both present and past of the given user ID.
+      parameters:
+        - name : user_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user
+      responses:
+        200:
+          description: Ok
+        404:
+          description: Can't find any user with the given ID.
+
   /users/{user_id}/groups/{group_id}:
     post:
       tags:

@@ -265,6 +265,48 @@ class UserTest extends TestCase
         $this->assertTrue($found);
     }
 
+    /// Path: GET   /users/{user_id}/past_groups
+    public function testGetUserPastGroupList()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $this->load('/users/1/past_groups');
+
+        $this->assertEquals($this->response_data->status, 'success');
+        $search_for = '2015';
+        $found = false;
+        foreach ($this->response_data->data->groups as $key => $info) {
+            if ($info->year == $search_for) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+        $this->assertEquals($this->response->getStatusCode(), 200);
+    }
+
+    /// GraphQL: user(id: 1) { past_groups { id name }}
+    public function testGraphQLUserPastGroupList()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $this->graphql('{ user(id: 1) { past_groups { id name year }} }');
+
+        $search_for = '2015';
+        $found = false;
+        foreach ($this->response_data->data->user->past_groups as $key => $info) {
+            if ($info->year == $search_for) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+    }
+
     /// Path: GET   /users/{user_id}/credit
     public function testGetUsersCreditSingle()
     {
