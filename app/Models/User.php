@@ -75,6 +75,16 @@ class User extends Authenticatable implements JWTSubject
         $classes->orderBy("Class.class_on");
         return $classes;
     }
+    
+    public function pastClasses($status = '')
+    {
+        $classes = $this->belongsToMany("App\Models\Classes", 'UserClass', 'user_id', 'class_id');
+        if ($status) {
+            $classes->where('Class.status', $status);
+        }
+        $classes->orderBy("Class.class_on");
+        return $classes;
+    }
 
     /// Connects to all the batches the current user mentors.
     public function mentored_batches($status = false)

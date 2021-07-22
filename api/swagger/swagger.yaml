@@ -563,12 +563,28 @@ paths:
         404:
           description: No user fonud with that User ID.
 
-  /users/{user_id}/class_history:
+  /users/{user_id}/classes:
+    get:
+      tags:
+        - user
+      summary: Class history of user for the current year.
+      description: Returns the class history of the given user for the current year.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID of the user who's history we want
+          type: integer
+      responses:
+        200:
+          description: Ok
+
+  /users/{user_id}/past_classes:
     get:
       tags:
         - user
       summary: Class history of user.
-      description: Returns the entire class history of the given user.
+      description: Returns the class history of the given user.
       parameters:
         - name: user_id
           in: path
