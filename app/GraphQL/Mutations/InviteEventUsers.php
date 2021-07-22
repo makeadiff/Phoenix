@@ -23,16 +23,12 @@ class inviteEventUsers
         $send_invites = $args['send_invites']; //True or False
         $event_model = new Event;
 
-        if (!is_array($user_ids)) {
-            $user_ids = [$user_ids];
-        }
-
         $event = $event_model->find($event_id);
         if (!$event) {
             return 0;
         } // No event with given id
 
-        $event->invite(['user_ids'=>$user_ids, 'send_invites'=>$send_invites]);
+        $event->invite($user_ids, $send_invites, $event_id);
         $count = count($user_ids);
 
         return $count;

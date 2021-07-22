@@ -78,10 +78,8 @@ type Mutation {
     assignLevelStudents(level_id: ID!, student_ids: [ID]): String
     markEventAttendance(event_id: ID!, attendance: [InputUseEventAttendance]): Int
     createDevice(user_id:ID, token: String): Int
-    insertDonation(donation:[InputDonationData]): Int
-    inviteEventUsers(event_id: ID!, user_ids:[ID], send_invites: String ): Int
-    updateEventAttendance(event_id: ID!, user_ids:[ID]!): Int
-    createRecurringEvent(event_id: ID!, event_data:[InputEventData]!): Int
+    insertDonation(donation: InputDonationData): Int
+    inviteEventUsers(event_id: ID!, user_ids:[ID], send_invites: Boolean ): Int
 }
 
 input InputTeacherAttendance {
@@ -111,7 +109,7 @@ input InputUseEventAttendance {
 input InputDonationData {
     donor_name: String!
     donor_email: String!
-    donor_phone: Int!
+    donor_phone: String!
     donor_address: String
     type: String!
     fundraiser_user_id: Int 
