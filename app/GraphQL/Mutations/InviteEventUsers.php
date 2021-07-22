@@ -3,12 +3,9 @@ namespace App\GraphQL\Mutations;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-use App\Models\Device;
-use App\Http\Controllers\BatchController;
-use Illuminate\Http\Request;
-use App\Exceptions\GraphQLException;
+use App\Models\Event;
 
-class createDevice
+class inviteEventUsers
 {
     /**
      * Return a value for the field.
@@ -21,13 +18,23 @@ class createDevice
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $user_id = $args['user_id'];
-        $token = $args['token'];
-        $device_model = new Device;
-        $device = $device_model->addOrActivate( ['user_id' => $user_id, 'token' => $token]);
+        $event_id = $args['event_id'];
+        $user_ids = $args['user_ids'];
+        $send_invites = $args['send_invites']; //True or False
+        $event_model = new Event;
 
+        if (!is_array($user_ids)) {
+            $user_ids = [$user_ids];
+        }
 
-        return $device->id;
+        $event = $event_model->find($event_id);
+        if (!$event) {
+            return 0;
+        } // No event with given id
 
+        $event->invite(['user_ids'=>$user_ids, 'send_invites'=>$send_invites]);
+        $count = count($user_ids);
+
+        return $count;
     }
 }

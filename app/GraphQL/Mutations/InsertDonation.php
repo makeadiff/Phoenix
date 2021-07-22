@@ -3,12 +3,12 @@ namespace App\GraphQL\Mutations;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-use App\Models\Device;
+use App\Models\Donation;
 use App\Http\Controllers\BatchController;
 use Illuminate\Http\Request;
 use App\Exceptions\GraphQLException;
 
-class createDevice
+class insertDonation
 {
     /**
      * Return a value for the field.
@@ -21,13 +21,15 @@ class createDevice
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $user_id = $args['user_id'];
-        $token = $args['token'];
-        $device_model = new Device;
-        $device = $device_model->addOrActivate( ['user_id' => $user_id, 'token' => $token]);
+       
+        $donation_model = new Donation;
+        $request_dummy = new Request;
+        $donation = $donation_model->add($request_dummy->all());
+        $donation->insertDonation($args['donation']);
 
 
-        return $device->id;
+        return 1;
 
     }
 }
+
