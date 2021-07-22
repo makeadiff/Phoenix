@@ -21,7 +21,6 @@ class createRecurringEvent
     {
         $event_id = $args['event_id'];
         $event_model = new Event;
-        $request_dummy = new Request;
 
         $event = $event_model->find($event_id);
         if (!$event) {
