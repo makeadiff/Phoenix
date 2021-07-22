@@ -7,11 +7,15 @@ use App\Models\Donor;
 use App\Libraries\SMS;
 use App\Libraries\Email;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Model;
 use \Datetime;
 use JSend;
+use Illuminate\Support\Facades\Auth;
 
-final class Donation extends Common
+final class Donation extends Model
 {
+    use Common;
+    
     protected $table = 'Donut_Donation';
     public $timestamps = true;
     const CREATED_AT = 'added_on';
@@ -25,7 +29,7 @@ final class Donation extends Common
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->start_date = $this->year . '-05-01 00:00:00';
+        $this->start_date = $this->yearStartTime();
     }
     
     public function fundraiser()
@@ -100,7 +104,8 @@ final class Donation extends Common
         }
 
         $q->select(
-            "Donut_Donation.id",
+            'Donut_Donation.id',
+            'Donut_Donation.id AS donut_id',
             'Donut_Donation.type',
             'Donut_Donation.fundraiser_user_id',
             'Donut_Donation.donor_id',
@@ -150,7 +155,7 @@ final class Donation extends Common
         if (!empty($data['from'])) {
             $q->where('Donut_Donation.added_on', '>', date('Y-m-d 00:00:00', strtotime($data['from'])));
         } elseif (empty($data['id'])) {
-            $q->where('Donut_Donation.added_on', '>', $this->start_date);
+            $q->where('Donut_Donation.added_on', '>', date('Y-m-d 00:00:00', strtotime($this->start_date)));
         } // If ID is given, should find donation anywhere in history - not just this year.
         if (!empty($data['to'])) {
             $q->where('Donut_Donation.added_on', '<', date('Y-m-d 00:00:00', strtotime($data['to'])));
@@ -235,6 +240,8 @@ final class Donation extends Common
         $this->id = $donation_id;
         $this->item = $this->find($donation_id);
 
+        $data->donut_id = $donation_id;
+
         return $data;
     }
 
@@ -289,12 +296,14 @@ final class Donation extends Common
             }
             $donation_repeat_count = $diff_months;
         }
+
+        $updated_by_user_id = Auth::id();
         
         $donation = Donation::create([
             'donor_id'          => $donor_id,
             'type'              => $data['type'],
             'fundraiser_user_id'=> $data['fundraiser_user_id'],
-            'updated_by_user_id'=> $data['fundraiser_user_id'],
+            'updated_by_user_id'=> $updated_by_user_id,
             'with_user_id'      => $data['fundraiser_user_id'],
             'amount'            => $data['amount'],
             'added_on'          => $data['added_on'],
@@ -349,10 +358,12 @@ final class Donation extends Common
         $this->chain($donation_id);
         $donation_id = $this->id;
 
+        $updated_by_user_id = Auth::id();
+
         $this->edit([
             'status'            => 'collected',
             'with_user_id'      => $given_to_user_id,
-            'updated_by_user_id'=> $given_to_user_id
+            'updated_by_user_id'=> $updated_by_user_id
         ]);
 
         ///  If national account does the approval, send recipt.
@@ -587,7 +598,8 @@ final class Donation extends Common
             $res .= (empty($res) ? "" : " ") . $this->convertNumber($hundreds) . " Hundred";
         }
 
-        $ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eightteen", "Nineteen"];
+        $ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", 
+                "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eightteen", "Nineteen"];
         $all_tens = ["", "", "Twenty", "Thirty", "Fourty", "Fifty", "Sixty", "Seventy", "Eigthy", "Ninety"];
 
         if ($tens || $unit) {

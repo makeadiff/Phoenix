@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Subject extends Common
+final class Subject extends Model
 {
+    use Common;
+    
     protected $table = 'Subject';
     public $timestamps = false;
 

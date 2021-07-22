@@ -3,9 +3,13 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Donation;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
-final class Donor extends Common
+final class Donor extends Model
 {
+    use Common;
+    
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $table = 'Donut_Donor';
@@ -20,6 +24,8 @@ final class Donor extends Common
     /// Used to find a donor who matches multiple fields - email and phone. If none found, create the donor.
     public function findMatching($data, $added_by_user_id = 0)
     {
+        if(!$added_by_user_id) $added_by_user_id = Auth::id();
+
         // Find the donor - both email and phone must be same
         $donor = app('db')->table($this->table)->select('id')->where('email', $data['donor_email'])->where('phone', $data['donor_phone'])->first();
 

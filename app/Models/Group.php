@@ -2,16 +2,20 @@
 namespace App\Models;
 
 use App\Models\Common;
+use Illuminate\Database\Eloquent\Model;
 
-final class Group extends Common
+final class Group extends Model
 {
+    use Common;
+    
     protected $table = 'Group';
     public $timestamps = false;
     protected $hidden = ['pivot'];
 
     public function users()
     {
-        return $this->belongsToMany('App\Models\User', 'UserGroup')->where('User.status', '=', '1')->where('User.user_type', '=', 'volunteer')->wherePivot('year', $this->year);
+        return $this->belongsToMany('App\Models\User', 'UserGroup')->where('User.status', '=', '1')
+                ->where('User.user_type', '=', 'volunteer')->wherePivot('year', $this->year());
     }
 
     public function vertical()
@@ -66,7 +70,9 @@ final class Group extends Common
         }
 
         // Get all the permissions of the current Group.
-        $permissions = app('db')->table('Permission')->select('Permission.name')->join('GroupPermission', 'Permission.id', '=', 'GroupPermission.permission_id')->where('GroupPermission.group_id', $this->id)->get()->toArray();
+        $permissions = app('db')->table('Permission')->select('Permission.name')
+                                ->join('GroupPermission', 'Permission.id', '=', 'GroupPermission.permission_id')
+                                ->where('GroupPermission.group_id', $this->id)->get()->toArray();
         $permissions_arr = json_decode(json_encode($permissions), true); // Making it an array.
 
         // Merge both permission sets together - all permissions of current group + parent group.
