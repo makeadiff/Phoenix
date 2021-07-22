@@ -93,10 +93,13 @@ final class Classes extends Model
         $q->join("Batch", 'Batch.id', '=', 'Class.batch_id');
         $q->join("Level", 'Level.id', '=', 'Class.level_id');
 
-        $q->where("Batch.year", '=', $this->year());
         $q->where("Batch.status", '=', '1');
-        $q->where("Level.year", '=', $this->year());
         $q->where("Level.status", '=', '1');
+
+        if(!isset($search['past']) or !$search['past']) {
+            $q->where("Batch.year", '=', $this->year());
+            $q->where("Level.year", '=', $this->year());
+        }
 
         foreach ($search_fields as $field) {
             if (empty($search[$field])) {
@@ -159,7 +162,10 @@ final class Classes extends Model
             }
         }
 
-        $q->where("Class.class_on", '>=', $this->yearStartTime());
+        if(!isset($search['past']) or !$search['past']) {
+            $q->where("Class.class_on", '>=', $this->yearStartTime());
+        }
+
         if (isset($search['direction']) and $search['direction'] == '-' and isset($search['limit'])) {
             $q->orderBy("Class.class_on", "DESC"); // If we are trying to find the latest class...
         } else {
