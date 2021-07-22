@@ -96,7 +96,7 @@ final class Classes extends Model
         $q->where("Batch.status", '=', '1');
         $q->where("Level.status", '=', '1');
 
-        if(!$search['past']){
+        if(!isset($search['past']) or !$search['past']) {
             $q->where("Batch.year", '=', $this->year());
             $q->where("Level.year", '=', $this->year());
         }
@@ -162,7 +162,7 @@ final class Classes extends Model
             }
         }
 
-        if(!$search['past']){
+        if(!isset($search['past']) or !$search['past']) {
             $q->where("Class.class_on", '>=', $this->yearStartTime());
         }
 
