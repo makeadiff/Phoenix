@@ -122,7 +122,7 @@ input InputDonationData {
 }
 
 input InputEventData {
-    frequency: Int 
+    frequency: String 
     repeat_until: String
 }
 

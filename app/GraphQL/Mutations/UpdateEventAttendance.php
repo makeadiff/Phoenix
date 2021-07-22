@@ -31,7 +31,7 @@ class updateEventAttendance
             return 0;
         } // No event with given id
         
-        $event->updateAttendance(['user_ids' => $user_ids, 'event_id' => $event_id]);
+        $event->updateAttendance([$user_ids, $event_id]);
         $count = count($user_ids);
 
         return $count;
