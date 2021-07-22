@@ -3,12 +3,10 @@ namespace App\GraphQL\Mutations;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-use App\Models\Device;
-use App\Http\Controllers\BatchController;
+use App\Models\Event;
 use Illuminate\Http\Request;
-use App\Exceptions\GraphQLException;
 
-class createDeviceToken
+class createRecurringEvent
 {
     /**
      * Return a value for the field.
@@ -21,14 +19,21 @@ class createDeviceToken
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $user_id = $args['user_id'];
-        $token = $args['token'];
-        $device_model = new Device;
-        $device = $device_model->addOrActivate(array_merge($request->all(), ['user_id' => $user_id, 'token' => $token]));
+        $event_id = $args['event_id'];
+        $event_model = new Event;
 
-        $device->createDeviceToken($args['device_id']);
+        $event = $event_model->find($event_id);
+        if (!$event) {
+            return 0;
+        } // No event with given id
+        $frequency = $event->frequency = $args['frequency'];
+        $repeat_until= $event->repeat_until=$args['repeat_until'];
 
-        return 1;
-
+        
+        $recurring = $event->createRecurringInstances($event,$frequency,$repeat_until);
+        $event->createRecurringEvent($event_id, $args['event_data']);
+        $count =count($recurring);
+        return $count;
     }
 }
+
