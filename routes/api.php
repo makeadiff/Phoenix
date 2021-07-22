@@ -476,10 +476,23 @@ Route::group([
         return JSend::success("Search Results", ['classes' => $data]);
     });
 
-    Route::get('/users/{user_id}/class_history', function (Request $request, $user_id) {
+    Route::get('/users/{user_id}/classes', function (Request $request, $user_id) {
         $search = [];
         $search['teacher_id'] = $user_id;
         $search['class_date_to'] = date('Y-m-d H:i:s');
+        $search['past'] = false;
+
+        $classes = new Classes;
+        $data = $classes->search($search);
+
+        return JSend::success("Search Results", ['classes' => $data]);
+    });
+
+    Route::get('/users/{user_id}/past_classes', function (Request $request, $user_id) {
+        $search = [];
+        $search['teacher_id'] = $user_id;
+        $search['class_date_to'] = date('Y-m-d H:i:s');
+        $search['past'] = true;
 
         $classes = new Classes;
         $data = $classes->search($search);
@@ -705,6 +718,29 @@ Route::group([
         }
 
         return JSend::success("User Groups for user $user_id", ['groups' => $info->groups]);
+    });
+
+    Route::get('/users/{user_id}/past_groups', function ($user_id) {
+        $user = new User;
+        $info = $user->fetch($user_id);
+        if (!$info) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        $past_groups = $info->pastGroups()->get();
+
+        $groups_by_year = [];
+
+        foreach ($past_groups as $grp) {
+    	    if(!isset($groups_by_year[$grp->year])){
+                $groups_by_year[$grp->year] = [$grp];
+            }
+    	    else {
+                $groups_by_year[$grp->year][] = $grp;
+            }
+        }
+
+        return JSend::success("User Groups for user $user_id using `past_grous`", ['groups' => $groups_by_year]);
     });
 
     Route::post('/users/{user_id}/groups', function ($user_id, Request $request) {

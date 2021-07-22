@@ -123,11 +123,11 @@ final class Survey_Response extends Model
             $fields['survey_question_id'] = $question_id;
         }
 
-        if (empty($fields['responder_id']) {
+        if (empty($fields['responder_id'])) {
             $fields['responder_id'] = Auth::id();
         }
 
-        if (empty($fields['added_by_user_id']) {
+        if (empty($fields['added_by_user_id'])) {
             $fields['added_by_user_id'] = Auth::id();
         }
 
