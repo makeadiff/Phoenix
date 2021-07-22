@@ -150,10 +150,12 @@ type User {
     sex: String
     status: String
     groups: [Group]
+    past_groups: [Group] @hasMany(relation: "pastGroups")
     data: [Data]
     city: City @belongsTo
     center: Center @belongsTo
     classes: [Class] @hasMany(relation: "classes") # :TODO: - Ideally, this should take an argument - (status: String)
+    past_classes: [Class] @hasMany(relation: "pastClasses")
     batches: [Batch] @hasMany
     donations: [Donation] @hasMany
     devices: [Device] @hasMany
@@ -234,6 +236,7 @@ type Group {
     vertical_id: Int
     vertical: Vertical
     main: Int
+    year: String
     users: [User]
 }
 
