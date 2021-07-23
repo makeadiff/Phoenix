@@ -21,14 +21,10 @@ class insertDonation
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-       
         $donation_model = new Donation;
-        $request_dummy = new Request;
-        $donation = $donation_model->add($request_dummy->all());
-        $donation->insertDonation($args['donation']);
+        $donation = $donation_model->add($args['donation']);
 
-
-        return 1;
+        return $donation->id;
 
     }
 }

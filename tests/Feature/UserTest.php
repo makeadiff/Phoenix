@@ -252,11 +252,12 @@ class UserTest extends TestCase
             $this->markTestSkipped("Running only priority tests.");
         }
 
+        // :TODO: Check if class_on date is this year?
         $this->graphql('{ user(id: 1) { classes { id class_type }} }');
 
         $search_for = 'scheduled';
         $found = false;
-        foreach ($this->response_data->data->classes as $key => $info) {
+        foreach ($this->response_data->data->user->classes as $key => $info) {
             if ($info->class_type == $search_for) {
                 $found = true;
                 break;
@@ -274,6 +275,7 @@ class UserTest extends TestCase
 
         $this->load('/users/1/past_classes');
 
+        // :TODO: Check if class_on date is last year?
         $this->assertEquals($this->response_data->status, 'success');
         $search_for = 'scheduled';
         $found = false;
@@ -298,7 +300,7 @@ class UserTest extends TestCase
 
         $search_for = 'scheduled';
         $found = false;
-        foreach ($this->response_data->data->classes as $key => $info) {
+        foreach ($this->response_data->data->user->classes as $key => $info) {
             if ($info->class_type == $search_for) {
                 $found = true;
                 break;
@@ -361,8 +363,8 @@ class UserTest extends TestCase
         $this->assertEquals($this->response_data->status, 'success');
         $search_for = '2015';
         $found = false;
-        foreach ($this->response_data->data->groups as $key => $info) {
-            if ($info->year == $search_for) {
+        foreach ($this->response_data->data->groups as $year => $info) {
+            if ($year == $search_for and $info[0]->year == $search_for) {
                 $found = true;
                 break;
             }
