@@ -1,6 +1,6 @@
 # Phoenix
 
-### 2.6.2
+### Version: 2.6.3
 
 ## Project Description/Purpose
 
@@ -8,8 +8,8 @@ Core API will create a centralized API for all operations on MAD Database. We'll
 
 Formats supported...
 
-* REST API : https://makeadiff.in/api/api/swagger/doc.html
-* GraphQL  : https://makeadiff.in/api/api/graphql/index.html
+- [REST API](https://makeadiff.in/api/api/swagger/doc.html)
+- [GraphQL](https://makeadiff.in/api/api/graphql/index.html)
 
 ## Installation
 
@@ -45,24 +45,24 @@ php-cs-fixer fix --rules=@PSR2
 
 Outsourcing projects to an external company/interns/remote teams requires us to give them database access. This has multiple problems...
 
-* Privacy issue for volunteers(Exposes names, phone numbers, email, etc.)
-* Privacy issue for students(Exposes names, age, shelter, etc. Also legal implications(JJ ACT))
-* Code integration back to our server is time consuming
-* Lack of control over how they do on the backend
-* Adds more projects that we have to maintain
-* Requires external parties to have a good understanding of our database. Requires more hand-holding - more time consuming for us.
+- Privacy issue for volunteers(Exposes names, phone numbers, email, etc.)
+- Privacy issue for students(Exposes names, age, shelter, etc. Also legal implications(JJ ACT))
+- Code integration back to our server is time consuming
+- Lack of control over how they do on the backend
+- Adds more projects that we have to maintain
+- Requires external parties to have a good understanding of our database. Requires more hand-holding - more time consuming for us.
 
 These problems will be solved if we create one centralized API system with which external parties can access MAD Data. All new apps can call this API to do all the operations to the database. 
 
 ## Why Core API?
 
-* Faster Development of Mobile Applications(Need for creating the backend is gone)
-* Easy Handover to Outsourcing Partners and/or Remote Developing Team.
-* Clean & easy way to access MAD data
-* Rapid development of any future apps
-* Quicker learning time for anyone starting new
-* Centralized authentication
-* Clean up existing apps for maintainability
-* Any future app will be using these APIs and extend APIs as needed
+- Faster Development of Mobile Applications(Need for creating the backend is gone)
+- Easy Handover to Outsourcing Partners and/or Remote Developing Team.
+- Clean & easy way to access MAD data
+- Rapid development of any future apps
+- Quicker learning time for anyone starting new
+- Centralized authentication
+- Clean up existing apps for maintainability
+- Any future app will be using these APIs and extend APIs as needed
 
 [Reference Document](https://docs.google.com/document/d/1YgDsgXaLp5HERyIkqpBCSs398C1xc54cE1Th6shs17o/) - Logic Cycle for why we choose the API Approach
