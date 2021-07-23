@@ -740,7 +740,7 @@ Route::group([
             }
         }
 
-        return JSend::success("User Groups for user $user_id using `past_grous`", ['groups' => $groups_by_year]);
+        return JSend::success("User Groups for user $user_id", ['groups' => $groups_by_year]);
     });
 
     Route::post('/users/{user_id}/groups', function ($user_id, Request $request) {
@@ -945,6 +945,18 @@ Route::group([
         }
         
         return JSend::success("Links for {$user->name}", ['links' => $grouped_links]);
+    });
+
+    Route::get('/users/{user_id}/events', function ($user_id) {
+        $user = new User;
+        $info = $user->fetch($user_id);
+        if (!$info) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        $events = $info->events()->get();
+
+        return JSend::success("Events for user $user_id", ['data' => $events]);
     });
 
     //////////////////////////////////////////////////////// Contacts /////////////////////////////////

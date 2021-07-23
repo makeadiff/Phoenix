@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Models\Group;
+use App\Models\Event;
 use App\Models\UserGroup;
 use App\Models\Log;
 use App\Models\Common;
@@ -840,5 +841,16 @@ class User extends Authenticatable implements JWTSubject
             return preg_replace('/^\+?91\D?/', '', $phone);
         }
         return $phone;
+    }
+
+    public function events()
+    {
+        $events = $this->belongsToMany('App\Models\Event', 'UserEvent')
+                        ->wherePivot('created_on', '>', $this->year())
+                        ->select('Event.id','Event.name', 'Event.description', 'Event.starts_on', 'Event.place', 'Event.city_id', 'Event.event_type_id', 
+                                'Event.type', 'Event.created_by_user_id', 'Event.place', 'Event.created_on', 'UserEvent.present' , 'UserEvent.late',
+                                'UserEvent.user_choice', 'UserEvent.reason');
+        $events->orderBy('Event.starts_on');
+        return $events;
     }
 }
