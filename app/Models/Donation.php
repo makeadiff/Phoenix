@@ -298,6 +298,7 @@ final class Donation extends Model
         }
 
         $updated_by_user_id = Auth::id();
+        if(!$updated_by_user_id) $updated_by_user_id = 0; // :TODO:
         
         $donation = Donation::create([
             'donor_id'          => $donor_id,
