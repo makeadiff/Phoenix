@@ -80,6 +80,7 @@ type Mutation {
     createDevice(user_id:ID, token: String): Int
     insertDonation(donation: InputDonationData): Int
     inviteEventUsers(event_id: ID!, user_ids:[ID], send_invites: Boolean ): Int
+    updateEventAttendance(user_ids: [ID], event_id: ID!): Int
 }
 
 input InputTeacherAttendance {
