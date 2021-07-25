@@ -845,12 +845,23 @@ class User extends Authenticatable implements JWTSubject
 
     public function events()
     {
-        $events = $this->belongsToMany('App\Models\Event', 'UserEvent')
-                        ->wherePivot('created_on', '>', $this->year())
-                        ->select('Event.id','Event.name', 'Event.description', 'Event.starts_on', 'Event.place', 'Event.city_id', 'Event.event_type_id', 
-                                'Event.type', 'Event.created_by_user_id', 'Event.place', 'Event.created_on', 'UserEvent.present' , 'UserEvent.late',
-                                'UserEvent.user_choice', 'UserEvent.reason');
-        $events->orderBy('Event.starts_on');
+        $events = $this->belongsToMany('App\Models\Event', 'UserEvent', 'user_id', 'event_id')
+                    ->where('starts_on', '>', date('Y-m-d H:i:s', mktime(1, 1, 1, 1, 1, $this->year())))
+                    //->wherePivot('event_id')
+                    ->select('Event.id','Event.name', 'Event.description', 'Event.starts_on', 'Event.place', 'Event.city_id', 'Event.event_type_id', 
+                            'Event.type', 'Event.created_by_user_id', 'Event.place', 'Event.created_on', 'UserEvent.present' , 'UserEvent.late',
+                            'UserEvent.user_choice', 'UserEvent.reason');
+        $events->orderBy('Event.starts_on' , 'desc');
+        return $events;
+    }
+
+    public function pastEvents()
+    {
+        $events = $this->belongsToMany('App\Models\Event', 'UserEvent', 'user_id', 'event_id')
+                    ->select('Event.id','Event.name', 'Event.description', 'Event.starts_on', 'Event.place', 'Event.city_id', 'Event.event_type_id', 
+                            'Event.type', 'Event.created_by_user_id', 'Event.place', 'Event.created_on', 'UserEvent.present' , 'UserEvent.late',
+                            'UserEvent.user_choice', 'UserEvent.reason');
+        $events->orderBy('Event.starts_on' , 'desc');
         return $events;
     }
 }

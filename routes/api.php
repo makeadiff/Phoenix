@@ -955,8 +955,32 @@ Route::group([
         }
 
         $events = $info->events()->get();
+        $result = [];
+        
+        foreach($events as $event){
+            unset($event['pivot']);
+            $result []= $event;
+        }
 
-        return JSend::success("Events for user $user_id", ['data' => $events]);
+        return JSend::success("Events for user $user_id", ['events' => $result]);
+    });
+
+    Route::get('/users/{user_id}/past_events', function ($user_id) {
+        $user = new User;
+        $info = $user->fetch($user_id);
+        if (!$info) {
+            return JSend::fail("Can't find user with user id '$user_id'");
+        }
+
+        $past_events = $info->pastEvents()->get();
+        $result = [];
+
+        foreach($past_events as $event){
+            unset($event['pivot']);
+            $result []= $event;
+        }
+
+        return JSend::success("Past Events for user $user_id", ['events' => $past_events]);
     });
 
     //////////////////////////////////////////////////////// Contacts /////////////////////////////////
