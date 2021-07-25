@@ -8,7 +8,7 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    protected $baseUrl = 'http://localhost:8888/Phoenix';
+    protected $baseUrl = 'http://localhost/MAD/api';
     protected $only_priority_tests = false;
     protected $write_to_db = true;
     protected $url_prefix = '/v1';
