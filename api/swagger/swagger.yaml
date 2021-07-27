@@ -567,6 +567,7 @@ paths:
     get:
       tags:
         - user
+        - class
       summary: Class history of user for the current year.
       description: Returns the class history of the given user for the current year.
       parameters:
@@ -578,11 +579,14 @@ paths:
       responses:
         200:
           description: Ok
+        404:
+          description: No user fonud with that User ID.
 
   /users/{user_id}/past_classes:
     get:
       tags:
         - user
+        - class
       summary: Class history of user.
       description: Returns the class history of the given user.
       parameters:
@@ -594,6 +598,46 @@ paths:
       responses:
         200:
           description: Ok
+        404:
+          description: No user fonud with that User ID.
+  
+  /users/{user_id}/events:
+    get:
+      tags:
+        - user
+        - event
+      summary: Event history of user for the current year.
+      description: Returns all the events user have been invited to in current year.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID of the user who's event history we want
+          type: integer
+      responses:
+        200:
+          description: Ok
+        404:
+          description: No user fonud with that User ID.
+
+  /users/{user_id}/past_events:
+    get:
+      tags:
+        - user
+        - event
+      summary: Event history of user.
+      description: Returns all the events user have been invited to.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID of the user who's event history we want
+          type: integer
+      responses:
+        200:
+          description: Ok
+        404:
+          description: No user fonud with that User ID.
 
   /users/login:
     post:

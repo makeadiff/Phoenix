@@ -161,6 +161,8 @@ type User {
     links: [Link] @hasMany
     conversations: [Conversation] @hasMany
     pivot: UserPivot
+    events: [Event] @hasMany
+    past_events: [Event] @hasMany(relation: "pastEvents")
 }
 
 # This holds reference table/pivot details for both event(UserEvent) and class data(UserClass) details.
