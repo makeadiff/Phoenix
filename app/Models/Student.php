@@ -42,10 +42,14 @@ final class Student extends Model
     }
 
 
-    public function search($data)
+    public function search($data, $pagination = false)
     {
         $q = app('db')->table('Student');
-        $results = $this->baseSearch($data, $q)->get();
+        if ($pagination) {
+            $results = $this->baseSearch($data, $q)->paginate(50, ['Student.*']);
+        } else {
+            $results = $this->baseSearch($data, $q)->get();
+        }
 
         return $results;
     }
