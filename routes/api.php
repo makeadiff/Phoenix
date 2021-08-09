@@ -977,6 +977,8 @@ Route::group([
     // These calls are commented intentionally - the actual calls are at the end of this file. These lines are here to denote that there are more routes.
     // Route::post('/students','StudentController@add');
     // Route::post('/students/{student_id}','StudentController@edit');
+    
+    Route::get('/students_paginated','StudentController@index');
 
     Route::get('/students', function (Request $request) {
         $search_fields = ['name','birthday', 'city_id','sex','center_id'];
