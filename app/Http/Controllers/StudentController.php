@@ -56,7 +56,7 @@ class StudentController extends Controller
     }
     public function index(Request $request)
     {
-        $search_fields = ['id','center_id','name','added_on','sex','status','birthday','description','center_name'];
+        $search_fields = ['id','center_id','name','sex','status','city_id'];
         $search = [];
         foreach ($search_fields as $key) {
             if (!$request->has($key)) {
