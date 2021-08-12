@@ -54,4 +54,23 @@ class StudentController extends Controller
 
         return JSend::success("Edited the student", array('student' => $result));
     }
+    public function index(Request $request)
+    {
+        $search_fields = ['id','center_id','name','sex','status','city_id'];
+        $search = [];
+        foreach ($search_fields as $key) {
+            if (!$request->has($key)) {
+                continue;
+            }
+            $search[$key] = $request->input($key);
+        }
+
+        $uri = $request->path();
+        $paginated = false;
+        if(stripos($uri, '_paginated')) $paginated = true;
+
+        $student = new Student;
+        $data = $student->search($search, $paginated);
+        return JSend::success("Students", ['students' => $data]);
+    }
 }
