@@ -87,7 +87,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /// Connects to all the batches the current user mentors.
-    public function mentored_batches($status = false)
+    public function mentoredBatches($status = false)
     {
         $batches = $this->belongsToMany("App\Models\Batch", 'UserBatch', 'user_id', 'batch_id');
         $batches->select("Batch.id", "Batch.class_time", "Batch.day", "Batch.batch_head_id");
@@ -97,7 +97,7 @@ class User extends Authenticatable implements JWTSubject
         if ($status) {
             $batches->where('Class.status', $status);
         }
-        $batches->orderBy("Class.class_on");
+        $batches->orderBy("Class.class_on")->distinct();
         return $batches;
     }
 
