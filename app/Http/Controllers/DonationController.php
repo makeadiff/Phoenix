@@ -23,7 +23,15 @@ class DonationController extends Controller
         });
 
         $donut_donation = new Donation;
-        $search['type'] = 'crowdfunding_patforms';
+
+        // If someone searches specifically for 'all', don't filter by donation type. This will be needed for getting historic donation data.
+        if(isset($search['type'])) {
+            if($search['type'] == 'all') {
+                unset($search['type']);
+            }
+        } else { // If no type is specified, use the 'crowdfunding_patforms' - for 2020 and forward.
+            $search['type'] = 'crowdfunding_patforms';            
+        }
         $donuts = $donut_donation->baseSearch($search)->get();
 
         $all_donations = $online->merge($donuts)->sortByDesc('added_on')->all();

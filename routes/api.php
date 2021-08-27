@@ -1119,7 +1119,7 @@ Route::group([
     });
 
     Route::get('/users/{user_id}/donations', function (Request $request, $fundraiser_user_id) {
-        $search_fields = ['from', 'to', 'amount'];
+        $search_fields = ['from', 'to', 'amount', 'type'];
         $search = ['fundraiser_user_id' => $fundraiser_user_id];
 
         foreach ($search_fields as $key) {
