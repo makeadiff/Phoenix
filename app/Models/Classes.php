@@ -177,6 +177,40 @@ final class Classes extends Model
         return $q;
     }
 
+    public function addClass($data)
+    {
+        if (empty($data['batch_id']) or empty($data['level_id'])) {
+            return false;
+        }
+
+        $batch_model = new Batch;
+        $batch = $batch_model->find($data['batch_id']);
+        $data['project_id'] = $batch->project_id;
+        $data['class_time'] = $batch->class_time;
+        
+        $class_day = $batch->day;
+        $class_time = $batch->class_time;
+
+        $day = strtolower(date('l', strtotime("Sunday + {$class_day} days")));
+        $class_day = date('Y-m-d', strtotime("next {$day}"));
+
+        $data['class_on'] = date('Y-m-d', strtotime($class_day)).' '.$class_time; 
+
+        $class = Classes::create($data);
+
+        app('db')->table('Class')->insert([
+            'batch_id'              => $data['batch_id'],
+            'level_id'              => $data['level_id'],
+            'project_id'            => $data['project_id'],
+            'class_on'              => $data['class_on'],
+            'lesson_id'             => 1,
+            'class_satisfaction'    => 0,
+            'status'                => 'projected'
+        ]);
+
+        return $data;
+    }
+
     // Not tested.
     public function add($data)
     {
