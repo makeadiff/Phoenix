@@ -27,7 +27,8 @@ class User extends Authenticatable implements JWTSubject
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','center_id',
-                            'credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on', 'campaign'];
+                            'credit','applied_role','applied_role_secondary','status','user_type', 'joined_on', 'added_on', 'left_on', 'campaign', 
+                            'job_status','edu_institution', 'edu_course', 'edu_year', 'company','why_mad', 'volunteering_experience'];
     public $enable_logging = false; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()
@@ -471,20 +472,38 @@ class User extends Authenticatable implements JWTSubject
         $zoho_user_id = isset($data['zoho_user_id']) ? $data['zoho_user_id'] : 0;
         $madapp_user_id = 0;
 
+        // Backward compatibility
+        if(!empty($data['profile']) and empty($data['applied_role'])) {
+            $data['applied_role'] = $data['profile'];
+        }
+
+        // Didn't find the user in the database - create now row.
         if (empty($results)) {
             $user = User::create([
                 'email'     => $data['email'],
                 'mad_email' => isset($data['mad_email']) ? $data['mad_email'] : '',
                 'phone'     => User::correctPhoneNumber($data['phone']),
                 'name'      => $data['name'],
-                'sex'       => isset($data['sex']) ? $data['sex'] : 'f',
+                'sex'       => isset($data['sex']) ? $data['sex'] : 'not-given',
                 'password_hash' => Hash::make($data['password']),
                 'address'   => isset($data['address']) ? $data['address'] : '',
                 'bio'       => isset($data['bio']) ? $data['bio'] : '',
                 'source'    => isset($data['source']) ? $data['source'] : 'other',
                 'birthday'  => isset($data['birthday']) ? $data['birthday'] : null,
+                
+                'job_status'=> isset($data['job_status']) ? $data['job_status'] : 'student',
+                'edu_institution'  => isset($data['edu_institution']) ? $data['edu_institution'] : null,
+                'edu_course'=> isset($data['edu_course']) ? $data['edu_course'] : null,
+                'edu_year'  => isset($data['edu_year']) ? $data['edu_year'] : null,
+                'company'   => isset($data['company']) ? $data['company'] : null,
+
                 'city_id'   => $data['city_id'],
-                'applied_role'=>isset($data['profile']) ? $data['profile'] : '',
+                'applied_role'=>isset($data['applied_role']) ? $data['applied_role'] : null,
+                'applied_role_secondary'=>isset($data['applied_role_secondary']) ? $data['applied_role_secondary'] : null,
+
+                'why_mad'   =>isset($data['why_mad']) ? $data['why_mad'] : null,
+                'volunteering_experience'   => isset($data['volunteering_experience']) ? $data['volunteering_experience'] : null,
+
                 'credit'    => isset($data['credit']) ? $data['credit'] : '3',
                 'status'    => isset($data['status']) ? $data['status'] : '1',
                 'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
@@ -494,6 +513,7 @@ class User extends Authenticatable implements JWTSubject
             ]);
             $madapp_user_id = $user->id;
 
+        // Found a matching user with same email/phone - so update the profile to mark new joining date.
         } else {
             $user = User::where('id', $results->id)->first();
             $madapp_user_id = $user->id;
@@ -508,7 +528,15 @@ class User extends Authenticatable implements JWTSubject
             $user->source       = isset($data['source']) ? $data['source'] : 'other';
             $user->birthday     = isset($data['birthday']) ? $data['birthday'] : null;
             $user->city_id      = $data['city_id'];
-            $user->applied_role = isset($data['profile']) ? $data['profile'] : '';
+
+            $user->job_status   = isset($data['job_status']) ? $data['job_status'] : '';
+            $user->edu_institution = isset($data['edu_institution']) ? $data['edu_institution'] : '';
+            $user->edu_course   = isset($data['edu_course']) ? $data['edu_course'] : '';
+            $user->edu_year     = isset($data['edu_year']) ? $data['edu_year'] : '';
+            $user->company      = isset($data['company']) ? $data['company'] : '';
+
+            $user->applied_role = isset($data['applied_role']) ? $data['applied_role'] : '';
+            $user->applied_role_secondary = isset($data['applied_role_secondary']) ? $data['applied_role_secondary'] : '';
             $user->credit       = isset($data['credit']) ? $data['credit'] : '3';
             $user->status       = isset($data['status']) ? $data['status'] : '1';
             $user->user_type    = isset($data['user_type']) ? $data['user_type'] : 'applicant';
@@ -516,12 +544,16 @@ class User extends Authenticatable implements JWTSubject
             $user->save();
         }
 
+        // return $user; // :DEBUG: - If you don't want to send data to Zoho when testing, enable this.
+
         if ($user and !$zoho_user_id) {
             // Send Data to Zoho
             $all_sexes = [
                 'm'     => 'Male',
                 'f'     => 'Female',
-                'o'     => 'Other'
+                'o'     => 'Other',
+                'non-binary'=>'Non-Binary',
+                'not-given' =>'Prefer not to say'
             ];
             $all_cities = [
                 0 => 'None',
@@ -576,7 +608,7 @@ class User extends Authenticatable implements JWTSubject
                         'Address_for_correspondence'    => isset($data['address']) ? $data['address'] : '',
                         'Mobile_Number'     => $data['phone'],
                         'Occupation'        => isset($data['job_status']) ? ucwords($data['job_status']) : '',
-                        'Role_Type'			=> isset($role_types[$data['profile']]) ? $role_types[$data['profile']] : 'Other',
+                        'Role_Type'			=> isset($role_types[$data['applied_role']]) ? $role_types[$data['applied_role']] : 'Other',
                         'Reason_for_choosing_to_volunteer_at_MAD'   => isset($data['why_mad']) ? $data['why_mad'] : '',
                         'MAD_Applicant_Id'  => $madapp_user_id,  // 'Unique_Applicant_ID'    => $status['id'],
                     ]
