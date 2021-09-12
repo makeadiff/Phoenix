@@ -26,7 +26,6 @@ class UserController extends Controller
             'email'     => 'required|email|unique:User,email',
             'mad_email' => 'email|regex:/.+\@makeadiff\.in$/',
             'password'  => 'required',
-            'sex'       => 'regex:/^[mfo]$/',
             'phone'     => 'required|unique:User,phone|regex:/[\+\-0-9 ]{10,14}/',
             'city_id'   => 'required|numeric|exists:City,id'
         ];

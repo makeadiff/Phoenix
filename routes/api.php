@@ -41,7 +41,7 @@ $url_prefix = 'v1';
 // Pubilc functions - these can be called without JWT authentication
 Route::group([
     'prefix' => $url_prefix, 
-    'middleware' => ['auth.basic', 'log.call']
+    'middleware' => ['auth.basic'] // , 'log.call']
 ], function () {
     /*
     Route::post('/users/login', function(Request $request) {  // - This line is here to get this call picked up the the all_call.php monitor.
