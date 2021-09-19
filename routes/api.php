@@ -77,7 +77,7 @@ Route::group([
 });
 
 
-$middleware = ['auth.jwt_or_basic', 'json.output', 'log.call'];
+$middleware = ['auth.jwt_or_basic', 'json.output']; //, 'log.call'];
 
 Route::group([
     'prefix' => $url_prefix, 
