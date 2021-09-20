@@ -2,6 +2,7 @@
 namespace App\Libraries;
 
 use Log;
+use DOMDocument;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -16,9 +17,8 @@ class Email
     public $attachments = [];
 
     private $smtp_host 		= 'smtp.gmail.com';
-    private $this->smtp_username 	= 'noreply@makeadiff.in';
+    private $smtp_username 	= 'noreply@makeadiff.in';
     private $smtp_password 	= 'noreplygonemad';
-
 
     public function send()
     {
@@ -48,11 +48,14 @@ class Email
             } else {
                 $mail->setFrom($this->smtp_username, "Make A Difference");
             }
-            $mail->addAddress($this->to_email);
+            $mail->addAddress($this->to);
 
             // Extract images
-            preg_match_all('/<img src="([^"]+)"[^>]*>/i', $this->html, $images);
-            foreach($images[1] as $image) {
+            $doc = new DOMDocument();
+            @$doc->loadHTML($this->html);
+            $images = $doc->getElementsByTagName('img');
+            foreach($images as $image_ele) {
+                $image = $image_ele->getAttribute('src');
                 $image_path = realpath($image);
                 $image_filename = basename($image_path);
                 $this->html = str_replace($image, "cid:$image_filename", $this->html); // $image should NOT be $image_path
@@ -66,10 +69,10 @@ class Email
             }
             
             //Content
-            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->isHTML(true); //Set email format to HTML
             $mail->Subject = $this->subject;
             $mail->Body    = $this->html;
-            $mail->AltBody = \Soundasleep\Html2Text::convert($this->body) . "--\nMake a Difference\nhttp://makeadiff.in/";
+            $mail->AltBody = \Soundasleep\Html2Text::convert($this->html) . "--\nMake a Difference\nhttp://makeadiff.in/";
 
             $mail->send();
             return [true, ''];
@@ -77,56 +80,6 @@ class Email
         } catch (Exception $e) {
             return [false, "Message could not be sent. Mailer Error: {$mail->ErrorInfo}"];
         }
-    }
-
-    public function send()
-    {
-        $headers = [
-            'From'      => $this->from,
-            'To'        => $this->to,
-            'Subject'   => $this->subject
-        ];
-
-        $mime = new \Mail_mime(array('eol' => "\n"));
-
-        foreach ($this->images as $image_file) {
-            $mime->addHTMLImage($image_file, mime_content_type($image_file));
-        }
-
-        foreach ($this->attachments as $attachment_file) {
-            if ($attachment_file and file_exists($attachment_file)) {
-                $mime->addAttachment($attachment_file, mime_content_type($attachment_file));
-            }
-        }
-
-        // SMTP Login details based on the $from address
-        if (stripos($this->from, 'donations@makeadiff.in') !== false) {
-            $this->smtp_username = "donations@makeadiff.in";
-            $this->smtp_password = "Fell-chose-5";
-        } elseif (stripos($this->from, 'madapp@makeadiff.in') !== false) {
-            $this->smtp_username = "madapp@makeadiff.in";
-            $this->smtp_password = "madappgonemad";
-        }
-
-        $smtp = \Mail::factory('smtp', [
-                    'host'     => $this->smtp_host,
-                    'auth'     => true,
-                    'username' => $this->smtp_username,
-                    'password' => $this->smtp_password
-                ]);
-
-        $mime->setHTMLBody($this->html);
-        $body = $mime->get();
-        $headers = $mime->headers($headers);
-
-        $mail = $smtp->send($this->to, $headers, $body);
-
-        if (\PEAR::isError($mail)) {
-            Log::error("Error sending email '{$this->subject}' to '{$this->to}' : " . $mail->getMessage());
-            return false;
-        }
-
-        return true;
     }
 
     public function queue()
