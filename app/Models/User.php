@@ -552,7 +552,7 @@ class User extends Authenticatable implements JWTSubject
         // Send Welcome Email. Do this ONLY if zoho sync is disabled.
         $mail = new Email;
         $mail->from     = "noreply@makeadiff.in";
-        $mail->to       = $user['email'];
+        $mail->to       = $data['email'];
         $mail->subject  = "You are one step closer to Making a Difference!";
 
         $base_path = app()->basePath();
