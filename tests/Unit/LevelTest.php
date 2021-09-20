@@ -48,7 +48,7 @@ class LevelTest extends TestCase
 
         $model = new Level;
         $data = $model->inCenter($this->ideal_center_id);
-        $level_ids = [10056, 10057];
+        $level_ids = array_keys($this->ideal_levels);
 
         $found = 0;
         foreach ($data as $level) {

@@ -40,11 +40,12 @@ class BatchTest extends TestCase
     public function testBatchSearchWithTeacher()
     {
         $batch = new Batch;
-        $batches = $batch->search(['teacher_id' => 203356]);
+        $batch_id = array_keys($this->ideal_batch_level_user_mapping)[0];
+        $teacher_id = array_values($this->ideal_batch_level_user_mapping[$batch_id])[0][0];
+        $batches = $batch->search(['teacher_id' => $teacher_id]);
 
         $result = $batches->first();
 
-        $batch_id = 3359;
         $this->assertEquals($result->id, $batch_id);
         $this->assertEquals($result->day, $this->ideal_batchs[$batch_id]['day']);
     }
