@@ -2,10 +2,10 @@
 namespace App\Libraries;
 
 use Log;
-
-require_once "Mail.php";
-require_once "Mail/mime.php";
-error_reporting(E_ERROR | E_PARSE);
+use DOMDocument;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
 class Email
 {
@@ -22,52 +22,64 @@ class Email
 
     public function send()
     {
-        $headers = [
-            'From'      => $this->from,
-            'To'        => $this->to,
-            'Subject'   => $this->subject
-        ];
+        $mail = new PHPMailer(true);
 
-        $mime = new \Mail_mime(array('eol' => "\n"));
-
-        foreach ($this->images as $image_file) {
-            $mime->addHTMLImage($image_file, mime_content_type($image_file));
-        }
-
-        foreach ($this->attachments as $attachment_file) {
-            if ($attachment_file and file_exists($attachment_file)) {
-                $mime->addAttachment($attachment_file, mime_content_type($attachment_file));
-            }
-        }
-
-        // SMTP Login details based on the $from address
-        if (stripos($this->from, 'donations@makeadiff.in') !== false) {
+        if(stripos($this->from, 'donations@makeadiff.in') !== false) {
             $this->smtp_username = "donations@makeadiff.in";
             $this->smtp_password = "Fell-chose-5";
-        } elseif (stripos($this->from, 'madapp@makeadiff.in') !== false) {
+        } elseif(stripos($this->from, 'madapp@makeadiff.in') !== false) {
             $this->smtp_username = "madapp@makeadiff.in";
             $this->smtp_password = "madappgonemad";
         }
 
-        $smtp = \Mail::factory('smtp', [
-                    'host'     => $this->smtp_host,
-                    'auth'     => true,
-                    'username' => $this->smtp_username,
-                    'password' => $this->smtp_password
-                ]);
+        try {
+            // $mail->SMTPDebug = SMTP::DEBUG_SERVER;               //Enable verbose debug output
+            $mail->isSMTP();                                        //Send using SMTP
+            $mail->Host       = 'smtp.gmail.com';                   //Set the SMTP server to send through
+            $mail->SMTPAuth   = true;                               //Enable SMTP authentication
+            $mail->Username   = $this->smtp_username;                     //SMTP username
+            $mail->Password   = $this->smtp_password;                     //SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;     //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+            $mail->Port       = 587;                                //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
-        $mime->setHTMLBody($this->html);
-        $body = $mime->get();
-        $headers = $mime->headers($headers);
+            //Recipients
+            if(isset($this->from)) {
+                $mail->setFrom($this->from, 'Make A Difference');
+            } else {
+                $mail->setFrom($this->smtp_username, "Make A Difference");
+            }
+            $mail->addAddress($this->to);
 
-        $mail = $smtp->send($this->to, $headers, $body);
+            // Extract images
+            $doc = new DOMDocument();
+            @$doc->loadHTML($this->html);
+            $images = $doc->getElementsByTagName('img');
+            foreach($images as $image_ele) {
+                $image = $image_ele->getAttribute('src');
+                $image_path = realpath($image);
+                $image_filename = basename($image_path);
+                $this->html = str_replace($image, "cid:$image_filename", $this->html); // $image should NOT be $image_path
+                
+                $mail->AddEmbeddedImage($image_path, $image_filename);
+            }
 
-        if (\PEAR::isError($mail)) {
-            Log::error("Error sending email '{$this->subject}' to '{$this->to}' : " . $mail->getMessage());
-            return false;
+            //Attachments
+            foreach($this->attachments as $attachment) {
+                $mail->addAttachment($attachment);
+            }
+            
+            //Content
+            $mail->isHTML(true); //Set email format to HTML
+            $mail->Subject = $this->subject;
+            $mail->Body    = $this->html;
+            $mail->AltBody = \Soundasleep\Html2Text::convert($this->html) . "--\nMake a Difference\nhttp://makeadiff.in/";
+
+            $mail->send();
+            return [true, ''];
+
+        } catch (Exception $e) {
+            return [false, "Message could not be sent. Mailer Error: {$mail->ErrorInfo}"];
         }
-
-        return true;
     }
 
     public function queue()

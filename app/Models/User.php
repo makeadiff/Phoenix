@@ -7,6 +7,7 @@ use App\Models\Log;
 use App\Models\Common;
 use App\Models\Classes;
 
+use App\Libraries\Email;
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
@@ -16,7 +17,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-// :TODO: Don't return password as plain text. Esp on /users/<ID> GET or /users/<ID> POST
+// :TODO: Don't return password as plain text. Esp on /users/<ID> GET or /users/<ID> POST. Later Comment: Huh? How is this even possible? We only store hashs.
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -27,7 +28,9 @@ class User extends Authenticatable implements JWTSubject
     const CREATED_AT = 'added_on';
     const UPDATED_AT = 'updated_on';
     protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','center_id',
-                            'credit','applied_role','status','user_type', 'joined_on', 'added_on', 'left_on', 'campaign'];
+                            'credit','applied_role','applied_role_secondary','status','user_type', 'joined_on', 'added_on', 'left_on', 'campaign', 
+                            'job_status','edu_institution', 'edu_course', 'edu_year', 'company','why_mad', 'volunteering_experience', 
+                            'zoho_sync_status', 'zoho_user_id'];
     public $enable_logging = false; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()
@@ -87,7 +90,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /// Connects to all the batches the current user mentors.
-    public function mentored_batches($status = false)
+    public function mentoredBatches($status = false)
     {
         $batches = $this->belongsToMany("App\Models\Batch", 'UserBatch', 'user_id', 'batch_id');
         $batches->select("Batch.id", "Batch.class_time", "Batch.day", "Batch.batch_head_id");
@@ -97,7 +100,7 @@ class User extends Authenticatable implements JWTSubject
         if ($status) {
             $batches->where('Class.status', $status);
         }
-        $batches->orderBy("Class.class_on");
+        $batches->orderBy("Class.class_on")->distinct();
         return $batches;
     }
 
@@ -471,29 +474,49 @@ class User extends Authenticatable implements JWTSubject
         $zoho_user_id = isset($data['zoho_user_id']) ? $data['zoho_user_id'] : 0;
         $madapp_user_id = 0;
 
+        // Backward compatibility
+        if(!empty($data['profile']) and empty($data['applied_role'])) {
+            $data['applied_role'] = $data['profile'];
+        }
+
+        // Didn't find the user in the database - create now row.
         if (empty($results)) {
             $user = User::create([
                 'email'     => $data['email'],
                 'mad_email' => isset($data['mad_email']) ? $data['mad_email'] : '',
                 'phone'     => User::correctPhoneNumber($data['phone']),
                 'name'      => $data['name'],
-                'sex'       => isset($data['sex']) ? $data['sex'] : 'f',
+                'sex'       => isset($data['sex']) ? $data['sex'] : 'not-given',
                 'password_hash' => Hash::make($data['password']),
                 'address'   => isset($data['address']) ? $data['address'] : '',
                 'bio'       => isset($data['bio']) ? $data['bio'] : '',
                 'source'    => isset($data['source']) ? $data['source'] : 'other',
                 'birthday'  => isset($data['birthday']) ? $data['birthday'] : null,
+                
+                'job_status'=> isset($data['job_status']) ? $data['job_status'] : 'student',
+                'edu_institution'  => isset($data['edu_institution']) ? $data['edu_institution'] : null,
+                'edu_course'=> isset($data['edu_course']) ? $data['edu_course'] : null,
+                'edu_year'  => isset($data['edu_year']) ? $data['edu_year'] : null,
+                'company'   => isset($data['company']) ? $data['company'] : null,
+
                 'city_id'   => $data['city_id'],
-                'applied_role'=>isset($data['profile']) ? $data['profile'] : '',
+                'applied_role'=>isset($data['applied_role']) ? $data['applied_role'] : null,
+                'applied_role_secondary'=>isset($data['applied_role_secondary']) ? $data['applied_role_secondary'] : null,
+
+                'why_mad'   =>isset($data['why_mad']) ? $data['why_mad'] : null,
+                'volunteering_experience'   => isset($data['volunteering_experience']) ? $data['volunteering_experience'] : null,
+
                 'credit'    => isset($data['credit']) ? $data['credit'] : '3',
                 'status'    => isset($data['status']) ? $data['status'] : '1',
                 'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
                 'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s'),
                 'campaign'  => isset($data['campaign']) ? $data['campaign'] : '',
-                'zoho_user_id'=>$zoho_user_id
+                'zoho_user_id'=>$zoho_user_id,
+                'zoho_sync_status' => 'insert-pending'
             ]);
             $madapp_user_id = $user->id;
 
+        // Found a matching user with same email/phone - so update the profile to mark new joining date.
         } else {
             $user = User::where('id', $results->id)->first();
             $madapp_user_id = $user->id;
@@ -508,98 +531,46 @@ class User extends Authenticatable implements JWTSubject
             $user->source       = isset($data['source']) ? $data['source'] : 'other';
             $user->birthday     = isset($data['birthday']) ? $data['birthday'] : null;
             $user->city_id      = $data['city_id'];
-            $user->applied_role = isset($data['profile']) ? $data['profile'] : '';
+
+            $user->job_status   = isset($data['job_status']) ? $data['job_status'] : '';
+            $user->edu_institution = isset($data['edu_institution']) ? $data['edu_institution'] : '';
+            $user->edu_course   = isset($data['edu_course']) ? $data['edu_course'] : '';
+            $user->edu_year     = isset($data['edu_year']) ? $data['edu_year'] : '';
+            $user->company      = isset($data['company']) ? $data['company'] : '';
+
+            $user->applied_role = isset($data['applied_role']) ? $data['applied_role'] : '';
+            $user->applied_role_secondary = isset($data['applied_role_secondary']) ? $data['applied_role_secondary'] : '';
             $user->credit       = isset($data['credit']) ? $data['credit'] : '3';
             $user->status       = isset($data['status']) ? $data['status'] : '1';
             $user->user_type    = isset($data['user_type']) ? $data['user_type'] : 'applicant';
             $user->joined_on    = isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s');
+
+            $user->zoho_sync_status = 'update-pending';
             $user->save();
         }
 
-        if ($user and !$zoho_user_id) {
-            // Send Data to Zoho
-            $all_sexes = [
-                'm'     => 'Male',
-                'f'     => 'Female',
-                'o'     => 'Other'
-            ];
-            $all_cities = [
-                0 => 'None',
-                1 => 'Bangalore',
-                2 => 'Mangalore',
-                3 => 'Trivandrum',
-                4 => 'Mumbai',
-                5 => 'Pune',
-                6 => 'Chennai',
-                8 => 'Vellore',
-                10 => 'Cochin',
-                11 => 'Hyderabad',
-                12 => 'Delhi',
-                13 => 'Chandigarh',
-                14 => 'Kolkata',
-                15 => 'Nagpur',
-                16 => 'Coimbatore',
-                17 => 'Vizag',
-                18 => 'Vijayawada',
-                19 => 'Gwalior',
-                20 => 'Lucknow',
-                21 => 'Bhopal',
-                22 => 'Mysore',
-                23 => 'Guntur',
-                24 => 'Ahmedabad',
-                25 => 'Dehradun',
-                26 => 'Leadership',
-                28 => 'Test'
-            ];
-            $role_types = [
-                'teaching'	=> 'Teaching Volunteer',
-                'wingman'	=> 'Wingman (Youth Mentoring)',
-                'fundraising'=>'Fundraising Volunteer',
-                'hc'		=> 'Human Capital Volunteer',
-                'campaigns' => 'Campaigns Volunteer',
-                'finance'   => 'Finance Volunteer',
-                'other'		=> 'Other'
-            ];
-            $client = new Client(['http_errors' => false]); //GuzzleHttp\Client
-            $response = '';
-            try {
-                $result = $client->post('https://creator.zoho.com/api/jithincn1/json/mad-recruit/form/Registration/record/add', [
-                    'form_params' => [
-                        'authtoken'         => 'cdcfd4eb1b77b0835f4339827906e42a',
-                        'scope'             => 'creatorapi',
-                        'campaign_id'       => isset($data['campaign']) ? $data['campaign'] : '',
-                        'Applicant_Name'    => $data['name'],
-                        'Gender'            => isset($data['sex']) ? $all_sexes[$data['sex']] : 'Female',
-                        'City'              => $all_cities[$data['city_id']],
-                        'Date_of_Birth'     => isset($data['birthday']) ? date('d-M-Y', strtotime($data['birthday'])) : '01-Jan-2000',
-                        'Email'             => $data['email'],
-                        'Address_for_correspondence'    => isset($data['address']) ? $data['address'] : '',
-                        'Mobile_Number'     => $data['phone'],
-                        'Occupation'        => isset($data['job_status']) ? ucwords($data['job_status']) : '',
-                        'Role_Type'			=> isset($role_types[$data['profile']]) ? $role_types[$data['profile']] : 'Other',
-                        'Reason_for_choosing_to_volunteer_at_MAD'   => isset($data['why_mad']) ? $data['why_mad'] : '',
-                        'MAD_Applicant_Id'  => $madapp_user_id,  // 'Unique_Applicant_ID'    => $status['id'],
-                    ]
-                ]);
-                $response = $result->getBody();
-            } catch (Exception $e) {
-                // Can't send data to Zoho
-                Log::add(['name' => 'zoho_user_push_exception', 'user_id' => $madapp_user_id, 'data' => $e]);
-            } finally {
-                if ($response) {
-                    $zoho_response = json_decode($response);
-                    $zoho_user_id = @$zoho_response->formname[1]->operation[1]->values->ID;
+        // Send Welcome Email. Do this ONLY if zoho sync is disabled.
+        $mail = new Email;
+        $mail->from     = "noreply@makeadiff.in";
+        $mail->to       = $data['email'];
+        $mail->subject  = "You are one step closer to Making a Difference!";
 
-                    if ($zoho_user_id and $madapp_user_id) {
-                        $user->zoho_user_id = $zoho_user_id;
-                        $user->save();
-                    } else {
-                        Log::add(['name' => 'zoho_user_push_error', 'user_id' => $madapp_user_id, 'data' => $zoho_response]);
-                    }
-                }
-            }
-            // $user->zoho_response = $zoho_response; // Use this if you want to debug the zoho call. This will show up in the AJAX call to our API
-        }
+        $base_path = app()->basePath();
+        $base_url = url('/');
+
+        $email_html = file_get_contents($base_path . '/resources/email_templates/applicant_welcome_template.html');
+        $mail->html = str_replace(
+            array('%BASE_FOLDER%','%BASE_URL%', '%NAME%', '%DATE%'),
+            array($base_path, $base_url,$data['name'], date('d/m/Y')),
+            $email_html
+        );
+
+        $images = [
+            $base_path . '/public/assets/header.jpg',
+            $base_path . '/public/assets/welcome_header.png',
+        ];
+        $mail->images = $images;
+        $mail->send(); // $mail->queue();
 
         return $user;
     }
