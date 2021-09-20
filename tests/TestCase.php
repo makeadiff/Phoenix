@@ -30,18 +30,18 @@ abstract class TestCase extends BaseTestCase
             "HTTP_Accept"        => "application/json"
     ];
 
-    // This is a mirroring of the DB structure for easier ideal case testing.
+    // This is a mirroring of the DB structure for easier ideal case testing. This has to be refreshed every year.
     protected $ideal_center_id = 247;
     protected $ideal_project_id= 1;
     protected $ideal_batchs = [
-        '3359'	=> [
+        '3933'	=> [
             'day'			=> 6,
             'class_time'	=> '10:00:00',
             'name'			=> 'Saturday 10:00 AM',
             'center_id'		=> 247,
             'project_id'	=> 1
         ],
-        '3360'	=> [
+        '3934'	=> [
             'day'			=> 0,
             'class_time'	=> '15:00:00',
             'name'			=> 'Sunday 03:00 PM',
@@ -50,28 +50,28 @@ abstract class TestCase extends BaseTestCase
         ],
     ];
     protected $ideal_levels = [
-        '10056'	=> [
-            'name'	=> 'A',
-            'grade'	=> '5',
-            'level_name' =>	'5 A',
-            'center_id'		=> 247,
-            'project_id'	=> 1,
-        ],
-        '10057'	=> [
+        '11510'	=> [
             'name'	=> 'A',
             'grade'	=> '6',
             'level_name' =>	'6 A',
             'center_id'		=> 247,
             'project_id'	=> 1,
+        ],
+        '11511'	=> [
+            'name'	=> 'A',
+            'grade'	=> '7',
+            'level_name' =>	'7 A',
+            'center_id'		=> 247,
+            'project_id'	=> 1,
         ]
     ];
     protected $ideal_batch_level_user_mapping = [
-        '3359'	=> [
-            '10056'	=> [203355],
-            '10057'	=> [203356]
+        '3933'	=> [
+            '11510'	=> [203355],
+            '11511'	=> [203356]
         ],
-        '3360'	=> [
-            '10057'	=> [203354, 203353]
+        '3934'	=> [
+            '11511'	=> [203354, 203353]
         ]
     ];
     protected $ideal_users = [

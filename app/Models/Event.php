@@ -238,7 +238,7 @@ final class Event extends Model
             }
 
             $mail = new Email;
-            $mail->from     = "noreply <noreply@makeadiff.in>";
+            $mail->from     = "noreply@makeadiff.in";
             $mail->to       = $email;
             $mail->subject  = "RSVP for " . $event_info->name;
 

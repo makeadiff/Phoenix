@@ -41,7 +41,7 @@ $url_prefix = 'v1';
 // Pubilc functions - these can be called without JWT authentication
 Route::group([
     'prefix' => $url_prefix, 
-    'middleware' => ['auth.basic', 'log.call']
+    'middleware' => ['auth.basic'] // , 'log.call']
 ], function () {
     /*
     Route::post('/users/login', function(Request $request) {  // - This line is here to get this call picked up the the all_call.php monitor.
@@ -77,7 +77,7 @@ Route::group([
 });
 
 
-$middleware = ['auth.jwt_or_basic', 'json.output', 'log.call'];
+$middleware = ['auth.jwt_or_basic', 'json.output']; //, 'log.call'];
 
 Route::group([
     'prefix' => $url_prefix, 
@@ -1133,7 +1133,7 @@ Route::group([
     });
 
     Route::get('/users/{user_id}/donations', function (Request $request, $fundraiser_user_id) {
-        $search_fields = ['from', 'to', 'amount'];
+        $search_fields = ['from', 'to', 'amount', 'type'];
         $search = ['fundraiser_user_id' => $fundraiser_user_id];
 
         foreach ($search_fields as $key) {

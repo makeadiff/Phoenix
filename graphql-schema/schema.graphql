@@ -156,6 +156,7 @@ type User {
     classes: [Class] @hasMany(relation: "classes") # :TODO: - Ideally, this should take an argument - (status: String)
     past_classes: [Class] @hasMany(relation: "pastClasses")
     batches: [Batch] @hasMany
+    mentored_batches: [Batch] @hasMany(relation: "mentoredBatches")
     donations: [Donation] @hasMany
     devices: [Device] @hasMany
     links: [Link] @hasMany
@@ -256,6 +257,7 @@ type Batch {
     center: Center @belongsTo
     levels: [Level]
     teachers: [User]
+    mentors: [User]
     classes: [Class]
     allocations: [Allocation]
 }
