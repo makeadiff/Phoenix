@@ -488,7 +488,20 @@ Route::group([
         }
 
         return JSend::success("Class added successfully.", ['class' => $new]);
-    });    
+    });
+
+    Route::delete('/classes/{class_id}', function ($class_id) {
+        $search = [];
+        $search['id'] = $class_id;
+
+        $class = new Classes;
+        $info = $class->removeClass($search);
+        if (!$info) {
+            return JSend::fail("Can't find class with id '$class_id'");
+        }
+        
+        return "";
+    });
 
     Route::get('/users/{user_id}/classes', function (Request $request, $user_id) {
         $search = [];

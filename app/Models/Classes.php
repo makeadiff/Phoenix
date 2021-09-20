@@ -195,20 +195,21 @@ final class Classes extends Model
         $class_day = date('Y-m-d', strtotime("next {$day}"));
 
         $data['class_on'] = date('Y-m-d', strtotime($class_day)).' '.$class_time; 
-
+        $data['status'] = 'projected';
+        
         $class = Classes::create($data);
 
-        app('db')->table('Class')->insert([
-            'batch_id'              => $data['batch_id'],
-            'level_id'              => $data['level_id'],
-            'project_id'            => $data['project_id'],
-            'class_on'              => $data['class_on'],
-            'lesson_id'             => 1,
-            'class_satisfaction'    => 0,
-            'status'                => 'projected'
-        ]);
+        return $class;
+    }
 
-        return $data;
+    public function removeClass($data)
+    {
+        if (empty($data['id'])){
+            return false;
+        }
+
+        app('db')->table("Class")->where('id', $data['id'])->delete();
+        return true;
     }
 
     // Not tested.
