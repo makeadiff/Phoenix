@@ -21,6 +21,7 @@ use App\Models\Contact;
 use App\Models\Alert;
 use App\Models\Device;
 use App\Models\CenterProject;
+use App\Models\Log;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DonationController;
@@ -1408,6 +1409,13 @@ Route::group([
         $notifications = $notification->search($search);
 
         return JSend::success("Notifications", ['notifications' => $notifications]);
+    });
+
+    Route::post('/logs', function (Request $request) {
+        $log_model = new Log;
+        $log = $log_model->add($request->all());
+
+        return JSend::success("Log item created", ['log' => $log]);
     });
 
 

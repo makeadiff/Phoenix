@@ -68,7 +68,7 @@ type Query {
 }
 
 type Mutation {
-    createLog(name: String, log: String, user_id: ID, added_on: DateTime): String
+    createLog(name: String, log: String, user_id: ID, level: String, added_on: DateTime): String
     cancelClass(class_id: ID, mentor_id: ID, reason: ClassCancelReason!, reason_other: String): Int
     saveTeacherAttendance(class_id: ID, mentor_id: Int, teachers: [InputTeacherAttendance]): Int
     saveStudentAttendance(class_id: ID, teacher_id: Int, class_satisfaction: Int, students: [InputStudentAttendance]): Int
