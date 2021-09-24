@@ -501,6 +501,13 @@ Route::group([
         return JSend::success("Search Results", ['classes' => $data]);
     });
 
+    Route::get('/users/{user_id}/sourcing_campaign', function (Request $request, $user_id) {
+        $user_model = new User;
+        $campaign_id = $user_model->getSourcingCampaignId($user_id);
+        $sourced_applicants = $user_model->getSourcedApplicants();
+        return JSend::success("Sourcing Campaign", ['campaign_id' => $campaign_id, 'sourced_applicants' => $sourced_applicants]);
+    });
+
     ///////////////////////////////////////////////// Data ////////////////////////////////////////
     if (!function_exists('getData')) { // It was causing some wierd issues in 'php artisan config:cache' command.
         function getData($item, $item_id, $data_name)
@@ -1445,9 +1452,9 @@ Route::group([
 
     // Use this to Debug/test things
     Route::get('/test', function () {
-        $donation_model = new DonationController;
-        $data = $donation_model->search(['fundraiser_user_id' => 1]);
-        return $data;
+        $user_model = new User;
+        $campaign_id = $user_model->getSourcingCampaignId(1);
+        return $campaign_id;
     });
 
     require_once base_path('routes/api-surveys.php');

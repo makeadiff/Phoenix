@@ -6,6 +6,7 @@ use App\Models\UserGroup;
 use App\Models\Log;
 use App\Models\Common;
 use App\Models\Classes;
+use App\Models\Data;
 
 use App\Libraries\Email;
 use Illuminate\Support\Facades\Hash;
@@ -802,6 +803,25 @@ class User extends Authenticatable implements JWTSubject
             ->distinct('Permission.name')->select('Permission.name')->whereIn("GroupPermission.group_id", $groups)->get()->pluck('name');
 
         return $permissions;
+    }
+
+    // Each user has a unique Sourcing campaign ID that's stored in the Data table.
+    public function getSourcingCampaignId($user_id = null)
+    {
+        $user_id = $this->chain($user_id);
+
+        $campaign_id = (new Data)->get('User', $user_id, 'sourcing_campaign_id')->getData();
+        return $campaign_id;
+    }
+
+    // They can give a registeartion link with that ID to new people - if they register using that link, we store the campaign 
+    // ID in the User table. This function will return all the people who came in thru the user
+    public function getSourcedApplicants($user_id = null)
+    {
+        $user_id = $this->chain($user_id);
+        $campaign_id = $this->getSourcingCampaignId($user_id);
+        $applicants = app('db')->table("User")->select('id','name')->where('campaign', $campaign_id)->get();
+        return $applicants;
     }
 
     /// Changes the phone number format from +91976063565 to 9746063565. Remove the 91 at the starting.
