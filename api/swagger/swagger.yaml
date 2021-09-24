@@ -763,7 +763,22 @@ paths:
           description: Ok
         404:
           description: Can't find any user with the given ID.
-
+  /users/{user_id}/sourcing_campaign:
+    get:
+      tags:
+        - user
+      summary: Returns Applicants who came in thru this user
+      description: Returnsthe Campaign ID and all the applicants that came in thru this user during the volunteer sourcing campaign
+      parameters:
+        - name: user_id
+          type: integer
+          in: path
+          required: true
+          description: ID of the user
+      responses:
+        200:
+          description: Ok
+          
   /users/{user_id}/data/{data_name}:
     get:
       tags:

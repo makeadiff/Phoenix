@@ -820,6 +820,7 @@ class User extends Authenticatable implements JWTSubject
     {
         $user_id = $this->chain($user_id);
         $campaign_id = $this->getSourcingCampaignId($user_id);
+        if(!$campaign_id) return null;
         $applicants = app('db')->table("User")->select('id','name')->where('campaign', $campaign_id)->get();
         return $applicants;
     }
