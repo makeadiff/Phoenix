@@ -42,7 +42,7 @@ return [
 
     'route' => [
         'prefix' => '',
-        'middleware' => ['auth.jwt_or_basic'] //, 'log.call' ] // Enable this to make sure graphql calls are authenticated. // ['log.call'] - if you want logging
+        'middleware' => [], // DISABLING THIS FOR NOW - but it has to be on ['auth.jwt_or_basic'] //, 'log.call' ] // Enable this to make sure graphql calls are authenticated. // ['log.call'] - if you want logging
     ],
 
     /*
