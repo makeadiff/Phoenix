@@ -15,7 +15,7 @@ class AddZohoFieldsToUser extends Migration
     {
         Schema::table('User', function (Blueprint $table) {
             $table->string('zoho_message')->nullable()->default(null)->after('zoho_user_id');
-            $table->enum('zoho_sync_status', ['insert-pending','update-update','done','error'])->nullable()->default(null)->after('zoho_message');
+            $table->enum('zoho_sync_status', ['insert-pending','update-pending','done','error'])->nullable()->default(null)->after('zoho_message');
         });
 
         Schema::table('User', function (Blueprint $table) {
