@@ -536,7 +536,7 @@ class User extends Authenticatable implements JWTSubject
             $user->job_status   = isset($data['job_status']) ? $data['job_status'] : '';
             $user->edu_institution = isset($data['edu_institution']) ? $data['edu_institution'] : '';
             $user->edu_course   = isset($data['edu_course']) ? $data['edu_course'] : '';
-            $user->edu_year     = isset($data['edu_year']) ? $data['edu_year'] : '';
+            $user->edu_year     = isset($data['edu_year']) ? $data['edu_year'] : null;
             $user->company      = isset($data['company']) ? $data['company'] : '';
 
             $user->applied_role = isset($data['applied_role']) ? $data['applied_role'] : '';

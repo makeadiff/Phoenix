@@ -989,7 +989,7 @@ Route::group([
     Route::get('/students_paginated','StudentController@index');
 
     Route::get('/students', function (Request $request) {
-        $search_fields = ['name','birthday', 'city_id','sex','center_id'];
+        $search_fields = ['name','birthday', 'city_id','sex','center_id', 'student_type'];
         $search = [];
         foreach ($search_fields as $key) {
             if (!$request->has($key)) {
