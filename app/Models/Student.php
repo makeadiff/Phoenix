@@ -13,7 +13,7 @@ final class Student extends Model
     
     protected $table = 'Student';
     public $timestamps = false;
-    protected $fillable = ['name','sex','birthday','center_id','status','added_on', 'description', 'photo'];
+    protected $fillable = ['name','sex','birthday','center_id','student_type','status','added_on', 'description', 'photo'];
 
     public function center()
     {
@@ -66,6 +66,7 @@ final class Student extends Model
             "Student.added_on",
             "Student.sex",
             "Student.status",
+            "Student.student_type",
             "Student.center_id",
             "Student.birthday",
             "Student.description",
@@ -119,6 +120,19 @@ final class Student extends Model
             $q->where('Student.sex', $data['sex']);
         }
 
+        if (empty($data['student_type']) and empty($data['student_type_in']) and empty($data['not_student_type'])) {
+            $data['student_type_in'] = ['active', 'active_away'];
+        }
+
+        if (!empty($data['student_type_in'])) {
+            $q->whereIn('Student.student_type', $data['student_type_in']);
+        } elseif (!empty($data['not_student_type'])) {
+            $q->whereNotIn('Student.student_type', $data['not_student_type']);
+        } elseif (!empty($data['student_type'])) {
+            $q->where('Student.student_type', $data['student_type']);
+        }
+
+
         if (!empty($data['level_id'])) {
             $q->join('StudentLevel', 'Student.id', '=', 'StudentLevel.student_id');
             $q->where('StudentLevel.level_id', $data['level_id']);
@@ -157,6 +171,7 @@ final class Student extends Model
             'center_id' => $data['center_id'],
             'description'   => isset($data['description']) ? $data['description'] : '',
             'photo'     => isset($data['photo']) ? $data['photo'] : '',
+            'student_type' => isset($data['student_type']) ? $data['student_type'] : 'active',
             'status'    => isset($data['status']) ? $data['status'] : '1',
             'added_on'  => isset($data['added_on']) ? $data['added_on'] : date('Y-m-d H:i:s')
         ]);

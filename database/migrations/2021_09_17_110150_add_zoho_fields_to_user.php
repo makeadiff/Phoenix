@@ -30,7 +30,7 @@ class AddZohoFieldsToUser extends Migration
      */
     public function down()
     {
-        Schema::table('user', function (Blueprint $table) {
+        Schema::table('User', function (Blueprint $table) {
             $table->dropColumn('zoho_message');
             $table->dropColumn('zoho_sync_status');
         });
