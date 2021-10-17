@@ -68,4 +68,80 @@ class StudentTest extends TestCase
         $this->assertEquals($this->response_data->data->student->name, 'Yoda');
         $this->assertEquals($this->response->getStatusCode(), 200);
     }
+
+    /// Path: POST    /students
+    public function testPostStudent()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
+
+        $number = rand(0, 9999);
+        $uniquer = str_pad($number, 4, 0, STR_PAD_LEFT);
+        $name = 'Test Student ' . $uniquer;
+
+        $student = [
+            'name'  => $name,
+            'center_id'  => $this->ideal_center_id,
+            'sex'   => 'm',
+            'student_type' => 'active'
+        ];
+
+        $this->load('/students', 'POST', $student);
+
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response_data->data->student->name, $name);
+        $this->assertEquals($this->response->getStatusCode(), 200);
+        $this->assertDatabaseHas('Student', array('name' => $name));
+
+        $created_student_id = $this->response_data->data->student->id;
+        return $created_student_id;
+    }
+
+    /// Path: DELETE    /students/{student_id}
+    /**
+     * @depends testPostStudent
+     */
+    public function testPostStudentEdit($created_student_id)
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
+        $student = [
+            'name'      => 'New Student Name',
+        ];
+        $this->load('/students/' . $created_student_id, 'POST', $student);
+        // dd($this->response_data);
+
+        $this->assertEquals($this->response_data->status, 'success');
+        $this->assertEquals($this->response->getStatusCode(), 200);
+        $this->assertDatabaseHas('Student', [
+            'id'    => $created_student_id,
+            'name'  => $student['name'],
+        ]);
+    }
+
+    /// Path: DELETE    /students/{student_id}
+    /**
+     * @depends testPostStudent
+     */
+    public function testDeletestudent($created_student_id)
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+        if (!$this->write_to_db) {
+            $this->markTestSkipped("Skipping as this test writes to the Database.");
+        }
+
+        $this->load('/students/' . $created_student_id, 'DELETE');
+        $this->assertEquals($this->response->getStatusCode(), 200);
+        $this->assertDatabaseHas('Student', array('id' => $created_student_id, 'status' => '0'));
+    }
 }

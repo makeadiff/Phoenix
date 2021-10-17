@@ -1494,6 +1494,22 @@ paths:
           type: integer
           required: false
           description: Returns all the students in the given center.
+        - name: student_type
+          in: query
+          type: string
+          enum: [active,active_away,alumni,alumni_no_contact,alumni_dead,other]
+          required: false
+          description: Finds only students of this type.
+        - name: student_type_in
+          in: query
+          type: string
+          required: false
+          description: Finds all students with any of the given types
+        - name: not_student_type
+          in: query
+          type: string
+          required: false
+          description: Finds students NOT in any of the given types.
         - name: sex
           in: query
           type: string
@@ -1530,6 +1546,12 @@ paths:
           in: formData
           required: true
           description: ID of the Center that student belongs to. Must be a valid center.
+        - name: student_type
+          in: formData
+          type: string
+          enum: [active,active_away,alumni,alumni_no_contact,alumni_dead,other]
+          required: true
+          description: Student Type - active or not.
       responses:
         200:
           description: Student added successfully.
