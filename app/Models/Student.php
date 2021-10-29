@@ -132,7 +132,6 @@ final class Student extends Model
             $q->where('Student.student_type', $data['student_type']);
         }
 
-
         if (!empty($data['level_id'])) {
             $q->join('StudentLevel', 'Student.id', '=', 'StudentLevel.student_id');
             $q->where('StudentLevel.level_id', $data['level_id']);

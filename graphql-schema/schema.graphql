@@ -184,8 +184,10 @@ type Student {
     description: String
     birthday: String
     added_on: String
+    student_type: String
     center_id: Int
     sex: String
+    reason_for_leaving: String
     center: Center @belongsTo
     comments: [Comment] @morphMany
     pivot: StudentAttendance
