@@ -1452,9 +1452,9 @@ Route::group([
 
     // Use this to Debug/test things
     Route::get('/test', function () {
-        $user_model = new User;
-        $campaign_id = $user_model->getSourcingCampaignId(1);
-        return $campaign_id;
+        $model = new Student;
+        $data = $model->fetch(11448);
+        dump($data->level());
     });
 
     require_once base_path('routes/api-surveys.php');

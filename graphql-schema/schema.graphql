@@ -190,6 +190,8 @@ type Student {
     reason_for_leaving: String
     center: Center @belongsTo
     comments: [Comment] @morphMany
+    levels: [Level] @hasMany
+    classes: [Class] @hasMany
     pivot: StudentAttendance
 }
 type StudentAttendance {
@@ -291,6 +293,7 @@ type Class {
     students: [Student]
     teachers: [User]
     substitutes: [User]
+    pivot: StudentAttendance
 }
 
 type Allocation {
@@ -299,7 +302,9 @@ type Allocation {
     batch: Batch 
     level: Level
     subject: Subject
-    user: User
+    teachers: [User]
+    mentors: [User]
+    users: [User]
 }
 
 type Project {
