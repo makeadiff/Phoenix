@@ -3,6 +3,7 @@ namespace App\Models;
 
 use App\Models\Common;
 use App\Models\Center;
+use App\Models\Level;
 use App\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +21,13 @@ final class Student extends Model
         return $this->belongsTo('App\Models\Center', 'center_id');
     }
 
-    public function level($project_id = 1)
+    public function levels() 
+    {
+        return $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')
+                    ->where('Level.status', '1')->where('Level.year', $this->year());
+    }
+
+    public function levelByProject($project_id = 1)
     {
         $levels = $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')
                     ->where('Level.status', '1')->where('Level.year', $this->year())->where("Level.project_id", $project_id);
@@ -39,6 +46,12 @@ final class Student extends Model
     public function comments()
     {
         return $this->morphMany('App\Models\Comment', 'item');
+    }
+
+    public function classes() 
+    {
+        return $this->belongsToMany('App\Models\Classes', 'StudentClass', 'student_id', 'class_id')
+                    ->where('Class.class_on', '>', $this->yearStartTime())->withPivot('present', 'participation', 'check_for_understanding');
     }
 
 
@@ -150,9 +163,10 @@ final class Student extends Model
 
         $this->id = $student_id;
         $this->student = $data;
+        $center = $data->center()->first();
 
-        $data->city_id = $data->center()->first()->city_id;
-        $data->center = $data->center()->first()->name;
+        $data->city_id = $center->city_id;
+        $data->center = $center->name;
         return $data;
     }
 
