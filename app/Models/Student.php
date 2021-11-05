@@ -27,6 +27,11 @@ final class Student extends Model
                     ->where('Level.status', '1')->where('Level.year', $this->year());
     }
 
+    public function pastLevels() 
+    {
+        return $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id');
+    }
+
     public function levelByProject($project_id = 1)
     {
         $levels = $this->belongsToMany('App\Models\Level', 'StudentLevel', 'student_id', 'level_id')
@@ -52,6 +57,12 @@ final class Student extends Model
     {
         return $this->belongsToMany('App\Models\Classes', 'StudentClass', 'student_id', 'class_id')
                     ->where('Class.class_on', '>', $this->yearStartTime())->withPivot('present', 'participation', 'check_for_understanding');
+    }
+
+    public function pastClasses() 
+    {
+        return $this->belongsToMany('App\Models\Classes', 'StudentClass', 'student_id', 'class_id')
+                    ->withPivot('present', 'participation', 'check_for_understanding');
     }
 
 

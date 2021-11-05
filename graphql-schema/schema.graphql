@@ -191,7 +191,9 @@ type Student {
     center: Center @belongsTo
     comments: [Comment] @morphMany
     levels: [Level] @hasMany
+    past_levels: [Level] @hasMany(relation: "pastLevels")
     classes: [Class] @hasMany
+    past_classes: [Class] @hasMany(relation: "pastClasses")
     pivot: StudentAttendance
 }
 type StudentAttendance {
