@@ -130,6 +130,13 @@ class User extends Authenticatable implements JWTSubject
         return $donations;
     }
 
+    public function pastDonations()
+    {
+        $donations = $this->hasMany("App\Models\Donation", 'fundraiser_user_id');
+        $donations->orderBy("added_on", 'desc');
+        return $donations;
+    }
+
     public function devices()
     {
         $devices = $this->hasMany("App\Models\Device", 'user_id');

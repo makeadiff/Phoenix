@@ -158,6 +158,7 @@ type User {
     batches: [Batch] @hasMany
     mentored_batches: [Batch] @hasMany(relation: "mentoredBatches")
     donations: [Donation] @hasMany
+    past_donations: [Donation] @hasMany(relation: "pastDonations")
     devices: [Device] @hasMany
     links: [Link] @hasMany
     conversations: [Conversation] @hasMany
