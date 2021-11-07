@@ -25,18 +25,18 @@ class Allocation extends Model
         return $this->belongsTo('App\Models\Level');
     }
 
-    public function teacher()
+    public function teachers()
     {
-        return $this->belongsTo('App\Models\User')->where('UserBatch.role', 'teacher');
+        return $this->belongsToMany('App\Models\User', 'UserBatch', 'id', 'user_id')->where('UserBatch.role', 'teacher');
     }
 
-    public function mentor()
+    public function mentors()
     {
-        return $this->belongsTo('App\Models\User')->where('UserBatch.role', 'mentor');
+        return $this->belongsToMany('App\Models\User', 'UserBatch', 'id', 'user_id')->where('UserBatch.role', 'mentor');
     }
-    public function user()
+    public function users()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsToMany('App\Models\User', 'UserBatch', 'id', 'user_id');
     }
 
     public function subject()
