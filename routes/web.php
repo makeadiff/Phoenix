@@ -15,13 +15,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/testing', function () {
-    $model = new App\Models\Student;
-    $data = $model->fetch(20631);
-    // dump($data->levelByProject(1)->first()->grade);
-    // $return = $data->classes()->first()->toArray();
-    $level = $data->levels()->first();
-    $return = $level->teachers()->get()->toArray();
+    $model = new App\Models\Batch;
+    $data = $model->fetch(3592);
 
-    dump($return);
+    $alloc = $data->allocations()->get()[0];
+    dump($alloc);
+    $usrs = $alloc->users()->get()->toArray();
+    dump($usrs);
+
+    // $return = [];
+    // foreach ($alloc as $al) {
+    //     $usrs = $al->users();
+    //     $return = $usrs->get()->toArray();
+    //     dump($return);
+    // }
 
 });

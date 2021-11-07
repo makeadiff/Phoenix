@@ -61,10 +61,10 @@ class LevelController extends Controller
     }
 
 
-    public function assignStudents(Request $request, $level_id = false)
+    public function assignStudents(Request $request, $level_id = null)
     {
         $level_model = new Level;
-        $level = false;
+        $level = null;
         if (!$level_id) {
             $level_id = $request->input('level_id');
         }
@@ -82,11 +82,16 @@ class LevelController extends Controller
         } else {
             $student_ids = $student_ids_raw;
         }
- 
+
+        $existing_student_ids = $level->students()->get()->pluck('id')->toArray(); // students alreday in the level
+
+        $add_student_ids = array_values(array_diff($student_ids, $existing_student_ids));
+        $remove_student_ids = array_values(array_diff($existing_student_ids, $student_ids));
+
         // Validation - make sure all students exists
         $student_not_found = [];
         $student_model = new Student;
-        foreach ($student_ids as $student_id) {
+        foreach ($add_student_ids as $student_id) {
             $student = $student_model->fetch($student_id);
             if (!$student) {
                 array_push($student_not_found, $student_id);
@@ -99,13 +104,15 @@ class LevelController extends Controller
             return JSend::fail("Can't find students with these IDs: " . implode(",", $student_not_found));
         }
 
-        $insert_count = 0;
-        foreach ($student_ids as $student_id) {
-            if ($level_model->assignStudent($level_id, $student_id)) {
-                $insert_count++;
-            }
+        foreach ($add_student_ids as $student_id) {
+            $level_model->assignStudent($level_id, $student_id);
+        }
+        foreach ($remove_student_ids as $student_id) {
+            $level_model->unassignStudent($level_id, $student_id);
         }
 
-        return JSend::success("Added $insert_count student(s) to class section " . $level->name, array('level' => $level));
+        // Why did I do this instead of the standard remove everything and add again? Not really sure - but this seemed cleaner.
+
+        return JSend::success("Updated student(s) in class section " . $level->name, array('level' => $level));
     }
 }
