@@ -8,7 +8,10 @@ final class UserGroup extends Model
 {
     use Common;
     protected $table = 'UserGroup';
-    public $timestamps = false;
+    public $timestamps = true;
+
+    const CREATED_AT = 'added_on';
+    const UPDATED_AT = null;
 
     public function user()
     {

@@ -36,6 +36,8 @@ final class Donor extends Model
                 'email' => $data['donor_email'],
                 'phone' => $data['donor_phone'],
                 'address' => $data['donor_address'],
+                'id_type' => empty($data['donor_id_type']) ? null : $data['donor_id_type'],
+                'id_number' => empty($data['donor_id_number']) ? null : $data['donor_id_number'],
                 'added_by_user_id' => $added_by_user_id,
                 'added_on'=> date('Y-m-d H:i:s')
             ]);

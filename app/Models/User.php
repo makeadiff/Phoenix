@@ -692,7 +692,8 @@ class User extends Authenticatable implements JWTSubject
             'user_id'   => $user_id,
             'group_id'  => $group_id,
             'year'      => $this->year(),
-            'main'      => (string) $main
+            'main'      => (string) $main,
+            'added_on'  => date('Y-m-d H:i:s')
         ]);
 
         return $this->item->groups();
