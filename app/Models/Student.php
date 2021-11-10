@@ -13,7 +13,11 @@ final class Student extends Model
     use Common;
     
     protected $table = 'Student';
-    public $timestamps = false;
+    public $timestamps = true;
+
+    const CREATED_AT = 'added_on';
+    const UPDATED_AT = 'updated_on';
+    
     protected $fillable = ['name','sex','birthday','center_id','student_type','status','added_on', 'description', 'photo'];
 
     public function center()
