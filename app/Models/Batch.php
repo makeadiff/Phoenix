@@ -70,8 +70,8 @@ final class Batch extends Model
         }
 
         if (isset($data['level_id'])) {
-            $q->join('BatchLevel', 'Batch.id', '=', 'BatchLevel.batch_id');
-            $q->join("Level", 'Level.id', '=', 'BatchLevel.level_id');
+            $q->join('UserBatch', 'Batch.id', '=', 'UserBatch.batch_id');
+            $q->join("Level", 'Level.id', '=', 'UserBatch.level_id');
             $q->where("Level.year", $this->year())->where('Level.status', '1');
         }
 
@@ -89,7 +89,7 @@ final class Batch extends Model
             } elseif ($field == 'mentor_id') {
                 $q->where("Batch.batch_head_id", $data[$field]);
             } elseif ($field == 'level_id') {
-                $q->where('BatchLevel.level_id', $data[$field]);
+                $q->where('UserBatch.level_id', $data[$field]);
             } elseif ($field === 'city_id') {
                 $q->where('Center.city_id', $data[$field]);
             } elseif ($field == 'direction' and isset($data['from_date'])) {
@@ -115,7 +115,7 @@ final class Batch extends Model
         }
 
         $q->orderBy('day')->orderBy('class_time');
-        // dd($q->toSql(), $q->getBindings(), $data);
+        //dd($q->toSql(), $q->getBindings(), $data);
 
         return $q;
     }
