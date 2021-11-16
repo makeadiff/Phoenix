@@ -16,12 +16,10 @@ Route::get('/', function () {
 });
 Route::get('/testing', function () {
     $model = new App\Models\Batch;
-    $data = $model->fetch(3592);
+    // $data = $model->fetch(4);
 
-    $alloc = $data->allocations()->get()[0];
-    dump($alloc);
-    $usrs = $alloc->users()->get()->toArray();
-    dump($usrs);
+    $return = $model->search(['level_id' => 11567]);
+    dump($return);
 
     // $return = [];
     // foreach ($alloc as $al) {
