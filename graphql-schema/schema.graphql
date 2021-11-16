@@ -29,28 +29,29 @@ type Query {
         type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): 
         [Donation] @all(model: "App\\Models\\Donation")
     events(name: String @where(operator: "like"), starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, 
-        event_type_id: Int @eq, vertical_id: Int @eq, status: String = "1" @eq): [Event!]! @all
+        event_type_id: Int @eq, vertical_id: Int @eq, status: String = "1" @eq, sort_order: [OrderByClause!] @orderBy): [Event!]! @all
     event_types(name: String @where(operator: "like"), vertical_id: Int @eq, role: String @eq, audience: String @eq): [Event_Type!]! @all
     users(name: String @where(operator: "like"), email: String @eq, mad_email: String @eq, 
-        phone: String @eq, city_id: Int @eq, status: String = "1" @eq, user_type: String = "volunteer" @eq): 
+        phone: String @eq, city_id: Int @eq, status: String = "1" @eq, user_type: String = "volunteer" @eq, sort_order: [OrderByClause!] @orderBy): 
         [User] @all # @paginate(type: "paginator" model: "App\\Models\\User")
-    centers(city_id: Int @eq, status: String = "1" @eq ): [Center!]! @all
-    students(name: String @where(operator: "like"), sex: String @eq, center_id: Int @eq, status: String = "1" @eq): [Student!]! @all
+    centers(city_id: Int @eq, status: String = "1" @eq, sort_order: [OrderByClause!] @orderBy): [Center!]! @all
+    students(name: String @where(operator: "like"), sex: String @eq, center_id: Int @eq, status: String = "1" @eq,
+        sort_order: [OrderByClause!] @orderBy): [Student!]! @all
     levels(center_id: Int @eq, project_id: Int @eq, name: String @where(operator:"like"), grade: Int @eq,
-        status: String = "1" @eq, year: Int = 2021 @eq): [Level!]! @all
+        status: String = "1" @eq, year: Int = 2021 @eq, sort_order: [OrderByClause!] @orderBy): [Level!]! @all
     allocations(batch_id: Int @eq, level_id: Int @eq, user_id: Int @eq, subject_id: Int @eq, role: String = "teacher" @eq): [Allocation] @all
-    cities(type: String = "actual" @eq): [City!]! @all
+    cities(type: String = "actual" @eq, sort_order: [OrderByClause!] @orderBy): [City!]! @all
     groups(group_type: String = "normal" @eq, status: String = "1" @eq, type: String @eq, 
-        vertical_id: Int @eq): [Group!]! @all
+        vertical_id: Int @eq, sort_order: [OrderByClause!] @orderBy): [Group!]! @all
     verticals(status: String = "1" @eq): [Vertical!]! @all
     projects(status: String = "1" @eq): [Project!]! @all
     subjects(status: String = "1" @eq): [Subject!]! @all
-    comments(item_type: String @eq, item_id: String @eq): [Comment] @all
+    comments(item_type: String @eq, item_id: String @eq, sort_order: [OrderByClause!] @orderBy): [Comment] @all
 
     # Custom Resolvers... 
     # The files that control these can be found at  app/GraphQL/Queries/<FileName>.php
     eventsInCity(city_id: ID): [Event] #Custom - app/GraphQL/Queries/EventsInCity.php - This is just a sample 
-    batchSearch(teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, 
+    batchSearch(batch_id: Int, teacher_id: Int, level_id: Int, project_id: Int, center_id: Int, mentor_id: Int, 
         class_status: String, direction: String, from_date: Date, limit: String): [Batch]
     classSearch(teacher_id: Int, level_id: Int, project_id: Int, status: String, batch_id: Int, 
         class_date: Date, direction: String, from_date: Date, limit: String): [Class]
@@ -65,6 +66,16 @@ type Query {
     # classConnection(teacher_id: Int, mentor_id: Int): [ClassConnection] #Custom return  + resolver. Used for finding unfilled data in UPMA. Both teacher and student.
     teacherClassConnection(teacher_id: Int): [TeacherClassConnection]
     mentorClassConnection(mentor_id: Int): [MentorClassConnection]
+}
+
+input OrderByClause{
+    field: String!
+    order: SortOrder!
+}
+
+enum SortOrder {
+    ASC
+    DESC
 }
 
 type Mutation {
