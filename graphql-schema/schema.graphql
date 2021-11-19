@@ -207,6 +207,7 @@ type StudentAttendance {
 type Center {
     id: ID!
     name: String!
+    class_starts_on: Date
     teachers: [User]
     students: [Student]
     batches: [Batch]

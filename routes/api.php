@@ -288,6 +288,17 @@ Route::group([
         return JSend::success("List of levels in $center[name]", ['levels' => $levels]);
     });
 
+    Route::post('/centers/{center_id}', function ($center_id, Request $request) {
+        $center_model = new Center;
+        $started_on = $request->input('class_started_on', 0);
+        $started_on_status = $center_model->edit(['class_starts_on' => $started_on], $center_id);
+
+        if (!$started_on_status) {
+            return JSend::fail("Error saving date");
+        }
+        return JSend::success("Date saved successfully", ['center' => $center_id]);
+    });
+
     ////////////////////////////////////////////////////////// Batches ///////////////////////////////////////////
     Route::get('/batches/{batch_id}', function ($batch_id) {
         $batch = (new Batch)->fetch($batch_id, false);
