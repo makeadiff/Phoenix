@@ -296,7 +296,7 @@ Route::group([
         if (!$started_on_status) {
             return JSend::fail("Error saving date");
         }
-        return JSend::success("Date saved successfully", ['center' => $center_id]);
+        return JSend::success("Date saved successfully", 200);
     });
 
     ////////////////////////////////////////////////////////// Batches ///////////////////////////////////////////
