@@ -290,13 +290,16 @@ Route::group([
 
     Route::post('/centers/{center_id}', function ($center_id, Request $request) {
         $center_model = new Center;
-        $started_on = $request->input('class_started_on', 0);
-        $started_on_status = $center_model->edit(['class_starts_on' => $started_on], $center_id);
+        $class_starts_on = $request->input('class_starts_on');
+        if(!$class_starts_on) {
+            return JSend::fail("Please provide the Class Starting date as class_starts_on parameter.");
+        }
+        $center = $center_model->edit(['class_starts_on' => date('Y-m-d 00:00:00', strtotime($class_starts_on))], $center_id);
 
-        if (!$started_on_status) {
+        if (!$center) {
             return JSend::fail("Error saving date");
         }
-        return JSend::success("Date saved successfully", 200);
+        return JSend::success("Date saved successfully", ['center' => $center]);
     });
 
     ////////////////////////////////////////////////////////// Batches ///////////////////////////////////////////

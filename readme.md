@@ -1,6 +1,6 @@
 # Phoenix
 
-### Version: 2.7.5
+### Version: 2.7.6
 
 ## Project Description/Purpose
 
