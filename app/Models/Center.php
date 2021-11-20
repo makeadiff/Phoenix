@@ -12,7 +12,7 @@ final class Center extends Model
     public $timestamps = true;
     const CREATED_AT = null;
     const UPDATED_AT = 'updated_on';
-    protected $fillable = ['name', 'class_started_on'];
+    protected $fillable = ['name', 'class_starts_on'];
 
     public function users()
     {

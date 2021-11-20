@@ -17,6 +17,7 @@ class BasicAuth
             $user->enable_logging = false;
             $info = $user->login($username, $password);
         }
+        // dump($username, $password, $user, $info);
 
         if (!$info) {
             $headers = array('WWW-Authenticate' => 'Basic');
