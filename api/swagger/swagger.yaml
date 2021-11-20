@@ -2324,6 +2324,47 @@ paths:
             $ref: "#/definitions/Subject"
 
   ############################ Classes
+  /classes/batches/{batch_id}/levels/{level_id}:
+    post:
+      tags:
+        - class
+      summary: Create a new class
+      description: Creates a new class from the batch id and level id
+      parameters: 
+        - name: batch_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the batch that should be found.
+        - name: level_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the level that should be found.
+      responses:
+        '200':
+          description: A new class will be created and class data will be returned.
+        404:
+          description: Given batch_id and/or level_id name can't be found in database.
+  
+  /classes/{class_id}:
+    delete:
+      tages:
+        - class
+      summary: Deletes the class
+      description: Deletes the class with given class_id.
+      parameters:
+        - name: class_id
+          in: path
+          type: integer
+          required: true
+          description: The ID of the class which needs to be deleted.
+      responses:
+        '200':
+          description: Blank string will be returned.
+        404:
+          description: Given class_id can't be found in database.
+
   /classes/{class_id}/data/{data_name}:
     get:
       tags:
