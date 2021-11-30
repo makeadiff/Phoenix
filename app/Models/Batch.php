@@ -146,7 +146,7 @@ final class Batch extends Model
     public function add($data)
     {
         $batch_data = [
-            'day'       => $data['day'],
+            'day'       => (string) $data['day'],
             'class_time'=> $data['class_time'],
             'center_id' => $data['center_id'],
             'project_id'=> $data['project_id'],
