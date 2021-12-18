@@ -77,7 +77,7 @@ class LevelController extends Controller
         }
 
         $student_ids_raw = $request->input('student_ids');
-        if(trim($student_ids_raw) == '') {
+        if(!$student_ids_raw) {
             $student_ids = []; // If they passed an empty string, that means remove all students from the class section
         } elseif (!is_array($student_ids_raw)) {
             $student_ids = explode(",", $student_ids_raw);
