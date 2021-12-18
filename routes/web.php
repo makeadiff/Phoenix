@@ -18,7 +18,7 @@ Route::get('/testing', function () {
     $model = new App\Models\Batch;
     // $data = $model->fetch(4);
 
-    $return = $model->search(['level_id' => 11567]);
+    $return = $model->search(['project_id' => 1, 'center_id' => 154]);
     dump($return);
 
     // $return = [];
