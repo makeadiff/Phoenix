@@ -77,7 +77,9 @@ class LevelController extends Controller
         }
 
         $student_ids_raw = $request->input('student_ids');
-        if (!is_array($student_ids_raw)) {
+        if(trim($student_ids_raw) == '') {
+            $student_ids = []; // If they passed an empty string, that means remove all students from the class section
+        } elseif (!is_array($student_ids_raw)) {
             $student_ids = explode(",", $student_ids_raw);
         } else {
             $student_ids = $student_ids_raw;
@@ -88,20 +90,23 @@ class LevelController extends Controller
         $add_student_ids = array_values(array_diff($student_ids, $existing_student_ids));
         $remove_student_ids = array_values(array_diff($existing_student_ids, $student_ids));
 
-        // Validation - make sure all students exists
-        $student_not_found = [];
-        $student_model = new Student;
-        foreach ($add_student_ids as $student_id) {
-            $student = $student_model->fetch($student_id);
-            if (!$student) {
-                array_push($student_not_found, $student_id);
+        if(count($add_student_ids)) { // Do validation only if there is a list of students provided. Sometimes they want to remove all students from a level.
+            // Validation - make sure all students exists
+            $student_not_found = [];
+            $student_model = new Student;
+            foreach ($add_student_ids as $student_id) {
+                $student = $student_model->fetch($student_id);
+                if (!$student) {
+                    array_push($student_not_found, $student_id);
+                }
             }
-        }
-        // Validation :TODO:...
-        // Are given students part of the same city as the level
+            // Validation :TODO:...
+            // Are given students part of the same city as the level
 
-        if (count($student_not_found)) {
-            return JSend::fail("Can't find students with these IDs: " . implode(",", $student_not_found));
+            if (count($student_not_found)) {
+                return JSend::fail("Can't find students with these IDs: " . implode(",", $student_not_found));
+            }
+
         }
 
         foreach ($add_student_ids as $student_id) {

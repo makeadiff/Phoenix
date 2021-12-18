@@ -56,7 +56,7 @@ final class Batch extends Model
 
     public function baseSearch($data, $q)
     {
-        $search_fields = ['id', 'day', 'center_id', 'level_id', 'batch_id', 'project_id', 'year', 'teacher_id', 'mentor_id', 'direction', 'from_date', 'limit', 'class_status', 'city_id'];
+        $search_fields = ['id', 'day', 'center_id', 'level_id', 'batch_id', 'project_id', 'year', 'teacher_id', 'mentor_id', 'direction', 'from_date', 'limit', 'class_status', 'city_id', 'status'];
         $q->select('Batch.id', 'Batch.day', 'Batch.class_time', 'Batch.batch_head_id', 'Batch.center_id', 'Batch.status', 'Batch.project_id')->distinct();
         if (!isset($data['status'])) {
             $data['status'] = '1';
@@ -115,7 +115,7 @@ final class Batch extends Model
         }
 
         $q->orderBy('day')->orderBy('class_time');
-        //dd($q->toSql(), $q->getBindings(), $data);
+        // dd($q->toSql(), $q->getBindings(), $data);
 
         return $q;
     }
