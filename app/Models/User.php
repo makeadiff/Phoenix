@@ -561,7 +561,7 @@ class User extends Authenticatable implements JWTSubject
         $mail = new Email;
         $mail->from     = "noreply@makeadiff.in";
         $mail->to       = $data['email'];
-        $mail->subject  = "You are one step closer to Making a Difference!";
+        $mail->subject  = "Your Journey to Make a Difference begins now!";
 
         $base_path = app()->basePath();
         $base_url = url('/');
