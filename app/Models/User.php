@@ -574,8 +574,9 @@ class User extends Authenticatable implements JWTSubject
         );
 
         $images = [
-            $base_path . '/public/assets/header.jpg',
             $base_path . '/public/assets/welcome_header.png',
+            $base_path . '/public/assets/recruitment-email/attributes-of-madsters.jpeg',
+            $base_path . '/public/assets/recruitment-email/recruitment-process.jpeg',
         ];
         $mail->images = $images;
         $mail->send(); // $mail->queue();
