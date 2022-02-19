@@ -181,7 +181,7 @@ paths:
       tags:
         - user
       summary: User Paginated Search
-      description: Search interface for users. Use any of the given parameters to search/filter the user table. The final result will be returned. Gives result in data of 50 users per page.
+      description: Search interface for users. Use any of the given parameters to search/filter the user table. The final result will be returned in sets of 50 users per page.
       parameters:
         - name: name
           in: query
@@ -241,8 +241,8 @@ paths:
           description: Returns all the teachers in the given center.
       responses:
         '200':
-          description: Returns the list of users according to the given parameters.
-          schema:            
+          description: Returns a paginated list of users according to the given parameters.
+          schema:
             $ref: "#/definitions/UserPaginated"
 
   /users/{user_id}:
@@ -1557,6 +1557,58 @@ paths:
           description: Student added successfully.
         400:
           description: There was an error in one of the parameters that was passed. You will get a more detailed reason for the issue in the response body.
+
+  /students_paginated:
+    get:
+      tags:
+        - student
+        - search
+      summary: Paginated Student search.
+      description: Returns a paginated list of the student search results. It will be in sets of 50 students per page.
+      parameters:
+        - name: name
+          in: query
+          type: string
+          description: Search by name
+        - name: city_id
+          in: query
+          type: integer
+          required: false
+          description: Return all students in the given city. If ommited the city of the user who's login is used to access the api is assumed.
+        - name: center_id
+          in: query
+          type: integer
+          required: false
+          description: Returns all the students in the given center.
+        - name: student_type
+          in: query
+          type: string
+          enum: [active,active_away,alumni,alumni_no_contact,alumni_dead,other]
+          required: false
+          description: Finds only students of this type.
+        - name: student_type_in
+          in: query
+          type: string
+          required: false
+          description: Finds all students with any of the given types
+        - name: not_student_type
+          in: query
+          type: string
+          required: false
+          description: Finds students NOT in any of the given types.
+        - name: sex
+          in: query
+          type: string
+          enum: [m,f]
+          required: false
+          description: Returns all the students who are of the given gender. Can be 'm' or 'f'.
+      responses:
+        '200':
+          description: Returns a paginated list of students according to the given parameters.
+          schema:
+            $ref: "#/definitions/StudentPaginated"
+        '404':
+          description: Did not find any students matching the given parameters
 
   /students/{student_id}:
     get:
@@ -4032,7 +4084,38 @@ definitions:
         type: integer
       total: 
         type: integer
-    
+
+  StudentPaginated:
+    type: "object"
+    properties:
+      current_page: 
+        type: integer
+        description: Current Page Number
+      data: 
+        type: "array"
+        items:
+          $ref: "#/definitions/Student"
+      first_page_url: 
+        type: string
+      from: 
+        type: integer
+      last_page: 
+        type: integer
+      last_page_url:
+        type: string
+      next_page_url:
+        type: string
+      path:
+        type: string
+      per_page: 
+        type: integer
+      prev_page_url:
+        type: string
+      to:
+        type: integer
+      total: 
+        type: integer
+
   Group:
     type: "object"
     properties:
