@@ -393,6 +393,49 @@ class UserTest extends TestCase
         $this->assertTrue($found);
     }
 
+    /// Path: GET   /users/{user_id}/past_events
+    public function testGetUsersPastEventList()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $this->load('/users/1/past_events');
+
+        $this->assertEquals($this->response_data->status, 'success');
+
+        $search_for = date('Y-m-d H:i:s', mktime(1, 1, 1, 1, 1, date('Y')));
+        $found = false;
+        foreach ($this->response_data->data->events as $key => $info) {
+            if ($info->starts_on < $search_for) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+        $this->assertEquals($this->response->getStatusCode(), 200);
+    }
+
+    /// GraphQL: user(id: 1) { past_events { id name }}
+    public function testGraphQLUserPastEventList()
+    {
+        if ($this->only_priority_tests) {
+            $this->markTestSkipped("Running only priority tests.");
+        }
+
+        $this->graphql('{ user(id: 1) { past_events { id name starts_on }} }');
+
+        $search_for = date('Y-m-d H:i:s', mktime(1, 1, 1, 1, 1, date('Y')));
+        $found = false;
+        foreach ($this->response_data->data->user->past_events as $key => $info) {
+            if ($info->starts_on < $search_for) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+    }
+
     /// Path: GET   /users/{user_id}/credit
     public function testGetUsersCreditSingle()
     {
