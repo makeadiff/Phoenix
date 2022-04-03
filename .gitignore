@@ -1,6 +1,6 @@
 /Old
 /node_modules
-bootstrap/cache
+/bootstrap/cache
 /public/hot
 /public/storage
 /tests/Secrets
