@@ -21,7 +21,7 @@ final class Batch extends Model
     }
     public function levels()
     {
-        return $this->belongsToMany("App\Models\Level", 'BatchLevel'); // ->where('BatchLevel.year', '=', $this->year());
+        return $this->belongsToMany("App\Models\Level", 'UserBatch'); // ->where('BatchLevel.year', '=', $this->year());
     }
     public function teachers()
     {
