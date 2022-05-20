@@ -44,20 +44,20 @@ class Allocation extends Model
         return $this->belongsTo('App\Models\Subject');
     }
 
-    public function getAllocation($batch_id, $level_id, $user_id, $role)
+    public function getAllocation($batch_id, $level_id, $user_id = null, $role = null)
     {
         $allocation = $this->where('batch_id', $batch_id)
-                            ->where('user_id', $user_id)
-                            ->where('level_id', $level_id)
-                            ->where('role', $role)
-                            ->first();
+                           ->where('level_id', $level_id);
+
+        if($user_id != null) $allocation->where('user_id', $user_id);
+        if($role != null) $allocation->where('role', $role);
 
         return $allocation;
     }
 
     public function createAllocation($batch_id, $level_id, $user_id, $role, $subject_id = 0)
     {
-        $existing_allocation = $this->getAllocation($batch_id, $level_id, $user_id, $role);
+        $existing_allocation = $this->getAllocation($batch_id, $level_id, $user_id, $role)->first();
 
         if (isset($existing_allocation->id)) {
             if ($existing_allocation->subject_id == $subject_id) { // Exact same row already exist in db.
@@ -93,7 +93,7 @@ class Allocation extends Model
 
     public function deleteAssignment($batch_id, $level_id, $user_id, $role)
     {
-        $existing_connection = $this->getAllocation($batch_id, $level_id, $user_id, $role);
+        $existing_connection = $this->getAllocation($batch_id, $level_id, $user_id, $role)->first();
 
         if (!isset($existing_connection->id)) {
             return false;

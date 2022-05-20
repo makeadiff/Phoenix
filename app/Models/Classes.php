@@ -172,7 +172,7 @@ final class Classes extends Model
             $q->orderBy("Class.class_on", "ASC");
         }
         $q->groupBy("Class.id");
-        // dd($q->toSql(), $q->getBindings(), $search);
+        // if(isset($search['class_date'])) dd($q->toSql(), $q->getBindings(), $search);
 
         return $q;
     }
