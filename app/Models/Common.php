@@ -9,7 +9,7 @@ trait Common
 
     public function yearStartMonth()
     {
-        return 8; // Aug, made this change for 2020 year. It was a wierd year.
+        return 7; // July
     }
 
     public function year()
