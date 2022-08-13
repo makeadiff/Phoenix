@@ -23,9 +23,9 @@ type Query {
     tag(name: String @eq):  Tag         @find(model: "App\\Models\\Tag")
     survey_template(id: ID @eq):    Survey_Template @find(model: "App\\Models\\Survey_Template")
 
-    # :HARDCODE: - Global replace all 2021 to next year. Not sure how to do it any other way yet. Other than custom resolvers for everything.
+    # :HARDCODE: - Global replace all 2022 to next year. Not sure how to do it any other way yet. Other than custom resolvers for everything.
 
-    donations(added_on: Date = "2021-05-01" @where(operator: ">="), amount: Int, status: String, 
+    donations(added_on: Date = "2022-05-01" @where(operator: ">="), amount: Int, status: String, 
         type: String, fundraiser_user_id: Int, updated_by_user_id: Int, donor_id: Int): 
         [Donation] @all(model: "App\\Models\\Donation")
     events(name: String @where(operator: "like"), starts_on: DateTime @eq, place: String @eq, city_id: Int @eq, 
@@ -38,7 +38,7 @@ type Query {
     students(name: String @where(operator: "like"), sex: String @eq, center_id: Int @eq, status: String = "1" @eq,
         sort_order: [OrderByClause!] @orderBy): [Student!]! @all
     levels(center_id: Int @eq, project_id: Int @eq, name: String @where(operator:"like"), grade: Int @eq,
-        status: String = "1" @eq, year: Int = 2021 @eq, sort_order: [OrderByClause!] @orderBy): [Level!]! @all
+        status: String = "1" @eq, year: Int = 2022 @eq, sort_order: [OrderByClause!] @orderBy): [Level!]! @all
     allocations(batch_id: Int @eq, level_id: Int @eq, user_id: Int @eq, subject_id: Int @eq, role: String = "teacher" @eq): [Allocation] @all
     cities(type: String = "actual" @eq, sort_order: [OrderByClause!] @orderBy): [City!]! @all
     groups(group_type: String = "normal" @eq, status: String = "1" @eq, type: String @eq, 
