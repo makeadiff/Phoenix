@@ -39,7 +39,7 @@ final class Conversation extends Model
     {
         // :TODO: Option to return an entire chain of conversation if you search for any conversation id within the chain.
         
-        $search_fields = ['id', 'user_id','assigned_to_user_id', 'city_id', 'center_id', 'group_id', 'vertical_id', 'comment'];
+        $search_fields = ['id', 'user_id','assigned_to_user_id', 'city_id', 'center_id', 'group_id', 'vertical_id', 'comment', 'user_id_in'];
         $q = app('db')->table('Conversation')->distinct();
         $q->select('Conversation.id','Conversation.user_id','Conversation.assigned_to_user_id','Conversation.type',
                     'Conversation.stage','Conversation.scheduled_on','Conversation.comment','Conversation.followup_to_conversation_id', 'Conversation.added_on');
@@ -64,6 +64,9 @@ final class Conversation extends Model
                 $q->join("UserGroup", 'UserGroup.user_id', "=", 'Conversation.user_id');
                 $q->join("Group", 'UserGroup.group_id', "=", 'Group.id');
                 $q->where("Group.vertical_id", $data[$field]);
+
+            } elseif ($field === 'user_id_in') {
+                $q->whereIn('Conversation.user_id', $data[$field]);
 
             } else {
                 $q->where($field, $data[$field]);
