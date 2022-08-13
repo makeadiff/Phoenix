@@ -17,7 +17,7 @@ abstract class TestCase extends BaseTestCase
     protected $client;
     protected $response;
     protected $response_data;
-    protected $year = 2021; // :HARDCODE:
+    protected $year = 2022; // :HARDCODE:
     protected $jwt_token = null;
     protected $jtw_token_file = null;
 
