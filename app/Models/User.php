@@ -625,6 +625,7 @@ class User extends Authenticatable implements JWTSubject
     public function setMainGroup($group_id, $main ='1', $user_id = false)
     {
         $user_id = $this->chain($user_id);
+        $this->unsetMainGroup($user_id);
         app('db')->table("UserGroup")->where('group_id',$group_id)->where('user_id', $user_id)->where('year',$this->year())->update(['main' => $main]);
     }
     private function unsetAllGroups($user_id = false)
@@ -679,7 +680,6 @@ class User extends Authenticatable implements JWTSubject
         if ($group_found) {
             if($group_found->main == $main) return false; // No change required
             else { // If the main group is not correctly, do that.
-                $this->unsetMainGroup($user_id);
                 $this->setMainGroup($group_found->id, $main, $user_id);
                 return false;
             }
