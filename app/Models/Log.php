@@ -45,9 +45,9 @@ final class Log extends Model
     public static function add($data)
     {
         $log_data = '';
-        if (isset($data['log'])) {
+        if (isset($data['log'])) { // Its already JSON
             $log_data = $data['log'];
-        } elseif (isset($data['data'])) {
+        } elseif (isset($data['data'])) { // Its an array, encode it as JSON
             $log_data = json_encode($data['data']);
         }
 
