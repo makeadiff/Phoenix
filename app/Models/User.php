@@ -554,6 +554,7 @@ class User extends Authenticatable implements JWTSubject
             if(isset($data['user_type'])) $user->user_type       = $data['user_type'];
             if(isset($data['joined_on'])) $user->joined_on       = $data['joined_on'];
 
+            if($zoho_user_id) $user->zoho_user_id = $zoho_user_id;
             $user->zoho_sync_status = 'update-pending';
             $user->save();
         }
