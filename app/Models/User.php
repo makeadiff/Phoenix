@@ -532,54 +532,55 @@ class User extends Authenticatable implements JWTSubject
             $user->mad_email    = isset($data['mad_email']) ? $data['mad_email'] : '';
             $user->phone        = User::correctPhoneNumber($data['phone']);
             $user->name         = $data['name'];
-            $user->sex          = isset($data['sex']) ? $data['sex'] : 'f';
             $user->password_hash= Hash::make($data['password']);
-            $user->address      = isset($data['address']) ? $data['address'] : '';
-            $user->bio          = isset($data['bio']) ? $data['bio'] : '';
-            $user->source       = isset($data['source']) ? $data['source'] : 'other';
-            $user->birthday     = isset($data['birthday']) ? $data['birthday'] : null;
             $user->city_id      = $data['city_id'];
 
-            $user->job_status   = isset($data['job_status']) ? $data['job_status'] : '';
-            $user->edu_institution = isset($data['edu_institution']) ? $data['edu_institution'] : '';
-            $user->edu_course   = isset($data['edu_course']) ? $data['edu_course'] : '';
-            $user->edu_year     = isset($data['edu_year']) ? $data['edu_year'] : null;
-            $user->company      = isset($data['company']) ? $data['company'] : '';
+            if(isset($data['sex'])) $user->sex          = $data['sex'];
+            if(isset($data['address'])) $user->address   = $data['address'];
+            if(isset($data['bio'])) $user->bio           = $data['bio'];
+            if(isset($data['source'])) $user->source     = $data['source'];
+            if(isset($data['birthday'])) $user->birthday = $data['birthday'];
+            
+            if(isset($data['job_status'])) $user->job_status     = $data['job_status'];
+            if(isset($data['edu_institution'])) $user->edu_institution  = $data['edu_institution'];
+            if(isset($data['edu_course'])) $user->edu_course     = $data['edu_course'];
+            if(isset($data['edu_year'])) $user->edu_year         = $data['edu_year'];
+            if(isset($data['company'])) $user->company           = $data['company'];
 
-            $user->applied_role = isset($data['applied_role']) ? $data['applied_role'] : '';
-            $user->applied_role_secondary = isset($data['applied_role_secondary']) ? $data['applied_role_secondary'] : '';
-            $user->credit       = isset($data['credit']) ? $data['credit'] : '3';
-            $user->status       = isset($data['status']) ? $data['status'] : '1';
-            $user->user_type    = isset($data['user_type']) ? $data['user_type'] : 'applicant';
-            $user->joined_on    = isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s');
+            if(isset($data['applied_role'])) $user->applied_role = $data['applied_role'];
+            if(isset($data['applied_role_secondary'])) $user->applied_role_secondary  = $data['applied_role_secondary'];
+            if(isset($data['credit'])) $user->credit             = $data['credit'];
+            if(isset($data['status'])) $user->status             = $data['status'];
+            if(isset($data['user_type'])) $user->user_type       = $data['user_type'];
+            if(isset($data['joined_on'])) $user->joined_on       = $data['joined_on'];
 
             $user->zoho_sync_status = 'update-pending';
             $user->save();
         }
 
         // Send Welcome Email. Do this ONLY if zoho sync is disabled.
-        $mail = new Email;
-        $mail->from     = "noreply@makeadiff.in";
-        $mail->to       = $data['email'];
-        $mail->subject  = "Your Journey to Make a Difference begins now!";
+        // $mail = new Email;
+        // $mail->from     = "noreply@makeadiff.in";
+        // $mail->to       = $data['email'];
+        // $mail->subject  = "Your Journey to Make a Difference begins now!";
 
-        $base_path = app()->basePath();
-        $base_url = url('/');
+        // $base_path = app()->basePath();
+        // $base_url = url('/');
 
-        $email_html = file_get_contents($base_path . '/resources/email_templates/applicant_welcome_template.html');
-        $mail->html = str_replace(
-            array('%BASE_FOLDER%','%BASE_URL%', '%NAME%', '%DATE%'),
-            array($base_path, $base_url,$data['name'], date('d/m/Y')),
-            $email_html
-        );
+        // $email_html = file_get_contents($base_path . '/resources/email_templates/applicant_welcome_template.html');
+        // $mail->html = str_replace(
+        //     array('%BASE_FOLDER%','%BASE_URL%', '%NAME%', '%DATE%'),
+        //     array($base_path, $base_url,$data['name'], date('d/m/Y')),
+        //     $email_html
+        // );
 
-        $images = [
-            $base_path . '/public/assets/welcome_header.png',
-            $base_path . '/public/assets/recruitment-email/attributes-of-madsters.jpeg',
-            $base_path . '/public/assets/recruitment-email/recruitment-process.jpeg',
-        ];
-        $mail->images = $images;
-        $mail->send(); // $mail->queue();
+        // $images = [
+        //     $base_path . '/public/assets/welcome_header.png',
+        //     $base_path . '/public/assets/recruitment-email/attributes-of-madsters.jpeg',
+        //     $base_path . '/public/assets/recruitment-email/recruitment-process.jpeg',
+        // ];
+        // $mail->images = $images;
+        // $mail->send(); // $mail->queue();
 
         return $user;
     }
