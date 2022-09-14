@@ -18,8 +18,6 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-// :TODO: Don't return password as plain text. Esp on /users/<ID> GET or /users/<ID> POST. Later Comment: Huh? How is this even possible? We only store hashs.
-
 class User extends Authenticatable implements JWTSubject
 {
     use Common;
@@ -31,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = ['email','mad_email','phone','name','sex','password_hash','address','bio','source','birthday','city_id','center_id',
                             'credit','applied_role','applied_role_secondary','status','user_type', 'joined_on', 'added_on', 'left_on', 'campaign', 
                             'job_status','edu_institution', 'edu_course', 'edu_year', 'company','why_mad', 'volunteering_experience', 
-                            'zoho_sync_status', 'zoho_user_id'];
+                            'data_source', 'data_source_user_id', 'data_synced_on'];
     public $enable_logging = false; // Used to disable logging the basic auth authentications for API Calls
 
     public function groups()
@@ -479,7 +477,6 @@ class User extends Authenticatable implements JWTSubject
         }
 
         $results = $q->first();
-        $zoho_user_id = isset($data['zoho_user_id']) ? $data['zoho_user_id'] : 0;
         $madapp_user_id = 0;
 
         // Backward compatibility
@@ -519,8 +516,10 @@ class User extends Authenticatable implements JWTSubject
                 'user_type' => isset($data['user_type']) ? $data['user_type'] : 'applicant',
                 'joined_on' => isset($data['joined_on']) ? $data['joined_on'] : date('Y-m-d H:i:s'),
                 'campaign'  => isset($data['campaign']) ? $data['campaign'] : '',
-                'zoho_user_id'=>$zoho_user_id,
-                'zoho_sync_status' => 'insert-pending'
+                
+                'data_source'           => isset($data['data_source']) ? $data['data_source'] : 'madapp',
+                'data_source_user_id'   => isset($data['data_source_user_id']) ? $data['data_source_user_id'] : null,
+                'data_synced_on'        => isset($data['data_synced_on']) ? $data['data_synced_on'] : null,
             ]);
             $madapp_user_id = $user->id;
 
@@ -554,8 +553,11 @@ class User extends Authenticatable implements JWTSubject
             if(isset($data['user_type'])) $user->user_type       = $data['user_type'];
             if(isset($data['joined_on'])) $user->joined_on       = $data['joined_on'];
 
-            if($zoho_user_id) $user->zoho_user_id = $zoho_user_id;
-            $user->zoho_sync_status = 'update-pending';
+
+            if(isset($data['data_source'])) $user->data_source                  = $data['data_source'];
+            if(isset($data['data_source_user_id'])) $user->data_source_user_id  = $data['data_source_user_id'];
+            if(isset($data['data_synced_on'])) $user->data_synced_on            = $data['data_synced_on'];
+
             $user->save();
         }
 
